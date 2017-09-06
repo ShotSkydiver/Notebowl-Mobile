@@ -6,7 +6,8 @@ target 'NB-Mobile' do
   use_frameworks!
 
   # Pods for NB-Mobile
-
+    pod 'DeviceKit', '~> 1.0'
+    
   target 'NB-MobileTests' do
     inherit! :search_paths
     # Pods for testing
