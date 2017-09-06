@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "20832195F4B18E651C4D876CCB008C21"
-               BuildableName = "Pods_NB_MobileUITests.framework"
-               BlueprintName = "Pods-NB-MobileUITests"
-               ReferencedContainer = "container:Pods.xcodeproj">
+               BlueprintIdentifier = "85E2918C1F5F619300172C46"
+               BuildableName = "NB-Mobile.app"
+               BlueprintName = "NB-Mobile"
+               ReferencedContainer = "container:NB-Mobile.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,6 +30,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "85E2918C1F5F619300172C46"
+            BuildableName = "NB-Mobile.app"
+            BlueprintName = "NB-Mobile"
+            ReferencedContainer = "container:NB-Mobile.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -44,15 +53,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "20832195F4B18E651C4D876CCB008C21"
-            BuildableName = "Pods_NB_MobileUITests.framework"
-            BlueprintName = "Pods-NB-MobileUITests"
-            ReferencedContainer = "container:Pods.xcodeproj">
+            BlueprintIdentifier = "85E2918C1F5F619300172C46"
+            BuildableName = "NB-Mobile.app"
+            BlueprintName = "NB-Mobile"
+            ReferencedContainer = "container:NB-Mobile.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -62,6 +72,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "85E2918C1F5F619300172C46"
+            BuildableName = "NB-Mobile.app"
+            BlueprintName = "NB-Mobile"
+            ReferencedContainer = "container:NB-Mobile.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

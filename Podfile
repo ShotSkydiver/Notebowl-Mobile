@@ -8,14 +8,5 @@ target 'NB-Mobile' do
   # Pods for NB-Mobile
     pod 'DeviceKit', '~> 1.0'
     
-  target 'NB-MobileTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'NB-MobileUITests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
 
 end
