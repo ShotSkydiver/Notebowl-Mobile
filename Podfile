@@ -7,6 +7,7 @@ target 'NB-Mobile' do
 
   # Pods for NB-Mobile
     pod 'DeviceKit', '~> 1.0'
-    
+    pod 'Parse'
+    pod 'ParseUI'
 
 end

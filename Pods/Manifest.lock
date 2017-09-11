@@ -1,12 +1,23 @@
 PODS:
+  - Bolts/Tasks (1.8.4)
   - DeviceKit (1.2.3)
+  - Parse (1.15.2):
+    - Bolts/Tasks (~> 1.8)
+  - ParseUI (1.2.0):
+    - Bolts/Tasks (~> 1.3)
+    - Parse (~> 1.9)
 
 DEPENDENCIES:
   - DeviceKit (~> 1.0)
+  - Parse
+  - ParseUI
 
 SPEC CHECKSUMS:
+  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   DeviceKit: f33cbc6e67d9bb416e42dedc647557c7c2f6d3d7
+  Parse: 7daa8804b876d250a65420534c97d2d786c3b0b4
+  ParseUI: af2eba584799da4a9fbdac0e178662d7438b502e
 
-PODFILE CHECKSUM: 9794a20e02677302be82f33b714b013a78ee451e
+PODFILE CHECKSUM: 8d0a24fde127520f6265a7859e0fe5c4260675fa
 
 COCOAPODS: 1.3.1
