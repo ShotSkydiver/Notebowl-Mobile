@@ -7,7 +7,12 @@ target 'NB-Mobile' do
 
   # Pods for NB-Mobile
     pod 'DeviceKit', '~> 1.0'
-    pod 'Parse'
-    pod 'ParseUI'
+    # pod 'Parse'
+    # pod 'ParseUI'
+    # pod 'Siesta', '~> 1.0'
+    # pod 'Siesta/UI', '~> 1.0'
+    pod 'Siesta/UI', path: './siesta-swift-4'
+    pod 'SwiftyJSON', '4.0.0-alpha.1'
+    # pod 'Siesta/Alamofire', '~> 1.0'
 
 end

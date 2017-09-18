@@ -1,23 +1,24 @@
 PODS:
-  - Bolts/Tasks (1.8.4)
   - DeviceKit (1.2.3)
-  - Parse (1.15.2):
-    - Bolts/Tasks (~> 1.8)
-  - ParseUI (1.2.0):
-    - Bolts/Tasks (~> 1.3)
-    - Parse (~> 1.9)
+  - Siesta/Core (1.2.0)
+  - Siesta/UI (1.2.0):
+    - Siesta/Core
+  - SwiftyJSON (4.0.0-alpha.1)
 
 DEPENDENCIES:
   - DeviceKit (~> 1.0)
-  - Parse
-  - ParseUI
+  - Siesta/UI (from `./siesta-swift-4`)
+  - SwiftyJSON (= 4.0.0-alpha.1)
+
+EXTERNAL SOURCES:
+  Siesta:
+    :path: ./siesta-swift-4
 
 SPEC CHECKSUMS:
-  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   DeviceKit: f33cbc6e67d9bb416e42dedc647557c7c2f6d3d7
-  Parse: 7daa8804b876d250a65420534c97d2d786c3b0b4
-  ParseUI: af2eba584799da4a9fbdac0e178662d7438b502e
+  Siesta: 510fe6f1967d5c727fd32390805472cb01684093
+  SwiftyJSON: dc88934f85fb50b263b1632b9cbad3402505783e
 
-PODFILE CHECKSUM: 8d0a24fde127520f6265a7859e0fe5c4260675fa
+PODFILE CHECKSUM: ea5dbe8d884eccefb43dd67c9961676c26895305
 
 COCOAPODS: 1.3.1
