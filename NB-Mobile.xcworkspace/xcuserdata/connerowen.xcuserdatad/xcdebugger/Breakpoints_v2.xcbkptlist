@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NB-Mobile/AppDelegate.swift"
-            timestampString = "526941278.122149"
+            timestampString = "527543605.078179"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "24"
@@ -25,13 +25,29 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NB-Mobile/API/NoteBowlAPI.swift"
-            timestampString = "526941278.131261"
+            filePath = "NB-Mobile/TestViewController.swift"
+            timestampString = "527573968.293019"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "logIn()"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "doLogin(_:email:password:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/Erik/Sources/Document.swift"
+            timestampString = "527543605.079226"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "parse(_:encoding:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

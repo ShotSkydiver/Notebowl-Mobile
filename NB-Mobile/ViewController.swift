@@ -9,6 +9,7 @@
 import UIKit
 import Siesta
 import SwiftyJSON
+import DeviceKit
 
 class ViewController: UIViewController, ResourceObserver {
     
@@ -57,7 +58,7 @@ class ViewController: UIViewController, ResourceObserver {
         
         showUserData()
         
-        userResource = NoteBowlAPI.credentials
+        //userResource = NoteBowlAPI.credentials
         
         
     }

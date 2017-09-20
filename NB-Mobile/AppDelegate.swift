@@ -21,7 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             $0.useNetworkActivityIndicator()
         }
         
-        NoteBowlAPI.logIn()
+        //NoteBowlAPI.logIn()
+        
         return true
     }
 
