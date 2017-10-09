@@ -8,31 +8,70 @@
 
 /* Begin PBXBuildFile section */
 		6C014B677C7A0713C03A4200 /* Pods_NB_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */; };
+		850006D01F77215E00B357DB /* webapp.js in Resources */ = {isa = PBXBuildFile; fileRef = 850006CF1F77215E00B357DB /* webapp.js */; };
 		852D18981F673A1900BDA97B /* University.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852D18971F673A1900BDA97B /* University.swift */; };
-		852D189A1F67BC6300BDA97B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852D18991F67BC6300BDA97B /* User.swift */; };
+		853CE2531F7E1467000E8D6C /* AuthTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2521F7E1467000E8D6C /* AuthTestViewController.swift */; };
+		853CE2551F7E1A83000E8D6C /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2541F7E1A83000E8D6C /* Users.swift */; };
+		854EAEE71F84408E008E03BA /* WKLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854EAEE61F84408E008E03BA /* WKLoginViewController.swift */; };
+		854EAEEA1F844919008E03BA /* WKZombie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEE81F8443BD008E03BA /* WKZombie.framework */; };
+		854EAEEB1F844919008E03BA /* WKZombie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEE81F8443BD008E03BA /* WKZombie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		854EAEEF1F844995008E03BA /* hpple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEED1F844986008E03BA /* hpple.framework */; };
+		854EAEF01F844995008E03BA /* hpple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEED1F844986008E03BA /* hpple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		85609D861F82A0A500DD2D7F /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D851F82A0A500DD2D7F /* CoursesTableViewController.swift */; };
+		85609D881F82A22000DD2D7F /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D871F82A22000DD2D7F /* API.swift */; };
+		85609D8A1F82A9E800DD2D7F /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D891F82A9E800DD2D7F /* CoursesTableViewCell.swift */; };
+		85609D8C1F82CE7000DD2D7F /* CourseDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D8B1F82CE7000DD2D7F /* CourseDetailViewController.swift */; };
 		85735AA21F71832700E277BC /* ErikViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85735AA11F71832700E277BC /* ErikViewController.swift */; };
-		85735AA41F719C0500E277BC /* Siesta+SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85735AA31F719C0400E277BC /* Siesta+SwiftyJSON.swift */; };
-		85735AA81F71CB0800E277BC /* WKWebViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85735AA71F71CB0800E277BC /* WKWebViewWrapper.swift */; };
-		85AD5DBF1F6726DC00474B98 /* NoteBowlAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AD5DBE1F6726DC00474B98 /* NoteBowlAPI.swift */; };
-		85E08DEC1F705A0500624E61 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E08DEB1F705A0500624E61 /* TestViewController.swift */; };
+		8574D9321F83EB39009B74EC /* TestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8574D9311F83EB39009B74EC /* TestingViewController.swift */; };
+		859DF8311F83357E00EDB263 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859DF8301F83357E00EDB263 /* UserProfileViewController.swift */; };
+		85D2D4101F7F0D9700D1BAE4 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D2D40F1F7F0D9700D1BAE4 /* Helpers.swift */; };
+		85D2D4121F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D2D4111F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift */; };
+		85D2D4141F7F1F8A00D1BAE4 /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D2D4131F7F1F8A00D1BAE4 /* Course.swift */; };
+		85D2D4161F7F299B00D1BAE4 /* API+Courses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D2D4151F7F299B00D1BAE4 /* API+Courses.swift */; };
+		85D2D4191F7F2E6300D1BAE4 /* Codable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D2D4181F7F2E6300D1BAE4 /* Codable+Extension.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
-		85E291931F5F619300172C46 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291921F5F619300172C46 /* ViewController.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		854EAEEC1F84491A008E03BA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				854EAEF01F844995008E03BA /* hpple.framework in Embed Frameworks */,
+				854EAEEB1F844919008E03BA /* WKZombie.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		850006CF1F77215E00B357DB /* webapp.js */ = {isa = PBXFileReference; explicitFileType = sourcecode.javascript; fileEncoding = 4; indentWidth = 4; lineEnding = 0; path = webapp.js; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		852D18971F673A1900BDA97B /* University.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = University.swift; sourceTree = "<group>"; };
-		852D18991F67BC6300BDA97B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		853CE2521F7E1467000E8D6C /* AuthTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTestViewController.swift; sourceTree = "<group>"; };
+		853CE2541F7E1A83000E8D6C /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
+		854EAEE61F84408E008E03BA /* WKLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKLoginViewController.swift; sourceTree = "<group>"; };
+		854EAEE81F8443BD008E03BA /* WKZombie.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WKZombie.framework; sourceTree = "<group>"; };
+		854EAEED1F844986008E03BA /* hpple.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = hpple.framework; sourceTree = "<group>"; };
+		85609D851F82A0A500DD2D7F /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
+		85609D871F82A22000DD2D7F /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		85609D891F82A9E800DD2D7F /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
+		85609D8B1F82CE7000DD2D7F /* CourseDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailViewController.swift; sourceTree = "<group>"; };
 		85735AA11F71832700E277BC /* ErikViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErikViewController.swift; sourceTree = "<group>"; };
-		85735AA31F719C0400E277BC /* Siesta+SwiftyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Siesta+SwiftyJSON.swift"; sourceTree = "<group>"; };
-		85735AA71F71CB0800E277BC /* WKWebViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKWebViewWrapper.swift; sourceTree = "<group>"; };
-		85AD5DBE1F6726DC00474B98 /* NoteBowlAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteBowlAPI.swift; sourceTree = "<group>"; };
-		85E08DEB1F705A0500624E61 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		8574D9311F83EB39009B74EC /* TestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingViewController.swift; sourceTree = "<group>"; };
+		859DF8301F83357E00EDB263 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
+		85D2D40F1F7F0D9700D1BAE4 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		85D2D4111F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireTokenLoginVC.swift; sourceTree = "<group>"; };
+		85D2D4131F7F1F8A00D1BAE4 /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
+		85D2D4151F7F299B00D1BAE4 /* API+Courses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "API+Courses.swift"; sourceTree = "<group>"; };
+		85D2D4181F7F2E6300D1BAE4 /* Codable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+Extension.swift"; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* NB-Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NB-Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		85E291921F5F619300172C46 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		85E291951F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		85E291971F5F619300172C46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85E2919A1F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +88,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				854EAEEF1F844995008E03BA /* hpple.framework in Frameworks */,
+				854EAEEA1F844919008E03BA /* WKZombie.framework in Frameworks */,
 				6C014B677C7A0713C03A4200 /* Pods_NB_Mobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,6 +114,8 @@
 		46B74E1CE70476650551376B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				854EAEED1F844986008E03BA /* hpple.framework */,
+				854EAEE81F8443BD008E03BA /* WKZombie.framework */,
 				EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */,
 			);
 			name = Frameworks;
@@ -91,7 +134,8 @@
 			isa = PBXGroup;
 			children = (
 				852D18971F673A1900BDA97B /* University.swift */,
-				852D18991F67BC6300BDA97B /* User.swift */,
+				853CE2541F7E1A83000E8D6C /* Users.swift */,
+				85D2D4131F7F1F8A00D1BAE4 /* Course.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -99,10 +143,18 @@
 		85AD5DBD1F6726BE00474B98 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				85AD5DBE1F6726DC00474B98 /* NoteBowlAPI.swift */,
-				85735AA31F719C0400E277BC /* Siesta+SwiftyJSON.swift */,
+				85609D871F82A22000DD2D7F /* API.swift */,
+				85D2D4151F7F299B00D1BAE4 /* API+Courses.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		85D2D4171F7F2E3C00D1BAE4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				85D2D4181F7F2E6300D1BAE4 /* Codable+Extension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		85E291841F5F619300172C46 = {
@@ -128,17 +180,25 @@
 		85E2918F1F5F619300172C46 /* NB-Mobile */ = {
 			isa = PBXGroup;
 			children = (
-				852D18961F673A0A00BDA97B /* Models */,
+				85D2D4171F7F2E3C00D1BAE4 /* Extensions */,
 				85AD5DBD1F6726BE00474B98 /* API */,
-				85E291901F5F619300172C46 /* AppDelegate.swift */,
-				85E291921F5F619300172C46 /* ViewController.swift */,
-				85E08DEB1F705A0500624E61 /* TestViewController.swift */,
-				85735AA11F71832700E277BC /* ErikViewController.swift */,
-				85735AA71F71CB0800E277BC /* WKWebViewWrapper.swift */,
+				852D18961F673A0A00BDA97B /* Models */,
+				85609D851F82A0A500DD2D7F /* CoursesTableViewController.swift */,
+				85609D891F82A9E800DD2D7F /* CoursesTableViewCell.swift */,
+				85609D8B1F82CE7000DD2D7F /* CourseDetailViewController.swift */,
+				859DF8301F83357E00EDB263 /* UserProfileViewController.swift */,
+				854EAEE61F84408E008E03BA /* WKLoginViewController.swift */,
+				85D2D40F1F7F0D9700D1BAE4 /* Helpers.swift */,
 				85E291941F5F619300172C46 /* Main.storyboard */,
 				85E291971F5F619300172C46 /* Assets.xcassets */,
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
+				85E291901F5F619300172C46 /* AppDelegate.swift */,
 				85E2919C1F5F619300172C46 /* Info.plist */,
+				850006CF1F77215E00B357DB /* webapp.js */,
+				85735AA11F71832700E277BC /* ErikViewController.swift */,
+				8574D9311F83EB39009B74EC /* TestingViewController.swift */,
+				853CE2521F7E1467000E8D6C /* AuthTestViewController.swift */,
+				85D2D4111F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift */,
 			);
 			path = "NB-Mobile";
 			sourceTree = "<group>";
@@ -156,6 +216,7 @@
 				85E2918B1F5F619300172C46 /* Resources */,
 				BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */,
 				646F7DE20B9EB370A737FCD1 /* [CP] Copy Pods Resources */,
+				854EAEEC1F84491A008E03BA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -252,6 +313,7 @@
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
+				850006D01F77215E00B357DB /* webapp.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,21 +374,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
-				"${BUILT_PRODUCTS_DIR}/Siesta/Siesta.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/WKZombie/WKZombie.framework",
-				"${BUILT_PRODUCTS_DIR}/hpple/hpple.framework",
+				"${BUILT_PRODUCTS_DIR}/Deviice/Deviice.framework",
+				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
+				"${BUILT_PRODUCTS_DIR}/ListPlaceholder/ListPlaceholder.framework",
+				"${BUILT_PRODUCTS_DIR}/Luminous/Luminous.framework",
+				"${BUILT_PRODUCTS_DIR}/ResponseDetective/ResponseDetective.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Siesta.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WKZombie.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hpple.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Deviice.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ListPlaceholder.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Luminous.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ResponseDetective.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -340,15 +400,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85E291931F5F619300172C46 /* ViewController.swift in Sources */,
+				85D2D4141F7F1F8A00D1BAE4 /* Course.swift in Sources */,
+				859DF8311F83357E00EDB263 /* UserProfileViewController.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
-				85AD5DBF1F6726DC00474B98 /* NoteBowlAPI.swift in Sources */,
+				8574D9321F83EB39009B74EC /* TestingViewController.swift in Sources */,
+				85D2D4191F7F2E6300D1BAE4 /* Codable+Extension.swift in Sources */,
+				85D2D4121F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift in Sources */,
+				853CE2551F7E1A83000E8D6C /* Users.swift in Sources */,
+				85609D8A1F82A9E800DD2D7F /* CoursesTableViewCell.swift in Sources */,
+				85609D8C1F82CE7000DD2D7F /* CourseDetailViewController.swift in Sources */,
+				85D2D4101F7F0D9700D1BAE4 /* Helpers.swift in Sources */,
+				85D2D4161F7F299B00D1BAE4 /* API+Courses.swift in Sources */,
 				852D18981F673A1900BDA97B /* University.swift in Sources */,
-				85735AA41F719C0500E277BC /* Siesta+SwiftyJSON.swift in Sources */,
-				85E08DEC1F705A0500624E61 /* TestViewController.swift in Sources */,
+				85609D861F82A0A500DD2D7F /* CoursesTableViewController.swift in Sources */,
 				85735AA21F71832700E277BC /* ErikViewController.swift in Sources */,
-				852D189A1F67BC6300BDA97B /* User.swift in Sources */,
-				85735AA81F71CB0800E277BC /* WKWebViewWrapper.swift in Sources */,
+				85609D881F82A22000DD2D7F /* API.swift in Sources */,
+				854EAEE71F84408E008E03BA /* WKLoginViewController.swift in Sources */,
+				853CE2531F7E1467000E8D6C /* AuthTestViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,7 +489,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -436,7 +504,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -487,7 +555,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -502,6 +570,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "NB-Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-Mobile";
@@ -518,6 +590,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "NB-Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-Mobile";

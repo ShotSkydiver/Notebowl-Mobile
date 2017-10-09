@@ -4,12 +4,22 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Alamofire.xcscheme</key>
+		<key>Deviice.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>DeviceKit.xcscheme</key>
+		<key>Disk.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ListPlaceholder.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Luminous.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -19,22 +29,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Siesta.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>SwiftyJSON.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>WKZombie.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>hpple.xcscheme</key>
+		<key>ResponseDetective.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -1,36 +1,24 @@
 PODS:
-  - Alamofire (4.5.1)
-  - DeviceKit (1.3.1)
-  - hpple (0.2.0)
-  - Siesta (1.3.0):
-    - Siesta/Core (= 1.3.0)
-  - Siesta/Alamofire (1.3.0):
-    - Alamofire (> 4.1)
-    - Siesta/Core
-  - Siesta/Core (1.3.0)
-  - Siesta/UI (1.3.0):
-    - Siesta/Core
-  - SwiftyJSON (4.0.0-alpha.1)
-  - WKZombie (1.0.8):
-    - hpple (= 0.2.0)
+  - Deviice (0.50.00)
+  - Disk (0.3.0)
+  - ListPlaceholder (1.0)
+  - Luminous (1.0.0):
+    - Deviice
+  - ResponseDetective (1.1)
 
 DEPENDENCIES:
-  - Alamofire
-  - DeviceKit (~> 1.3.0)
-  - Siesta (~> 1.0)
-  - Siesta/Alamofire
-  - Siesta/UI (~> 1.0)
-  - SwiftyJSON (~> 4.0.0-alpha.1)
-  - WKZombie
+  - Disk (~> 0.3.0)
+  - ListPlaceholder
+  - Luminous
+  - ResponseDetective
 
 SPEC CHECKSUMS:
-  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  DeviceKit: 17ebbc8ab0c2c2070bbbfa13d256611ccf85fb75
-  hpple: 3b765f96fc2cd56ad1a49aef6f7be5cb2aa64b57
-  Siesta: 90cb487ebcabdc1ee0201842f027cd37df2532be
-  SwiftyJSON: dc88934f85fb50b263b1632b9cbad3402505783e
-  WKZombie: a4f5e81599c93225526a42e318535789c3a2a5f7
+  Deviice: c198e96944bf0b370c9c753f51f952da996c767f
+  Disk: 0ad7b1ba8ce81e30d0c9815ae34473fd139b5219
+  ListPlaceholder: fb25d89a8b45ca4142e0e86009bb5b0e43cffec8
+  Luminous: 591485def5858499dd0b3733f7d494baf1e0e3e3
+  ResponseDetective: 58281558cda442747b3c4c711edf20b647018240
 
-PODFILE CHECKSUM: 3a414182843249da4776d03508e3b6df1fbb08fb
+PODFILE CHECKSUM: 6463d1850c71c94d8e2dfd01deb3cad3deb9fd47
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0.beta.1

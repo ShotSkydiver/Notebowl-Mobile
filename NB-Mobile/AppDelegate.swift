@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Siesta
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,12 +17,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        RemoteImageView.defaultImageService.configure {
-            $0.useNetworkActivityIndicator()
+        //RemoteImageView.defaultImageService.configure {
+        //    $0.useNetworkActivityIndicator()
+        //}
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+
+        let isLoggedIn = Helpers.checkIfUserLoggedIn()
+        
+        if (isLoggedIn == true) {
+            print("user is already logged in!")
+
+
+            window?.rootViewController = mainStoryboard.instantiateViewController(withIdentifier: "loggedInTabBarController")
+            window?.makeKeyAndVisible()
         }
+        else if (isLoggedIn == false) {
+            print("no user is logged in!")
+
+            window?.rootViewController = mainStoryboard.instantiateViewController(withIdentifier: "loggedOutNavController")
+            window?.makeKeyAndVisible()
+        }
+
         
-        //NoteBowlAPI.logIn()
-        
+
         return true
     }
 
