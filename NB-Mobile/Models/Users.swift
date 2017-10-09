@@ -18,14 +18,14 @@ struct User: Codable {
     var lastName: String
     var email: String
     var userJsonURL: URL
-    var userAvatar: String?
+    var userAvatar: String = "null"
     var userAvatarThumb: String?
     var university: URL
     var resourceKey: String
     var itemType: String
     var isUniversityAdmin: Bool
-    var created: Date
-    var updated: Date
+    var created: String
+    var updated: String
     
     enum CodingKeys: String, CodingKey {
         case firstName
@@ -61,7 +61,9 @@ extension User {
         lastName = try values.decode(String.self, forKey: .lastName)
         email = try values.decode(String.self, forKey: .email)
         userJsonURL = try values.decode(URL.self, forKey: .userJsonURL)
-        userAvatar = try values.decode(String.self, forKey: .userAvatar)
+        if let userAvatar = try values.decodeIfPresent(String.self, forKey: .userAvatar) {
+            self.userAvatar = userAvatar
+        }
         
         //let additionalInfo = try values.nestedContainer(keyedBy: AdditionalInfoKeys.self, forKey: .additionalInfo)
         userAvatarThumb = try values.decode(String.self, forKey: .userAvatarThumb)
@@ -69,8 +71,8 @@ extension User {
         resourceKey = try values.decode(String.self, forKey: .resourceKey)
         itemType = try values.decode(String.self, forKey: .itemType)
         isUniversityAdmin = try values.decode(Bool.self, forKey: .isUniversityAdmin)
-        created = try values.decode(Date.self, forKey: .created)
-        updated = try values.decode(Date.self, forKey: .updated)
+        created = try values.decode(String.self, forKey: .created)
+        updated = try values.decode(String.self, forKey: .updated)
     }
     
     func encode(to encoder: Encoder) throws {

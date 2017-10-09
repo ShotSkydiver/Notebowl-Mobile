@@ -46,8 +46,13 @@ class WKLoginViewController: UIViewController {
 
     func handleResultContent(content: String) {
         print("result content: ", content, " END")
-        let jsonData = content.data(using: .utf8, allowLossyConversion: true)!
+        let jsonData = content.data(using: .utf8)!
         let decoder = JSONDecoder()
+        //let formatter = DateFormatter()
+        //formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSxxx"
+        //formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        //formatter.locale = Locale(identifier: "en_US_POSIX")
+        //decoder.dateDecodingStrategy = .formatted(formatter)
         do {
             let users = try decoder.decode(Users.self, from: jsonData)
             print("success! ", users.result)
@@ -73,99 +78,12 @@ class WKLoginViewController: UIViewController {
             >>> submit(then: .wait(5.0))
             >>> get(by: .XPathQuery("//body"))
             === { (result: HTMLElement?) in
-                self.handleResultContent(content: (result?.content)!)
+                Helpers.decodeUserObject(jsonString: (result?.content)!)
+                //self.handleResultContent(content: (result?.content)!)
             }
 
-
-        /*
-        let action : Action<HTMLPage> = open(denisonCasLoginURL)
-        //var jsonPageResult: HTMLPage
-
-        action.start { result in
-            switch result {
-            case .success(let page):
-                print("success! htmlPage: ", page.url)
-                //dump()
-
-                inspect
-                    >>> get(by: .XPathQuery("//[@id='username']"))
-                    >>> setAttribute("value", value: user)
-                    >>> get(by: .XPathQuery("//[@id='password']"))
-                    >>> setAttribute("value", value: pass)
-                    >>> get(by: .XPathQuery("//[@id='loginForm']"))
-                    >>> submit(then: .wait(5.0))
-                    >>> execute("JSON.parse(document.body.textContent)")
-                    === { (result: JavaScriptResult?) in
-                        print("result: ", String(data: result!, encoding: .utf8))
-                    }
-                    //>>> map { jsonPageResult = $0 as HTMLPage }
-                    //>>> get(by: .XPathQuery("//pre"))
-                    //=== { (result: HTMLElement?) in
-                        //let resultContent = result!.content!
-                        //print("content: ", result!.objectForKey("result"))
-                        //let resultData = resultContent.data(using: .utf8)!
-                        //print("content as data: ")
-                        //let userDecoded = try? JSONDecoder().decode(Users.self, from: resultData)
-                        //dump(userDecoded)
-                    //}
-
-
-                    >>> inspect
-                    === { (result: HTMLPage?) in
-                        if let result = result, let jsonPageResult = jsonPageResult {
-                            print("resultjson: ", result.data)
-                            print("result: ", String(data: result.data!, encoding: .utf8))
-
-
-                        }
-                        else {
-                            print("not equal!")
-
-                        }
-                    }
-
-
-
-            case .error(let error):
-                print("erreeror! ", error.debugDescription)
-            }
-        }
-
-        print("after action")
-        */
-
-
     }
 
-
-
-    func handleJSONResult(_ result: Result<JavaScriptResult>) {
-
-        switch result {
-        case .success(let page):
-            print("handleJSONResult success!")
-
-            print("json object: ", String(data: page, encoding: .utf8))
-            let userDecoded = Helpers.decodeUserObject(jsonData: page)
-            print("user decoded: ", userDecoded)
-
-        case .error(let error):
-            print("handleJSONResult error! ", error.debugDescription)
-        }
-    }
 
 }
-/*
-extension WKZombie {
-    func execute(_ script: JavaScript) -> Action<JavaScriptResult> {
 
-        return Action() { [unowned self] completion in
-            self._renderer.executeScript(script, completionHandler: { result, response, error in
-                let data = self._handleResponse(result as? Data, response: response, error: error)
-
-                completion(data)
-            })
-        }
-    }
-}
-*/

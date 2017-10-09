@@ -90,12 +90,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NB-Mobile/WKLoginViewController.swift"
-            timestampString = "529283278.086492"
+            timestampString = "529284840.093833"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
-            landmarkName = "handleJSONResult(_:)"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "handleResultContent(content:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -106,27 +106,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NB-Mobile/WKLoginViewController.swift"
-            timestampString = "529283278.086593"
+            timestampString = "529284840.094217"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "loginDenison(user:pass:)"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "handleResultContent(content:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NB-Mobile/WKLoginViewController.swift"
-            timestampString = "529283278.086675"
+            timestampString = "529284840.094584"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "handleResultContent(content:)"
             landmarkType = "7">
          </BreakpointContent>
