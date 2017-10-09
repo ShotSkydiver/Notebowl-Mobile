@@ -32,6 +32,8 @@ class WKLoginViewController: UIViewController {
 
         activityIndicator.startAnimating()
         snapshots.removeAll()
+
+        //loginDemo(user: "bob.smith@notebowl.com", pass: "notebowlbeta")
         loginDenison(user: "check_y16", pass: "(N0t3B0wL@2016)")
 
         self.activityIndicator.stopAnimating()
@@ -41,25 +43,6 @@ class WKLoginViewController: UIViewController {
 
     func loginDemo(user: String, pass: String) {
 
-
-    }
-
-    func handleResultContent(content: String) {
-        print("result content: ", content, " END")
-        let jsonData = content.data(using: .utf8)!
-        let decoder = JSONDecoder()
-        //let formatter = DateFormatter()
-        //formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSxxx"
-        //formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        //formatter.locale = Locale(identifier: "en_US_POSIX")
-        //decoder.dateDecodingStrategy = .formatted(formatter)
-        do {
-            let users = try decoder.decode(Users.self, from: jsonData)
-            print("success! ", users.result)
-        }
-        catch {
-            print("error!")
-        }
 
     }
     
@@ -79,7 +62,6 @@ class WKLoginViewController: UIViewController {
             >>> get(by: .XPathQuery("//body"))
             === { (result: HTMLElement?) in
                 Helpers.decodeUserObject(jsonString: (result?.content)!)
-                //self.handleResultContent(content: (result?.content)!)
             }
 
     }
