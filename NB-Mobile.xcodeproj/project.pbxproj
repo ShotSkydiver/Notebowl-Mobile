@@ -9,14 +9,11 @@
 /* Begin PBXBuildFile section */
 		6C014B677C7A0713C03A4200 /* Pods_NB_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */; };
 		850006D01F77215E00B357DB /* webapp.js in Resources */ = {isa = PBXBuildFile; fileRef = 850006CF1F77215E00B357DB /* webapp.js */; };
+		850A70FE1F8D1CDE0004C21D /* IGAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850A70FD1F8D1CDE0004C21D /* IGAuthViewController.swift */; };
 		852D18981F673A1900BDA97B /* University.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852D18971F673A1900BDA97B /* University.swift */; };
 		853CE2531F7E1467000E8D6C /* AuthTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2521F7E1467000E8D6C /* AuthTestViewController.swift */; };
 		853CE2551F7E1A83000E8D6C /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2541F7E1A83000E8D6C /* Users.swift */; };
 		854EAEE71F84408E008E03BA /* WKLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854EAEE61F84408E008E03BA /* WKLoginViewController.swift */; };
-		854EAEEA1F844919008E03BA /* WKZombie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEE81F8443BD008E03BA /* WKZombie.framework */; };
-		854EAEEB1F844919008E03BA /* WKZombie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEE81F8443BD008E03BA /* WKZombie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		854EAEEF1F844995008E03BA /* hpple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEED1F844986008E03BA /* hpple.framework */; };
-		854EAEF01F844995008E03BA /* hpple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 854EAEED1F844986008E03BA /* hpple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		85609D861F82A0A500DD2D7F /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D851F82A0A500DD2D7F /* CoursesTableViewController.swift */; };
 		85609D881F82A22000DD2D7F /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D871F82A22000DD2D7F /* API.swift */; };
 		85609D8A1F82A9E800DD2D7F /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85609D891F82A9E800DD2D7F /* CoursesTableViewCell.swift */; };
@@ -42,8 +39,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				854EAEF01F844995008E03BA /* hpple.framework in Embed Frameworks */,
-				854EAEEB1F844919008E03BA /* WKZombie.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -52,12 +47,11 @@
 
 /* Begin PBXFileReference section */
 		850006CF1F77215E00B357DB /* webapp.js */ = {isa = PBXFileReference; explicitFileType = sourcecode.javascript; fileEncoding = 4; indentWidth = 4; lineEnding = 0; path = webapp.js; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
+		850A70FD1F8D1CDE0004C21D /* IGAuthViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IGAuthViewController.swift; sourceTree = "<group>"; };
 		852D18971F673A1900BDA97B /* University.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = University.swift; sourceTree = "<group>"; };
 		853CE2521F7E1467000E8D6C /* AuthTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTestViewController.swift; sourceTree = "<group>"; };
 		853CE2541F7E1A83000E8D6C /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		854EAEE61F84408E008E03BA /* WKLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKLoginViewController.swift; sourceTree = "<group>"; };
-		854EAEE81F8443BD008E03BA /* WKZombie.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WKZombie.framework; sourceTree = "<group>"; };
-		854EAEED1F844986008E03BA /* hpple.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = hpple.framework; sourceTree = "<group>"; };
 		85609D851F82A0A500DD2D7F /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85609D871F82A22000DD2D7F /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		85609D891F82A9E800DD2D7F /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
@@ -88,8 +82,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				854EAEEF1F844995008E03BA /* hpple.framework in Frameworks */,
-				854EAEEA1F844919008E03BA /* WKZombie.framework in Frameworks */,
 				6C014B677C7A0713C03A4200 /* Pods_NB_Mobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,8 +106,6 @@
 		46B74E1CE70476650551376B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				854EAEED1F844986008E03BA /* hpple.framework */,
-				854EAEE81F8443BD008E03BA /* WKZombie.framework */,
 				EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */,
 			);
 			name = Frameworks;
@@ -188,6 +178,7 @@
 				85609D8B1F82CE7000DD2D7F /* CourseDetailViewController.swift */,
 				859DF8301F83357E00EDB263 /* UserProfileViewController.swift */,
 				854EAEE61F84408E008E03BA /* WKLoginViewController.swift */,
+				850A70FD1F8D1CDE0004C21D /* IGAuthViewController.swift */,
 				85D2D40F1F7F0D9700D1BAE4 /* Helpers.swift */,
 				85E291941F5F619300172C46 /* Main.storyboard */,
 				85E291971F5F619300172C46 /* Assets.xcassets */,
@@ -379,6 +370,8 @@
 				"${BUILT_PRODUCTS_DIR}/ListPlaceholder/ListPlaceholder.framework",
 				"${BUILT_PRODUCTS_DIR}/Luminous/Luminous.framework",
 				"${BUILT_PRODUCTS_DIR}/ResponseDetective/ResponseDetective.framework",
+				"${BUILT_PRODUCTS_DIR}/WKZombie/WKZombie.framework",
+				"${BUILT_PRODUCTS_DIR}/hpple/hpple.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -387,6 +380,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ListPlaceholder.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Luminous.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ResponseDetective.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WKZombie.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hpple.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -404,6 +399,7 @@
 				859DF8311F83357E00EDB263 /* UserProfileViewController.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				8574D9321F83EB39009B74EC /* TestingViewController.swift in Sources */,
+				850A70FE1F8D1CDE0004C21D /* IGAuthViewController.swift in Sources */,
 				85D2D4191F7F2E6300D1BAE4 /* Codable+Extension.swift in Sources */,
 				85D2D4121F7F196D00D1BAE4 /* AlamofireTokenLoginVC.swift in Sources */,
 				853CE2551F7E1A83000E8D6C /* Users.swift in Sources */,
@@ -568,6 +564,7 @@
 			baseConfigurationReference = 8EA4B9585E3E077F8A700C3B /* Pods-NB-Mobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -578,6 +575,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-Mobile";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -588,6 +587,7 @@
 			baseConfigurationReference = D7B899D8A577A114EC8DB5D6 /* Pods-NB-Mobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -598,6 +598,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-Mobile";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

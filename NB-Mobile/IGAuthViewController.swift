@@ -8,7 +8,7 @@
 
 import UIKit
 import WebKit
-import OnePasswordExtension
+//import OnePasswordExtension
 
 public class IGAuthViewController: UIViewController {
 
@@ -68,11 +68,13 @@ public class IGAuthViewController: UIViewController {
         }
 
         // 1Password integration
+        /*
         if allowOnePasswordIntegration && OnePasswordExtension.shared().isAppExtensionAvailable() {
             let icon = UIImage(named: "1PasswordNavbar", in: bundle, compatibleWith: nil)
             let rightBarButton = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(fillLogin))
             self.navigationItem.rightBarButtonItem = rightBarButton
         }
+        */
 
         let navBar = navigationController!.navigationBar
 
@@ -125,7 +127,7 @@ public class IGAuthViewController: UIViewController {
     }
 
     // MARK: -
-
+    /*
     @objc func fillLogin() {
         OnePasswordExtension
             .shared()
@@ -135,6 +137,7 @@ public class IGAuthViewController: UIViewController {
             }
         }
     }
+    */
 
     private func loadAuthorizationURL() {
         let authorizationURL = URL(string: baseURL + "/oauth/authorize/")
