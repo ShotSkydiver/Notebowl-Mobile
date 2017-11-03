@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dgI-kh-SjR">
+    <device id="retina5_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13770"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--WebView Auth Nav Controller-->
+        <scene sceneID="SIz-DT-gMx">
+            <objects>
+                <navigationController title="WebView Auth Nav Controller" id="dgI-kh-SjR" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="juA-OC-Ueg">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="0uu-cG-Nn7" kind="relationship" relationship="rootViewController" id="gmI-kd-Ox4"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fvq-eX-AD0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="277" y="2386"/>
+        </scene>
+        <!--Login Gateways-->
+        <scene sceneID="5gE-Hq-gUN">
+            <objects>
+                <viewController title="Login Gateways" id="0uu-cG-Nn7" customClass="TestAuthWebViewController" customModule="NB_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Xzt-pl-voL">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                        <viewLayoutGuide key="safeArea" id="38L-TQ-7S8"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="WebView User Auth" id="BmZ-Nd-RXk"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D1D-K2-Uef" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1128.985507246377" y="2385.326086956522"/>
+        </scene>
+    </scenes>
+</document>
