@@ -3,19 +3,16 @@ PODS:
   - Disk (0.3.1)
   - Luminous (1.0.0):
     - Deviice
-  - PKHUD (5.0.0)
 
 DEPENDENCIES:
-  - Disk (~> 0.3.0)
+  - Disk
   - Luminous
-  - PKHUD (~> 5.0)
 
 SPEC CHECKSUMS:
   Deviice: c198e96944bf0b370c9c753f51f952da996c767f
   Disk: 64f0f95a4163314aba6f09f010f17de964762140
   Luminous: 591485def5858499dd0b3733f7d494baf1e0e3e3
-  PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
 
-PODFILE CHECKSUM: ca13bc36ac2a93aa9902cbe8f91609bc1e12f9fe
+PODFILE CHECKSUM: 79681b556abe0e66f885ca73b911852b7b6a7499
 
 COCOAPODS: 1.4.0.beta.2

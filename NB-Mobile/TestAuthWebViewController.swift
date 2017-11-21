@@ -8,7 +8,6 @@
 
 import UIKit
 import Disk
-import PKHUD
 
 class TestAuthWebViewController: UIViewController {
 
@@ -29,7 +28,6 @@ class TestAuthWebViewController: UIViewController {
         let webkitAuthVC = NBAuthViewController() { (mobileToken) in
             guard let mobileToken = mobileToken else {
                 print("login failed!")
-                HUD.flash(.error, delay: 1.0)
                 return
             }
             let saveToken = Helpers.saveTokenToDisk(currentToken: mobileToken)
@@ -37,9 +35,7 @@ class TestAuthWebViewController: UIViewController {
                 print("mobiletoken save to disk success! ", mobileToken.token)
             }
             
-            self.dismiss(animated: true, completion: {
-                HUD.flash(.success, delay: 1.0)
-            })
+            self.dismiss(animated: true, completion: nil)
         }
 
         webkitAuthVC.modalPresentationStyle = .fullScreen

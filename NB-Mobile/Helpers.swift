@@ -29,27 +29,31 @@ class Helpers: NSObject {
         }
         return false
     }
-    class func saveUserToDisk(user: User) {
-        do {
-            try Disk.save(user, to: .applicationSupport, as: "currentUser.json")
-        }
-        catch {
-            fatalError(error.localizedDescription)
-        }
-    }
 
-    class func buildMobileRegisterQuery() -> [URLQueryItem] {
+
+    class func buildMobileRegisterQuery() -> String {
         let deviceInfo = Deviice.current
         let deviceOS = (Luminous.System.Hardware.systemName + " " + Luminous.System.Hardware.systemVersion)
 
-        let uuidQuery = URLQueryItem(name: "uuid", value: Luminous.System.Hardware.Device.identifierForVendor!)
-        let nameQuery = URLQueryItem(name: "name", value: deviceInfo.model)
-        let osQuery = URLQueryItem(name: "os", value: deviceOS)
-        let typeQuery = URLQueryItem(name: "type", value: deviceInfo.type.rawValue)
-        let modelQuery = URLQueryItem(name: "model", value: deviceInfo.identifier)
+        var params = "?uuid=\(Luminous.System.Hardware.Device.identifierForVendor!)&name=\(deviceInfo.model)&os=\(deviceOS)&type=\(deviceInfo.type)&model=\(deviceInfo.identifier)"
+        params = params.encodeURIComponent()!
 
-        return [uuidQuery, nameQuery, osQuery, typeQuery, modelQuery]
+        var base = "/gateway/services/mobile/register"
+        base = base.encodeURIComponent()!
+
+        let finalEncoded = (base + params.encodeURIComponent()!)
+
+        return finalEncoded
     }
 
 }
 
+
+extension String {
+
+    func encodeURIComponent() -> String? {
+        var characterSet = NSMutableCharacterSet.alphanumeric()
+        characterSet.addCharacters(in: "-_.!~*'()")
+        return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
+    }
+}

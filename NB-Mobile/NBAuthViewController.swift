@@ -10,7 +10,6 @@ import UIKit
 import WebKit
 import Luminous
 import Deviice
-import PKHUD
 
 
 public class NBAuthViewController: UIViewController {
@@ -43,13 +42,11 @@ public class NBAuthViewController: UIViewController {
         
         self.view.addSubview(webView)
 
-        var components = URLComponents(string: "https://demo.nbstage.com/bulletin")
-        let queryItem = URLQueryItem(name: "returnUrl", value: "/api/v1.0/credentials")
-        components?.queryItems = [queryItem]
-        let loginUrl = components?.url
-        let request = URLRequest(url: loginUrl!, cachePolicy: .reloadRevalidatingCacheData)
+        let loginUrl = ("https://demo.nbstage.com/bulletin?returnUrl=" + Helpers.buildMobileRegisterQuery())
+
+        let finalUrl = URL(string: loginUrl)!
         
-        webView.load(request)
+        webView.load(URLRequest(url: finalUrl))
     }
 
     func endAuthentication(token: Token?) {
@@ -60,7 +57,6 @@ public class NBAuthViewController: UIViewController {
 extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let webviewUrl = webView.url!.absoluteURL
 
         webView.evaluateJavaScript("document.contentType") { (response, error) in
             let responseString = response as? String
@@ -69,23 +65,14 @@ extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
 
                 webView.evaluateJavaScript("document.body.innerText") { (data, error) in
                     let dataString = data as! String
-                    guard let usersJson = try? self.decoder.decode(Users.self, from: dataString.data(using: .utf8)!) else {
 
                         guard let tokenResponseJson = try? self.decoder.decode(TokenResponse.self, from: dataString.data(using: .utf8)!) else {
                             return
                         }
+                    
                         self.endAuthentication(token: tokenResponseJson.result)
-                        return
-                    }
 
-                    Helpers.saveUserToDisk(user: usersJson.result)
 
-                    var components = URLComponents(url: webviewUrl, resolvingAgainstBaseURL: false)
-                    components?.path = "/gateway/services/mobile/register"
-                    components?.queryItems = Helpers.buildMobileRegisterQuery()
-                    let componentsUrl = components?.url
-
-                    webView.load(URLRequest(url: componentsUrl!))
                 }
             }
         }
