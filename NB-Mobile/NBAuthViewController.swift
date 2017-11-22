@@ -6,25 +6,24 @@
 //  Copyright © 2017 NoteBowl. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import WebKit
-import Luminous
-import Deviice
 
 
 public class NBAuthViewController: UIViewController {
-    private var completion: (Token?) -> Void
-
     private var webView: WKWebView!
-    private let decoder = JSONDecoder()
 
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        webView = WKWebView()
+        super.init(coder: aDecoder)
+        webView.navigationDelegate = self
     }
 
-    public init(completion: @escaping (_ mobileToken: Token?) -> Void) {
-        self.completion = completion
-        super.init(nibName: nil, bundle: nil)
+    override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        webView = WKWebView()
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        webView.navigationDelegate = self
     }
 
     override public func viewDidLoad() {
@@ -43,15 +42,11 @@ public class NBAuthViewController: UIViewController {
         self.view.addSubview(webView)
 
         let loginUrl = ("https://demo.nbstage.com/bulletin?returnUrl=" + Helpers.buildMobileRegisterQuery())
-
         let finalUrl = URL(string: loginUrl)!
         
         webView.load(URLRequest(url: finalUrl))
     }
 
-    func endAuthentication(token: Token?) {
-        self.completion(token)
-    }
 }
 
 extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
@@ -60,19 +55,28 @@ extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
 
         webView.evaluateJavaScript("document.contentType") { (response, error) in
             let responseString = response as? String
-            if (responseString!.compare("application/json") == .orderedSame) {
-                print("contentType is json!")
+            if (responseString! == ("application/json")) {
 
-                webView.evaluateJavaScript("document.body.innerText") { (data, error) in
-                    let dataString = data as! String
+                webView.evaluateJavaScript("document.body.textContent") { (data, error) in
+                    guard error == nil else { fatalError(error!.localizedDescription) }
 
-                        guard let tokenResponseJson = try? self.decoder.decode(TokenResponse.self, from: dataString.data(using: .utf8)!) else {
-                            return
-                        }
+                    do {
+                        let dataString = data as! String
+                        let tokenJson = try Token(json: dataString, keyPath: "result")
+                        try Helpers.saveToDisk(token: tokenJson)
+                        self.dismiss(animated: true, completion: nil)
+                        return
+                    }
+                    catch let error as NSError {
+                        fatalError("""
+                            Domain: \(error.domain)
+                            Code: \(error.code)
+                            Description: \(error.localizedDescription)
+                            Failure Reason: \(error.localizedFailureReason ?? "")
+                            Suggestions: \(error.localizedRecoverySuggestion ?? "")
+                            """)
+                    }
                     
-                        self.endAuthentication(token: tokenResponseJson.result)
-
-
                 }
             }
         }

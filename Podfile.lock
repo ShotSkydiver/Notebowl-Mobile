@@ -1,7 +1,7 @@
 PODS:
   - Deviice (0.50.00)
-  - Disk (0.3.1)
-  - Luminous (1.0.0):
+  - Disk (0.3.2)
+  - Luminous (1.0.1):
     - Deviice
 
 DEPENDENCIES:
@@ -10,8 +10,8 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Deviice: c198e96944bf0b370c9c753f51f952da996c767f
-  Disk: 64f0f95a4163314aba6f09f010f17de964762140
-  Luminous: 591485def5858499dd0b3733f7d494baf1e0e3e3
+  Disk: 52ebc1656944971c73a661458713b3b7497c1b4c
+  Luminous: 0a4f640871ce986a1a4709d6c8f02bd4ddf35223
 
 PODFILE CHECKSUM: 79681b556abe0e66f885ca73b911852b7b6a7499
 

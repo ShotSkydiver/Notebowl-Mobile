@@ -19,15 +19,14 @@ class Helpers: NSObject {
         return (urlComp?.url)!
     }
 
-    class func saveTokenToDisk(currentToken: Token) -> Bool {
+    class func saveToDisk(token: Token) throws {
         do {
-            try Disk.save(currentToken, to: .applicationSupport, as: "token.json")
-            return true
+            try Disk.save(token, to: .applicationSupport, as: "token.json")
         }
         catch {
-            fatalError(error.localizedDescription)
+            throw error
         }
-        return false
+
     }
 
 
@@ -49,11 +48,4 @@ class Helpers: NSObject {
 }
 
 
-extension String {
 
-    func encodeURIComponent() -> String? {
-        var characterSet = NSMutableCharacterSet.alphanumeric()
-        characterSet.addCharacters(in: "-_.!~*'()")
-        return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
-    }
-}

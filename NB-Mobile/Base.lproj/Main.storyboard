@@ -29,7 +29,7 @@
         <!--Login Gateways-->
         <scene sceneID="5gE-Hq-gUN">
             <objects>
-                <viewController title="Login Gateways" id="0uu-cG-Nn7" customClass="TestAuthWebViewController" customModule="NB_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Login Gateways" id="0uu-cG-Nn7" customClass="InitialViewController" customModule="NB_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xzt-pl-voL">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
