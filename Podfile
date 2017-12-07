@@ -6,7 +6,6 @@ target 'NB-Mobile' do
   use_frameworks!
 
   # Pods for NB-Mobile
-    pod 'Luminous'
     pod 'Disk'
 end
 

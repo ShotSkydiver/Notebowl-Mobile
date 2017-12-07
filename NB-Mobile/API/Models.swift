@@ -8,9 +8,3 @@
 
 import Foundation
 
-
-public struct Token: Codable {
-    let uuid: String
-    let token: String
-}
-

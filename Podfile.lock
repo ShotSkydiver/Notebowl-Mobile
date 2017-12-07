@@ -1,18 +1,12 @@
 PODS:
-  - Deviice (0.50.00)
-  - Disk (0.3.2)
-  - Luminous (1.0.1):
-    - Deviice
+  - Disk (0.3.3)
 
 DEPENDENCIES:
   - Disk
-  - Luminous
 
 SPEC CHECKSUMS:
-  Deviice: c198e96944bf0b370c9c753f51f952da996c767f
-  Disk: 52ebc1656944971c73a661458713b3b7497c1b4c
-  Luminous: 0a4f640871ce986a1a4709d6c8f02bd4ddf35223
+  Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
 
-PODFILE CHECKSUM: 79681b556abe0e66f885ca73b911852b7b6a7499
+PODFILE CHECKSUM: c8d58ccb97acd6a718aa16293a70a16c93cf8c3d
 
 COCOAPODS: 1.4.0.beta.2

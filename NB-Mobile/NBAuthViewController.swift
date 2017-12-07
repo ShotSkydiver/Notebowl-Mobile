@@ -41,7 +41,7 @@ public class NBAuthViewController: UIViewController {
         
         self.view.addSubview(webView)
 
-        let loginUrl = ("https://demo.nbstage.com/bulletin?returnUrl=" + Helpers.buildMobileRegisterQuery())
+        let loginUrl = ("https://demo.nbstage.com/bulletin?returnUrl=" + UIDevice().deviceQuery)
         let finalUrl = URL(string: loginUrl)!
         
         webView.load(URLRequest(url: finalUrl))
@@ -50,33 +50,15 @@ public class NBAuthViewController: UIViewController {
 }
 
 extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
-
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-
         webView.evaluateJavaScript("document.contentType") { (response, error) in
-            let responseString = response as? String
-            if (responseString! == ("application/json")) {
-
+            if ((response as! String) == ("application/json")) {
                 webView.evaluateJavaScript("document.body.textContent") { (data, error) in
-                    guard error == nil else { fatalError(error!.localizedDescription) }
-
-                    do {
-                        let dataString = data as! String
-                        let tokenJson = try Token(json: dataString, keyPath: "result")
-                        try Helpers.saveToDisk(token: tokenJson)
-                        self.dismiss(animated: true, completion: nil)
-                        return
-                    }
-                    catch let error as NSError {
-                        fatalError("""
-                            Domain: \(error.domain)
-                            Code: \(error.code)
-                            Description: \(error.localizedDescription)
-                            Failure Reason: \(error.localizedFailureReason ?? "")
-                            Suggestions: \(error.localizedRecoverySuggestion ?? "")
-                            """)
+                    if (NBClient.shared.parseToken(from: data)) {
+                        try? NBClient.shared.writeToken()
                     }
                     
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
         }

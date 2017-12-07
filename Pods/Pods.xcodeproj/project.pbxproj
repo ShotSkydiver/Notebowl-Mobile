@@ -7,139 +7,70 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08FE5F621B60125D92F8C39BAC90626F /* Luminous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A694C514DD5D2E63F55016A7B671F4 /* Luminous.swift */; };
-		0B5BD1CD351B60274036B85A75506FBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */; };
-		155278697DE95FE85991CE469BE2935B /* Disk+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62411DC3114F113A853B3D8BC8B07A8 /* Disk+Codable.swift */; };
-		15F3D2C840492FFE6FAF11BFCDCAACA9 /* Luminous-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 82B1BA155531AC008E3F061A1BCDC274 /* Luminous-dummy.m */; };
-		2457EC42C917E84F99033F609EB13EC3 /* ReplaceMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077423C06DE89CF8EE2003EAAC5B38C0 /* ReplaceMe.swift */; };
-		2979933FADDF1DB0C6814E38B97AEEFB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */; };
-		54B4D9D1D7107638B4E79C329028CC10 /* Disk+[UIImage].swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CC7199BC4E8ECF87165BBA04B0ADC4 /* Disk+[UIImage].swift */; };
-		57F5F0E4502788A2CA95F2B30D4AFCE3 /* Disk+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34012C8C3BDD1125D7404B0A9C62C94 /* Disk+Helpers.swift */; };
-		586277DBE01A0AA98B977F953ABBFEAB /* Deviice-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C95C7E6407A0FB147F21F33947694D6 /* Deviice-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6F0B2BE8EB0273B15DD59ADA5CE3912B /* Disk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D08A90C0FFF727005EEA6C74B651694 /* Disk.swift */; };
-		87CF22D207D6D38A8FEA9F8C12975BCA /* Disk+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8D3B3D5B021E17DBA627A50A76720B /* Disk+UIImage.swift */; };
-		9046E105B786954A454A883360CA62BE /* Deviice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DC86C2A8DB1ABAFC4C5C53F4FF9BB37 /* Deviice.framework */; };
-		9182F7302BCD2D2879FBDEF19E6B942E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E466633CC4C5C17AB897D7199A54321 /* SystemConfiguration.framework */; };
-		9D86E7FF0E7748FEBAB358B017F8AEF5 /* Pods-NB-Mobile-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = EE211E29B094D62370F0AA5346C4AFFC /* Pods-NB-Mobile-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9E5A31188CCE6BBDDB1220AEA824D8CD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */; };
-		A03971E1AEDB1B1D9205962165439522 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF8CFEF4612F25AE3182B9913C8D2FE /* Reachability.swift */; };
-		A8F909B39333B28D10A25EFC8F6206AF /* Disk-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = D2AB48CF65C2F659FEC299A21B644C4B /* Disk-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		ADCAE4D4A1AB37A1ABB468B78D651B07 /* Pods-NB-Mobile-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A4EC7830266F91512A124412DD74E112 /* Pods-NB-Mobile-dummy.m */; };
-		AFB5DF952786BEE60F3F6FE3EFD2CF32 /* Disk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 14473CCA51528DF38CD0CC828276934C /* Disk-dummy.m */; };
-		B389F193C856F168B09FF64C805EAD4D /* Disk+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57853A5C55BC1E95C9818329B7B4E42 /* Disk+Errors.swift */; };
-		BB8BBFDA99E16D4757BE2497F3CC4449 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA61A09E8D0A74AA4B82249F5ECBBE77 /* UIKit.framework */; };
-		BE5AC63A59186D3DB61B11B62EC7D84B /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61FB4C9EA418F4910D9FF5F48A5D366 /* ExternalAccessory.framework */; };
-		C0F6BA1F68C3782575DE3B0D7B75401C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FE3D4B72E72E10A761D3A0D406F6738 /* AVFoundation.framework */; };
-		C90319AD1CBE6A1562D75FCDBEBBA5E0 /* Disk+InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DFAB60758A39DFB0669FBB3CCBAB38A /* Disk+InternalHelpers.swift */; };
-		D04C71081CA7B3D4C9112C2EF3E4293C /* Deviice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B971DD3A558709E0D66B4BE638624BE /* Deviice.swift */; };
-		D2CC2D6DAD0F3D1426794BFA9DF3318B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */; };
-		D5426D24FACD6E34D5B83FC867EF7EAD /* Disk+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BA53CF4CC6907B80436D1CA9C1BF5E /* Disk+Data.swift */; };
-		E71847F74129AB7A24D459472E2E045C /* Luminous-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 17612C84CA0D3C64E969EB18E30EFB6F /* Luminous-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EEC58E9F92789CE9F44909BFA6592BF4 /* Disk+[Data].swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1133FEA9A184C3ECC7721FA0EF0866 /* Disk+[Data].swift */; };
-		EEF0930DC9A866CA97209104C3BDE95D /* Disk.h in Headers */ = {isa = PBXBuildFile; fileRef = FDBDFC658F0B10E858C6196100F4DF69 /* Disk.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F138D47E78EB875A53715B233BB93CDD /* Disk+VolumeInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EBF4F3E04F3144591E69F045CE4F33 /* Disk+VolumeInformation.swift */; };
-		F3F9C509EB227CBEC89AC595691FD57F /* Deviice-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CA58E0BEA783CAAF2EB61A213F3DEEE3 /* Deviice-dummy.m */; };
-		FA9533DF5B94597FAA422A9CB8E6DAFA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89ACF0B1A2BCE37E48B20D657EEBECA8 /* CoreTelephony.framework */; };
+		155278697DE95FE85991CE469BE2935B /* Disk+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6021E80C8470F0C4E28225CF9D82CE /* Disk+Codable.swift */; };
+		27F4B1E698F8756CD4C1DEF18B3E68CE /* Pods-NB-Mobile-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A4EC7830266F91512A124412DD74E112 /* Pods-NB-Mobile-dummy.m */; };
+		54B4D9D1D7107638B4E79C329028CC10 /* Disk+[UIImage].swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8F5B08062179972F8DB524192688A9 /* Disk+[UIImage].swift */; };
+		57F5F0E4502788A2CA95F2B30D4AFCE3 /* Disk+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FECCBB0736A70E18322C705748CFC43 /* Disk+Helpers.swift */; };
+		638FC50D59F279D9E504812D64A9A95F /* Pods-NB-Mobile-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = EE211E29B094D62370F0AA5346C4AFFC /* Pods-NB-Mobile-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6F0B2BE8EB0273B15DD59ADA5CE3912B /* Disk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0057F5042E1F63E0EBA82609AE403E31 /* Disk.swift */; };
+		87CF22D207D6D38A8FEA9F8C12975BCA /* Disk+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4A6E13B96B74E004FD045E2334942E /* Disk+UIImage.swift */; };
+		A8F909B39333B28D10A25EFC8F6206AF /* Disk-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 626525D4A308B00FFC018D67F592A5F3 /* Disk-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AB89CFEE1D3ED7B5EA1A99938B70BF8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		AFB5DF952786BEE60F3F6FE3EFD2CF32 /* Disk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 89AF781A76A9841234F2209CF8785E78 /* Disk-dummy.m */; };
+		B389F193C856F168B09FF64C805EAD4D /* Disk+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D567112740D1C7E99558C0A87982AAA /* Disk+Errors.swift */; };
+		C90319AD1CBE6A1562D75FCDBEBBA5E0 /* Disk+InternalHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BDEAF4DCDE02630811084F08019940E /* Disk+InternalHelpers.swift */; };
+		D2CC2D6DAD0F3D1426794BFA9DF3318B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		D5426D24FACD6E34D5B83FC867EF7EAD /* Disk+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DC7A16BD513E6FE9F239B28A0B3BD6 /* Disk+Data.swift */; };
+		EEC58E9F92789CE9F44909BFA6592BF4 /* Disk+[Data].swift in Sources */ = {isa = PBXBuildFile; fileRef = 91289A7C18BFB31FD1DEE7342FB464F1 /* Disk+[Data].swift */; };
+		EEF0930DC9A866CA97209104C3BDE95D /* Disk.h in Headers */ = {isa = PBXBuildFile; fileRef = D2E621187DBB191581606F31737E34D6 /* Disk.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F138D47E78EB875A53715B233BB93CDD /* Disk+VolumeInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF1A0A945FCD494A4A91F29D8682A23 /* Disk+VolumeInformation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0FA4586DD1DEB39F992969052990B23D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3F07F11CA9D871AAB56A87ACF385DC23;
-			remoteInfo = Luminous;
-		};
-		361620B5200B716C09B468A31E26DD07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A58EC33E6AC45E1B56B40DCA9FD71AB6;
-			remoteInfo = Deviice;
-		};
-		7520BF40D9F2820BD3AB8FA1E55B5E98 /* PBXContainerItemProxy */ = {
+		19A87C1A05AE7A6376233ADB6204381E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1691E754022217B52671D98A23731A08;
 			remoteInfo = Disk;
 		};
-		C0143CA89C683A9DA1C47D1AE806E0DC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A58EC33E6AC45E1B56B40DCA9FD71AB6;
-			remoteInfo = Deviice;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0359D05BF42B5BF04BEC66014B26AFB7 /* Disk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Disk.modulemap; sourceTree = "<group>"; };
-		077423C06DE89CF8EE2003EAAC5B38C0 /* ReplaceMe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ReplaceMe.swift; path = Luminous/Classes/ReplaceMe.swift; sourceTree = "<group>"; };
-		0C95C7E6407A0FB147F21F33947694D6 /* Deviice-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Deviice-umbrella.h"; sourceTree = "<group>"; };
-		0D772CBA6A8FDE5B20A00C82808FC47C /* Luminous.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Luminous.modulemap; sourceTree = "<group>"; };
-		0DE02B854C69BE6F9D449D33E6089A55 /* Luminous.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Luminous.framework; path = Luminous.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0DFAB60758A39DFB0669FBB3CCBAB38A /* Disk+InternalHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+InternalHelpers.swift"; path = "Sources/Disk+InternalHelpers.swift"; sourceTree = "<group>"; };
-		0E466A510B4A7B4D8CD41AC65B2047F3 /* Disk-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Disk-prefix.pch"; sourceTree = "<group>"; };
-		10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		14473CCA51528DF38CD0CC828276934C /* Disk-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Disk-dummy.m"; sourceTree = "<group>"; };
-		17612C84CA0D3C64E969EB18E30EFB6F /* Luminous-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Luminous-umbrella.h"; sourceTree = "<group>"; };
-		1A1133FEA9A184C3ECC7721FA0EF0866 /* Disk+[Data].swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+[Data].swift"; path = "Sources/Disk+[Data].swift"; sourceTree = "<group>"; };
-		1DC86C2A8DB1ABAFC4C5C53F4FF9BB37 /* Deviice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Deviice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		226D5F7AD51963D77DC4C5743A3B166F /* Pods_NB_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_NB_Mobile.framework; path = "Pods-NB-Mobile.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		27CA954E7F24D9A6F41C603827CD7B00 /* Luminous-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Luminous-prefix.pch"; sourceTree = "<group>"; };
-		2FE3D4B72E72E10A761D3A0D406F6738 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		3D8D3B3D5B021E17DBA627A50A76720B /* Disk+UIImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+UIImage.swift"; path = "Sources/Disk+UIImage.swift"; sourceTree = "<group>"; };
-		3E466633CC4C5C17AB897D7199A54321 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
-		41CAED8DE4D7B44FE97B84B6A541651F /* Disk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Disk.xcconfig; sourceTree = "<group>"; };
-		43A694C514DD5D2E63F55016A7B671F4 /* Luminous.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Luminous.swift; path = Luminous/Classes/Luminous.swift; sourceTree = "<group>"; };
-		4BF8CFEF4612F25AE3182B9913C8D2FE /* Reachability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = Luminous/Classes/Reachability.swift; sourceTree = "<group>"; };
-		52CC7199BC4E8ECF87165BBA04B0ADC4 /* Disk+[UIImage].swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+[UIImage].swift"; path = "Sources/Disk+[UIImage].swift"; sourceTree = "<group>"; };
-		588127AF69DCE9EB04257D2432F776D7 /* Deviice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Deviice.framework; path = Deviice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0057F5042E1F63E0EBA82609AE403E31 /* Disk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Disk.swift; path = Sources/Disk.swift; sourceTree = "<group>"; };
+		0D567112740D1C7E99558C0A87982AAA /* Disk+Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Errors.swift"; path = "Sources/Disk+Errors.swift"; sourceTree = "<group>"; };
+		2BDEAF4DCDE02630811084F08019940E /* Disk+InternalHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+InternalHelpers.swift"; path = "Sources/Disk+InternalHelpers.swift"; sourceTree = "<group>"; };
+		42DC7A16BD513E6FE9F239B28A0B3BD6 /* Disk+Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Data.swift"; path = "Sources/Disk+Data.swift"; sourceTree = "<group>"; };
+		5D6021E80C8470F0C4E28225CF9D82CE /* Disk+Codable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Codable.swift"; path = "Sources/Disk+Codable.swift"; sourceTree = "<group>"; };
 		60C3ECB03FF8BEB00DC0C23B64D6BF10 /* Pods-NB-Mobile.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-NB-Mobile.modulemap"; sourceTree = "<group>"; };
 		624DF268C562DE2379A002E95F7F5CCF /* Pods-NB-Mobile-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NB-Mobile-frameworks.sh"; sourceTree = "<group>"; };
-		6D08A90C0FFF727005EEA6C74B651694 /* Disk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Disk.swift; path = Sources/Disk.swift; sourceTree = "<group>"; };
-		719078D2EE5E1A2B3F21B39C5A097834 /* Disk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Disk.framework; path = Disk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		82B1BA155531AC008E3F061A1BCDC274 /* Luminous-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Luminous-dummy.m"; sourceTree = "<group>"; };
-		89ACF0B1A2BCE37E48B20D657EEBECA8 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		626525D4A308B00FFC018D67F592A5F3 /* Disk-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Disk-umbrella.h"; sourceTree = "<group>"; };
+		6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6FECCBB0736A70E18322C705748CFC43 /* Disk+Helpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Helpers.swift"; path = "Sources/Disk+Helpers.swift"; sourceTree = "<group>"; };
+		727D1BB7CEAEA5F8AD631F5FA5E2D585 /* Disk-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Disk-prefix.pch"; sourceTree = "<group>"; };
+		7E4A6E13B96B74E004FD045E2334942E /* Disk+UIImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+UIImage.swift"; path = "Sources/Disk+UIImage.swift"; sourceTree = "<group>"; };
+		89AF781A76A9841234F2209CF8785E78 /* Disk-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Disk-dummy.m"; sourceTree = "<group>"; };
+		91289A7C18BFB31FD1DEE7342FB464F1 /* Disk+[Data].swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+[Data].swift"; path = "Sources/Disk+[Data].swift"; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9908BE906E3F6CB366207BD3FF699C88 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9B971DD3A558709E0D66B4BE638624BE /* Deviice.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Deviice.swift; path = Pod/Classes/Deviice.swift; sourceTree = "<group>"; };
-		A3EBF4F3E04F3144591E69F045CE4F33 /* Disk+VolumeInformation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+VolumeInformation.swift"; path = "Sources/Disk+VolumeInformation.swift"; sourceTree = "<group>"; };
 		A4EC7830266F91512A124412DD74E112 /* Pods-NB-Mobile-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-NB-Mobile-dummy.m"; sourceTree = "<group>"; };
-		A7BA53CF4CC6907B80436D1CA9C1BF5E /* Disk+Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Data.swift"; path = "Sources/Disk+Data.swift"; sourceTree = "<group>"; };
-		A819631FC5119FB68F45724E3EA7BD8D /* Luminous.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Luminous.xcconfig; sourceTree = "<group>"; };
-		B04D4A93B3D68AAAE18391472FBBAC53 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B4E4774C248C818E6BB6CD1237DD9586 /* Deviice.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Deviice.modulemap; sourceTree = "<group>"; };
+		ABF1A0A945FCD494A4A91F29D8682A23 /* Disk+VolumeInformation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+VolumeInformation.swift"; path = "Sources/Disk+VolumeInformation.swift"; sourceTree = "<group>"; };
+		B5DE169E2FCC28CA03640ED17EA025DF /* Disk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Disk.framework; path = Disk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9D0F309995BDBB9163D1A777C932EDC /* Disk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Disk.xcconfig; sourceTree = "<group>"; };
 		BE52AD1817B3E29DDAFD6B8F08F0EC09 /* Pods-NB-Mobile-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-NB-Mobile-resources.sh"; sourceTree = "<group>"; };
+		C1B567D9FF0AB13E7C1B377A78BCA4D7 /* Pods_NB_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_NB_Mobile.framework; path = "Pods-NB-Mobile.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4264AB166B1E8AA6209E64DF50BED6A /* Pods-NB-Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NB-Mobile.debug.xcconfig"; sourceTree = "<group>"; };
-		C57853A5C55BC1E95C9818329B7B4E42 /* Disk+Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Errors.swift"; path = "Sources/Disk+Errors.swift"; sourceTree = "<group>"; };
-		C61FB4C9EA418F4910D9FF5F48A5D366 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/ExternalAccessory.framework; sourceTree = DEVELOPER_DIR; };
+		C493A3BB622450A866AD6FA0DD5367C7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C7C0E0BC1BBC58035BC49E11393F1E81 /* Pods-NB-Mobile-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-NB-Mobile-acknowledgements.plist"; sourceTree = "<group>"; };
-		CA58E0BEA783CAAF2EB61A213F3DEEE3 /* Deviice-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Deviice-dummy.m"; sourceTree = "<group>"; };
-		D100146E11D7F03B14A600CD89F49F5E /* Deviice.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Deviice.xcconfig; sourceTree = "<group>"; };
-		D2AB48CF65C2F659FEC299A21B644C4B /* Disk-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Disk-umbrella.h"; sourceTree = "<group>"; };
-		D62411DC3114F113A853B3D8BC8B07A8 /* Disk+Codable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Codable.swift"; path = "Sources/Disk+Codable.swift"; sourceTree = "<group>"; };
-		DA61A09E8D0A74AA4B82249F5ECBBE77 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		DD56F613EFEB3D128F6A1ECF30507714 /* Deviice-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Deviice-prefix.pch"; sourceTree = "<group>"; };
+		D2E621187DBB191581606F31737E34D6 /* Disk.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Disk.h; path = Sources/Disk.h; sourceTree = "<group>"; };
 		E574D3BA8C7010B28D7EAB5981AEE59A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E68E60FCF8025AACFAF1961CB4BF4531 /* Disk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Disk.modulemap; sourceTree = "<group>"; };
 		EB6855FCDB4A5DB36F1200E9D3FD41EE /* Pods-NB-Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-NB-Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		EE211E29B094D62370F0AA5346C4AFFC /* Pods-NB-Mobile-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-NB-Mobile-umbrella.h"; sourceTree = "<group>"; };
 		F07FCF22F9D7013071B56A8C7C4C18C3 /* Pods-NB-Mobile-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-NB-Mobile-acknowledgements.markdown"; sourceTree = "<group>"; };
-		F24A329FBD3B8A0BD7A54ED03F75439A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F34012C8C3BDD1125D7404B0A9C62C94 /* Disk+Helpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+Helpers.swift"; path = "Sources/Disk+Helpers.swift"; sourceTree = "<group>"; };
-		FDBDFC658F0B10E858C6196100F4DF69 /* Disk.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Disk.h; path = Sources/Disk.h; sourceTree = "<group>"; };
+		FE8F5B08062179972F8DB524192688A9 /* Disk+[UIImage].swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Disk+[UIImage].swift"; path = "Sources/Disk+[UIImage].swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0126C0E029F134C2A51D82986002AB72 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B5BD1CD351B60274036B85A75506FBC /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		101DD059EA06C65CBFAA55616FA36E3B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -148,45 +79,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8212BBDEF019BA4C9AEDD3A5EEF5987F /* Frameworks */ = {
+		3E0C14565DFB6476C713529A27CA215E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E5A31188CCE6BBDDB1220AEA824D8CD /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8F3BFDA25B890A6982B4859B224FD0A4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C0F6BA1F68C3782575DE3B0D7B75401C /* AVFoundation.framework in Frameworks */,
-				FA9533DF5B94597FAA422A9CB8E6DAFA /* CoreTelephony.framework in Frameworks */,
-				9046E105B786954A454A883360CA62BE /* Deviice.framework in Frameworks */,
-				BE5AC63A59186D3DB61B11B62EC7D84B /* ExternalAccessory.framework in Frameworks */,
-				2979933FADDF1DB0C6814E38B97AEEFB /* Foundation.framework in Frameworks */,
-				9182F7302BCD2D2879FBDEF19E6B942E /* SystemConfiguration.framework in Frameworks */,
-				BB8BBFDA99E16D4757BE2497F3CC4449 /* UIKit.framework in Frameworks */,
+				AB89CFEE1D3ED7B5EA1A99938B70BF8E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01EFDC08F5B690DE7FE6153B5EC68F3C /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				B4E4774C248C818E6BB6CD1237DD9586 /* Deviice.modulemap */,
-				D100146E11D7F03B14A600CD89F49F5E /* Deviice.xcconfig */,
-				CA58E0BEA783CAAF2EB61A213F3DEEE3 /* Deviice-dummy.m */,
-				DD56F613EFEB3D128F6A1ECF30507714 /* Deviice-prefix.pch */,
-				0C95C7E6407A0FB147F21F33947694D6 /* Deviice-umbrella.h */,
-				B04D4A93B3D68AAAE18391472FBBAC53 /* Info.plist */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/Deviice";
-			sourceTree = "<group>";
-		};
 		0D3CFBE22BA23D7F2F41632E73D29E1B /* Pods-NB-Mobile */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,126 +108,80 @@
 			path = "Target Support Files/Pods-NB-Mobile";
 			sourceTree = "<group>";
 		};
-		6536BDECA692830457A158DA5C5556BE /* Products */ = {
+		4113E599B9716465B5AC5A422FF86F16 /* Disk */ = {
 			isa = PBXGroup;
 			children = (
-				588127AF69DCE9EB04257D2432F776D7 /* Deviice.framework */,
-				719078D2EE5E1A2B3F21B39C5A097834 /* Disk.framework */,
-				0DE02B854C69BE6F9D449D33E6089A55 /* Luminous.framework */,
-				226D5F7AD51963D77DC4C5743A3B166F /* Pods_NB_Mobile.framework */,
+				D2E621187DBB191581606F31737E34D6 /* Disk.h */,
+				0057F5042E1F63E0EBA82609AE403E31 /* Disk.swift */,
+				91289A7C18BFB31FD1DEE7342FB464F1 /* Disk+[Data].swift */,
+				FE8F5B08062179972F8DB524192688A9 /* Disk+[UIImage].swift */,
+				5D6021E80C8470F0C4E28225CF9D82CE /* Disk+Codable.swift */,
+				42DC7A16BD513E6FE9F239B28A0B3BD6 /* Disk+Data.swift */,
+				0D567112740D1C7E99558C0A87982AAA /* Disk+Errors.swift */,
+				6FECCBB0736A70E18322C705748CFC43 /* Disk+Helpers.swift */,
+				2BDEAF4DCDE02630811084F08019940E /* Disk+InternalHelpers.swift */,
+				7E4A6E13B96B74E004FD045E2334942E /* Disk+UIImage.swift */,
+				ABF1A0A945FCD494A4A91F29D8682A23 /* Disk+VolumeInformation.swift */,
+				5EF6088058C38457F2C931CCBAEE1120 /* Support Files */,
 			);
-			name = Products;
+			name = Disk;
+			path = Disk;
+			sourceTree = "<group>";
+		};
+		5EF6088058C38457F2C931CCBAEE1120 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				E68E60FCF8025AACFAF1961CB4BF4531 /* Disk.modulemap */,
+				B9D0F309995BDBB9163D1A777C932EDC /* Disk.xcconfig */,
+				89AF781A76A9841234F2209CF8785E78 /* Disk-dummy.m */,
+				727D1BB7CEAEA5F8AD631F5FA5E2D585 /* Disk-prefix.pch */,
+				626525D4A308B00FFC018D67F592A5F3 /* Disk-umbrella.h */,
+				C493A3BB622450A866AD6FA0DD5367C7 /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Disk";
+			sourceTree = "<group>";
+		};
+		6DEEF0ADCF6E579B75DC7062EBE41939 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4113E599B9716465B5AC5A422FF86F16 /* Disk */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
-				C220F23190497936D1E3732E94A63745 /* Frameworks */,
-				CBFDF36532A731A6398D347D7CBAE7B9 /* Pods */,
-				6536BDECA692830457A158DA5C5556BE /* Products */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				6DEEF0ADCF6E579B75DC7062EBE41939 /* Pods */,
+				98426FE9911E9B9C63743816607D0888 /* Products */,
 				DC82255EE7F9280F18EF939A093C467E /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		9C1CFFD01E3FC22C3AFCD17DA60B9D7B /* Support Files */ = {
+		98426FE9911E9B9C63743816607D0888 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9908BE906E3F6CB366207BD3FF699C88 /* Info.plist */,
-				0D772CBA6A8FDE5B20A00C82808FC47C /* Luminous.modulemap */,
-				A819631FC5119FB68F45724E3EA7BD8D /* Luminous.xcconfig */,
-				82B1BA155531AC008E3F061A1BCDC274 /* Luminous-dummy.m */,
-				27CA954E7F24D9A6F41C603827CD7B00 /* Luminous-prefix.pch */,
-				17612C84CA0D3C64E969EB18E30EFB6F /* Luminous-umbrella.h */,
+				B5DE169E2FCC28CA03640ED17EA025DF /* Disk.framework */,
+				C1B567D9FF0AB13E7C1B377A78BCA4D7 /* Pods_NB_Mobile.framework */,
 			);
-			name = "Support Files";
-			path = "../Target Support Files/Luminous";
+			name = Products;
 			sourceTree = "<group>";
 		};
-		AC48A3EC178D770A0255E473C59F3F76 /* Luminous */ = {
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				43A694C514DD5D2E63F55016A7B671F4 /* Luminous.swift */,
-				4BF8CFEF4612F25AE3182B9913C8D2FE /* Reachability.swift */,
-				077423C06DE89CF8EE2003EAAC5B38C0 /* ReplaceMe.swift */,
-				9C1CFFD01E3FC22C3AFCD17DA60B9D7B /* Support Files */,
-			);
-			name = Luminous;
-			path = Luminous;
-			sourceTree = "<group>";
-		};
-		AE78CB49F8D07382FF070DE5F67BA043 /* Deviice */ = {
-			isa = PBXGroup;
-			children = (
-				9B971DD3A558709E0D66B4BE638624BE /* Deviice.swift */,
-				01EFDC08F5B690DE7FE6153B5EC68F3C /* Support Files */,
-			);
-			name = Deviice;
-			path = Deviice;
-			sourceTree = "<group>";
-		};
-		B816D80D00F00E1790AF08999A389207 /* Disk */ = {
-			isa = PBXGroup;
-			children = (
-				FDBDFC658F0B10E858C6196100F4DF69 /* Disk.h */,
-				6D08A90C0FFF727005EEA6C74B651694 /* Disk.swift */,
-				1A1133FEA9A184C3ECC7721FA0EF0866 /* Disk+[Data].swift */,
-				52CC7199BC4E8ECF87165BBA04B0ADC4 /* Disk+[UIImage].swift */,
-				D62411DC3114F113A853B3D8BC8B07A8 /* Disk+Codable.swift */,
-				A7BA53CF4CC6907B80436D1CA9C1BF5E /* Disk+Data.swift */,
-				C57853A5C55BC1E95C9818329B7B4E42 /* Disk+Errors.swift */,
-				F34012C8C3BDD1125D7404B0A9C62C94 /* Disk+Helpers.swift */,
-				0DFAB60758A39DFB0669FBB3CCBAB38A /* Disk+InternalHelpers.swift */,
-				3D8D3B3D5B021E17DBA627A50A76720B /* Disk+UIImage.swift */,
-				A3EBF4F3E04F3144591E69F045CE4F33 /* Disk+VolumeInformation.swift */,
-				D0F0DCA8BCB902EDDBB0884326998E0E /* Support Files */,
-			);
-			name = Disk;
-			path = Disk;
-			sourceTree = "<group>";
-		};
-		C220F23190497936D1E3732E94A63745 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1DC86C2A8DB1ABAFC4C5C53F4FF9BB37 /* Deviice.framework */,
-				D7DD8CE43C5F70B7729576794DD90D58 /* iOS */,
+				D35AF013A5F0BAD4F32504907A52519E /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CBFDF36532A731A6398D347D7CBAE7B9 /* Pods */ = {
+		D35AF013A5F0BAD4F32504907A52519E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				AE78CB49F8D07382FF070DE5F67BA043 /* Deviice */,
-				B816D80D00F00E1790AF08999A389207 /* Disk */,
-				AC48A3EC178D770A0255E473C59F3F76 /* Luminous */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		D0F0DCA8BCB902EDDBB0884326998E0E /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				0359D05BF42B5BF04BEC66014B26AFB7 /* Disk.modulemap */,
-				41CAED8DE4D7B44FE97B84B6A541651F /* Disk.xcconfig */,
-				14473CCA51528DF38CD0CC828276934C /* Disk-dummy.m */,
-				0E466A510B4A7B4D8CD41AC65B2047F3 /* Disk-prefix.pch */,
-				D2AB48CF65C2F659FEC299A21B644C4B /* Disk-umbrella.h */,
-				F24A329FBD3B8A0BD7A54ED03F75439A /* Info.plist */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/Disk";
-			sourceTree = "<group>";
-		};
-		D7DD8CE43C5F70B7729576794DD90D58 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				2FE3D4B72E72E10A761D3A0D406F6738 /* AVFoundation.framework */,
-				89ACF0B1A2BCE37E48B20D657EEBECA8 /* CoreTelephony.framework */,
-				C61FB4C9EA418F4910D9FF5F48A5D366 /* ExternalAccessory.framework */,
-				10D66E3D35FAD895A34A231AA884844D /* Foundation.framework */,
-				3E466633CC4C5C17AB897D7199A54321 /* SystemConfiguration.framework */,
-				DA61A09E8D0A74AA4B82249F5ECBBE77 /* UIKit.framework */,
+				6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -340,36 +197,20 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		07723F33358D526F7FB8B0EB5C98C0D3 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				586277DBE01A0AA98B977F953ABBFEAB /* Deviice-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		58BAE1683887DA21A2A9FB876831E30D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E71847F74129AB7A24D459472E2E045C /* Luminous-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		93B5F925E8EAF0EA3B0D1976F00F105F /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9D86E7FF0E7748FEBAB358B017F8AEF5 /* Pods-NB-Mobile-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9C28D7C793A07EBD55DFBFB585E9C1D9 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A8F909B39333B28D10A25EFC8F6206AF /* Disk-umbrella.h in Headers */,
 				EEF0930DC9A866CA97209104C3BDE95D /* Disk.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F98CEAE5A79420E6FF722DB45802FD83 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				638FC50D59F279D9E504812D64A9A95F /* Pods-NB-Mobile-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,62 +231,25 @@
 			);
 			name = Disk;
 			productName = Disk;
-			productReference = 719078D2EE5E1A2B3F21B39C5A097834 /* Disk.framework */;
+			productReference = B5DE169E2FCC28CA03640ED17EA025DF /* Disk.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		3F07F11CA9D871AAB56A87ACF385DC23 /* Luminous */ = {
+		37EBDC4E33E30DCCE078A3A2C0322630 /* Pods-NB-Mobile */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A535D9D8DCAA1D048564F4640B4C5F04 /* Build configuration list for PBXNativeTarget "Luminous" */;
+			buildConfigurationList = E1A739FA2E7B1AFC8FFB0049C9FC6578 /* Build configuration list for PBXNativeTarget "Pods-NB-Mobile" */;
 			buildPhases = (
-				102250E68300ED41FD14816950419CA8 /* Sources */,
-				8F3BFDA25B890A6982B4859B224FD0A4 /* Frameworks */,
-				58BAE1683887DA21A2A9FB876831E30D /* Headers */,
+				19312D05B037B8DF3A6EDE94456FF9F2 /* Sources */,
+				3E0C14565DFB6476C713529A27CA215E /* Frameworks */,
+				F98CEAE5A79420E6FF722DB45802FD83 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6A4A2EAEAEC7B9E9E9D056CFDE54A02F /* PBXTargetDependency */,
-			);
-			name = Luminous;
-			productName = Luminous;
-			productReference = 0DE02B854C69BE6F9D449D33E6089A55 /* Luminous.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		4A8F647CCB0E774D0C7C8E74BE8E0C06 /* Pods-NB-Mobile */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0452CE5EABA4B68B372747039C8CB9CB /* Build configuration list for PBXNativeTarget "Pods-NB-Mobile" */;
-			buildPhases = (
-				64281EA48F07FB26D3CD07E6653E89F7 /* Sources */,
-				0126C0E029F134C2A51D82986002AB72 /* Frameworks */,
-				93B5F925E8EAF0EA3B0D1976F00F105F /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				83BCDCD9DC5C774F7FB80E34391F5AD1 /* PBXTargetDependency */,
-				F5DF70131591C26B227CD23C4E4F09F9 /* PBXTargetDependency */,
-				31BEBBCB79D55FB8E0185143D4D1BBC8 /* PBXTargetDependency */,
+				36097E68F2D854D3E5091E3FB8596553 /* PBXTargetDependency */,
 			);
 			name = "Pods-NB-Mobile";
 			productName = "Pods-NB-Mobile";
-			productReference = 226D5F7AD51963D77DC4C5743A3B166F /* Pods_NB_Mobile.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		A58EC33E6AC45E1B56B40DCA9FD71AB6 /* Deviice */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 47E462BFC752364F6798974728D9F18C /* Build configuration list for PBXNativeTarget "Deviice" */;
-			buildPhases = (
-				2B7B09AB36813BB1A9D5B7A8FE0BF3E2 /* Sources */,
-				8212BBDEF019BA4C9AEDD3A5EEF5987F /* Frameworks */,
-				07723F33358D526F7FB8B0EB5C98C0D3 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Deviice;
-			productName = Deviice;
-			productReference = 588127AF69DCE9EB04257D2432F776D7 /* Deviice.framework */;
+			productReference = C1B567D9FF0AB13E7C1B377A78BCA4D7 /* Pods_NB_Mobile.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -465,44 +269,22 @@
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
-			productRefGroup = 6536BDECA692830457A158DA5C5556BE /* Products */;
+			productRefGroup = 98426FE9911E9B9C63743816607D0888 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A58EC33E6AC45E1B56B40DCA9FD71AB6 /* Deviice */,
 				1691E754022217B52671D98A23731A08 /* Disk */,
-				3F07F11CA9D871AAB56A87ACF385DC23 /* Luminous */,
-				4A8F647CCB0E774D0C7C8E74BE8E0C06 /* Pods-NB-Mobile */,
+				37EBDC4E33E30DCCE078A3A2C0322630 /* Pods-NB-Mobile */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		102250E68300ED41FD14816950419CA8 /* Sources */ = {
+		19312D05B037B8DF3A6EDE94456FF9F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15F3D2C840492FFE6FAF11BFCDCAACA9 /* Luminous-dummy.m in Sources */,
-				08FE5F621B60125D92F8C39BAC90626F /* Luminous.swift in Sources */,
-				A03971E1AEDB1B1D9205962165439522 /* Reachability.swift in Sources */,
-				2457EC42C917E84F99033F609EB13EC3 /* ReplaceMe.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2B7B09AB36813BB1A9D5B7A8FE0BF3E2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3F9C509EB227CBEC89AC595691FD57F /* Deviice-dummy.m in Sources */,
-				D04C71081CA7B3D4C9112C2EF3E4293C /* Deviice.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64281EA48F07FB26D3CD07E6653E89F7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ADCAE4D4A1AB37A1ABB468B78D651B07 /* Pods-NB-Mobile-dummy.m in Sources */,
+				27F4B1E698F8756CD4C1DEF18B3E68CE /* Pods-NB-Mobile-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,66 +309,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		31BEBBCB79D55FB8E0185143D4D1BBC8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Luminous;
-			target = 3F07F11CA9D871AAB56A87ACF385DC23 /* Luminous */;
-			targetProxy = 0FA4586DD1DEB39F992969052990B23D /* PBXContainerItemProxy */;
-		};
-		6A4A2EAEAEC7B9E9E9D056CFDE54A02F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Deviice;
-			target = A58EC33E6AC45E1B56B40DCA9FD71AB6 /* Deviice */;
-			targetProxy = C0143CA89C683A9DA1C47D1AE806E0DC /* PBXContainerItemProxy */;
-		};
-		83BCDCD9DC5C774F7FB80E34391F5AD1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Deviice;
-			target = A58EC33E6AC45E1B56B40DCA9FD71AB6 /* Deviice */;
-			targetProxy = 361620B5200B716C09B468A31E26DD07 /* PBXContainerItemProxy */;
-		};
-		F5DF70131591C26B227CD23C4E4F09F9 /* PBXTargetDependency */ = {
+		36097E68F2D854D3E5091E3FB8596553 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Disk;
 			target = 1691E754022217B52671D98A23731A08 /* Disk */;
-			targetProxy = 7520BF40D9F2820BD3AB8FA1E55B5E98 /* PBXContainerItemProxy */;
+			targetProxy = 19A87C1A05AE7A6376233ADB6204381E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		017B6CB6B6196285F68759F96C587007 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D100146E11D7F03B14A600CD89F49F5E /* Deviice.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Deviice/Deviice-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Deviice/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Deviice/Deviice.modulemap";
-				PRODUCT_NAME = Deviice;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		16F0D144888FF0891C0059D0EFDDF431 /* Debug */ = {
+		723708BB61F20BA19678A58756C36A8A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C4264AB166B1E8AA6209E64DF50BED6A /* Pods-NB-Mobile.debug.xcconfig */;
 			buildSettings = {
@@ -614,69 +346,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		4C73657BA06A493C60C62DCDAEB10767 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A819631FC5119FB68F45724E3EA7BD8D /* Luminous.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Luminous/Luminous-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Luminous/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Luminous/Luminous.modulemap";
-				PRODUCT_NAME = Luminous;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		610146E51E556998B8896DA89FF7EEA2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A819631FC5119FB68F45724E3EA7BD8D /* Luminous.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Luminous/Luminous-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Luminous/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Luminous/Luminous.modulemap";
-				PRODUCT_NAME = Luminous;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -800,7 +469,7 @@
 		};
 		B4DFD151AC0472657EAF5F6B0D73E9A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41CAED8DE4D7B44FE97B84B6A541651F /* Disk.xcconfig */;
+			baseConfigurationReference = B9D0F309995BDBB9163D1A777C932EDC /* Disk.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -829,70 +498,7 @@
 			};
 			name = Debug;
 		};
-		D662F130A581995AAB3494E893D9298E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D100146E11D7F03B14A600CD89F49F5E /* Deviice.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Deviice/Deviice-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Deviice/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Deviice/Deviice.modulemap";
-				PRODUCT_NAME = Deviice;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		ED964B7463A146758B68801D25A7409D /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41CAED8DE4D7B44FE97B84B6A541651F /* Disk.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Disk/Disk-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Disk/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Disk/Disk.modulemap";
-				PRODUCT_NAME = Disk;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		F30E87EC824BBBEE26C48BC9BDC3D5E9 /* Release */ = {
+		B58B28FAAB34660BDB7BCE15B8FAFCCD /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB6855FCDB4A5DB36F1200E9D3FD41EE /* Pods-NB-Mobile.release.xcconfig */;
 			buildSettings = {
@@ -926,18 +532,41 @@
 			};
 			name = Release;
 		};
+		ED964B7463A146758B68801D25A7409D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B9D0F309995BDBB9163D1A777C932EDC /* Disk.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Disk/Disk-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Disk/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Disk/Disk.modulemap";
+				PRODUCT_NAME = Disk;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0452CE5EABA4B68B372747039C8CB9CB /* Build configuration list for PBXNativeTarget "Pods-NB-Mobile" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				16F0D144888FF0891C0059D0EFDDF431 /* Debug */,
-				F30E87EC824BBBEE26C48BC9BDC3D5E9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -947,29 +576,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		47E462BFC752364F6798974728D9F18C /* Build configuration list for PBXNativeTarget "Deviice" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D662F130A581995AAB3494E893D9298E /* Debug */,
-				017B6CB6B6196285F68759F96C587007 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A535D9D8DCAA1D048564F4640B4C5F04 /* Build configuration list for PBXNativeTarget "Luminous" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				610146E51E556998B8896DA89FF7EEA2 /* Debug */,
-				4C73657BA06A493C60C62DCDAEB10767 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		CBD9A2E3065E5BD8E663E08B81AE10F3 /* Build configuration list for PBXNativeTarget "Disk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B4DFD151AC0472657EAF5F6B0D73E9A1 /* Debug */,
 				ED964B7463A146758B68801D25A7409D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E1A739FA2E7B1AFC8FFB0049C9FC6578 /* Build configuration list for PBXNativeTarget "Pods-NB-Mobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				723708BB61F20BA19678A58756C36A8A /* Debug */,
+				B58B28FAAB34660BDB7BCE15B8FAFCCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
