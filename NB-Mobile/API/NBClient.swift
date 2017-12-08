@@ -11,33 +11,32 @@ import UIKit
 import Disk
 
 
-fileprivate enum NotebowlQuery: String {
+
+fileprivate enum Query: String {
     var url: URL? {
         switch self {
         case .api:
             return URL(string: self.rawValue)
-        case .authorize, .users:
-            return URL(string: NotebowlQuery.api.rawValue + self.rawValue)
+        case .authorize, .users, .courses:
+            return URL(string: Query.api.rawValue + self.rawValue)
         }
     }
     
     case api = "https://demo.nbstage.com/api/v1.0/"
-
+    
     case users = "users"
     case authorize = "credentials"
     
-
+    case courses = "courses"
+    
 }
-
 
 
 public class NBClient {
     
-
-    private class NotebowlToken: Codable {
+    private class Token: Codable {
         var token: String
         var uuid: String
-        
         
         var debugDetails: NSString {
             return  """
@@ -46,39 +45,60 @@ public class NBClient {
                 """ as NSString
         }
         
+        var query: [String: Any] {
+            return ["token": token, "uuid": uuid]
+        }
+        
     }
+    
+    
     
     public static let shared = NBClient()
     
-    private var token: NotebowlToken?
-    
+    private var token: Token?
     
     private init() { }
     
     
-    public func writeToken() throws {
-        try? Disk.save(self.token, to: .applicationSupport, as: "currentUser.json")
-    }
-    
-    
     public func checkToken() -> Bool {
-        self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: NotebowlToken.self)
-        var request = Just.get((NotebowlQuery.authorize.url?.absoluteString)!, params:["token": self.token!.token, "uuid": self.token!.uuid])
+        self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: Token.self)
+        let request = Just.get(Query.authorize.url!, params: self.token!.query)
         if (request.ok) {
             return true
         }
         return false
     }
     
+    public func parseToken(from data: Any?) throws {
+        self.token = try? Token(json: (data as! String))
+        try? Disk.save(self.token, to: .applicationSupport, as: "currentUser.json")
+    }
     
-    public func parseToken(from data: Any?) -> Bool {
-        self.token = try? NotebowlToken(json: (data as! String))
-        if let token = self.token {
-            return true
+    
+    public func getCurrentUser() -> User? {
+        let req = Just.get(Query.authorize.url!, params: self.token!.query)
+        let user = try? User(data: req.content!)
+        return user
+    }
+    
+    public func logoutUser() {
+        let deleteReq = Just.delete(Query.authorize.url!, params: self.token!.query)
+        if (deleteReq.ok) {
+            try? Disk.remove("currentUser.json", from: .applicationSupport)
         }
-        return false
+        
+        let webVC = NBAuthViewController()
+        UIApplication.shared.keyWindow?.rootViewController?.present(webVC, animated: true, completion: nil)
     }
     
     
     
+    public func getAllCourses() -> [Course]? {
+        let req = Just.get(Query.courses.url!, params: self.token!.query)
+        if (req.ok) {
+            let courses = try? [Course](data: req.content!)
+            return courses
+        }
+        return nil
+    }
 }
