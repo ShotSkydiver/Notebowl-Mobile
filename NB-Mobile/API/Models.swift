@@ -26,22 +26,7 @@ public class NBCodable: Decodable {
     var url: URL
     var createdAt: String
     var updatedAt: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case url
-        case createdAt
-        case updatedAt
 
-    }
-    
-    required public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.url = try container.decode(URL.self, forKey: .url)
-        self.createdAt = try container.decode(String.self, forKey: .createdAt)
-        self.updatedAt = try container.decode(String.self, forKey: .updatedAt)
-        
-        
-    }
 }
 
 public class User: NBCodable, NBItem {
@@ -64,6 +49,7 @@ public class User: NBCodable, NBItem {
         case userAvatar = "profileUrl"
         
     }
+ 
     
     required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             let courses = NBClient.shared.get(Course.self)
             for courseResult in (courses as! [Course]) {
-                print("\ncourse : ", courseResult.courseName)
+                print("\ncourse : ", courseResult.courseName, " \ndescription: ", courseResult.courseDescription ?? "no description!")
             }
             
         }
