@@ -10,48 +10,12 @@ import Foundation
 import UIKit
 import Disk
 
-
-
-fileprivate enum Query: String {
-    var url: URL? {
-        switch self {
-        case .api:
-            return URL(string: self.rawValue)
-        case .authorize, .users, .courses:
-            return URL(string: Query.api.rawValue + self.rawValue)
-        }
-    }
-    
+fileprivate enum BaseURL: String {
     case api = "https://demo.nbstage.com/api/v1.0/"
-    
-    case users = "users"
-    case authorize = "credentials"
-    
-    case courses = "courses"
-    
+    case credentials = "credentials"
 }
 
-
 public class NBClient {
-    
-    private class Token: Codable {
-        var token: String
-        var uuid: String
-        
-        var debugDetails: NSString {
-            return  """
-                Saved token:  \(token)
-                Device UUID:    \(uuid)
-                """ as NSString
-        }
-        
-        var query: [String: Any] {
-            return ["token": token, "uuid": uuid]
-        }
-        
-    }
-    
-    
     
     public static let shared = NBClient()
     
@@ -61,10 +25,12 @@ public class NBClient {
     
     
     public func checkToken() -> Bool {
-        self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: Token.self)
-        let request = Just.get(Query.authorize.url!, params: self.token!.query)
-        if (request.ok) {
-            return true
+        if Disk.exists("currentUser.json", in: .applicationSupport) {
+            self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: Token.self)
+            let request = Just.get((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
+            if (request.ok) {
+                return true
+            }
         }
         return false
     }
@@ -76,13 +42,21 @@ public class NBClient {
     
     
     public func getCurrentUser() -> User? {
-        let req = Just.get(Query.authorize.url!, params: self.token!.query)
-        let user = try? User(data: req.content!)
-        return user
+        let req = Just.get((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
+        if (req.ok) {
+            do {
+                let user = try User(data: req.content!)
+                return user
+            }
+            catch {
+                print("error! ", error.localizedDescription)
+            }
+        }
+        return nil
     }
     
     public func logoutUser() {
-        let deleteReq = Just.delete(Query.authorize.url!, params: self.token!.query)
+        let deleteReq = Just.delete((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
         if (deleteReq.ok) {
             try? Disk.remove("currentUser.json", from: .applicationSupport)
         }
@@ -91,14 +65,13 @@ public class NBClient {
         UIApplication.shared.keyWindow?.rootViewController?.present(webVC, animated: true, completion: nil)
     }
     
-    
-    
-    public func getAllCourses() -> [Course]? {
-        let req = Just.get(Query.courses.url!, params: self.token!.query)
+    public func get<T>(_ objectsOfType: T.Type) -> [NBItem]? where T: NBItem {
+        let req = Just.get((BaseURL.api.rawValue + objectsOfType.routeName), params: self.token!.query)
+        
         if (req.ok) {
-            let courses = try? [Course](data: req.content!)
-            return courses
+            let items = try? [T](data: req.content!)
+            return items
         }
-        return nil
+        return []
     }
 }

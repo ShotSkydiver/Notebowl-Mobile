@@ -28,8 +28,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if (NBClient.shared.checkToken()) {
             print("user logged in already!")
-            let user = NBClient.shared.getCurrentUser()
-            print("user name: ", user?.name)
+            let user = NBClient.shared.getCurrentUser()!
+            print("user name: ", user.name)
+            
+            let courses = NBClient.shared.get(Course.self)
+            for courseResult in (courses as! [Course]) {
+                print("\ncourse : ", courseResult.courseName)
+            }
+            
         }
         else {
             print("user not logged in!")

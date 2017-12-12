@@ -69,6 +69,7 @@ public extension UIDevice {
         let finalEncoded = (base + params.encodeURIComponent()!)
         return finalEncoded
     }
+    
 }
 
 

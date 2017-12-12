@@ -8,21 +8,43 @@
 
 import Foundation
 
-public class NBItem: Decodable {
-    var itemType: String
-    var url: URL
-    var createdAt: Date
-    var updatedAt: Date
+public struct Token: Codable {
+    var token: String
+    var uuid: String
     
-    private enum CodingKeys: String, CodingKey {
-        case itemType
-        case url
-        case createdAt
-        case updatedAt
+    var query: [String: Any] {
+        return ["token": token, "uuid": uuid]
     }
 }
 
-public class User: NBItem {
+
+public protocol NBItem {
+    static var routeName: String { get }
+}
+
+public class NBCodable: Decodable {
+    var url: URL
+    var createdAt: String
+    var updatedAt: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case url
+        case createdAt
+        case updatedAt
+
+    }
+    
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try container.decode(URL.self, forKey: .url)
+        self.createdAt = try container.decode(String.self, forKey: .createdAt)
+        self.updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        
+        
+    }
+}
+
+public class User: NBCodable, NBItem {
     
     var firstName: String
     var lastName: String
@@ -32,12 +54,15 @@ public class User: NBItem {
     
     public var name: String { return (firstName + " " + lastName)}
     
+    public static let routeName: String = "users"
+    
     private enum CodingKeys: String, CodingKey {
         case firstName
         case lastName
         case email
         case university = "_university"
         case userAvatar = "profileUrl"
+        
     }
     
     required public init(from decoder: Decoder) throws {
@@ -54,8 +79,7 @@ public class User: NBItem {
 }
 
 
-
-public class Course: NBItem {
+public class Course: NBCodable, NBItem {
     
     var courseName: String
     var courseNumber: String
@@ -66,6 +90,8 @@ public class Course: NBItem {
     var term: URL
     var university: URL
     
+    public static let routeName: String = "courses"
+    
     private enum CodingKeys: String, CodingKey {
         case courseName = "name"
         case courseNumber = "number"
@@ -75,6 +101,7 @@ public class Course: NBItem {
         case courseDescription = "description"
         case term = "_term"
         case university = "_university"
+
     }
     
     required public init(from decoder: Decoder) throws {
@@ -87,7 +114,7 @@ public class Course: NBItem {
         self.courseDescription = try values.decodeIfPresent(String.self, forKey: .courseDescription)
         self.term = try values.decode(URL.self, forKey: .term)
         self.university = try values.decode(URL.self, forKey: .university)
-        
+
         try super.init(from: decoder)
     }
 }
