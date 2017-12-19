@@ -17,6 +17,11 @@
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
+		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
+		85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */; };
+		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
+		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
+		85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +51,11 @@
 		85E2919C1F5F619300172C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85E291A11F5F619300172C46 /* NB-MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NB-MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291AC1F5F619300172C46 /* NB-MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NB-MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
+		85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
+		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
+		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
+		85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesDetailViewController.swift; sourceTree = "<group>"; };
 		8EA4B9585E3E077F8A700C3B /* Pods-NB-Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NB-Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		D7B899D8A577A114EC8DB5D6 /* Pods-NB-Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NB-Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NB_Mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,7 +140,12 @@
 			children = (
 				852D18961F673A0A00BDA97B /* API */,
 				8501E8581F9FFE86000728D7 /* NBAuthViewController.swift */,
+				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
+				85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */,
+				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
 				85E291941F5F619300172C46 /* Main.storyboard */,
+				85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */,
+				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
 				85E291971F5F619300172C46 /* Assets.xcassets */,
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
 				85E291901F5F619300172C46 /* AppDelegate.swift */,
@@ -329,9 +344,14 @@
 			files = (
 				8501E85A1F9FFE86000728D7 /* NBAuthViewController.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
+				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
 				85CB67D81FD9964500E81670 /* Just.swift in Sources */,
 				853CE2551F7E1A83000E8D6C /* Models.swift in Sources */,
+				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
+				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
+				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
+				85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

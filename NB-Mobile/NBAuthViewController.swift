@@ -55,7 +55,7 @@ extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
             if ((response as! String) == ("application/json")) {
                 webView.evaluateJavaScript("document.body.textContent") { (data, error) in
                     try? NBClient.shared.parseToken(from: data)
-                    
+
                     self.dismiss(animated: true, completion: nil)
                 }
             }

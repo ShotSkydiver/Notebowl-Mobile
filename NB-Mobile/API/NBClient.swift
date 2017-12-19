@@ -21,23 +21,28 @@ public class NBClient {
     
     private var token: Token?
     
+    public var loginValidated: Bool = false
+    
     private init() { }
     
     
-    public func checkToken() -> Bool {
+    public func checkToken() {
         if Disk.exists("currentUser.json", in: .applicationSupport) {
             self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: Token.self)
             let request = Just.get((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
             if (request.ok) {
-                return true
+                self.loginValidated = true
+                return
             }
         }
-        return false
+        self.loginValidated = false
+        return
     }
     
     public func parseToken(from data: Any?) throws {
         self.token = try? Token(json: (data as! String))
         try? Disk.save(self.token, to: .applicationSupport, as: "currentUser.json")
+        self.loginValidated = true
     }
     
     
@@ -54,6 +59,8 @@ public class NBClient {
         }
         return nil
     }
+    
+    
     
     public func logoutUser() {
         let deleteReq = Just.delete((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)

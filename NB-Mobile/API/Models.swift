@@ -34,8 +34,8 @@ public class User: NBCodable, NBItem {
     var firstName: String
     var lastName: String
     var email: String
-    var university: URL
-    var userAvatar: URL?
+    var university: String
+    var userAvatar: String?
     
     public var name: String { return (firstName + " " + lastName)}
     
@@ -56,8 +56,8 @@ public class User: NBCodable, NBItem {
         self.firstName = try container.decode(String.self, forKey: .firstName)
         self.lastName = try container.decode(String.self, forKey: .lastName)
         self.email = try container.decode(String.self, forKey: .email)
-        self.university = try container.decode(URL.self, forKey: .university)
-        self.userAvatar = try container.decode(URL.self, forKey: .userAvatar)
+        self.university = try container.decode(String.self, forKey: .university)
+        self.userAvatar = try container.decode(String.self, forKey: .userAvatar)
         
         try super.init(from: decoder)
     }
@@ -75,6 +75,8 @@ public class Course: NBCodable, NBItem {
     var courseDescription: String?
     var term: URL
     var university: URL
+    
+    public var courseCode: String { return (courseSubject + " " + courseNumber)}
     
     public static let routeName: String = "courses"
     
