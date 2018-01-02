@@ -61,24 +61,27 @@ public class NBClient {
     }
     
     
-    
     public func logoutUser() {
         let deleteReq = Just.delete((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
         if (deleteReq.ok) {
             try? Disk.remove("currentUser.json", from: .applicationSupport)
         }
-        
-        let webVC = NBAuthViewController()
-        UIApplication.shared.keyWindow?.rootViewController?.present(webVC, animated: true, completion: nil)
+
     }
     
-    public func get<T>(_ objectsOfType: T.Type) -> [NBItem]? where T: NBItem {
-        let req = Just.get((BaseURL.api.rawValue + objectsOfType.routeName), params: self.token!.query)
+    public func get<T>(_ objectsOfType: T.Type, urlToGet: String? = nil) -> [NBProtocol]? where T: NBProtocol {
+        let genericUrl = (BaseURL.api.rawValue + objectsOfType.routeName)
+        let req = Just.get((urlToGet ?? genericUrl), params: self.token!.query)
         
         if (req.ok) {
-            let items = try? [T](data: req.content!)
+            
+            guard let items = try? [T](data: req.content!) else {
+                let item = try? T(data: req.content!)
+                return [item!]
+            }
             return items
         }
         return []
     }
+    
 }

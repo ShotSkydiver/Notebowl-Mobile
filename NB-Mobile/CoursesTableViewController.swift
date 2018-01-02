@@ -18,8 +18,11 @@ class CoursesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         courses = NBClient.shared.get(Course.self) as! [Course]
-
-        self.title = "Spring 2018"
+        for course in courses {
+            print("course term: ", course.term.first)
+            
+        }
+        self.title = courses.first?.term.first?.title
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -38,9 +41,9 @@ class CoursesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "courseCell", for: indexPath) as! CoursesTableViewCell
-        cell.courseTitle.text = courses[indexPath.row].courseName
+        cell.courseTitle.text = courses[indexPath.row].name
         cell.courseNumber.text = courses[indexPath.row].courseCode
-        cell.courseDescription.text = courses[indexPath.row].courseDescription
+        cell.courseDescription.text = courses[indexPath.row].description
         cell.currentGrade.text = "88.5%"
         
         return cell

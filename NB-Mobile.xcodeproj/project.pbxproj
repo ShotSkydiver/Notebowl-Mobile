@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		6C014B677C7A0713C03A4200 /* Pods_NB_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */; };
+		8501CDF61FFBF5D800C853CE /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501CDF51FFBF5D800C853CE /* Just.swift */; };
 		8501E85A1F9FFE86000728D7 /* NBAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501E8581F9FFE86000728D7 /* NBAuthViewController.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
 		853CE2551F7E1A83000E8D6C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2541F7E1A83000E8D6C /* Models.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
-		85CB67D81FD9964500E81670 /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CB67D71FD9964500E81670 /* Just.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
@@ -38,11 +38,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8501CDF51FFBF5D800C853CE /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
 		8501E8581F9FFE86000728D7 /* NBAuthViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAuthViewController.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		853CE2541F7E1A83000E8D6C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
-		85CB67D71FD9964500E81670 /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Just.swift; path = "../../../Downloads/Just-swift-4-1/Sources/Just/Just.swift"; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* NB-Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NB-Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85E291951F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 			children = (
 				853CE2541F7E1A83000E8D6C /* Models.swift */,
 				8531ACB21FC4EA9F00EC72FA /* Extensions.swift */,
-				85CB67D71FD9964500E81670 /* Just.swift */,
+				8501CDF51FFBF5D800C853CE /* Just.swift */,
 				85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */,
 			);
 			path = API;
@@ -345,7 +345,7 @@
 				8501E85A1F9FFE86000728D7 /* NBAuthViewController.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
-				85CB67D81FD9964500E81670 /* Just.swift in Sources */,
+				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,
 				853CE2551F7E1A83000E8D6C /* Models.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,

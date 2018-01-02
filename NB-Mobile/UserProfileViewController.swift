@@ -14,6 +14,8 @@ class UserProfileViewController: UIViewController {
     @IBOutlet weak var placeholderLabel: UILabel!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var userUniversity: UILabel!
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
     
     private var didSetup: Bool = false
     
@@ -39,6 +41,13 @@ class UserProfileViewController: UIViewController {
         }
     }
     
+    @IBAction func logoutButtonPressed() {
+        NBClient.shared.logoutUser()
+        self.didSetup = false
+        let webVC = NBAuthViewController()
+        self.present(webVC, animated: true, completion: nil)
+    }
+    
     func notLoggedIn() {
         self.placeholderLabel.isHidden = false
         self.userName.isHidden = true
@@ -59,7 +68,9 @@ class UserProfileViewController: UIViewController {
         
         self.userName.text = user.name
         
-        let avatarImage = Just.get(user.userAvatar!).content
+        self.userUniversity.text = user.university.first?.name
+        
+        let avatarImage = Just.get(user.profileThumbUrl).content
         if avatarImage != nil {
             self.userImage.image = UIImage(data: avatarImage!)
         }

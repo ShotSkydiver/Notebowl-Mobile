@@ -26,7 +26,7 @@ class CoursesDetailViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.title = self.selectedCourse.courseCode
-        self.courseTitle.text = self.selectedCourse.courseName
-        self.courseDescription.text = self.selectedCourse.courseDescription
+        self.courseTitle.text = self.selectedCourse.name
+        self.courseDescription.text = self.selectedCourse.description
     }
 }

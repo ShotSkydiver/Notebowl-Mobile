@@ -18,91 +18,89 @@ public struct Token: Codable {
 }
 
 
-public protocol NBItem {
+public protocol NBProtocol: Decodable {
+    var url: URL { get }
+    var createdAt: String { get }
+    var updatedAt: String { get }
+    
     static var routeName: String { get }
 }
 
-public class NBCodable: Decodable {
-    var url: URL
-    var createdAt: String
-    var updatedAt: String
 
-}
 
-public class User: NBCodable, NBItem {
+public struct User: NBProtocol {
+    public var url: URL
+    public var createdAt: String
+    public var updatedAt: String
     
     var firstName: String
     var lastName: String
     var email: String
-    var university: String
-    var userAvatar: String?
+    var _university: String
+    var profileUrl: String?
+    var profileThumbUrl: String
     
     public var name: String { return (firstName + " " + lastName)}
     
+    public var university: [University] { return (NBClient.shared.get(University.self, urlToGet: _university) as! [University]) }
+    
     public static let routeName: String = "users"
-    
-    private enum CodingKeys: String, CodingKey {
-        case firstName
-        case lastName
-        case email
-        case university = "_university"
-        case userAvatar = "profileUrl"
-        
-    }
- 
-    
-    required public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.firstName = try container.decode(String.self, forKey: .firstName)
-        self.lastName = try container.decode(String.self, forKey: .lastName)
-        self.email = try container.decode(String.self, forKey: .email)
-        self.university = try container.decode(String.self, forKey: .university)
-        self.userAvatar = try container.decode(String.self, forKey: .userAvatar)
-        
-        try super.init(from: decoder)
-    }
-    
+
 }
 
 
-public class Course: NBCodable, NBItem {
+public struct Course: NBProtocol {
+    public var url: URL
+    public var createdAt: String
+    public var updatedAt: String
     
-    var courseName: String
-    var courseNumber: String
-    var courseSubject: String
+    var name: String
+    var number: String
+    var subject: String
     var units: Int
-    var courseLocation: String?
-    var courseDescription: String?
-    var term: URL
-    var university: URL
+    var location: String?
+    var description: String?
+    var _term: String
+    var _university: String
     
-    public var courseCode: String { return (courseSubject + " " + courseNumber)}
+    public var courseCode: String { return (subject + " " + number)}
+    
+    public var term: [Term] { return (NBClient.shared.get(Term.self, urlToGet: _term) as! [Term]) }
+    
+    public var university: [University] { return (NBClient.shared.get(University.self, urlToGet: _university) as! [University]) }
     
     public static let routeName: String = "courses"
-    
-    private enum CodingKeys: String, CodingKey {
-        case courseName = "name"
-        case courseNumber = "number"
-        case courseSubject = "subject"
-        case units
-        case courseLocation = "location"
-        case courseDescription = "description"
-        case term = "_term"
-        case university = "_university"
 
-    }
-    
-    required public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.courseName = try values.decode(String.self, forKey: .courseName)
-        self.courseNumber = try values.decode(String.self, forKey: .courseNumber)
-        self.courseSubject = try values.decode(String.self, forKey: .courseSubject)
-        self.units = try values.decode(Int.self, forKey: .units)
-        self.courseLocation = try values.decodeIfPresent(String.self, forKey: .courseLocation)
-        self.courseDescription = try values.decodeIfPresent(String.self, forKey: .courseDescription)
-        self.term = try values.decode(URL.self, forKey: .term)
-        self.university = try values.decode(URL.self, forKey: .university)
+}
 
-        try super.init(from: decoder)
-    }
+public struct Term: NBProtocol {
+    public var url: URL
+    public var createdAt: String
+    public var updatedAt: String
+    
+    var title: String
+    var termStart: String
+    var termEnd: String
+    var termAvailable: String
+    var _university: String
+    
+    public static let routeName: String = "terms"
+    
+    public var university: [University] { return (NBClient.shared.get(University.self, urlToGet: _university) as! [University]) }
+}
+
+
+public struct University: NBProtocol {
+    public var url: URL
+    public var createdAt: String
+    public var updatedAt: String
+    
+    var profileLogo: String?
+    var defaultLogo: String
+    var location: String
+    var name: String
+    var domain: String
+
+    public static let routeName: String = "universities"
+
 }

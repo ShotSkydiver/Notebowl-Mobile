@@ -39,7 +39,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JVM-eO-vC0">
                                             <rect key="frame" x="20" y="59" width="374" height="50"/>
-                                            <mutableString key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lorem eros, sodales sed consequat in, ultricies id nulla. Maecenas scelerisque sagittis placerat. Nunc fringilla purus at ex placerat ullamcorper. Suspendisse potenti. Phasellus enim magna, euismod ut tincidunt ac, pulvinar ut nunc. Donec interdum dolor eu est porttitor sodales. Vestibulum sollicitudin, justo eu aliquet porttitor, felis ligula dignissim sapien, non pellentesque risus odio vel nisi. In sodales mi scelerisque, feugiat tortor ac, interdum orci.</mutableString>
+                                            <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lorem eros, sodales sed consequat in, ultricies id nulla. Maecenas scelerisque sagittis placerat. Nunc fringilla purus at ex placerat ullamcorper. Suspendisse potenti. Phasellus enim magna, euismod ut tincidunt ac, pulvinar ut nunc. Donec interdum dolor eu est porttitor sodales. Vestibulum sollicitudin, justo eu aliquet porttitor, felis ligula dignissim sapien, non pellentesque risus odio vel nisi. In sodales mi scelerisque, feugiat tortor ac, interdum orci.</string>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                             <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
@@ -110,7 +110,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Completely Redundant Course Title Again" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t4L-Qn-bbe">
-                                <rect key="frame" x="20" y="127.66666666666652" width="374" height="57.333333333333343"/>
+                                <rect key="frame" x="20" y="127.66666666666667" width="374" height="57.333333333333329"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="24"/>
                                 <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -120,7 +120,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="169" id="GWF-4Z-GvR"/>
                                 </constraints>
-                                <mutableString key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lorem eros, sodales sed consequat in, ultricies id nulla. Maecenas scelerisque sagittis placerat. Nunc fringilla purus at ex placerat ullamcorper. Suspendisse potenti. Phasellus enim magna, euismod ut tincidunt ac, pulvinar ut nunc. Donec interdum dolor eu est porttitor sodales. Vestibulum sollicitudin, justo eu aliquet porttitor, felis ligula dignissim sapien, non pellentesque risus odio vel nisi. In sodales mi scelerisque, feugiat tortor ac, interdum orci.</mutableString>
+                                <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lorem eros, sodales sed consequat in, ultricies id nulla. Maecenas scelerisque sagittis placerat. Nunc fringilla purus at ex placerat ullamcorper. Suspendisse potenti. Phasellus enim magna, euismod ut tincidunt ac, pulvinar ut nunc. Donec interdum dolor eu est porttitor sodales. Vestibulum sollicitudin, justo eu aliquet porttitor, felis ligula dignissim sapien, non pellentesque risus odio vel nisi. In sodales mi scelerisque, feugiat tortor ac, interdum orci.</string>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -173,7 +173,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="There's nothing to see here yet! No user is logged in!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="6" translatesAutoresizingMaskIntoConstraints="NO" id="68Y-qJ-uEf">
-                                <rect key="frame" x="57.333333333333343" y="361.33333333333331" width="299.33333333333326" height="14.333333333333314"/>
+                                <rect key="frame" x="57" y="361" width="299" height="14"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -193,25 +193,43 @@
                                 <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="University Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VEI-Ik-ht5">
+                                <rect key="frame" x="20" y="408" width="374" height="33"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="0XG-uE-e4S" firstAttribute="bottom" secondItem="VEI-Ik-ht5" secondAttribute="bottom" constant="246" id="7GO-Fp-Amc"/>
+                            <constraint firstItem="VEI-Ik-ht5" firstAttribute="top" secondItem="JYE-Mz-SY8" secondAttribute="bottom" constant="55" id="9FC-0w-wo9"/>
                             <constraint firstItem="68Y-qJ-uEf" firstAttribute="centerX" secondItem="Ljd-Te-ISS" secondAttribute="centerX" id="BSz-Ka-A2j"/>
                             <constraint firstItem="o6v-kI-BTB" firstAttribute="top" secondItem="0XG-uE-e4S" secondAttribute="top" constant="23" id="OTR-6x-1eK"/>
+                            <constraint firstItem="VEI-Ik-ht5" firstAttribute="leading" secondItem="JYE-Mz-SY8" secondAttribute="leading" id="V4P-s1-1W1"/>
                             <constraint firstItem="JYE-Mz-SY8" firstAttribute="top" secondItem="o6v-kI-BTB" secondAttribute="bottom" constant="15" id="XMR-ES-qbl"/>
                             <constraint firstItem="o6v-kI-BTB" firstAttribute="centerY" secondItem="Ljd-Te-ISS" secondAttribute="centerY" constant="-148" id="YDc-d7-gyh"/>
                             <constraint firstAttribute="trailing" secondItem="JYE-Mz-SY8" secondAttribute="trailing" constant="20" id="ZBC-9c-Igg"/>
                             <constraint firstItem="JYE-Mz-SY8" firstAttribute="leading" secondItem="Ljd-Te-ISS" secondAttribute="leading" constant="20" id="bE1-UD-vBH"/>
+                            <constraint firstItem="VEI-Ik-ht5" firstAttribute="trailing" secondItem="JYE-Mz-SY8" secondAttribute="trailing" id="e2j-5U-cGl"/>
                             <constraint firstItem="o6v-kI-BTB" firstAttribute="centerX" secondItem="Ljd-Te-ISS" secondAttribute="centerX" id="squ-wO-Cn8"/>
                             <constraint firstItem="68Y-qJ-uEf" firstAttribute="centerY" secondItem="Ljd-Te-ISS" secondAttribute="centerY" id="uXC-Bd-7u9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0XG-uE-e4S"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Your Profile" largeTitleDisplayMode="always" id="2Aj-pE-r8J"/>
+                    <navigationItem key="navigationItem" title="My Profile" largeTitleDisplayMode="always" id="2Aj-pE-r8J">
+                        <barButtonItem key="rightBarButtonItem" title="Logout" id="len-VN-Fys">
+                            <connections>
+                                <action selector="logoutButtonPressed" destination="z9l-Tx-Ts8" id="CPp-iU-TWO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="logoutButton" destination="len-VN-Fys" id="EZM-8N-YPJ"/>
                         <outlet property="placeholderLabel" destination="68Y-qJ-uEf" id="Olm-oR-EI9"/>
                         <outlet property="userImage" destination="o6v-kI-BTB" id="CHn-Ot-8br"/>
                         <outlet property="userName" destination="JYE-Mz-SY8" id="z4O-JZ-ps7"/>
+                        <outlet property="userUniversity" destination="VEI-Ik-ht5" id="Jgb-O2-YSk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LJT-lo-jBM" userLabel="First Responder" sceneMemberID="firstResponder"/>
