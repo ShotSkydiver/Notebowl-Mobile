@@ -13,6 +13,7 @@ class CoursesDetailViewController: UIViewController {
     
     @IBOutlet weak var courseTitle: UILabel!
     @IBOutlet weak var courseDescription: UILabel!
+    @IBOutlet weak var courseGrade: UILabel!
     
     var selectedCourse: Course!
     
@@ -28,5 +29,6 @@ class CoursesDetailViewController: UIViewController {
         self.title = self.selectedCourse.courseCode
         self.courseTitle.text = self.selectedCourse.name
         self.courseDescription.text = self.selectedCourse.description
+        self.courseGrade.text = self.selectedCourse.currentGradePercent
     }
 }

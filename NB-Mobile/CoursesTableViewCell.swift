@@ -8,22 +8,27 @@
 
 import Foundation
 import UIKit
-
+import SkeletonView
 
 class CoursesTableViewCell: UITableViewCell {
     
     @IBOutlet weak var courseTitle: UILabel!
     @IBOutlet weak var courseNumber: UILabel!
-    @IBOutlet weak var courseDescription: UILabel!
+    @IBOutlet weak var lastUpdated: UILabel!
     @IBOutlet weak var currentGrade: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
+
         super.setSelected(selected, animated: animated)
         
     }
+    
+    
+    
 }

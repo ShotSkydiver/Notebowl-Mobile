@@ -8,12 +8,14 @@
 
 import Foundation
 import UIKit
+import SkeletonView
 
 class UserProfileViewController: UIViewController {
     
     @IBOutlet weak var placeholderLabel: UILabel!
     @IBOutlet weak var userName: UILabel!
-    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var userImage: RoundImageView!
+    
     @IBOutlet weak var userUniversity: UILabel!
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     
@@ -22,6 +24,7 @@ class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.showAnimatedSkeleton()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -49,10 +52,7 @@ class UserProfileViewController: UIViewController {
     }
     
     func notLoggedIn() {
-        self.placeholderLabel.isHidden = false
-        self.userName.isHidden = true
-        self.userImage.isHidden = true
-        
+
         let webVC = NBAuthViewController()
         
         self.present(webVC, animated: true, completion: nil)
@@ -60,11 +60,9 @@ class UserProfileViewController: UIViewController {
     }
     
     func setupUser() {
-        self.placeholderLabel.isHidden = true
-        self.userName.isHidden = false
-        self.userImage.isHidden = false
         
-        let user = NBClient.shared.getCurrentUser()!
+        NBClient.shared.getCurrentUser()
+        let user = NBClient.shared.currentUser!
         
         self.userName.text = user.name
         
@@ -77,5 +75,7 @@ class UserProfileViewController: UIViewController {
         else { print("avatarImage is nil!") }
        
         self.didSetup = true
+        
+        self.view.hideSkeleton()
     }
 }

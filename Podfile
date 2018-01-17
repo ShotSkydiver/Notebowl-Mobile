@@ -7,5 +7,6 @@ target 'NB-Mobile' do
 
   # Pods for NB-Mobile
     pod 'Disk'
+    pod 'SkeletonView'
 end
 

@@ -20,6 +20,7 @@ public class NBClient {
     public static let shared = NBClient()
     
     private var token: Token?
+    public var currentUser: User?
     
     public var loginValidated: Bool = false
     
@@ -46,18 +47,23 @@ public class NBClient {
     }
     
     
-    public func getCurrentUser() -> User? {
+    public func getCurrentUser() {
         let req = Just.get((BaseURL.api.rawValue + BaseURL.credentials.rawValue), params: self.token!.query)
         if (req.ok) {
+            
             do {
-                let user = try User(data: req.content!)
-                return user
+                let reqJson = req.json
+                let nestedJson = (reqJson as AnyObject).value(forKeyPath: "result")
+                let itemType = (nestedJson as AnyObject).value(forKey: "itemType")
+                
+                print("nestedjson: ", itemType!)
+                
+                self.currentUser = try User(data: req.content!)
             }
             catch {
                 print("error! ", error.localizedDescription)
             }
         }
-        return nil
     }
     
     
@@ -69,9 +75,25 @@ public class NBClient {
 
     }
     
-    public func get<T>(_ objectsOfType: T.Type, urlToGet: String? = nil) -> [NBProtocol]? where T: NBProtocol {
+    /*
+ 
+         func getter (attrib): {BaseCollection]? {
+         
+         if let class = Static.indexClass(ucfirst(class)) {
+         var collectionRef = new BaseCollection();
+         load(collectionRef)
+         return collectionRef as! [class.self]
+         }
+         }
+ 
+     */
+    
+    
+    public func get<T>(_ objectsOfType: T.Type, urlToGet: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "") -> [NBProtocol]? where T: NBProtocol {
         let genericUrl = (BaseURL.api.rawValue + objectsOfType.routeName)
-        let req = Just.get((urlToGet ?? genericUrl), params: self.token!.query)
+        
+        let req = Just.get((urlToGet ?? genericUrl), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "token": self.token!.token, "uuid": self.token!.uuid])
+        print("req: ", req.url!.absoluteString)
         
         if (req.ok) {
             

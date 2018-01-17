@@ -19,6 +19,7 @@
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
 		85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */; };
+		85F15C761FFD5A8700E45AF4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85E2919C1F5F619300172C46 /* Info.plist */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
 		85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */; };
@@ -264,6 +265,7 @@
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
+				85F15C761FFD5A8700E45AF4 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,10 +327,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
+				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

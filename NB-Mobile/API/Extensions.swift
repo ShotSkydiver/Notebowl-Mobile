@@ -49,6 +49,47 @@ public extension DateFormatter {
     }
 }
 
+public extension Date {
+    var relativelyFormatted: String {
+        let now = Date()
+        let components = Calendar.current.dateComponents(
+            [.year, .month, .weekOfYear, .day, .hour, .minute, .second],
+            from: self,
+            to: now
+        )
+        if let years = components.year, years > 0 {
+            return "\(years) year\(years == 1 ? "" : "s") ago"
+        }
+        
+        if let months = components.month, months > 0 {
+            return "\(months) month\(months == 1 ? "" : "s") ago"
+        }
+        
+        if let weeks = components.weekOfYear, weeks > 0 {
+            return "\(weeks) week\(weeks == 1 ? "" : "s") ago"
+        }
+        if let days = components.day, days > 0 {
+            guard days > 1 else { return "yesterday" }
+            
+            return "\(days) day\(days == 1 ? "" : "s") ago"
+        }
+        
+        if let hours = components.hour, hours > 0 {
+            return "\(hours) hour\(hours == 1 ? "" : "s") ago"
+        }
+        
+        if let minutes = components.minute, minutes > 0 {
+            return "\(minutes) minute\(minutes == 1 ? "" : "s") ago"
+        }
+        
+        if let seconds = components.second, seconds > 30 {
+            return "\(seconds) second\(seconds == 1 ? "" : "s") ago"
+        }
+        
+        return "just now"
+    }
+}
+
 public extension UIDevice {
     var modelName: String {
         var systemInfo = utsname()
@@ -72,4 +113,55 @@ public extension UIDevice {
     
 }
 
+public extension UITableView {
+    public func reloadData(_ completion: @escaping () -> Void) {
+        UIView.animate(withDuration: 0, animations: {
+            self.reloadData()
+        }, completion: { _ in
+            completion()
+        })
+    }
+}
+
+
+@IBDesignable
+class RoundImageView: UIImageView {
+    @IBInspectable
+    var borderWidth: CGFloat {
+        set {
+            if newValue < 0 {
+                layer.borderWidth = 0
+            } else {
+                layer.borderWidth = newValue
+            }
+        }
+        get {
+            return layer.borderWidth
+        }
+    }
+    
+    @IBInspectable
+    var borderColor: UIColor? {
+        set {
+            layer.borderColor = newValue?.cgColor
+        }
+        get {
+            if let borderColor = layer.borderColor {
+                return UIColor(cgColor: borderColor)
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    override var frame: CGRect {
+        didSet {
+            if frame.width < frame.height {
+                layer.cornerRadius = frame.width / 2
+            } else {
+                layer.cornerRadius = frame.height / 2
+            }
+        }
+    }
+}
 
