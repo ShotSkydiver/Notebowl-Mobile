@@ -12,7 +12,6 @@ import SkeletonView
 
 class UserProfileViewController: UIViewController {
     
-    @IBOutlet weak var placeholderLabel: UILabel!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userImage: RoundImageView!
     
@@ -25,12 +24,6 @@ class UserProfileViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.showAnimatedSkeleton()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,23 +45,18 @@ class UserProfileViewController: UIViewController {
     }
     
     func notLoggedIn() {
-
         let webVC = NBAuthViewController()
-        
         self.present(webVC, animated: true, completion: nil)
-        
     }
     
     func setupUser() {
         
-        NBClient.shared.getCurrentUser()
-        let user = NBClient.shared.currentUser!
+        let user = NBClient.shared.getCurrentUser()
         
-        self.userName.text = user.name
+        self.userName.text = user.fullName
+        self.userUniversity.text = user.university!.name!
         
-        self.userUniversity.text = user.university.first?.name
-        
-        let avatarImage = Just.get(user.profileThumbUrl).content
+        let avatarImage = Just.get(user.profileThumbUrl!.absoluteString).content
         if avatarImage != nil {
             self.userImage.image = UIImage(data: avatarImage!)
         }

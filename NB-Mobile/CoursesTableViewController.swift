@@ -24,39 +24,31 @@ class CoursesTableViewController: UITableViewController {
         self.tableView.refreshControl!.addTarget(self, action: #selector(CoursesTableViewController.refreshCourseData(sender:)), for: .valueChanged)
         
         self.view.showAnimatedSkeleton()
-        
         self.getTableData()
     }
-    
     
     func getTableData() {
         DispatchQueue.main.async {
+            self.courses = NBClient.shared.getMappable(Course.self)
             
-        self.courses = NBClient.shared.get(Course.self) as! [Course]
-        self.title = "Spring 2018"
+            for course in self.courses {
+                course.refreshGrades()
+            }
+            
+            self.title = "Spring 2018"
+            self.navigationController?.title = "Courses"
         
-        if (self.tableView.refreshControl!.isRefreshing) { self.tableView.refreshControl!.endRefreshing() }
-        if (self.view.isSkeletonActive) { self.view.hideSkeleton() }
+            if (self.tableView.refreshControl!.isRefreshing) { self.tableView.refreshControl!.endRefreshing() }
+            if (self.view.isSkeletonActive) { self.view.hideSkeleton(reloadDataAfter: false) }
         
-        self.tableView.reloadData()
+            self.tableView.reloadData()
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-    }
+
     
     @objc func refreshCourseData(sender: UIRefreshControl) {
-        print("refresh")
-
         self.tableView.refreshControl!.beginRefreshing()
         self.getTableData()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -79,8 +71,8 @@ class CoursesTableViewController: UITableViewController {
             let course = self.courses[indexPath.row]
             cell.courseTitle.text = course.name
             cell.courseNumber.text = course.courseCode
-            cell.lastUpdated.text = course.mostRecentGrade
-            cell.currentGrade.text = course.currentGradePercent
+            cell.lastUpdated.text = course.lastUpdated
+            cell.currentGrade.text = course.userCourseGrade
         }
         let selectedView = UIView()
         selectedView.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.2)
@@ -88,19 +80,17 @@ class CoursesTableViewController: UITableViewController {
         
         return cell
     }
-
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "courseDetail" {
             self.lastSelected = self.tableView.indexPathForSelectedRow
             
             let destination = segue.destination as! CoursesDetailViewController
-            destination.selectedCourse = courses[self.tableView.indexPathForSelectedRow!.row]
+            destination.selectedCourse = self.courses[self.tableView.indexPathForSelectedRow!.row]
             
         }
     }
 }
-
 
 @available(iOS 11.0, *)
 extension CoursesTableViewController: SkeletonTableViewDataSource {

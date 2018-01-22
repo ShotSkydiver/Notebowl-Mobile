@@ -8,5 +8,6 @@ target 'NB-Mobile' do
   # Pods for NB-Mobile
     pod 'Disk'
     pod 'SkeletonView'
+    pod 'ObjectMapper', '~> 3.1'
 end
 

@@ -1,15 +1,18 @@
 PODS:
   - Disk (0.3.3)
+  - ObjectMapper (3.1.0)
   - SkeletonView (1.0.4)
 
 DEPENDENCIES:
   - Disk
+  - ObjectMapper (~> 3.1)
   - SkeletonView
 
 SPEC CHECKSUMS:
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
+  ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
   SkeletonView: 933a9442b08c3550f61c2ae38a02456a74ad86f4
 
-PODFILE CHECKSUM: c2cd02ca11c4e08534ecc97c73db4af6e621fd61
+PODFILE CHECKSUM: 33b49d5e76d14030a79e295cb711df455993f017
 
-COCOAPODS: 1.4.0.rc.1
+COCOAPODS: 1.4.0

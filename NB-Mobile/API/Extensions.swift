@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import ObjectMapper
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -165,3 +166,28 @@ class RoundImageView: UIImageView {
     }
 }
 
+
+
+class ObjectTransform<T: Object>: TransformType {
+    public typealias Object = T
+    public typealias JSON = String
+    
+    func transformFromJSON(_ value: Any?) -> T? {
+        let urlString = value as! String
+        
+        let req = Just.get(urlString, params: ["token": NBClient.shared.token!.token, "uuid": NBClient.shared.token!.uuid])
+        
+        if (req.ok) {
+            let reqJson = req.json
+            let nestedJson = (reqJson as AnyObject).value(forKeyPath: "result")
+            
+            let mapp = Mapper<T>().map(JSONObject: nestedJson!)
+            return mapp
+        }
+        return nil
+    }
+    
+    func transformToJSON(_ value: T?) -> String? {
+        return nil
+    }
+}

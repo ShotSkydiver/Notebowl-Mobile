@@ -11,7 +11,6 @@
 		8501CDF61FFBF5D800C853CE /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501CDF51FFBF5D800C853CE /* Just.swift */; };
 		8501E85A1F9FFE86000728D7 /* NBAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501E8581F9FFE86000728D7 /* NBAuthViewController.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
-		853CE2551F7E1A83000E8D6C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CE2541F7E1A83000E8D6C /* Models.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
@@ -23,6 +22,7 @@
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
 		85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */; };
+		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,7 +42,6 @@
 		8501CDF51FFBF5D800C853CE /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
 		8501E8581F9FFE86000728D7 /* NBAuthViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBAuthViewController.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		853CE2541F7E1A83000E8D6C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* NB-Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NB-Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -57,6 +56,7 @@
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
 		85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesDetailViewController.swift; sourceTree = "<group>"; };
+		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
 		8EA4B9585E3E077F8A700C3B /* Pods-NB-Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NB-Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		D7B899D8A577A114EC8DB5D6 /* Pods-NB-Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NB-Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NB_Mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,10 +108,10 @@
 		852D18961F673A0A00BDA97B /* API */ = {
 			isa = PBXGroup;
 			children = (
-				853CE2541F7E1A83000E8D6C /* Models.swift */,
 				8531ACB21FC4EA9F00EC72FA /* Extensions.swift */,
 				8501CDF51FFBF5D800C853CE /* Just.swift */,
 				85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */,
+				85FF86102006A1BA0080D223 /* MappableModels.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -327,11 +327,13 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,7 +352,7 @@
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
 				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,
-				853CE2551F7E1A83000E8D6C /* Models.swift in Sources */,
+				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,

@@ -20,6 +20,5 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         self.delegate = self
     }
-    
 
 }

@@ -20,7 +20,6 @@ class CoursesDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,7 +27,7 @@ class CoursesDetailViewController: UIViewController {
         
         self.title = self.selectedCourse.courseCode
         self.courseTitle.text = self.selectedCourse.name
-        self.courseDescription.text = self.selectedCourse.description
-        self.courseGrade.text = self.selectedCourse.currentGradePercent
+        self.courseDescription.text = self.selectedCourse.desc
+        self.courseGrade.text = self.selectedCourse.userCourseGrade
     }
 }
