@@ -9,15 +9,6 @@
 import Foundation
 import ObjectMapper
 
-public struct Token: Codable {
-    var token: String
-    var uuid: String
-    
-    var query: [String: Any] {
-        return ["token": token, "uuid": uuid]
-    }
-}
-
 public enum ItemType: String {
     case user = "credentials"
     case course = "courses"
@@ -50,8 +41,8 @@ extension ItemType {
     override init() {}
  
     public func mapping(map: Map) {
-        createdAt <- (map["createdAt"], ISO8601DateTransform())
-        updatedAt <- (map["updatedAt"], ISO8601DateTransform())
+        createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
+        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
     }
@@ -177,8 +168,8 @@ class Assignment: Object {
         
         title <- map["title"]
         points <- (map["points"], TransformOf<Double, Int>(fromJSON: { Double(exactly: $0!)! }, toJSON: { $0.map { Int(exactly: $0)! } }))
-        dueDate <- (map["dueDate"], ISO8601DateTransform())
-        availableDate <- (map["availableDate"], ISO8601DateTransform())
+        dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
+        availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         desc <- map["description"]
     }
     
@@ -189,13 +180,13 @@ class Assignment: Object {
             self.userGrade = 0.0
             return
         }
-        self.userGrade = firstGrade.grade
+        self.userGrade = firstGrade.grade?.doubleValue
 
     }
 }
 
 class Grade: Object {
-    var grade: Double? = 0.0
+    var grade: NSDecimalNumber?
     
     override class var routeType: ItemType { return .grade }
     
@@ -207,7 +198,7 @@ class Grade: Object {
     override func mapping(map: Map) {
         super.mapping(map: map)
         
-        grade <- (map["grade"], TransformOf<Double, Int>(fromJSON: { Double(exactly: $0!)! }, toJSON: { $0.map { Int(exactly: $0)! } }))
+        grade <- (map["grade"], NSDecimalNumberTransform())
     }
 }
 

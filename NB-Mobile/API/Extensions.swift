@@ -103,6 +103,10 @@ public extension UIDevice {
         return identifier
     }
     
+    var uuid: String {
+        return identifierForVendor!.uuidString
+    }
+    
     var deviceQuery: String {
         var params = "?uuid=\(identifierForVendor!)&name=\(name)&os=\(systemVersion)&type=\(model)&model=\(modelName)"
         params = params.encodeURIComponent()!
@@ -175,7 +179,7 @@ class ObjectTransform<T: Object>: TransformType {
     func transformFromJSON(_ value: Any?) -> T? {
         let urlString = value as! String
         
-        let req = Just.get(urlString, params: ["token": NBClient.shared.token!.token, "uuid": NBClient.shared.token!.uuid])
+        let req = Just.get(urlString, params: ["uuid": UIDevice().uuid])
         
         if (req.ok) {
             let reqJson = req.json
@@ -189,5 +193,14 @@ class ObjectTransform<T: Object>: TransformType {
     
     func transformToJSON(_ value: T?) -> String? {
         return nil
+    }
+}
+
+class ISO8601FixedDateTransform: DateFormatterTransform {
+    
+    static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")
+    
+    public init() {
+        super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }

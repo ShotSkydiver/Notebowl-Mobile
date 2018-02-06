@@ -17,8 +17,7 @@ public class NBClient {
     public static let shared = NBClient()
     
     public static let defaultUrl = "https://demo.nbstage.com/api/v1.0/credentials"
-    
-    public var token: Token?
+
     public var currentUser: User?
     
     public var loginValidated: Bool = false
@@ -26,24 +25,23 @@ public class NBClient {
     private init() { }
     
     public func checkToken() {
-        if Disk.exists("currentUser.json", in: .applicationSupport) {
-            self.token = try? Disk.retrieve("currentUser.json", from: .applicationSupport, as: Token.self)
-            let request = Just.get(NBClient.defaultUrl, params: self.token!.query)
+            let request = Just.get(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
             if (request.ok) {
                 self.loginValidated = true
                 return
             }
-        }
         self.loginValidated = false
         return
     }
+
     
-    public func parseToken(from data: Any?) throws {
-        self.token = try? Token(json: (data as! String))
-        try? Disk.save(self.token, to: .applicationSupport, as: "currentUser.json")
-        self.loginValidated = true
+    public func registerNotificationsToken(token: String) {
+        let req = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
+        print("pushregister req: ", req.url!.absoluteString)
+        if (req.ok) {
+            print("register ok! ", req.json)
+        }
     }
-    
     
     public func getCurrentUser() -> User {
         self.currentUser = self.getMappable(User.self)?.first
@@ -51,14 +49,14 @@ public class NBClient {
     }
     
     public func logoutUser() {
-        let deleteReq = Just.delete(NBClient.defaultUrl, params: self.token!.query)
+        let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
         if (deleteReq.ok) {
-            try? Disk.remove("currentUser.json", from: .applicationSupport)
+            print("do logout")
         }
     }
     
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "") -> [T]? where T: Object {
-        let req = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "token": self.token!.token, "uuid": self.token!.uuid])
+        let req = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         print("req: ", req.url!.absoluteString)
         
         if (req.ok) {

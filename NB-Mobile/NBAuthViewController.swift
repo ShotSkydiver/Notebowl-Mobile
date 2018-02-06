@@ -51,14 +51,13 @@ public class NBAuthViewController: UIViewController {
 
 extension NBAuthViewController: WKNavigationDelegate, WKUIDelegate {
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.evaluateJavaScript("document.contentType") { (response, error) in
-            if ((response as! String) == ("application/json")) {
-                webView.evaluateJavaScript("document.body.textContent") { (data, error) in
-                    try? NBClient.shared.parseToken(from: data)
-
-                    self.dismiss(animated: true, completion: nil)
-                }
-            }
+        var components = URLComponents(url: webView.url!.absoluteURL, resolvingAgainstBaseURL: false)
+        let pathComponents = components!.path
+        if (pathComponents == "/gateway/services/mobile/register") {
+            NBClient.shared.loginValidated = true
+            self.dismiss(animated: true, completion: nil)
+            
+            
         }
     }
 }
