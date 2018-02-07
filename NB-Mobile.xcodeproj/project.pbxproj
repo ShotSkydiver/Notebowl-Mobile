@@ -14,6 +14,8 @@
 		85250A0D202A1B540003A416 /* WebViewPresentingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A0C202A1B540003A416 /* WebViewPresentingController.swift */; };
 		85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85250A0E202A1B730003A416 /* DefaultPreferences.plist */; };
 		85250A11202A1BE90003A416 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85250A10202A1BE90003A416 /* Login.storyboard */; };
+		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
+		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
@@ -49,6 +51,8 @@
 		85250A0C202A1B540003A416 /* WebViewPresentingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewPresentingController.swift; sourceTree = "<group>"; };
 		85250A0E202A1B730003A416 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		85250A10202A1BE90003A416 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
+		85250A12202A2DC50003A416 /* NBLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBLoadingView.swift; sourceTree = "<group>"; };
+		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* NB-Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "NB-Mobile.entitlements"; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
@@ -117,6 +121,8 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
+				85250A13202A2DC50003A416 /* QCMethod.swift */,
 				85250A08202A1B490003A416 /* Enums.swift */,
 				85250A09202A1B490003A416 /* ProgressWebViewController.swift */,
 			);
@@ -368,13 +374,11 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-NB-Mobile/Pods-NB-Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -399,8 +403,10 @@
 				85250A0B202A1B490003A416 /* ProgressWebViewController.swift in Sources */,
 				85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */,
 				85250A0A202A1B490003A416 /* Enums.swift in Sources */,
+				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				85250A0D202A1B540003A416 /* WebViewPresentingController.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
+				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

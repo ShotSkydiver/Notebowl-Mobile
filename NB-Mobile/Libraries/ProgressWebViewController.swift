@@ -8,6 +8,7 @@
 
 import UIKit
 import WebKit
+import UserNotifications
 
 let estimatedProgressKeyPath = "estimatedProgress"
 let titleKeyPath = "title"
@@ -137,7 +138,6 @@ open class ProgressWebViewController: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         navigationItem.title = navigationItem.title ?? url?.absoluteString
         
         if let navigationController = navigationController {
@@ -167,19 +167,21 @@ open class ProgressWebViewController: UIViewController {
     
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         setUpState()
+    }
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
+        UIApplication.shared.registerForRemoteNotifications()
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         rollbackState()
     }
 
     override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -207,7 +209,6 @@ open class ProgressWebViewController: UIViewController {
     }
 }
 
-// MARK: - Public Methods
 public extension ProgressWebViewController {
     func load(_ url: URL) {
         guard let webView = webView else {
@@ -224,24 +225,9 @@ public extension ProgressWebViewController {
             webView?.go(to: firstPageItem)
         }
     }
-    /*
-    func isPageJson() -> Bool {
-        // webView.evaluateJavaScript("document.contentType") { (response, error) in
-        // if ((response as! String) == ("application/json")) {
-        var isJson: Bool = false
-        webView?.evaluateJavaScript("document.contentType") { (response, error) in
-            if ((response as! String) == ("application/json")) {
-                print("is json!")
-                isJson = true
-                return
-            }
-        }
-        return isJson
-    }
-     */
+
 }
 
-// MARK: - Fileprivate Methods
 fileprivate extension ProgressWebViewController {
     var availableCookies: [HTTPCookie]? {
         return cookies?.filter {
@@ -261,14 +247,12 @@ fileprivate extension ProgressWebViewController {
     func createRequest(url: URL) -> URLRequest {
         var request = URLRequest(url: url)
         
-        // Set up headers
         if let headers = headers {
             for (field, value) in headers {
                 request.addValue(value, forHTTPHeaderField: field)
             }
         }
         
-        // Set up Cookies
         if let cookies = availableCookies, let value = HTTPCookie.requestHeaderFields(with: cookies)[cookieKey] {
             request.addValue(value, forHTTPHeaderField: cookieKey)
         }
@@ -565,7 +549,6 @@ extension ProgressWebViewController: WKNavigationDelegate {
             return
         }
         
-        // Ensure all available cookies are set in the navigation request
         if url.host == self.url?.host, let cookies = availableCookies, !checkRequestCookies(navigationAction.request, cookies: cookies) {
             load(url)
             actionPolicy = .cancel

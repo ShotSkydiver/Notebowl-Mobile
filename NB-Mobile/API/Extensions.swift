@@ -91,6 +91,14 @@ public extension Date {
     }
 }
 
+public extension UITableViewCell {
+    func showCell(_ show: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.contentView.alpha = show ? 1.0 : 0.0
+        }
+    }
+}
+
 public extension UIDevice {
     var modelName: String {
         var systemInfo = utsname()

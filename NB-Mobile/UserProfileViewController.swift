@@ -16,8 +16,15 @@ class UserProfileViewController: UIViewController {
     @IBOutlet weak var userUniversity: UILabel!
     @IBOutlet weak var logoutButton: UIBarButtonItem!
     
+    var loadingView: NBLoadingView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingView = NBLoadingView()
+        loadingView?.showLoadView(false)
+        self.view.addSubview(loadingView!)
+        loadingView?.addUntitled2Animation()
         setupUser()
     }
     
@@ -25,16 +32,17 @@ class UserProfileViewController: UIViewController {
         NBClient.shared.logoutUser()
     }
     
-    
     func setupUser() {
-        
-        let user = NBClient.shared.getCurrentUser()
-        
-        self.userName.text = user.fullName
-        self.userUniversity.text = user.university!.name!
-        
-        let avatarImage = Just.get(user.profileThumbUrl!.absoluteString).content
-        self.userImage.image = UIImage(data: avatarImage!)
-
+        loadingView?.showLoadView(true)
+        DispatchQueue.main.async {
+            let user = NBClient.shared.getCurrentUser()
+            
+            self.userName.text = user.fullName
+            self.userUniversity.text = user.university!.name!
+            
+            let avatarImage = Just.get(user.profileThumbUrl!.absoluteString).content
+            self.userImage.image = UIImage(data: avatarImage!)
+            self.loadingView?.showLoadView(false)
+        }
     }
 }

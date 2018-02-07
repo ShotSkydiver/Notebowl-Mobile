@@ -8,11 +8,12 @@
 
 import Foundation
 import UIKit
-import SkeletonView
 
 @available(iOS 11.0, *)
 class CoursesTableViewController: UITableViewController {
     var courses: [Course]!
+    
+    var loadingView: NBLoadingView?
     
     private var lastSelected: IndexPath! = nil
     
@@ -23,11 +24,15 @@ class CoursesTableViewController: UITableViewController {
         self.tableView.refreshControl!.tintColor = UIColor(named: "Notebowl Blue")
         self.tableView.refreshControl!.addTarget(self, action: #selector(CoursesTableViewController.refreshCourseData(sender:)), for: .valueChanged)
         
-        self.view.showAnimatedSkeleton()
+        loadingView = NBLoadingView()
+        loadingView?.showLoadView(false)
+        self.view.addSubview(loadingView!)
+        loadingView?.addUntitled2Animation()
         self.getTableData()
     }
     
     func getTableData() {
+        loadingView?.showLoadView(true)
         DispatchQueue.main.async {
             self.courses = NBClient.shared.getMappable(Course.self)
             
@@ -38,9 +43,8 @@ class CoursesTableViewController: UITableViewController {
             self.title = "Spring 2018"
             self.navigationController?.title = "Courses"
         
-            if (self.tableView.refreshControl!.isRefreshing) { self.tableView.refreshControl!.endRefreshing() }
-            if (self.view.isSkeletonActive) { self.view.hideSkeleton(reloadDataAfter: false) }
-        
+            self.loadingView?.showLoadView(false)
+            self.tableView.refreshControl!.endRefreshing()
             self.tableView.reloadData()
         }
     }
@@ -66,13 +70,15 @@ class CoursesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "courseCell", for: indexPath) as! CoursesTableViewCell
-
+        cell.showCell(false)
+        
         if (self.courses) != nil {
             let course = self.courses[indexPath.row]
             cell.courseTitle.text = course.name
             cell.courseNumber.text = course.courseCode
             cell.lastUpdated.text = course.lastUpdated
             cell.currentGrade.text = course.userCourseGrade
+            cell.showCell(true)
         }
         let selectedView = UIView()
         selectedView.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.2)
@@ -92,18 +98,3 @@ class CoursesTableViewController: UITableViewController {
     }
 }
 
-@available(iOS 11.0, *)
-extension CoursesTableViewController: SkeletonTableViewDataSource {
-    
-    func collectionSkeletonView(_ skeletonView: UITableView, cellIdenfierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
-        return "courseCell"
-    }
-    
-    func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
-    }
-    
-    func numSections(in collectionSkeletonView: UITableView) -> Int {
-        return 1
-    }
-}
