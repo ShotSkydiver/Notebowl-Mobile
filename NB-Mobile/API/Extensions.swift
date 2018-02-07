@@ -126,59 +126,26 @@ public extension UIDevice {
     
 }
 
-public extension UITableView {
-    public func reloadData(_ completion: @escaping () -> Void) {
-        UIView.animate(withDuration: 0, animations: {
-            self.reloadData()
-        }, completion: { _ in
-            completion()
-        })
+public extension UIImage {
+    public func filled(withColor color: UIColor) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        color.setFill()
+        guard let context = UIGraphicsGetCurrentContext() else { return self }
+        
+        context.translateBy(x: 0, y: size.height)
+        context.scaleBy(x: 1.0, y: -1.0)
+        context.setBlendMode(CGBlendMode.normal)
+        
+        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        guard let mask = self.cgImage else { return self }
+        context.clip(to: rect, mask: mask)
+        context.fill(rect)
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return newImage
     }
 }
-
-
-@IBDesignable
-class RoundImageView: UIImageView {
-    @IBInspectable
-    var borderWidth: CGFloat {
-        set {
-            if newValue < 0 {
-                layer.borderWidth = 0
-            } else {
-                layer.borderWidth = newValue
-            }
-        }
-        get {
-            return layer.borderWidth
-        }
-    }
-    
-    @IBInspectable
-    var borderColor: UIColor? {
-        set {
-            layer.borderColor = newValue?.cgColor
-        }
-        get {
-            if let borderColor = layer.borderColor {
-                return UIColor(cgColor: borderColor)
-            } else {
-                return nil
-            }
-        }
-    }
-    
-    override var frame: CGRect {
-        didSet {
-            if frame.width < frame.height {
-                layer.cornerRadius = frame.width / 2
-            } else {
-                layer.cornerRadius = frame.height / 2
-            }
-        }
-    }
-}
-
-
 
 class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T

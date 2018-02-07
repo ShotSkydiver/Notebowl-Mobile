@@ -18,13 +18,14 @@
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
+		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
+		85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */; };
+		85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
-		85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */; };
-		85F15C761FFD5A8700E45AF4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85E2919C1F5F619300172C46 /* Info.plist */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
 		85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */; };
@@ -56,6 +57,9 @@
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* NB-Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "NB-Mobile.entitlements"; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
+		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
+		85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedTableViewCell.swift; sourceTree = "<group>"; };
+		85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableVCWithNavbarImage.swift; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* NB-Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NB-Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85E291951F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -65,7 +69,6 @@
 		85E291A11F5F619300172C46 /* NB-MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NB-MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291AC1F5F619300172C46 /* NB-MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NB-MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
-		85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
 		85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesDetailViewController.swift; sourceTree = "<group>"; };
@@ -121,6 +124,7 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */,
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
 				85250A08202A1B490003A416 /* Enums.swift */,
@@ -148,6 +152,27 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		85CC9BF4202B8E30001CABB0 /* Home Feed */ = {
+			isa = PBXGroup;
+			children = (
+				85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */,
+				85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */,
+			);
+			path = "Home Feed";
+			sourceTree = "<group>";
+		};
+		85CC9BF5202B8E68001CABB0 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
+				856EE668202524DF00D8089D /* NB-Mobile.entitlements */,
+				85250A0E202A1B730003A416 /* DefaultPreferences.plist */,
+				85E2919C1F5F619300172C46 /* Info.plist */,
+				85E291971F5F619300172C46 /* Assets.xcassets */,
+			);
+			path = "Support Files";
+			sourceTree = "<group>";
+		};
 		85E291841F5F619300172C46 = {
 			isa = PBXGroup;
 			children = (
@@ -172,21 +197,17 @@
 			isa = PBXGroup;
 			children = (
 				85250A06202A1AE60003A416 /* Libraries */,
-				856EE668202524DF00D8089D /* NB-Mobile.entitlements */,
-				85250A0E202A1B730003A416 /* DefaultPreferences.plist */,
-				85E2919C1F5F619300172C46 /* Info.plist */,
+				85CC9BF5202B8E68001CABB0 /* Support Files */,
 				85E291901F5F619300172C46 /* AppDelegate.swift */,
+				85250A10202A1BE90003A416 /* Login.storyboard */,
+				85E291941F5F619300172C46 /* Main.storyboard */,
 				852D18961F673A0A00BDA97B /* API */,
+				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
+				85250A07202A1AF40003A416 /* Login */,
+				85CC9BF4202B8E30001CABB0 /* Home Feed */,
 				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
 				85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */,
 				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
-				85E291941F5F619300172C46 /* Main.storyboard */,
-				85250A10202A1BE90003A416 /* Login.storyboard */,
-				85250A07202A1AF40003A416 /* Login */,
-				85E7E01C1FE983F900ECF5F8 /* UserProfileViewController.swift */,
-				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
-				85E291971F5F619300172C46 /* Assets.xcassets */,
-				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
 			);
 			path = "NB-Mobile";
 			sourceTree = "<group>";
@@ -311,7 +332,6 @@
 				85250A11202A1BE90003A416 /* Login.storyboard in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
-				85F15C761FFD5A8700E45AF4 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,15 +415,17 @@
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
 				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,
+				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85250A0B202A1B490003A416 /* ProgressWebViewController.swift in Sources */,
-				85E7E01D1FE983F900ECF5F8 /* UserProfileViewController.swift in Sources */,
+				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,
 				85250A0A202A1B490003A416 /* Enums.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
+				85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */,
 				85250A0D202A1B540003A416 /* WebViewPresentingController.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
 				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
@@ -557,8 +579,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8EA4B9585E3E077F8A700C3B /* Pods-NB-Mobile.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Beta";
-				CODE_SIGN_ENTITLEMENTS = "NB-Mobile/NB-Mobile.entitlements";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				CODE_SIGN_ENTITLEMENTS = "NB-Mobile/Support Files/NB-Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 8M84348K8B;
@@ -566,7 +588,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "NB-Mobile/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/NB-Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -581,8 +603,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D7B899D8A577A114EC8DB5D6 /* Pods-NB-Mobile.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Beta";
-				CODE_SIGN_ENTITLEMENTS = "NB-Mobile/NB-Mobile.entitlements";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				CODE_SIGN_ENTITLEMENTS = "NB-Mobile/Support Files/NB-Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 8M84348K8B;
@@ -590,7 +612,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "NB-Mobile/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/NB-Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";

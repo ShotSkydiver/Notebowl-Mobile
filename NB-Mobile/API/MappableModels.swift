@@ -38,6 +38,8 @@ extension ItemType {
     
     class var routeType: ItemType { return .user }
     
+    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
+    
     public required init?(map: Map) { }
     
     override init() {}
@@ -94,7 +96,8 @@ class Course: Object {
     
     public var userCourseGrade: String?
     public var lastUpdated: String?
-    public var secondsSinceUpdate: TimeInterval?
+    
+    public var secondsSinceGradeUpdate: TimeInterval?
     
     override class var routeType: ItemType { return .course }
     
@@ -146,11 +149,11 @@ class Course: Object {
         
         if (recentGrade?.first != nil) {
             self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
-            self.secondsSinceUpdate = recentGrade?.first!.updatedAt.timeIntervalSinceReferenceDate
+            self.secondsSinceGradeUpdate = recentGrade?.first!.secondsSinceUpdate
         }
         else {
             self.lastUpdated = self.updatedAt?.relativelyFormatted
-            self.secondsSinceUpdate = self.updatedAt.timeIntervalSinceReferenceDate
+            self.secondsSinceGradeUpdate = self.secondsSinceUpdate
         }
     }
 }
@@ -242,10 +245,9 @@ class Post: Object {
     var _creator: User?
     var _parent: Course?
     
-    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
-    
     public var postLikes: [Like]?
     public var postComments: [Comment]?
+    public var likedByCurrentUser: Bool?
     
     override class var routeType: ItemType { return .post }
     
@@ -263,6 +265,20 @@ class Post: Object {
         _creator <- (map["_creator"], ObjectTransform<User>())
         _parent <- (map["_parent"], ObjectTransform<Course>())
     }
+    
+    func refreshData() {
+        self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        
+        for like in postLikes! {
+            if (like._owner?.resourceKey == NBClient.shared.currentUser?.resourceKey) {
+                self.likedByCurrentUser = true
+                return
+            }
+        }
+        self.likedByCurrentUser = false
+    }
+    
 }
 
 class Comment: Object {
@@ -318,9 +334,7 @@ class Notification: Object {
     var name: String?
     
     override class var routeType: ItemType { return .notification }
-    
-    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
-    
+        
     required public init?(map: Map) {
         super.init(map: map)
     }

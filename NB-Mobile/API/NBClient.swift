@@ -53,6 +53,15 @@ public class NBClient {
         }
     }
     
+    public func buildFilterString(from items: [Object]) -> String {
+        var urlBuilder: String = ""
+        for item in items {
+            urlBuilder = (urlBuilder + item.url.absoluteString + ",")
+            
+        }
+        return urlBuilder
+    }
+    
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "") -> [T]? where T: Object {
         let req = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         print("req: ", req.url!.absoluteString)

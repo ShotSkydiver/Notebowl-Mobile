@@ -43,7 +43,7 @@ class CoursesTableViewController: UITableViewController {
             self.title = "Spring 2018"
             self.navigationController?.title = "Courses"
             
-            self.courses.sort() { $0.secondsSinceUpdate! > $1.secondsSinceUpdate! }
+            self.courses.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
         
             self.loadingView?.showLoadView(false)
             self.tableView.refreshControl!.endRefreshing()
