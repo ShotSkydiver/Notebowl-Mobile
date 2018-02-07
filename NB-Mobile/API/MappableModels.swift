@@ -15,6 +15,10 @@ public enum ItemType: String {
     case assignment = "assignments"
     case grade = "grades"
     case university = "universities"
+    case post = "posts"
+    case comment = "comments"
+    case like = "likes"
+    case notification = "notifications"
 }
 
 extension ItemType {
@@ -30,12 +34,11 @@ extension ItemType {
     var updatedAt: Date!
     var itemType: String!
     var url: URL!
+    var resourceKey: String!
     
     class var routeType: ItemType { return .user }
     
-    public required init?(map: Map) {
-        
-    }
+    public required init?(map: Map) { }
     
     override init() {}
  
@@ -44,6 +47,7 @@ extension ItemType {
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
+        resourceKey <- map["resourceKey"]
     }
 }
 
@@ -63,7 +67,6 @@ public class User: Object {
     
     required public init?(map: Map) {
         super.init(map: map)
-        
     }
     
     override public func mapping(map: Map) {
@@ -91,12 +94,12 @@ class Course: Object {
     
     public var userCourseGrade: String?
     public var lastUpdated: String?
+    public var secondsSinceUpdate: TimeInterval?
     
     override class var routeType: ItemType { return .course }
     
     required public init?(map: Map) {
         super.init(map: map)
-        
     }
     
     override func mapping(map: Map) {
@@ -119,7 +122,7 @@ class Course: Object {
         for assignment in courseAssignments! {
             assignment.currentGrade()
             
-            if (assignment.userGrade == 0.0) {
+            if ((assignment.userGrade == 0.0) || (assignment.userGrade == nil)) {
                 
             }
             else {
@@ -133,15 +136,22 @@ class Course: Object {
         var finalGrade = (userPoints/maximumPoints)
         finalGrade = (finalGrade*100.0)
         
-        if (finalGrade == 0.0) {
-            self.userCourseGrade = "--"
+        if (finalGrade.isNaN) {
+            self.userCourseGrade = "-"
         }
         else {
             self.userCourseGrade = String(format: "%.1f%%", finalGrade)
         }
         let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsUrls)\"]", sortBy: "updatedAt:desc", limit: "1")
         
-        self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
+        if (recentGrade?.first != nil) {
+            self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
+            self.secondsSinceUpdate = recentGrade?.first!.updatedAt.timeIntervalSinceReferenceDate
+        }
+        else {
+            self.lastUpdated = self.updatedAt?.relativelyFormatted
+            self.secondsSinceUpdate = self.updatedAt.timeIntervalSinceReferenceDate
+        }
     }
 }
 
@@ -159,7 +169,6 @@ class Assignment: Object {
     
     required public init?(map: Map) {
         super.init(map: map)
-        
     }
     
     override func mapping(map: Map) {
@@ -191,12 +200,10 @@ class Grade: Object {
     
     required public init?(map: Map) {
         super.init(map: map)
-        
     }
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
         grade <- (map["grade"], NSDecimalNumberTransform())
     }
 }
@@ -213,7 +220,6 @@ class University: Object {
     
     required public init?(map: Map) {
         super.init(map: map)
-        
     }
     
     override func mapping(map: Map) {
@@ -225,4 +231,108 @@ class University: Object {
         domain <- map["domain"]
         location <- map["location"]
     }
+}
+
+class Post: Object {
+    
+    var editedAt: Date?
+    var isAnonymous: Bool!
+    var pinned: Bool!
+    var text: String?
+    var _creator: User?
+    var _parent: Course?
+    
+    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
+    
+    public var postLikes: [Like]?
+    public var postComments: [Comment]?
+    
+    override class var routeType: ItemType { return .post }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
+        isAnonymous <- map["isAnonymous"]
+        pinned <- map["pinned"]
+        text <- map["text"]
+        _creator <- (map["_creator"], ObjectTransform<User>())
+        _parent <- (map["_parent"], ObjectTransform<Course>())
+    }
+}
+
+class Comment: Object {
+    
+    var editedAt: Date?
+    var isAnonymous: Bool!
+    var text: String?
+    var _creator: User?
+    var _parent: Post?
+    
+    override class var routeType: ItemType { return .comment }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
+        isAnonymous <- map["isAnonymous"]
+        text <- map["text"]
+        _creator <- (map["_creator"], ObjectTransform<User>())
+        _parent <- (map["_parent"], ObjectTransform<Post>())
+    }
+}
+
+class Like: Object {
+    
+    var _parent: Post?
+    var _owner: User?
+    
+    override class var routeType: ItemType { return .like }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        _parent <- (map["_parent"], ObjectTransform<Post>())
+        _owner <- (map["_owner"], ObjectTransform<User>())
+    }
+}
+
+class Notification: Object {
+    
+    var status: String?
+    var text: String?
+    var type: String?
+    var _parent: Post?
+    var name: String?
+    
+    override class var routeType: ItemType { return .notification }
+    
+    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        name <- map["name"]
+        status <- map["status"]
+        text <- map["text"]
+        type <- map["type"]
+        _parent <- (map["_parent"], ObjectTransform<Post>())
+    }
+
 }

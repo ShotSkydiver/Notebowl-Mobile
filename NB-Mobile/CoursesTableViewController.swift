@@ -2,7 +2,7 @@
 //  CoursesTableViewController.swift
 //  NB-Mobile
 //
-//  Created by Conner Owen on 12/12/17.
+//  Created by Conner Owen on 12/14/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.
 //
 
@@ -42,6 +42,8 @@ class CoursesTableViewController: UITableViewController {
             
             self.title = "Spring 2018"
             self.navigationController?.title = "Courses"
+            
+            self.courses.sort() { $0.secondsSinceUpdate! > $1.secondsSinceUpdate! }
         
             self.loadingView?.showLoadView(false)
             self.tableView.refreshControl!.endRefreshing()
@@ -49,23 +51,15 @@ class CoursesTableViewController: UITableViewController {
         }
     }
 
-    
     @objc func refreshCourseData(sender: UIRefreshControl) {
-        self.tableView.refreshControl!.beginRefreshing()
         self.getTableData()
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (self.courses != nil) {
            return self.courses.count
         }
-        else {
-            return 7
-        }
+        return 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -88,12 +82,11 @@ class CoursesTableViewController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "courseDetail" {
-            self.lastSelected = self.tableView.indexPathForSelectedRow
+        if let senderCell = sender as? CoursesTableViewCell {
+            let indexPath = tableView.indexPath(for: senderCell)
+            let destVC = segue.destination as! CoursesDetailViewController
             
-            let destination = segue.destination as! CoursesDetailViewController
-            destination.selectedCourse = self.courses[self.tableView.indexPathForSelectedRow!.row]
-            
+            destVC.selectedCourse = self.courses[indexPath!.row]
         }
     }
 }
