@@ -19,6 +19,7 @@ public class NBClient {
     public static let defaultUrl = "https://demo.nbstage.com/api/v1.0/credentials"
 
     public var currentUser: User?
+    public var deviceToken: String?
     
     public var loginValidated: Bool = false
     
@@ -35,8 +36,8 @@ public class NBClient {
     }
 
     
-    public func registerNotificationsToken(token: String) {
-        let req = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
+    public func registerNotificationsToken() {
+        let req = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": self.deviceToken!])
         print("pushregister req: ", req.url!.absoluteString)
         if (req.ok) {
             print("register ok! ", req.json)

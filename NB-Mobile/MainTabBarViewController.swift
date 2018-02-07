@@ -21,4 +21,16 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self
     }
 
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if selectedViewController == nil || viewController == selectedViewController {
+            return false
+        }
+        
+        let fromView = selectedViewController!.view
+        let toView = viewController.view
+        
+        UIView.transition(from: fromView!, to: toView!, duration: 0.3, options: [.transitionCrossDissolve], completion: nil)
+        
+        return true
+    }
 }

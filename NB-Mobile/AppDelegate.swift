@@ -10,25 +10,49 @@ import UIKit
 import UserNotifications
 
 
+
+@available(iOS 11.0, *)
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var initialRootController: UIViewController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
+        let defaults = UserDefaults.standard
         
-        let dictionary = NSDictionary(object: "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36", forKey: "UserAgent" as NSCopying)
-        UserDefaults.standard.register(defaults: dictionary as! [String : Any])
+        if let prefsFile = Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist"),
+            let prefsDict = NSDictionary(contentsOf: prefsFile) as? [String: Any] {
+            defaults.register(defaults: prefsDict)
+        }
         
-        NBClient.shared.checkToken()
+        let isUserLoggedIn = defaults.bool(forKey: "com.notebowl.standalone.userLoggedIn")
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
-        UIApplication.shared.registerForRemoteNotifications()
+        if !isUserLoggedIn {
+            self.presentLogin()
+        }
+        else if (isUserLoggedIn) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
+            application.registerForRemoteNotifications()
+        }
         
         return true
     }
 
+    func presentLogin() {
+        let storyboard = UIStoryboard(name: "Login", bundle: nil)
+        let onboarding = storyboard.instantiateViewController(withIdentifier: "initialLoginController") as! WebViewPresentingController
+        self.initialRootController = self.window?.rootViewController
+        self.window?.rootViewController = onboarding
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+    func finishedPresentingOnboarding() {
+        self.window?.rootViewController = initialRootController
+    }
+    
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data -> String in
             return String(format: "%02.2hhx", data)
@@ -36,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         print("Device Token: \(token)")
         
-        NBClient.shared.registerNotificationsToken(token: token)
+        NBClient.shared.deviceToken = token
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("fail ", error.localizedDescription)
@@ -49,6 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+@available(iOS 11.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo

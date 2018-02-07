@@ -15,7 +15,6 @@ public enum ItemType: String {
     case assignment = "assignments"
     case grade = "grades"
     case university = "universities"
-
 }
 
 extension ItemType {
