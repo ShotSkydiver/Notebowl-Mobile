@@ -20,48 +20,50 @@ class HomeFeedTableViewCell: UITableViewCell {
     @IBOutlet weak var postLikes: UILabel!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var commentButton: UIButton!
+    @IBOutlet weak var buttonsView: UIView!
     
     var post: Post?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.showCell(false)
-        
-        let selectedView = UIView()
-        selectedView.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.2)
-        self.selectedBackgroundView = selectedView
-        
         self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
-        
-        self.updateCell()
-        self.showCell(true)
+                
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    func updateCell() {
-        if (self.post != nil) {
-            DispatchQueue.main.async {
-                self.userName.text = self.post!._creator?.fullName
-                self.userAvatar.image = UIImage(data: Just.get((self.post!._creator?.profileThumbUrl.absoluteString)!).content!)
-                self.postContent.text = self.post!.text
-                self.postedDate.text = self.post!.updatedAt.relativelyFormatted
-                
-                self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) Likes")
-                self.postComments.text = ("\(self.post!.postComments?.count ?? 0) Comments")
-                
-                if (self.post!.likedByCurrentUser)! {
-                    self.likeButton.setTitle("Liked", for: .normal)
-                    self.likeButton.setBackgroundImage(UIImage().filled(withColor: UIColor(named: "Notebowl Blue")!), for: .normal)
-                    self.likeButton.setTitleColor(UIColor.groupTableViewBackground, for: .normal)
-                    
-                }
+    func setPostLiked() {
+        self.likeButton.isSelected = true
+    }
+    
+    @IBAction func likeButtonPressed() {
+        if (self.likeButton.isSelected) {
+            let delReq = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+            if (delReq.ok) {
+                self.post!.refreshData()
+                self.updateLikes()
+            }
+        }
+        else if (!self.likeButton.isSelected) {
+            let postReq = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
+            if (postReq.ok) {
+                self.post!.refreshData()
+                self.updateLikes()
             }
         }
     }
+    
+    func updateLikes() {
+        DispatchQueue.main.async {
+            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) Likes")
+            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) Comments")
+            self.likeButton.isSelected = self.post!.likedByCurrentUser!
+        }
+    }
+    
 }

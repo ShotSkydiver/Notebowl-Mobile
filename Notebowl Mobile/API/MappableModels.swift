@@ -11,6 +11,7 @@ import ObjectMapper
 
 public enum ItemType: String {
     case user = "credentials"
+    case term = "terms"
     case course = "courses"
     case assignment = "assignments"
     case grade = "grades"
@@ -58,9 +59,8 @@ public class User: Object {
     var firstName: String!
     var lastName: String!
     var email: String?
-    var profileUrl: URL!
+    var profileUrl: UIImage!
     var profileThumbUrl: URL!
-    
     var university: University?
     
     var fullName: String { return (firstName + " " + lastName) }
@@ -77,8 +77,34 @@ public class User: Object {
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
-        profileUrl <- (map["profileUrl"], URLTransform())
+        profileUrl <- (map["profileUrl"], ImageTransform())
         profileThumbUrl <- (map["profileThumbUrl"], URLTransform())
+        university <- (map["_university"], ObjectTransform<University>())
+    }
+}
+
+class Term: Object {
+    
+    var title: String?
+    var termStart: Date!
+    var termEnd: Date!
+    var termAvailable: Date!
+    
+    var university: University?
+    
+    override class var routeType: ItemType { return .term }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        title <- map["title"]
+        termStart <- (map["termStart"], ISO8601FixedDateTransform())
+        termEnd <- (map["termEnd"], ISO8601FixedDateTransform())
+        termAvailable <- (map["termAvailable"], ISO8601FixedDateTransform())
         university <- (map["_university"], ObjectTransform<University>())
     }
 }
@@ -242,12 +268,14 @@ class Post: Object {
     var isAnonymous: Bool!
     var pinned: Bool!
     var text: String?
-    var _creator: User?
+    var _creator: User!
     var _parent: Course?
     
     public var postLikes: [Like]?
     public var postComments: [Comment]?
-    public var likedByCurrentUser: Bool?
+    public var likedByCurrentUser: Bool? // get rid of 
+    
+    public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .post }
     
@@ -270,13 +298,20 @@ class Post: Object {
         self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         
-        for like in postLikes! {
-            if (like._owner?.resourceKey == NBClient.shared.currentUser?.resourceKey) {
-                self.likedByCurrentUser = true
-                return
+        if postLikes!.count > 0 {
+            for like in postLikes! {
+                if (like._owner?.resourceKey == NBClient.shared.currentUser?.resourceKey) {
+                    self.likedByCurrentUser = true
+                    self.likeFromCurrentUser = like
+                }
+                else {
+                    self.likedByCurrentUser = false
+                }
             }
         }
-        self.likedByCurrentUser = false
+        else if postLikes!.count == 0 {
+            self.likedByCurrentUser = false
+        }
     }
     
 }

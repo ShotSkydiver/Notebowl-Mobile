@@ -171,6 +171,32 @@ class ObjectTransform<T: Object>: TransformType {
     }
 }
 
+class ImageTransform: TransformType {
+    public typealias Object = UIImage
+    public typealias JSON = String
+    
+    func transformFromJSON(_ value: Any?) -> UIImage? {
+        print("\n\nprofileurl: ", (value as! String))
+        var urlcomps = URLComponents(string: (value as! String))!
+        // let rull = URL(string: (value as! String))
+        if (urlcomps.host == nil) {
+            print("host nil!")
+            urlcomps.scheme = "https"
+            urlcomps.host = "demo.nbstage.com"
+        }
+        let req = Just.get(urlcomps.url!.absoluteString, params: ["uuid": UIDevice().uuid])
+        
+        if (req.ok) {
+            return UIImage(data: req.content!)
+        }
+        return nil
+    }
+    
+    func transformToJSON(_ value: UIImage?) -> String? {
+        return nil
+    }
+}
+
 class ISO8601FixedDateTransform: DateFormatterTransform {
     
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")

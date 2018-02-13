@@ -34,6 +34,9 @@ class NBLoadingView: UIView, CAAnimationDelegate {
             let centerX = (window.center.x-(dimensions/2))
             let centerY = ((window.center.y-141)-(dimensions/2))
             super.init(frame: CGRect(x: centerX, y: centerY, width: dimensions, height: dimensions))
+            
+            self.alpha = 0.0
+            
             setupProperties()
             setupLayers()
         }
