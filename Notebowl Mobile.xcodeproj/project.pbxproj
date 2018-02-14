@@ -17,6 +17,8 @@
 		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
+		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
+		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
 		85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */; };
@@ -59,6 +61,8 @@
 		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
+		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
+		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
 		85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedTableViewCell.swift; sourceTree = "<group>"; };
@@ -154,6 +158,16 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		8583F6C42034AFB000313C9D /* Courses View */ = {
+			isa = PBXGroup;
+			children = (
+				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
+				85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */,
+				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
+			);
+			path = "Courses View";
+			sourceTree = "<group>";
+		};
 		85CC9BF4202B8E30001CABB0 /* Home Feed */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,9 +221,9 @@
 				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
 				85250A07202A1AF40003A416 /* Login */,
 				85CC9BF4202B8E30001CABB0 /* Home Feed */,
-				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
-				85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */,
-				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
+				8583F6C42034AFB000313C9D /* Courses View */,
+				8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */,
+				8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */,
 			);
 			path = "Notebowl Mobile";
 			sourceTree = "<group>";
@@ -418,10 +432,12 @@
 				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
 				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
+				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
+				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85250A0B202A1B490003A416 /* ProgressWebViewController.swift in Sources */,
 				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,

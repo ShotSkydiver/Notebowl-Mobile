@@ -19,10 +19,6 @@ class CoursesTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.refreshControl!.attributedTitle = NSAttributedString(string: "Refresh grades")
-        self.tableView.refreshControl!.tintColor = UIColor(named: "Notebowl Blue")
-        self.tableView.refreshControl!.addTarget(self, action: #selector(CoursesTableViewController.refreshCourseData(sender:)), for: .valueChanged)
-        
         loadingView = NBLoadingView()
         self.view.addSubview(loadingView!)
         loadingView.addUntitled2Animation()
@@ -46,10 +42,6 @@ class CoursesTableViewController: UITableViewController {
             self.tableView.refreshControl!.endRefreshing()
             self.tableView.reloadData()
         }
-    }
-
-    @objc func refreshCourseData(sender: UIRefreshControl) {
-        self.getTableData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

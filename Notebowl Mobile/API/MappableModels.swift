@@ -16,6 +16,7 @@ public enum ItemType: String {
     case assignment = "assignments"
     case grade = "grades"
     case university = "universities"
+    case enrollment = "enrollments"
     case post = "posts"
     case comment = "comments"
     case like = "likes"
@@ -262,6 +263,29 @@ class University: Object {
     }
 }
 
+class Enrollment: Object {
+    
+    var role: String?
+    var status: String?
+    var user: User!
+    var parent: Course? // just temporary
+    
+    override class var routeType: ItemType { return .enrollment }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        role <- map["role"]
+        status <- map["status"]
+        user <- map["_user"]
+        parent <- map["_parent"]
+    }
+}
+
 class Post: Object {
     
     var editedAt: Date?
@@ -365,8 +389,12 @@ class Notification: Object {
     var status: String?
     var text: String?
     var type: String?
-    var _parent: Post?
+    var parent: Object?
     var name: String?
+
+    public var imageForUser: UIImage!
+    
+    public var statusBool: Bool { return ((status == nil) ? false : true) }
     
     override class var routeType: ItemType { return .notification }
         
@@ -381,7 +409,17 @@ class Notification: Object {
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]
-        _parent <- (map["_parent"], ObjectTransform<Post>())
+        parent <- (map["_parent"], ObjectTransform<Object>())
+    }
+    
+    func refreshImages() {
+        let imageReq = Just.get(("https://demo.nbstage.com/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture"), params: ["uuid": UIDevice().uuid])
+        if (imageReq.ok) {
+            self.imageForUser = UIImage(data: imageReq.content!)
+        }
+        else {
+            self.imageForUser = UIImage(named: "Default Avatar")
+        }
     }
 
 }

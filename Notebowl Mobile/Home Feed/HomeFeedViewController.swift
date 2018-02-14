@@ -26,17 +26,6 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
         self.bulletinTableView.dataSource = self
         
         self.getPosts()
-        
-        /*
-        self.bulletinTableView.refreshControl = UIRefreshControl()
-        self.bulletinTableView.refreshControl!.attributedTitle = NSAttributedString(string: "Refresh feed")
-        self.bulletinTableView.refreshControl!.tintColor = UIColor(named: "Notebowl Blue")
-        self.bulletinTableView.refreshControl!.addTarget(self, action: #selector(HomeFeedViewController.refreshFeed(sender:)), for: .valueChanged)
-        */
-    }
-    
-    @objc func refreshFeed(sender: UIRefreshControl) {
-        self.getPosts()
     }
     
     func tempUserImageUpdater() {
@@ -57,7 +46,7 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
         
         DispatchQueue.main.async {
             let postsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Course.self)!)
-            self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter)\"]", sortBy: "updatedAt:desc", limit: "5")
+            self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter)\"]", sortBy: "updatedAt:desc", limit: "2")
             
             for post in self.posts {
                 post.refreshData()
