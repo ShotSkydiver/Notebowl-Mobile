@@ -1,6 +1,6 @@
 //
 //  CoursesTableViewController.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 12/14/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.
@@ -29,18 +29,13 @@ class CoursesTableViewController: UITableViewController {
         loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            let coursesFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self)!)
-            self.courses = NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(coursesFilter)\"]", sortBy: "updatedAt:desc", limit: "10")
+            let currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
             
-            for course in self.courses {
-                course.refreshGrades()
+            _ = NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10") { result in
+                self.courses = NBClient.shared.initArray(from: result!)
+                self.loadingView.showLoadView(false)
+                self.tableView.reloadData()
             }
-            
-            self.courses.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-        
-            self.loadingView.showLoadView(false)
-            self.tableView.refreshControl!.endRefreshing()
-            self.tableView.reloadData()
         }
     }
     

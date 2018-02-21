@@ -1,6 +1,6 @@
 //
 //  Extensions.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 11/21/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.
@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import ObjectMapper
+import Kingfisher
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -39,6 +40,24 @@ public extension String {
         characterSet.addCharacters(in: "-_.!~*'()")
         return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
     }
+}
+
+public extension URL {
+    public func appendingQueryParameters(_ parameters: [String: String]) -> URL {
+        var urlComponents = URLComponents(url: self, resolvingAgainstBaseURL: true)!
+        var items = urlComponents.queryItems ?? []
+        items += parameters.map({ URLQueryItem(name: $0, value: $1) })
+        urlComponents.queryItems = items
+        return urlComponents.url!
+    }
+    public mutating func appendQueryParameters(_ parameters: [String: String]) {
+        self = appendingQueryParameters(parameters)
+    }
+    public func appendUUID() -> URL {
+        let uuidParams = ["uuid": UIDevice().uuid]
+        return self.appendingQueryParameters(uuidParams)
+    }
+
 }
 
 public extension DateFormatter {
@@ -152,18 +171,10 @@ class ObjectTransform<T: Object>: TransformType {
     public typealias JSON = String
     
     func transformFromJSON(_ value: Any?) -> T? {
-        let urlString = value as! String
-        
-        let req = Just.get(urlString, params: ["uuid": UIDevice().uuid])
-        
-        if (req.ok) {
-            let reqJson = req.json
-            let nestedJson = (reqJson as AnyObject).value(forKeyPath: "result")
-            
-            let mapp = Mapper<T>().map(JSONObject: nestedJson!)
-            return mapp
-        }
-        return nil
+        let r = Just.get((value as! String), params: ["uuid": UIDevice().uuid])
+        print("objtransform req: ", r.url!)
+        let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+        return finalmap
     }
     
     func transformToJSON(_ value: T?) -> String? {
@@ -172,27 +183,19 @@ class ObjectTransform<T: Object>: TransformType {
 }
 
 class ImageTransform: TransformType {
-    public typealias Object = UIImage
+    public typealias Object = URL
     public typealias JSON = String
     
-    func transformFromJSON(_ value: Any?) -> UIImage? {
-        print("\n\nprofileurl: ", (value as! String))
-        var urlcomps = URLComponents(string: (value as! String))!
-        // let rull = URL(string: (value as! String))
-        if (urlcomps.host == nil) {
-            print("host nil!")
-            urlcomps.scheme = "https"
-            urlcomps.host = "demo.nbstage.com"
+    func transformFromJSON(_ value: Any?) -> URL? {
+
+        var imageURL = URL(string: (value as! String))
+        if (imageURL?.baseURL == nil) {
+            imageURL = URL(string: (value as! String), relativeTo: URL(string: "https://demo.nbstage.com"))
         }
-        let req = Just.get(urlcomps.url!.absoluteString, params: ["uuid": UIDevice().uuid])
-        
-        if (req.ok) {
-            return UIImage(data: req.content!)
-        }
-        return nil
+        return imageURL!.absoluteURL
     }
     
-    func transformToJSON(_ value: UIImage?) -> String? {
+    func transformToJSON(_ value: URL?) -> String? {
         return nil
     }
 }

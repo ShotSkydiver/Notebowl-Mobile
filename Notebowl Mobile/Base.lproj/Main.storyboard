@@ -322,7 +322,7 @@
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="homeFeedCell" rowHeight="220" id="N3g-5j-72E" customClass="HomeFeedTableViewCell" customModule="Notebowl_Mobile" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="39" width="414" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="N3g-5j-72E" id="B4F-AI-Uku">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="N3g-5j-72E" id="B4F-AI-Uku">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="219.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
@@ -351,7 +351,7 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Heq-0N-jB9">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Heq-0N-jB9">
                                                     <rect key="frame" x="78" y="64" width="316" height="77"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                                                     <color key="textColor" red="0.1764705882352941" green="0.1764705882352941" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
@@ -371,10 +371,9 @@
                                                     <rect key="frame" x="78" y="175" width="316" height="34"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dRu-2e-dXW">
-                                                            <rect key="frame" x="0.0" y="2" width="53" height="30"/>
+                                                            <rect key="frame" x="0.0" y="2" width="63" height="30"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="53" id="1nT-xE-tgU"/>
-                                                                <constraint firstAttribute="height" constant="30" id="xa4-R0-Lpx"/>
+                                                                <constraint firstAttribute="width" constant="63" id="1nT-xE-tgU"/>
                                                             </constraints>
                                                             <state key="normal" title="Like"/>
                                                             <state key="selected" title="Liked"/>
@@ -465,7 +464,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NcF-z0-kmO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1474" y="1855"/>
+            <point key="canvasLocation" x="1473.913043478261" y="1854.6195652173915"/>
         </scene>
         <!--Logged In Tab Bar VC-->
         <scene sceneID="2r2-Ek-p9a">

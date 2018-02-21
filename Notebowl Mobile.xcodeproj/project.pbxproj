@@ -80,7 +80,6 @@
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
 		85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesDetailViewController.swift; sourceTree = "<group>"; };
 		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
-		EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NB_Mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +111,6 @@
 		46B74E1CE70476650551376B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EF11D4BF43C7D60C2899982C /* Pods_NB_Mobile.framework */,
 				09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */,
 			);
 			name = Frameworks;
@@ -409,11 +407,13 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
+				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -651,9 +651,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "NB-MobileTests/Info.plist";
+				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-MobileTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -666,9 +666,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "NB-MobileTests/Info.plist";
+				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-MobileTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -681,9 +681,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "NB-MobileUITests/Info.plist";
+				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-MobileUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;
@@ -697,9 +697,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "NB-MobileUITests/Info.plist";
+				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.NoteBowl.NB-MobileUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;

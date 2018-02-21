@@ -1,6 +1,6 @@
 //
 //  NBClient.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 11/28/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.
@@ -33,15 +33,14 @@ public class NBClient {
     }
     
     public func registerNotificationsToken() {
-        let req = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": self.deviceToken!])
-        print("pushregister req: ", req.url!.absoluteString)
-        if (req.ok) {
-            print("register ok! ", req.json)
-        }
+        _ = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": self.deviceToken!])
     }
     
     public func getCurrentUser() -> User {
-        self.currentUser = self.getMappable(User.self)?.first
+        if (self.currentUser == nil) {
+            print("currentuser null")
+            self.currentUser = self.getMappable(User.self)?.first
+        }
         return self.currentUser!
     }
     
@@ -57,23 +56,36 @@ public class NBClient {
         var urlBuilder: String = ""
         for item in items {
             urlBuilder = (urlBuilder + item.url.absoluteString + ",")
-            
         }
         return urlBuilder
     }
     
-    public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "") -> [T]? where T: Object {
-        let req = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
-        print("req: ", req.url!.absoluteString)
-        if (req.ok) {
-            let reqJson = req.json
-            let nestedJson = (reqJson as AnyObject).value(forKeyPath: "result")
-            let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson!)
-            let jsonstring = String(data: nestedData!, encoding: .utf8)
-            
-            let items = Mapper<T>().mapArray(JSONString: jsonstring!)!
-            return items
+    public func initArray<T>(from array: [T]) -> [T]? where T: Object {
+        var mutableArray = array
+        for item in mutableArray {
+            item.refresh()
         }
-        return []
+        mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
+        
+        return mutableArray
     }
+
+    
+    public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
+        var objectResult: [T]?
+        
+        let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
+        print("getmappable request: ", r.url!)
+        
+        if r.ok {
+                let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+                objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+        }
+        if (completionHandler != nil){
+            completionHandler!(objectResult)
+        }
+ 
+        return objectResult
+    }
+    
 }

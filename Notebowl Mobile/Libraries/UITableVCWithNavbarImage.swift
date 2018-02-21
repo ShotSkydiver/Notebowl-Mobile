@@ -1,6 +1,6 @@
 //
 //  UITableVCWithNavbarImage.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 1/27/18.
 //  Copyright © 2018 NoteBowl. All rights reserved.
@@ -8,11 +8,12 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 @available(iOS 11.0, *)
 class UITableVCWithNavbarImage: UIViewController {
     
-    private let navbarImageView = UIImageView(image: UIImage(named: "Default Avatar"))
+    public let navbarImageView = UIImageView(image: UIImage(named: "Default Avatar"))
     
     private struct Const {
         /// Image height/width for Large NavBar state
@@ -33,29 +34,29 @@ class UITableVCWithNavbarImage: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
         navbarImageView.isUserInteractionEnabled = true
         navbarImageView.addGestureRecognizer(tapGestureRecognizer)
-
-        setupNav()
-    }
-    
-    func updateImage(image: UIImage) {
-        self.navbarImageView.image = image
+        
+        setupUI()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // showImage(true)
+        // let placeholderimg = UIImage(named: "Default Avatar")
+        self.navbarImageView.kf.indicatorType = .activity
+        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.5))]) { image, error, cache, url in
+            print("navbar image finished loading! cached? ", cache.cached.description)
+        }
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // showImage(false)
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        let tappedImage = tapGestureRecognizer.view as! UIImageView
-        
+        // let tappedImage = tapGestureRecognizer.view as! UIImageView
         let menu = UIAlertController(title: "Options", message: "Manage your profile", preferredStyle: .actionSheet)
         let editProfilePic = UIAlertAction(title: "Change Profile Picture", style: .default) { (action) in
             print("profilepicchange")
@@ -72,12 +73,12 @@ class UITableVCWithNavbarImage: UIViewController {
         self.present(menu, animated: true, completion: nil)
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    @objc func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let height = navigationController?.navigationBar.frame.height else { return }
         moveAndResizeImage(for: height)
     }
     
-    func setupNav() {
+    func setupUI() {
         navigationController?.navigationBar.prefersLargeTitles = true
         guard let navigationBar = self.navigationController?.navigationBar else { return }
         navigationBar.addSubview(navbarImageView)
@@ -118,10 +119,11 @@ class UITableVCWithNavbarImage: UIViewController {
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: xTranslation, y: yTranslation)
     }
-    
+    /*
     func showImage(_ show: Bool) {
         UIView.animate(withDuration: 0.2) {
             self.navbarImageView.alpha = show ? 1.0 : 0.0
         }
     }
+    */
 }

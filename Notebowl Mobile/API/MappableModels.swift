@@ -1,6 +1,6 @@
 //
 //  MappableModels.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 1/10/18.
 //  Copyright © 2018 NoteBowl. All rights reserved.
@@ -42,6 +42,8 @@ extension ItemType {
     
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
     
+    public func refresh() { }
+    
     public required init?(map: Map) { }
     
     override init() {}
@@ -60,7 +62,7 @@ public class User: Object {
     var firstName: String!
     var lastName: String!
     var email: String?
-    var profileUrl: UIImage!
+    var profileUrl: URL!
     var profileThumbUrl: URL!
     var university: University?
     
@@ -90,7 +92,6 @@ class Term: Object {
     var termStart: Date!
     var termEnd: Date!
     var termAvailable: Date!
-    
     var university: University?
     
     override class var routeType: ItemType { return .term }
@@ -143,7 +144,8 @@ class Course: Object {
         desc <- map["description"]
     }
     
-    public func refreshGrades() {
+    override public func refresh() {
+        print("refresh course")
         let courseAssignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         
         var assignmentsUrls: String = ""
@@ -268,7 +270,7 @@ class Enrollment: Object {
     var role: String?
     var status: String?
     var user: User!
-    var parent: Course? // just temporary
+    var parent: Course?
     
     override class var routeType: ItemType { return .enrollment }
     
@@ -297,8 +299,7 @@ class Post: Object {
     
     public var postLikes: [Like]?
     public var postComments: [Comment]?
-    public var likedByCurrentUser: Bool? // get rid of 
-    
+    public var likedByCurrentUser: Bool?
     public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .post }
@@ -314,17 +315,19 @@ class Post: Object {
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
         text <- map["text"]
+
         _creator <- (map["_creator"], ObjectTransform<User>())
         _parent <- (map["_parent"], ObjectTransform<Course>())
     }
     
-    func refreshData() {
+    override public func refresh() {
+        print("refresh post")
         self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         
         if postLikes!.count > 0 {
             for like in postLikes! {
-                if (like._owner?.resourceKey == NBClient.shared.currentUser?.resourceKey) {
+                if (like._owner?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
                     self.likedByCurrentUser = true
                     self.likeFromCurrentUser = like
                 }
@@ -337,7 +340,6 @@ class Post: Object {
             self.likedByCurrentUser = false
         }
     }
-    
 }
 
 class Comment: Object {
@@ -385,7 +387,7 @@ class Like: Object {
 }
 
 class Notification: Object {
-    
+
     var status: String?
     var text: String?
     var type: String?
@@ -412,7 +414,7 @@ class Notification: Object {
         parent <- (map["_parent"], ObjectTransform<Object>())
     }
     
-    func refreshImages() {
+    override public func refresh() {
         let imageReq = Just.get(("https://demo.nbstage.com/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture"), params: ["uuid": UIDevice().uuid])
         if (imageReq.ok) {
             self.imageForUser = UIImage(data: imageReq.content!)

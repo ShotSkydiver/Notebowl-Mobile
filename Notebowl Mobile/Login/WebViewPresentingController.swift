@@ -1,6 +1,6 @@
 //
 //  WebViewPresentingController.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 1/28/18.
 //  Copyright © 2018 NoteBowl. All rights reserved.
@@ -53,18 +53,18 @@ extension WebViewPresentingController: ProgressWebViewControllerDelegate {
         let pathComponents = components!.path
         if (pathComponents == "/gateway/services/mobile/register") {
             print("dismiss controller")
-            controller.dismiss(animated: true, completion: {
-                print("segue to tabbar")
-                
-            })
+            
+            DispatchQueue.main.async {
+                controller.dismiss(animated: true, completion: nil)
+            }
             
             let defaults = UserDefaults.standard
             defaults.set(true, forKey: "com.notebowl.standalone.userLoggedIn")
-            
             NBClient.shared.registerNotificationsToken()
-            
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.finishedPresentingOnboarding()
+            
+            
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 //  CoursesTableViewCell.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 12/12/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.

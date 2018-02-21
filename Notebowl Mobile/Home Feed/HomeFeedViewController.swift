@@ -1,6 +1,6 @@
 //
 //  HomeFeedViewController.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 2/7/18.
 //  Copyright © 2018 NoteBowl. All rights reserved.
@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 @available(iOS 11.0, *)
 class HomeFeedViewController: UITableVCWithNavbarImage {
@@ -18,23 +19,13 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.tempLoadingViewSetup()
-        self.tempUserImageUpdater()
-        
         self.bulletinTableView.delegate = self
         self.bulletinTableView.dataSource = self
         
+        self.tempLoadingViewSetup()
         self.getPosts()
     }
-    
-    func tempUserImageUpdater() {
-        DispatchQueue.main.async {
-            let user = NBClient.shared.getCurrentUser()
-            self.updateImage(image: UIImage(data: Just.get(user.profileThumbUrl.absoluteString).content!)!)
-            self.showImage(true)
-        }
-    }
+
     func tempLoadingViewSetup() {
         self.loadingView = NBLoadingView()
         self.view.addSubview(self.loadingView)
@@ -45,17 +36,11 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            let postsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Course.self)!)
-            self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter)\"]", sortBy: "updatedAt:desc", limit: "2")
-            
-            for post in self.posts {
-                post.refreshData()
+            _ = NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "8") { result in
+                self.posts = NBClient.shared.initArray(from: result!)
+                self.bulletinTableView.reloadData()
+                self.loadingView.showLoadView(false)
             }
-            self.posts.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-        
-            self.loadingView.showLoadView(false)
-            self.bulletinTableView.reloadData()
-            
         }
     }
 }
@@ -79,22 +64,14 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         cell.postContent.text = postForCell.text
         cell.postedDate.text = postForCell.updatedAt.relativelyFormatted
         cell.userName.text = postForCell._creator.fullName
-        cell.userAvatar.image = postForCell._creator.profileUrl
         
-        cell.postLikes.text = ("\(postForCell.postLikes?.count ?? 0) Likes")
-        cell.postComments.text = ("\(postForCell.postComments?.count ?? 0) Comments")
-        
-        if (postForCell.likedByCurrentUser)! {
-            cell.setPostLiked()
-        }
-        cell.showCell(true)
+        let placeholderimg = UIImage(named: "Default Avatar")
+        cell.userAvatar.kf.setImage(with: postForCell._creator.profileUrl, placeholder: placeholderimg, options: [.transition(.fade(0.5))])
+
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        DispatchQueue.main.async(execute: {
-            (cell as! HomeFeedTableViewCell).updateLikes()
-        })
+        (cell as! HomeFeedTableViewCell).updateLikes()
     }
-   
 }

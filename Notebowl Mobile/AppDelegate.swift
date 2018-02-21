@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 9/5/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.
@@ -59,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Device Token: \(token)")
         
         NBClient.shared.deviceToken = token
+        
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("fail ", error.localizedDescription)

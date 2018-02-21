@@ -1,6 +1,6 @@
 //
 //  HomeFeedTableViewCell.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 2/7/18.
 //  Copyright © 2018 NoteBowl. All rights reserved.
@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 @available(iOS 11.0, *)
 class HomeFeedTableViewCell: UITableViewCell {
@@ -30,29 +31,24 @@ class HomeFeedTableViewCell: UITableViewCell {
         self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
-                
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
-    func setPostLiked() {
-        self.likeButton.isSelected = true
-    }
-    
+
     @IBAction func likeButtonPressed() {
         if (self.likeButton.isSelected) {
             let delReq = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
             if (delReq.ok) {
-                self.post!.refreshData()
+                self.post!.refresh()
                 self.updateLikes()
             }
         }
         else if (!self.likeButton.isSelected) {
             let postReq = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
             if (postReq.ok) {
-                self.post!.refreshData()
+                self.post!.refresh()
                 self.updateLikes()
             }
         }

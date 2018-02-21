@@ -1,6 +1,6 @@
 //
 //  MainTabBarViewController.swift
-//  NB-Mobile
+//  Notebowl Mobile
 //
 //  Created by Conner Owen on 12/19/17.
 //  Copyright © 2017 NoteBowl. All rights reserved.

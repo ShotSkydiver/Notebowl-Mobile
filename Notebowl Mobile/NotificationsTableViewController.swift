@@ -20,7 +20,6 @@ class NotificationsTableViewController: UITableViewController {
         super.viewDidLoad()
         
         self.tempLoadingViewSetup()
-        
         self.getNotifications()
     }
     
@@ -34,21 +33,13 @@ class NotificationsTableViewController: UITableViewController {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            
-            self.notifications = NBClient.shared.getMappable(Notification.self, sortBy: "updatedAt:desc", limit: "10")
-            
-            for notification in self.notifications {
-                notification.refreshImages()
+            _ = NBClient.shared.getMappable(Notification.self, sortBy: "updatedAt:desc", limit: "10") { result in
+                self.notifications = NBClient.shared.initArray(from: result!)
+                self.loadingView.showLoadView(false)
+                self.tableView.reloadData()
             }
-            
-            self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-            
-            self.loadingView.showLoadView(false)
-            self.tableView.reloadData()
         }
     }
-    
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (self.notifications) != nil {
