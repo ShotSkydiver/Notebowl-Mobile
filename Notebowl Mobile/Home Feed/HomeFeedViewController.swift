@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import Kingfisher
 
-@available(iOS 11.0, *)
 class HomeFeedViewController: UITableVCWithNavbarImage {
     var posts: [Post]!
     var loadingView: NBLoadingView!
@@ -44,7 +43,6 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
     }
 }
 
-@available(iOS 11.0, *)
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

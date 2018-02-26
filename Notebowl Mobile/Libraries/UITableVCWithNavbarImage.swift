@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import Kingfisher
 
-@available(iOS 11.0, *)
 class UITableVCWithNavbarImage: UIViewController {
     
     public let navbarImageView = UIImageView(image: UIImage(named: "Default Avatar"))
@@ -76,7 +75,7 @@ class UITableVCWithNavbarImage: UIViewController {
     }
     
     func setupUI() {
-        navigationController?.navigationBar.prefersLargeTitles = true
+        if #available(iOS 11.0, *) { navigationController?.navigationBar.prefersLargeTitles = true } 
         guard let navigationBar = self.navigationController?.navigationBar else { return }
         navigationBar.addSubview(navbarImageView)
         navbarImageView.layer.cornerRadius = Const.ImageSizeForLargeState / 2

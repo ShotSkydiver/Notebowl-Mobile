@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-@available(iOS 11.0, *)
 class CoursesTableViewController: UITableViewController {
     var courses: [Course]!
     var loadingView: NBLoadingView!

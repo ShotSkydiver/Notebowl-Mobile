@@ -9,7 +9,6 @@
 import UIKit
 import UserNotifications
 
-@available(iOS 11.0, *)
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -31,12 +30,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.presentLogin()
         }
         else if isUserLoggedIn {
-            NBClient.shared.getCurrentUser()
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
-            application.registerForRemoteNotifications()
+            _ = NBClient.shared.getCurrentUser()
+
+            registerNotifications()
         }
-        
         return true
     }
 
@@ -46,12 +43,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.initialRootController = self.window?.rootViewController
         self.window?.rootViewController = onboarding
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
-        UIApplication.shared.registerForRemoteNotifications()
+        registerNotifications()
     }
     func finishedPresentingOnboarding() {
-        NBClient.shared.getCurrentUser()
+        _ = NBClient.shared.getCurrentUser()
         self.window?.rootViewController = initialRootController
+    }
+    
+    func registerNotifications() {
+        #if arch(i386) || arch(x86_64)
+        print("is simulator!")
+        return
+        #endif
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
+        UIApplication.shared.registerForRemoteNotifications()
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -75,7 +81,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-@available(iOS 11.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo

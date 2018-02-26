@@ -11,7 +11,6 @@ import UIKit
 import ObjectMapper
 import Kingfisher
 
-@available(iOS 11.0, *)
 class NotificationsTableViewController: UITableViewController {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
@@ -70,11 +69,11 @@ class NotificationsTableViewController: UITableViewController {
         let placeholderimg = UIImage(named: "Default Avatar")
         cell.userAvatar.kf.indicatorType = .activity
         cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar(), placeholder: placeholderimg, options: [.transition(.fade(0.5))])
-        
+        /*
         if (!notificationForCell.statusBool) {
             cell.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.1)
         }
-        
+        */
         cell.showCell(true)
         return cell
     }

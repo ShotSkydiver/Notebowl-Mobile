@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import Kingfisher
 
-@available(iOS 11.0, *)
 class HomeFeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var userAvatar: UIImageView!

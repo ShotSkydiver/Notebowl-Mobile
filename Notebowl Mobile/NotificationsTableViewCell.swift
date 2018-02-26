@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-@available(iOS 11.0, *)
 class NotificationsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var userAvatar: UIImageView!
@@ -34,7 +33,7 @@ class NotificationsTableViewCell: UITableViewCell {
     func updateReadStatus() {
         DispatchQueue.main.async {
             if (!self.notification!.statusBool) {
-                self.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.1)
+                self.backgroundColor = #colorLiteral(red: 0.231372549, green: 0.6509803922, blue: 0.8862745098, alpha: 0.1000000015)
             }
             else if (self.notification!.statusBool) {
                 self.backgroundColor = UIColor.white

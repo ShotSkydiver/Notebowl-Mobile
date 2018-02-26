@@ -14,10 +14,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 11.0, *) {
-            UITabBar.appearance().tintColor = UIColor(named: "Notebowl Blue")
-        } else { }
-        
+        UITabBar.appearance().tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         self.delegate = self
     }
 
