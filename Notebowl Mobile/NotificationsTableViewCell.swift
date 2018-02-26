@@ -25,20 +25,10 @@ class NotificationsTableViewCell: UITableViewCell {
         self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
-        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-    }
-    
-    func updateUserImage() {
-        DispatchQueue.main.async {
-            let imageReq = Just.get("https://demo.nbstage.com/rpc/v1.0/notifications/\(self.notification!.resourceKey)/getProfilePicture", params: ["uuid": UIDevice().uuid])
-            if (imageReq.ok) {
-                self.userAvatar.image = UIImage(data: imageReq.content!)
-            }
-        }
     }
     
     func updateReadStatus() {

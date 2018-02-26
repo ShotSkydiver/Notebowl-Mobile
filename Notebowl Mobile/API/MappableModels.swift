@@ -76,13 +76,12 @@ public class User: Object {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
         profileUrl <- (map["profileUrl"], ImageTransform())
         profileThumbUrl <- (map["profileThumbUrl"], URLTransform())
-        university <- (map["_university"], ObjectTransform<University>())
+
     }
 }
 
@@ -145,7 +144,6 @@ class Course: Object {
     }
     
     override public func refresh() {
-        print("refresh course")
         let courseAssignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         
         var assignmentsUrls: String = ""
@@ -194,7 +192,6 @@ class Assignment: Object {
     var dueDate: Date?
     var availableDate: Date?
     var desc: String?
-    
     var userGrade: Double?
     
     override class var routeType: ItemType { return .assignment }
@@ -317,7 +314,7 @@ class Post: Object {
         text <- map["text"]
 
         _creator <- (map["_creator"], ObjectTransform<User>())
-        _parent <- (map["_parent"], ObjectTransform<Course>())
+        _parent <- map["_parent"]
     }
     
     override public func refresh() {
@@ -363,7 +360,7 @@ class Comment: Object {
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
         _creator <- (map["_creator"], ObjectTransform<User>())
-        _parent <- (map["_parent"], ObjectTransform<Post>())
+        _parent <- map["_parent"]
     }
 }
 
@@ -381,7 +378,7 @@ class Like: Object {
     override func mapping(map: Map) {
         super.mapping(map: map)
         
-        _parent <- (map["_parent"], ObjectTransform<Post>())
+        _parent <- map["_parent"]
         _owner <- (map["_owner"], ObjectTransform<User>())
     }
 }
@@ -393,10 +390,11 @@ class Notification: Object {
     var type: String?
     var parent: Object?
     var name: String?
-
-    public var imageForUser: UIImage!
     
-    public var statusBool: Bool { return ((status == nil) ? false : true) }
+    public var statusBool: Bool {
+        if status == nil { return false }
+        else { return true }
+    }
     
     override class var routeType: ItemType { return .notification }
         
@@ -414,14 +412,12 @@ class Notification: Object {
         parent <- (map["_parent"], ObjectTransform<Object>())
     }
     
-    override public func refresh() {
-        let imageReq = Just.get(("https://demo.nbstage.com/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture"), params: ["uuid": UIDevice().uuid])
-        if (imageReq.ok) {
-            self.imageForUser = UIImage(data: imageReq.content!)
-        }
-        else {
-            self.imageForUser = UIImage(named: "Default Avatar")
-        }
+    func getUrlForAvatar() -> URL? {
+        let params = ["uuid": UIDevice().uuid]
+        let sttt = ("https://demo.nbstage.com/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
+        var imageUrl = URL(string: sttt)
+        imageUrl?.appendQueryParameters(params)
+        return imageUrl
     }
-
+    
 }

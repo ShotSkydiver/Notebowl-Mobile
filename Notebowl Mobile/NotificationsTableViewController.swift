@@ -9,12 +9,12 @@
 import Foundation
 import UIKit
 import ObjectMapper
+import Kingfisher
 
 @available(iOS 11.0, *)
 class NotificationsTableViewController: UITableViewController {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,11 +33,21 @@ class NotificationsTableViewController: UITableViewController {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            _ = NBClient.shared.getMappable(Notification.self, sortBy: "updatedAt:desc", limit: "10") { result in
-                self.notifications = NBClient.shared.initArray(from: result!)
-                self.loadingView.showLoadView(false)
-                self.tableView.reloadData()
+            self.notifications = NBClient.shared.getMappable(Notification.self, sortBy: "updatedAt:desc", limit: "10")
+            
+            var unreadCount = 0
+            for notification in self.notifications {
+                if !notification.statusBool {
+                    unreadCount = unreadCount + 1
+                }
             }
+            
+            self.tabBarController?.tabBar.items?[2].badgeValue = String(format: "%d", unreadCount)
+            
+            self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
+            self.loadingView.showLoadView(false)
+            self.tableView.reloadData()
+            
         }
     }
     
@@ -56,7 +66,10 @@ class NotificationsTableViewController: UITableViewController {
         
         cell.notificationContent.text = notificationForCell.text
         cell.notificationDate.text = notificationForCell.updatedAt.relativelyFormatted
-        cell.userAvatar.image = notificationForCell.imageForUser
+        
+        let placeholderimg = UIImage(named: "Default Avatar")
+        cell.userAvatar.kf.indicatorType = .activity
+        cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar(), placeholder: placeholderimg, options: [.transition(.fade(0.5))])
         
         if (!notificationForCell.statusBool) {
             cell.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.1)
@@ -67,9 +80,7 @@ class NotificationsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        DispatchQueue.main.async(execute: {
-            (cell as! NotificationsTableViewCell).updateReadStatus()
-        })
+        (cell as! NotificationsTableViewCell).updateReadStatus()
     }
 }
 

@@ -31,6 +31,7 @@ class HomeFeedTableViewCell: UITableViewCell {
         self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
+ 
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

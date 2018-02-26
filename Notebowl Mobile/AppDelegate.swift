@@ -30,7 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !isUserLoggedIn {
             self.presentLogin()
         }
-        else if (isUserLoggedIn) {
+        else if isUserLoggedIn {
+            NBClient.shared.getCurrentUser()
+            
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
             application.registerForRemoteNotifications()
         }
@@ -48,6 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.registerForRemoteNotifications()
     }
     func finishedPresentingOnboarding() {
+        NBClient.shared.getCurrentUser()
         self.window?.rootViewController = initialRootController
     }
     

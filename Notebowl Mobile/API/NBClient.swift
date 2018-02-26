@@ -37,8 +37,9 @@ public class NBClient {
     }
     
     public func getCurrentUser() -> User {
+        NSLog("doing currentuser")
         if (self.currentUser == nil) {
-            print("currentuser null")
+            NSLog("currentuser null")
             self.currentUser = self.getMappable(User.self)?.first
         }
         return self.currentUser!

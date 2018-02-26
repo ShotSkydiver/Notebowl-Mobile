@@ -14,8 +14,6 @@ class CoursesTableViewController: UITableViewController {
     var courses: [Course]!
     var loadingView: NBLoadingView!
     
-    private var lastSelected: IndexPath! = nil
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,11 +29,10 @@ class CoursesTableViewController: UITableViewController {
         DispatchQueue.main.async {
             let currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
             
-            _ = NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10") { result in
-                self.courses = NBClient.shared.initArray(from: result!)
-                self.loadingView.showLoadView(false)
-                self.tableView.reloadData()
-            }
+            self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10")!)
+            self.loadingView.showLoadView(false)
+            self.tableView.reloadData()
+            
         }
     }
     
@@ -49,14 +46,12 @@ class CoursesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "courseCell", for: indexPath) as! CoursesTableViewCell
         
-        if (self.courses) != nil {
-            let course = self.courses[indexPath.row]
-            cell.courseTitle.text = course.name
-            cell.courseNumber.text = course.courseCode
-            cell.lastUpdated.text = course.lastUpdated
-            cell.currentGrade.text = course.userCourseGrade
-            cell.showCell(true)
-        }
+        let courseForCell = self.courses[indexPath.row]
+        cell.courseTitle.text = courseForCell.name
+        cell.courseNumber.text = courseForCell.courseCode
+        cell.lastUpdated.text = courseForCell.lastUpdated
+        cell.currentGrade.text = courseForCell.userCourseGrade
+        cell.showCell(true)
         
         return cell
     }

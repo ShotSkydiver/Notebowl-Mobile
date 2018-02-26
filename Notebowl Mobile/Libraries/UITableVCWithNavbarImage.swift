@@ -40,15 +40,13 @@ class UITableVCWithNavbarImage: UIViewController {
         navbarImageView.addGestureRecognizer(tapGestureRecognizer)
         
         setupUI()
+        
+        self.navbarImageView.kf.indicatorType = .activity
+        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition])
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // let placeholderimg = UIImage(named: "Default Avatar")
-        self.navbarImageView.kf.indicatorType = .activity
-        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.5))]) { image, error, cache, url in
-            print("navbar image finished loading! cached? ", cache.cached.description)
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -56,7 +54,6 @@ class UITableVCWithNavbarImage: UIViewController {
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        // let tappedImage = tapGestureRecognizer.view as! UIImageView
         let menu = UIAlertController(title: "Options", message: "Manage your profile", preferredStyle: .actionSheet)
         let editProfilePic = UIAlertAction(title: "Change Profile Picture", style: .default) { (action) in
             print("profilepicchange")
