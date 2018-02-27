@@ -13,51 +13,33 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var initialRootController: UIViewController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
-        
-        if let prefsFile = Bundle.main.url(forResource: "DefaultPreferences", withExtension: "plist"),
-            let prefsDict = NSDictionary(contentsOf: prefsFile) as? [String: Any] {
-            defaults.register(defaults: prefsDict)
+        if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
+            UserDefaults.set(hasUserLoggedIn: false)
         }
         
-        let isUserLoggedIn = defaults.bool(forKey: "com.notebowl.standalone.userLoggedIn")
-        
-        if !isUserLoggedIn {
-            self.presentLogin()
-        }
-        else if isUserLoggedIn {
-            _ = NBClient.shared.getCurrentUser()
-
-            registerNotifications()
-        }
         return true
     }
 
-    func presentLogin() {
-        let storyboard = UIStoryboard(name: "Login", bundle: nil)
-        let onboarding = storyboard.instantiateViewController(withIdentifier: "initialLoginController") as! WebViewPresentingController
-        self.initialRootController = self.window?.rootViewController
-        self.window?.rootViewController = onboarding
-        
-        registerNotifications()
-    }
-    func finishedPresentingOnboarding() {
-        _ = NBClient.shared.getCurrentUser()
-        self.window?.rootViewController = initialRootController
-    }
-    
     func registerNotifications() {
         #if arch(i386) || arch(x86_64)
         print("is simulator!")
         return
         #endif
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in }
-        UIApplication.shared.registerForRemoteNotifications()
+        if !(UIApplication.shared.isRegisteredForRemoteNotifications) {
+            print("not registered!")
+            
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { allow, error in
+                if allow {
+                    print("notifications allowed")
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -67,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         print("Device Token: \(token)")
         
-        NBClient.shared.deviceToken = token
+        _ = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
         
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

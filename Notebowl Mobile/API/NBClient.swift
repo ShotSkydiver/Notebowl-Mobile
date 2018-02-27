@@ -46,11 +46,10 @@ public class NBClient {
     }
     
     public func logoutUser() {
-        let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
-        if (deleteReq.ok) {
-            let defaults = UserDefaults.standard
-            defaults.set(false, forKey: "com.notebowl.standalone.userLoggedIn")
-        }
+        // let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
+
+        // UserDefaults.standard.set(false, forKey: "com.notebowl.standalone.userLoggedIn")
+        UserDefaults.set(hasUserLoggedIn: false)
     }
     
     public func buildFilterString(from items: [Object]) -> String {

@@ -2,17 +2,29 @@ PODS:
   - Disk (0.3.3)
   - Kingfisher (4.6.2)
   - ObjectMapper (3.1.0)
+  - ProgressWebViewController (1.6.1)
 
 DEPENDENCIES:
   - Disk
   - Kingfisher (~> 4.0)
   - ObjectMapper (~> 3.1)
+  - ProgressWebViewController (from `https://github.com/kf99916/ProgressWebViewController.git`)
+
+EXTERNAL SOURCES:
+  ProgressWebViewController:
+    :git: https://github.com/kf99916/ProgressWebViewController.git
+
+CHECKOUT OPTIONS:
+  ProgressWebViewController:
+    :commit: 1c5a334cf5c466c386936e1c9b9bc2d0c4c4f5a5
+    :git: https://github.com/kf99916/ProgressWebViewController.git
 
 SPEC CHECKSUMS:
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
   Kingfisher: 55b9c395bf8d3949676ad3861111923990ab68cf
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
+  ProgressWebViewController: b43f1bfd69951e07ff690eabc0fdc10abe2a8e06
 
-PODFILE CHECKSUM: 02e5b66c1c92f2c73a6cf6aa753e79fc1b42b943
+PODFILE CHECKSUM: 0af119b90de40d09b3d516ca3ea49c600a055bfc
 
 COCOAPODS: 1.4.0

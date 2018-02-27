@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="sYJ-ui-r4S">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14092" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -466,6 +466,32 @@
             </objects>
             <point key="canvasLocation" x="1473.913043478261" y="1854.6195652173915"/>
         </scene>
+        <!--Root View-->
+        <scene sceneID="UZy-wh-fI0">
+            <objects>
+                <viewController storyboardIdentifier="rootViewController" title="Root View" id="Y7H-BV-ySK" customClass="RootViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="tgX-sm-WAe">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="uni-image-gray" translatesAutoresizingMaskIntoConstraints="NO" id="W5g-6g-h6c">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="W5g-6g-h6c" secondAttribute="trailing" id="3Jz-SN-80m"/>
+                            <constraint firstItem="W5g-6g-h6c" firstAttribute="top" secondItem="tgX-sm-WAe" secondAttribute="top" id="5ur-Wc-tyA"/>
+                            <constraint firstItem="W5g-6g-h6c" firstAttribute="leading" secondItem="tgX-sm-WAe" secondAttribute="leading" id="FFk-3h-uLH"/>
+                            <constraint firstAttribute="bottom" secondItem="W5g-6g-h6c" secondAttribute="bottom" id="OgE-cO-vfm"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="DJL-vA-RkN"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ylW-57-La8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1817.3913043478262" y="1694.8369565217392"/>
+        </scene>
         <!--Logged In Tab Bar VC-->
         <scene sceneID="2r2-Ek-p9a">
             <objects>
@@ -511,6 +537,7 @@
         <image name="bell-vector" width="30" height="30"/>
         <image name="book-vector" width="30" height="30"/>
         <image name="today_apps-vector" width="30" height="30"/>
+        <image name="uni-image-gray" width="1000" height="667"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="ixy-bG-Npg"/>

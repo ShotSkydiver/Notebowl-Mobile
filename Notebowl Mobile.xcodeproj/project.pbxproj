@@ -10,13 +10,12 @@
 		02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
 		8501CDF61FFBF5D800C853CE /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501CDF51FFBF5D800C853CE /* Just.swift */; };
 		85250A0A202A1B490003A416 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A08202A1B490003A416 /* Enums.swift */; };
-		85250A0B202A1B490003A416 /* ProgressWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A09202A1B490003A416 /* ProgressWebViewController.swift */; };
-		85250A0D202A1B540003A416 /* WebViewPresentingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A0C202A1B540003A416 /* WebViewPresentingController.swift */; };
 		85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85250A0E202A1B730003A416 /* DefaultPreferences.plist */; };
 		85250A11202A1BE90003A416 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85250A10202A1BE90003A416 /* Login.storyboard */; };
 		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
+		8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8534A19E2045CF1B0001B5BA /* RootViewController.swift */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
@@ -53,13 +52,12 @@
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		8501CDF51FFBF5D800C853CE /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
 		85250A08202A1B490003A416 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
-		85250A09202A1B490003A416 /* ProgressWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressWebViewController.swift; sourceTree = "<group>"; };
-		85250A0C202A1B540003A416 /* WebViewPresentingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewPresentingController.swift; sourceTree = "<group>"; };
 		85250A0E202A1B730003A416 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		85250A10202A1BE90003A416 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
 		85250A12202A2DC50003A416 /* NBLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBLoadingView.swift; sourceTree = "<group>"; };
 		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		8534A19E2045CF1B0001B5BA /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -132,7 +130,6 @@
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
 				85250A08202A1B490003A416 /* Enums.swift */,
-				85250A09202A1B490003A416 /* ProgressWebViewController.swift */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
@@ -140,7 +137,6 @@
 		85250A07202A1AF40003A416 /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				85250A0C202A1B540003A416 /* WebViewPresentingController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -217,6 +213,7 @@
 				85E291941F5F619300172C46 /* Main.storyboard */,
 				852D18961F673A0A00BDA97B /* API */,
 				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
+				8534A19E2045CF1B0001B5BA /* RootViewController.swift */,
 				85250A07202A1AF40003A416 /* Login */,
 				85CC9BF4202B8E30001CABB0 /* Home Feed */,
 				8583F6C42034AFB000313C9D /* Courses View */,
@@ -409,12 +406,14 @@
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/ProgressWebViewController/ProgressWebViewController.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProgressWebViewController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -438,13 +437,12 @@
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
+				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
-				85250A0B202A1B490003A416 /* ProgressWebViewController.swift in Sources */,
 				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,
 				85250A0A202A1B490003A416 /* Enums.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */,
-				85250A0D202A1B540003A416 /* WebViewPresentingController.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
 				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
 			);

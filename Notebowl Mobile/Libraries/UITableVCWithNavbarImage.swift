@@ -60,8 +60,7 @@ class UITableVCWithNavbarImage: UIViewController {
         let logoutUser = UIAlertAction(title: "Logout", style: .destructive) { (action) in
             print("logout")
             NBClient.shared.logoutUser()
-            let delegate = UIApplication.shared.delegate as! AppDelegate
-            delegate.presentLogin()
+
         }
         menu.addAction(editProfilePic)
         menu.addAction(logoutUser)

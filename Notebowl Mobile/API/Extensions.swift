@@ -118,6 +118,25 @@ public extension UITableViewCell {
     }
 }
 
+extension UserDefaults {
+    struct Keys {
+        private init() {}
+        
+        static let HasUserLoggedIn = "hasUserLoggedIn"
+    }
+    
+    class var hasUserLoggedIn: Bool {
+        let userDefaults = UserDefaults.standard
+        return userDefaults.bool(forKey: UserDefaults.Keys.HasUserLoggedIn)
+    }
+    
+    class func set(hasUserLoggedIn: Bool) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(hasUserLoggedIn, forKey: UserDefaults.Keys.HasUserLoggedIn)
+    }
+
+}
+
 public extension UIDevice {
     var modelName: String {
         var systemInfo = utsname()
