@@ -49,7 +49,6 @@ class CoursesTableViewController: UITableViewController {
         cell.courseTitle.text = courseForCell.name
         cell.courseNumber.text = courseForCell.courseCode
         cell.lastUpdated.text = courseForCell.lastUpdated
-        cell.currentGrade.text = courseForCell.userCourseGrade
         cell.showCell(true)
         
         return cell
@@ -58,7 +57,7 @@ class CoursesTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let senderCell = sender as? CoursesTableViewCell {
             let indexPath = tableView.indexPath(for: senderCell)
-            let destVC = segue.destination as! CoursesDetailViewController
+            let destVC = segue.destination as! CourseAssignmentsTableView
             
             destVC.selectedCourse = self.courses[indexPath!.row]
         }

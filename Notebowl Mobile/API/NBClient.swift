@@ -15,26 +15,9 @@ public class NBClient {
     
     public static let shared = NBClient()
     public static let defaultUrl = "https://demo.nbstage.com/api/v1.0/credentials"
-
     public var currentUser: User?
-    public var deviceToken: String?
-    public var loginValidated: Bool = false
     
     private init() { }
-    
-    public func checkToken() {
-            let request = Just.get(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
-            if (request.ok) {
-                self.loginValidated = true
-                return
-            }
-        self.loginValidated = false
-        return
-    }
-    
-    public func registerNotificationsToken() {
-        _ = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": self.deviceToken!])
-    }
     
     public func getCurrentUser() -> User {
         NSLog("doing currentuser")
@@ -46,10 +29,10 @@ public class NBClient {
     }
     
     public func logoutUser() {
-        // let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
-
-        // UserDefaults.standard.set(false, forKey: "com.notebowl.standalone.userLoggedIn")
+        let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
+        print("result of delete req: ", deleteReq.statusCode)
         UserDefaults.set(hasUserLoggedIn: false)
+
     }
     
     public func buildFilterString(from items: [Object]) -> String {

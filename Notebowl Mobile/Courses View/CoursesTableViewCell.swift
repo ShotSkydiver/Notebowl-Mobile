@@ -14,7 +14,6 @@ class CoursesTableViewCell: UITableViewCell {
     @IBOutlet weak var courseTitle: UILabel!
     @IBOutlet weak var courseNumber: UILabel!
     @IBOutlet weak var lastUpdated: UILabel!
-    @IBOutlet weak var currentGrade: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

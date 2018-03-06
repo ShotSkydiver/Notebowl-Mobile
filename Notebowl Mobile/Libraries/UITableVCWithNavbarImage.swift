@@ -41,7 +41,7 @@ class UITableVCWithNavbarImage: UIViewController {
         setupUI()
         
         self.navbarImageView.kf.indicatorType = .activity
-        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition])
+        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.3))])
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -53,18 +53,23 @@ class UITableVCWithNavbarImage: UIViewController {
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        let menu = UIAlertController(title: "Options", message: "Manage your profile", preferredStyle: .actionSheet)
+        let menu = UIAlertController(title: "Options", message: "Manage your profile and other app settings.", preferredStyle: .actionSheet)
+        
         let editProfilePic = UIAlertAction(title: "Change Profile Picture", style: .default) { (action) in
-            print("profilepicchange")
+            
         }
         let logoutUser = UIAlertAction(title: "Logout", style: .destructive) { (action) in
             print("logout")
             NBClient.shared.logoutUser()
-
+            
+            self.dismiss(animated: true, completion: nil)
+        }
+        let dismiss = UIAlertAction(title: "Close", style: .cancel) { (action) in
+            
         }
         menu.addAction(editProfilePic)
         menu.addAction(logoutUser)
-        
+        menu.addAction(dismiss)
         self.present(menu, animated: true, completion: nil)
     }
     

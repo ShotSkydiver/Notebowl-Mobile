@@ -32,7 +32,7 @@ class NotificationsTableViewController: UITableViewController {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            self.notifications = NBClient.shared.getMappable(Notification.self, sortBy: "updatedAt:desc", limit: "10")
+            self.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc", limit: "10")
             
             var unreadCount = 0
             for notification in self.notifications {
@@ -40,14 +40,22 @@ class NotificationsTableViewController: UITableViewController {
                     unreadCount = unreadCount + 1
                 }
             }
-            
-            self.tabBarController?.tabBar.items?[2].badgeValue = String(format: "%d", unreadCount)
-            
+            if unreadCount > 0 {
+                self.tabBarController?.tabBar.items?[2].badgeValue = String(format: "%d", unreadCount)
+            }
             self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
             self.loadingView.showLoadView(false)
             self.tableView.reloadData()
             
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 120
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -67,13 +75,8 @@ class NotificationsTableViewController: UITableViewController {
         cell.notificationDate.text = notificationForCell.updatedAt.relativelyFormatted
         
         let placeholderimg = UIImage(named: "Default Avatar")
-        cell.userAvatar.kf.indicatorType = .activity
-        cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar(), placeholder: placeholderimg, options: [.transition(.fade(0.5))])
-        /*
-        if (!notificationForCell.statusBool) {
-            cell.backgroundColor = UIColor(red: 59.0/255.0, green: 166.0/255.0, blue: 226.0/255.0, alpha: 0.1)
-        }
-        */
+        cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar(), placeholder: placeholderimg, options: [.transition(.fade(0.3))])
+
         cell.showCell(true)
         return cell
     }

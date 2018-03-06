@@ -9,13 +9,16 @@
 /* Begin PBXBuildFile section */
 		02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
 		8501CDF61FFBF5D800C853CE /* Just.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8501CDF51FFBF5D800C853CE /* Just.swift */; };
-		85250A0A202A1B490003A416 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A08202A1B490003A416 /* Enums.swift */; };
 		85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85250A0E202A1B730003A416 /* DefaultPreferences.plist */; };
 		85250A11202A1BE90003A416 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85250A10202A1BE90003A416 /* Login.storyboard */; };
 		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
+		85348E7720463E3A00ABD877 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85348E7520463E3A00ABD877 /* Enums.swift */; };
+		85348E7820463E3A00ABD877 /* ProgressWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */; };
 		8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8534A19E2045CF1B0001B5BA /* RootViewController.swift */; };
+		85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */; };
+		85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
@@ -29,7 +32,6 @@
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
-		85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */; };
 		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,13 +53,17 @@
 		410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		8501CDF51FFBF5D800C853CE /* Just.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Just.swift; sourceTree = "<group>"; };
-		85250A08202A1B490003A416 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		85250A0E202A1B730003A416 /* DefaultPreferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultPreferences.plist; sourceTree = "<group>"; };
 		85250A10202A1BE90003A416 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
 		85250A12202A2DC50003A416 /* NBLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBLoadingView.swift; sourceTree = "<group>"; };
 		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
+		8529E5622047D0B700D1E41D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		85348E7520463E3A00ABD877 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressWebViewController.swift; sourceTree = "<group>"; };
 		8534A19E2045CF1B0001B5BA /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsTableView.swift; sourceTree = "<group>"; };
+		85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentCellView.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -76,7 +82,6 @@
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
-		85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesDetailViewController.swift; sourceTree = "<group>"; };
 		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,6 +114,7 @@
 		46B74E1CE70476650551376B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8529E5622047D0B700D1E41D /* QuartzCore.framework */,
 				09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */,
 			);
 			name = Frameworks;
@@ -129,7 +135,6 @@
 				85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */,
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
-				85250A08202A1B490003A416 /* Enums.swift */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
@@ -137,6 +142,8 @@
 		85250A07202A1AF40003A416 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				85348E7520463E3A00ABD877 /* Enums.swift */,
+				85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -156,7 +163,8 @@
 			isa = PBXGroup;
 			children = (
 				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
-				85F4545D1FE0ACBB006D8B77 /* CoursesDetailViewController.swift */,
+				85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */,
+				85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */,
 				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
 			);
 			path = "Courses View";
@@ -293,6 +301,7 @@
 				TargetAttributes = {
 					85E2918C1F5F619300172C46 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0930;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -404,16 +413,16 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
+				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/ProgressWebViewController/ProgressWebViewController.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProgressWebViewController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -427,9 +436,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
-				85F4545E1FE0ACBB006D8B77 /* CoursesDetailViewController.swift in Sources */,
+				85348E7720463E3A00ABD877 /* Enums.swift in Sources */,
 				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,
+				85348E7820463E3A00ABD877 /* ProgressWebViewController.swift in Sources */,
+				85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */,
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
@@ -440,7 +452,6 @@
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,
-				85250A0A202A1B490003A416 /* Enums.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
@@ -600,6 +611,7 @@
 			baseConfigurationReference = 54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -614,6 +626,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "27fff1c4-2fc1-42d5-8b0a-cf2f5d0cf2e9";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -624,6 +638,7 @@
 			baseConfigurationReference = 410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
@@ -638,6 +653,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

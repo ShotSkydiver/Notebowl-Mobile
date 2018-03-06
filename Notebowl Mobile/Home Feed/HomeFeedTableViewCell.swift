@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import Kingfisher
+import FaveButton
 
-class HomeFeedTableViewCell: UITableViewCell {
+class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
     
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var userName: UILabel!
@@ -18,10 +19,8 @@ class HomeFeedTableViewCell: UITableViewCell {
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var postComments: UILabel!
     @IBOutlet weak var postLikes: UILabel!
-    @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var commentButton: UIButton!
-    @IBOutlet weak var buttonsView: UIView!
-    
+    @IBOutlet weak var likeButton: FaveButton!
+
     var post: Post?
     
     override func awakeFromNib() {
@@ -31,35 +30,53 @@ class HomeFeedTableViewCell: UITableViewCell {
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
  
+        self.likeButton.delegate = self
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+
+    }
 
     @IBAction func likeButtonPressed() {
-        if (self.likeButton.isSelected) {
-            let delReq = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
-            if (delReq.ok) {
+        if (!self.likeButton.isSelected) {
+            DispatchQueue.main.async {
+                _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
                 self.post!.refresh()
-                self.updateLikes()
+                self.updateLikes(animated: true)
             }
         }
-        else if (!self.likeButton.isSelected) {
-            let postReq = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
-            if (postReq.ok) {
+        else if (self.likeButton.isSelected) {
+            DispatchQueue.main.async {
+                _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
                 self.post!.refresh()
-                self.updateLikes()
+                self.updateLikes(animated: true)
             }
         }
     }
     
-    func updateLikes() {
-        DispatchQueue.main.async {
-            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) Likes")
-            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) Comments")
-            self.likeButton.isSelected = self.post!.likedByCurrentUser!
+    func updateLikes(animated: Bool) {
+
+        switch (self.post!.postLikes!.count) {
+        case 1:
+            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) like")
+            break
+        default:
+            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) likes")
+            break
         }
+        switch (self.post!.postComments!.count) {
+        case 1:
+            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comment")
+            break
+        default:
+            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comments")
+            break
+        }
+        self.likeButton.setSelected(selected: self.post!.likedByCurrentUser!, animated: animated)
     }
     
 }

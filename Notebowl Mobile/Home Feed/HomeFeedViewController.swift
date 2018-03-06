@@ -36,7 +36,7 @@ class HomeFeedViewController: UITableVCWithNavbarImage {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-                self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
+                self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "8")!)
                 self.bulletinTableView.reloadData()
                 self.loadingView.showLoadView(false)
             }
@@ -57,15 +57,19 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         let postForCell = self.posts[indexPath.row]
         cell.post = postForCell
         
-        cell.updateLikes()
+        DispatchQueue.main.async {
+            cell.updateLikes(animated: false)
+            
+        }
         
         cell.postContent.text = postForCell.text
         cell.postedDate.text = postForCell.updatedAt.relativelyFormatted
         cell.userName.text = postForCell._creator.fullName
         
         let placeholderimg = UIImage(named: "Default Avatar")
-        cell.userAvatar.kf.setImage(with: postForCell._creator.profileUrl, placeholder: placeholderimg, options: [.transition(.fade(0.5))])
+        cell.userAvatar.kf.setImage(with: postForCell._creator.profileThumbUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
 
+        cell.showCell(true)
         return cell
     }
 }

@@ -1,30 +1,31 @@
 PODS:
   - Disk (0.3.3)
-  - Kingfisher (4.6.2)
+  - FaveButton (2.0.3)
+  - Kingfisher (4.6.3)
   - ObjectMapper (3.1.0)
-  - ProgressWebViewController (1.6.1)
 
 DEPENDENCIES:
   - Disk
+  - FaveButton (from `https://github.com/okipol88/fave-button`, branch `feature/selectionWithoutAnimation`)
   - Kingfisher (~> 4.0)
   - ObjectMapper (~> 3.1)
-  - ProgressWebViewController (from `https://github.com/kf99916/ProgressWebViewController.git`)
 
 EXTERNAL SOURCES:
-  ProgressWebViewController:
-    :git: https://github.com/kf99916/ProgressWebViewController.git
+  FaveButton:
+    :branch: feature/selectionWithoutAnimation
+    :git: https://github.com/okipol88/fave-button
 
 CHECKOUT OPTIONS:
-  ProgressWebViewController:
-    :commit: 1c5a334cf5c466c386936e1c9b9bc2d0c4c4f5a5
-    :git: https://github.com/kf99916/ProgressWebViewController.git
+  FaveButton:
+    :commit: a8af7d902e3d962c8aa466b4a5f9039de2fe452e
+    :git: https://github.com/okipol88/fave-button
 
 SPEC CHECKSUMS:
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
-  Kingfisher: 55b9c395bf8d3949676ad3861111923990ab68cf
+  FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
+  Kingfisher: 98e6d5b5e807645743e8ed5ececd25d688d38452
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
-  ProgressWebViewController: b43f1bfd69951e07ff690eabc0fdc10abe2a8e06
 
-PODFILE CHECKSUM: 0af119b90de40d09b3d516ca3ea49c600a055bfc
+PODFILE CHECKSUM: 9021fc47868a6cbc171d60dd52e83e7783ca051a
 
 COCOAPODS: 1.4.0

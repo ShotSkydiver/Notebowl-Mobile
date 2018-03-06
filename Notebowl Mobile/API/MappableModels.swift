@@ -14,6 +14,7 @@ public enum ItemType: String {
     case term = "terms"
     case course = "courses"
     case assignment = "assignments"
+    case category = "categories"
     case grade = "grades"
     case university = "universities"
     case enrollment = "enrollments"
@@ -26,6 +27,7 @@ public enum ItemType: String {
 extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
+        
         return ("https://demo.nbstage.com/api/v1.0/" + route)
     }
 }
@@ -40,7 +42,7 @@ extension ItemType {
     
     class var routeType: ItemType { return .user }
     
-    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate}
+    public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     
     public func refresh() { }
     
@@ -80,7 +82,7 @@ public class User: Object {
         lastName <- map["lastName"]
         email <- map["email"]
         profileUrl <- (map["profileUrl"], ImageTransform())
-        profileThumbUrl <- (map["profileThumbUrl"], URLTransform())
+        profileThumbUrl <- (map["profileThumbUrl"], ImageTransform())
 
     }
 }
@@ -118,14 +120,13 @@ class Course: Object {
     var units: Int?
     var location: String?
     var desc: String?
-    
     var courseCode: String { return (subject + " " + number) }
     
-    public var userCourseGrade: String?
     public var lastUpdated: String?
-    
     public var secondsSinceGradeUpdate: TimeInterval?
-    
+
+    public var categories: [Category]!
+        
     override class var routeType: ItemType { return .course }
     
     required public init?(map: Map) {
@@ -144,35 +145,10 @@ class Course: Object {
     }
     
     override public func refresh() {
-        let courseAssignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         
-        var assignmentsUrls: String = ""
-        var maximumPoints = 0.0, userPoints = 0.0
-        
-        for assignment in courseAssignments! {
-            assignment.currentGrade()
-            
-            if ((assignment.userGrade == 0.0) || (assignment.userGrade == nil)) {
-                
-            }
-            else {
-                maximumPoints += assignment.points!
-                userPoints += assignment.userGrade!
-            }
-            
-            assignmentsUrls = (assignmentsUrls + assignment.url.absoluteString + ",")
-        }
-        
-        var finalGrade = (userPoints/maximumPoints)
-        finalGrade = (finalGrade*100.0)
-        
-        if (finalGrade.isNaN) {
-            self.userCourseGrade = "-"
-        }
-        else {
-            self.userCourseGrade = String(format: "%.1f%%", finalGrade)
-        }
-        let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsUrls)\"]", sortBy: "updatedAt:desc", limit: "1")
+        let assignmentsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")!)
+        let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsFilter)\"]", sortBy: "updatedAt:desc", limit: "1")
         
         if (recentGrade?.first != nil) {
             self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
@@ -185,14 +161,18 @@ class Course: Object {
     }
 }
 
+
+
 class Assignment: Object {
     
     var title: String!
-    var points: Double?
+    var points: Int?
     var dueDate: Date?
     var availableDate: Date?
     var desc: String?
-    var userGrade: Double?
+    var category: URL!
+    
+    var userGrade: Grade?
     
     override class var routeType: ItemType { return .assignment }
     
@@ -204,21 +184,39 @@ class Assignment: Object {
         super.mapping(map: map)
         
         title <- map["title"]
-        points <- (map["points"], TransformOf<Double, Int>(fromJSON: { Double(exactly: $0!)! }, toJSON: { $0.map { Int(exactly: $0)! } }))
+        points <- map["points"]
         dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         desc <- map["description"]
+        category <- (map["_category"], URLTransform())
     }
     
-    public func currentGrade() {
-        let current = (NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]", sortBy: "updatedAt:desc", limit: "1"))
-        guard let firstGrade = current?.first else {
-            print("grade null!")
-            self.userGrade = 0.0
-            return
-        }
-        self.userGrade = firstGrade.grade?.doubleValue
+    public func getUserGrade() {
+        userGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")?.first
 
+    }
+}
+
+class Category: Object {
+    var title: String!
+    var weight: Int!
+    var isExtraCredit: Bool!
+    var dropLowest: Int!
+    var parent: Course?
+
+    override class var routeType: ItemType { return .category }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        title <- map["title"]
+        weight <- map["weight"]
+        isExtraCredit <- map["isExtraCredit"]
+        dropLowest <- map["dropLowest"]
     }
 }
 
@@ -345,7 +343,6 @@ class Comment: Object {
     var isAnonymous: Bool!
     var text: String?
     var _creator: User?
-    var _parent: Post?
     
     override class var routeType: ItemType { return .comment }
     
@@ -360,13 +357,10 @@ class Comment: Object {
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
         _creator <- (map["_creator"], ObjectTransform<User>())
-        _parent <- map["_parent"]
     }
 }
 
 class Like: Object {
-    
-    var _parent: Post?
     var _owner: User?
     
     override class var routeType: ItemType { return .like }
@@ -378,7 +372,6 @@ class Like: Object {
     override func mapping(map: Map) {
         super.mapping(map: map)
         
-        _parent <- map["_parent"]
         _owner <- (map["_owner"], ObjectTransform<User>())
     }
 }
