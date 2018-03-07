@@ -8,31 +8,43 @@
 
 import Foundation
 import UIKit
+import HGPlaceholders
 
-class CoursesTableViewController: UITableViewController {
+class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
     var courses: [Course]!
     var loadingView: NBLoadingView!
+    
+    var placeholderTableView: TableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        placeholderTableView = tableView as? TableView
+        placeholderTableView?.placeholderDelegate = self
+        
         loadingView = NBLoadingView()
         self.view.addSubview(loadingView!)
         loadingView.addUntitled2Animation()
+        
         self.getTableData()
     }
     
     func getTableData() {
         loadingView.showLoadView(true)
-        
+
         DispatchQueue.main.async {
             let currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
-            
             self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10")!)
-            self.loadingView.showLoadView(false)
+            print("courses array is: ", self.courses.isEmpty)
             self.tableView.reloadData()
-            
+            self.loadingView.showLoadView(false)
         }
+    }
+    
+    func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
+        placeholderTableView?.showDefault()
+
+        self.getTableData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -61,6 +73,12 @@ class CoursesTableViewController: UITableViewController {
             
             destVC.selectedCourse = self.courses[indexPath!.row]
         }
+    }
+}
+
+class CourseTableView: TableView {
+    override func customSetup() {
+        placeholdersProvider = .coursesPlaceholders
     }
 }
 

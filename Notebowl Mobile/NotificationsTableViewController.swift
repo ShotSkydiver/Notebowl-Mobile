@@ -10,15 +10,21 @@ import Foundation
 import UIKit
 import ObjectMapper
 import Kingfisher
+import HGPlaceholders
 
-class NotificationsTableViewController: UITableViewController {
+class NotificationsTableViewController: UITableViewController, PlaceholderDelegate {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
     
+    var placeholderTableView: TableView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.tempLoadingViewSetup()
+        
+        placeholderTableView = tableView as? TableView
+        placeholderTableView?.placeholderDelegate = self
+        
         self.getNotifications()
     }
     
@@ -33,7 +39,6 @@ class NotificationsTableViewController: UITableViewController {
         
         DispatchQueue.main.async {
             self.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc", limit: "10")
-            
             var unreadCount = 0
             for notification in self.notifications {
                 if !notification.statusBool {
@@ -44,10 +49,16 @@ class NotificationsTableViewController: UITableViewController {
                 self.tabBarController?.tabBar.items?[2].badgeValue = String(format: "%d", unreadCount)
             }
             self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-            self.loadingView.showLoadView(false)
-            self.tableView.reloadData()
             
+            self.tableView.reloadData()
+            self.loadingView.showLoadView(false)
         }
+    }
+    
+    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
+        placeholderTableView?.showDefault()
+        
+        self.getNotifications()
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -86,4 +97,8 @@ class NotificationsTableViewController: UITableViewController {
     }
 }
 
-
+class NotificationTableView: TableView {
+    override func customSetup() {
+        placeholdersProvider = .notifsPlaceholders
+    }
+}

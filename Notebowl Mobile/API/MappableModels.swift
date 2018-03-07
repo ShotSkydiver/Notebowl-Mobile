@@ -315,6 +315,24 @@ class Post: Object {
         _parent <- map["_parent"]
     }
     
+    func updateLikes() {
+        self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        if postLikes!.count > 0 {
+            for like in postLikes! {
+                if (like._owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+                    self.likedByCurrentUser = true
+                    self.likeFromCurrentUser = like
+                }
+                else {
+                    self.likedByCurrentUser = false
+                }
+            }
+        }
+        else if postLikes!.count == 0 {
+            self.likedByCurrentUser = false
+        }
+    }
+    
     override public func refresh() {
         print("refresh post")
         self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
@@ -322,7 +340,7 @@ class Post: Object {
         
         if postLikes!.count > 0 {
             for like in postLikes! {
-                if (like._owner?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+                if (like._owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
                     self.likedByCurrentUser = true
                     self.likeFromCurrentUser = like
                 }
@@ -361,7 +379,7 @@ class Comment: Object {
 }
 
 class Like: Object {
-    var _owner: User?
+    var _owner: User!
     
     override class var routeType: ItemType { return .like }
     

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14105" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -15,10 +15,10 @@
         <scene sceneID="dnM-jb-jrb">
             <objects>
                 <tableViewController storyboardIdentifier="coursesTableViewController" title="Courses TableView Controller" id="JtQ-y2-5t3" customClass="CoursesTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="Go3-NF-LpD">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="Go3-NF-LpD" customClass="CourseTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" red="0.88235294117647056" green="0.88235294117647056" blue="0.88235294117647056" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" red="0.19215686269999999" green="0.58039215690000001" blue="0.85882352939999995" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="c4P-gb-juF">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="1"/>
@@ -93,6 +93,7 @@
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
                                     </userDefinedRuntimeAttributes>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
                                 </userDefinedRuntimeAttributes>
@@ -128,7 +129,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="assignmentCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="assignmentCell" rowHeight="80" id="zHu-0h-f96" customClass="CourseAssignmentViewCell" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333336" width="414" height="80"/>
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="414" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zHu-0h-f96" id="AgF-Jf-8Te">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="79.666666666666671"/>
@@ -192,7 +193,7 @@
         <scene sceneID="4Di-eU-D8S">
             <objects>
                 <tableViewController title="Notifications TableView Controller" id="Jd2-FC-big" customClass="NotificationsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="uBG-Nm-imb">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="uBG-Nm-imb" customClass="NotificationTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -249,6 +250,7 @@
                                         <constraint firstItem="UFQ-7V-M4f" firstAttribute="leading" secondItem="pqE-zy-miK" secondAttribute="leadingMargin" id="vdb-KY-nV1"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <outlet property="notificationContent" destination="jhJ-JY-ZkJ" id="959-mb-9Sh"/>
                                     <outlet property="notificationDate" destination="IFd-AT-oY4" id="k0k-G0-Z8q"/>
@@ -267,14 +269,19 @@
             </objects>
             <point key="canvasLocation" x="957.97101449275374" y="2613.5869565217395"/>
         </scene>
-        <!--Unread-->
+        <!--Recents-->
         <scene sceneID="vUx-WI-Ovy">
             <objects>
                 <navigationController id="hUS-W2-ld6" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Unread" image="bell-vector" id="ykP-pp-fDG"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="C0V-xe-Ww4">
-                        <rect key="frame" x="0.0" y="20" width="414" height="96"/>
+                    <tabBarItem key="tabBarItem" title="Recents" image="bell-vector" id="ykP-pp-fDG"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C0V-xe-Ww4">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="barTintColor" red="0.20392156859999999" green="0.28235294119999998" blue="0.36470588240000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="Jd2-FC-big" kind="relationship" relationship="rootViewController" id="4z5-Pa-SSx"/>
@@ -289,11 +296,13 @@
             <objects>
                 <navigationController title="Profile Nav Controller" id="h5w-W2-6Qi" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Latest" image="today_apps-vector" id="Lho-Gi-jfY"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="89X-1V-RzI">
-                        <rect key="frame" x="0.0" y="20" width="414" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="barTintColor" red="0.20392156859999999" green="0.28235294119999998" blue="0.36470588240000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
+                            <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         </textAttributes>
                         <textAttributes key="largeTitleTextAttributes">
                             <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
@@ -310,13 +319,13 @@
         <!--Latest-->
         <scene sceneID="h3d-lu-Lpk">
             <objects>
-                <viewController title="Latest" id="XYy-Qd-okh" customClass="HomeFeedViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Latest" extendedLayoutIncludesOpaqueBars="YES" id="XYy-Qd-okh" customClass="HomeFeedViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="b3w-2R-CKG">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72">
-                                <rect key="frame" x="0.0" y="116" width="414" height="620"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72" customClass="HomeTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -338,14 +347,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="219.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="Pii-Ni-aak">
-                                                    <rect key="frame" x="15" y="11" width="46" height="46"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="Pii-Ni-aak">
+                                                    <rect key="frame" x="20" y="11" width="46" height="46"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="46" id="uYY-sD-jI4"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLX-hS-wuc">
-                                                    <rect key="frame" x="73" y="11" width="326" height="25"/>
+                                                    <rect key="frame" x="78" y="11" width="316" height="25"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="25" id="BVf-zo-tXI"/>
                                                     </constraints>
@@ -354,7 +363,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="42 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7p-g9-XbK">
-                                                    <rect key="frame" x="73" y="33" width="159" height="21"/>
+                                                    <rect key="frame" x="78" y="33" width="159" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="159" id="CDU-7r-jtp"/>
                                                         <constraint firstAttribute="height" constant="21" id="i8S-sg-rNR"/>
@@ -364,13 +373,13 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Heq-0N-jB9">
-                                                    <rect key="frame" x="73" y="64" width="326" height="107"/>
+                                                    <rect key="frame" x="78" y="64" width="316" height="107"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                     <color key="textColor" red="0.1764705882352941" green="0.1764705882352941" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dRu-2e-dXW" customClass="FaveButton" customModule="FaveButton">
-                                                    <rect key="frame" x="73" y="179" width="30" height="30"/>
+                                                    <rect key="frame" x="78" y="179" width="30" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="30" id="1nT-xE-tgU"/>
                                                         <constraint firstAttribute="height" constant="30" id="YEa-mm-Auv"/>
@@ -384,13 +393,13 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 likes" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gg6-oO-bh0">
-                                                    <rect key="frame" x="108" y="188" width="124" height="13"/>
+                                                    <rect key="frame" x="113" y="187.66666666666666" width="114" height="13.333333333333343"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 comments" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hd1-bj-bV8">
-                                                    <rect key="frame" x="240" y="188" width="159" height="13"/>
+                                                    <rect key="frame" x="235" y="187.66666666666666" width="159" height="13.333333333333343"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -419,6 +428,7 @@
                                                 <constraint firstItem="dRu-2e-dXW" firstAttribute="leading" secondItem="Heq-0N-jB9" secondAttribute="leading" id="x2w-au-mSE"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <outlet property="likeButton" destination="dRu-2e-dXW" id="LKh-nr-ifo"/>
                                             <outlet property="postComments" destination="hd1-bj-bV8" id="bdZ-oi-ZoG"/>
@@ -432,16 +442,16 @@
                                 </prototypes>
                             </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="yJQ-xz-W72" firstAttribute="top" secondItem="r09-M8-rM9" secondAttribute="top" id="0P5-5Y-9zG"/>
                             <constraint firstItem="yJQ-xz-W72" firstAttribute="trailing" secondItem="r09-M8-rM9" secondAttribute="trailing" id="Is9-SY-4Ms"/>
                             <constraint firstItem="yJQ-xz-W72" firstAttribute="bottom" secondItem="r09-M8-rM9" secondAttribute="bottom" constant="49" id="RIj-dw-b78"/>
+                            <constraint firstItem="yJQ-xz-W72" firstAttribute="top" secondItem="b3w-2R-CKG" secondAttribute="top" id="rI4-bS-B3h"/>
                             <constraint firstItem="yJQ-xz-W72" firstAttribute="leading" secondItem="r09-M8-rM9" secondAttribute="leading" id="vKX-BI-G7E"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="r09-M8-rM9"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Latest Posts" id="oYZ-wD-P4s"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="oYZ-wD-P4s" customClass="NotebowlLogoNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target"/>
                     <connections>
                         <outlet property="bulletinTableView" destination="yJQ-xz-W72" id="uP8-mC-bmr"/>
                     </connections>
@@ -496,8 +506,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="tintColor" red="0.19215686269999999" green="0.58039215690000001" blue="0.85882352939999995" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="selectedImageTintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="barTintColor" red="0.92549019607843142" green="0.94117647058823528" blue="0.94509803921568625" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="selectedImageTintColor" red="0.30196078431372547" green="0.30196078431372547" blue="0.30196078431372547" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="h5w-W2-6Qi" kind="relationship" relationship="viewControllers" id="pLX-GX-0rC"/>
@@ -514,10 +525,14 @@
             <objects>
                 <navigationController title="Courses Nav Controller" id="HSI-fu-8pP" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Courses" image="book-vector" id="GaJ-TT-zS9"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="0JD-ga-Hq1">
-                        <rect key="frame" x="0.0" y="20" width="414" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0JD-ga-Hq1">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.19215686269999999" green="0.58039215690000001" blue="0.85882352939999995" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                        <color key="barTintColor" red="0.20392156859999999" green="0.28235294119999998" blue="0.36470588240000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="JtQ-y2-5t3" kind="relationship" relationship="rootViewController" id="L4h-dD-qpM"/>

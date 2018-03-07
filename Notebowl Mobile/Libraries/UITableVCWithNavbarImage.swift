@@ -22,7 +22,7 @@ class UITableVCWithNavbarImage: UIViewController {
         /// Margin from bottom anchor of NavBar to bottom anchor of Image for Large NavBar state
         static let ImageBottomMarginForLargeState: CGFloat = 12
         /// Margin from bottom anchor of NavBar to bottom anchor of Image for Small NavBar state
-        static let ImageBottomMarginForSmallState: CGFloat = 6
+        static let ImageBottomMarginForSmallState: CGFloat = 12
         /// Image height/width for Small NavBar state
         static let ImageSizeForSmallState: CGFloat = 32
         /// Height of NavBar for Small state. Usually it's just 44
@@ -40,7 +40,7 @@ class UITableVCWithNavbarImage: UIViewController {
         
         setupUI()
         
-        self.navbarImageView.kf.indicatorType = .activity
+        // self.navbarImageView.kf.indicatorType = .activity
         self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.3))])
     }
     
@@ -79,7 +79,7 @@ class UITableVCWithNavbarImage: UIViewController {
     }
     
     func setupUI() {
-        if #available(iOS 11.0, *) { navigationController?.navigationBar.prefersLargeTitles = true } 
+        if #available(iOS 11.0, *) { navigationController?.navigationBar.prefersLargeTitles = false }
         guard let navigationBar = self.navigationController?.navigationBar else { return }
         navigationBar.addSubview(navbarImageView)
         navbarImageView.layer.cornerRadius = Const.ImageSizeForLargeState / 2

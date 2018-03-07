@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import ObjectMapper
-import Kingfisher
+import HGPlaceholders
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -185,6 +185,64 @@ public extension UIImage {
     }
 }
 
+extension PlaceholdersProvider {
+    
+    static var emptyHome: PlaceholderData {
+        var emptyStyle = PlaceholderData()
+        emptyStyle.image = UIImage(named: "sad-face-vector")
+        emptyStyle.title = "It's lonely in here!"
+        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
+        emptyStyle.action = "Check again!"
+        return emptyStyle
+    }
+    static var emptyCourses: PlaceholderData {
+        var emptyStyle = PlaceholderData()
+        emptyStyle.image = PlaceholderData.error.image
+        emptyStyle.title = "Enroll in some courses!"
+        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
+        emptyStyle.action = "Check again!"
+        return emptyStyle
+    }
+    static var emptyNotifications: PlaceholderData {
+        var emptyStyle = PlaceholderData()
+        emptyStyle.image = UIImage(named: "thinking-face-vector")
+        emptyStyle.title = "Nothing noteworthy has happened!"
+        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
+        emptyStyle.action = "Check again!"
+        return emptyStyle
+    }
+    
+    static var commonStyle: PlaceholderStyle {
+        var nbStyle = PlaceholderStyle()
+        nbStyle.backgroundColor = .groupTableViewBackground
+        nbStyle.actionBackgroundColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+        nbStyle.actionTitleColor = .groupTableViewBackground
+        nbStyle.titleColor = .darkText
+        nbStyle.subtitleColor = #colorLiteral(red: 0.3098039216, green: 0.3098039216, blue: 0.3098039216, alpha: 1)
+        nbStyle.isAnimated = true
+        nbStyle.titleFont = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        nbStyle.subtitleFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+        nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        return nbStyle
+    }
+    
+    static var homeFeedPlaceholders: PlaceholdersProvider {
+        let homePlaceholder = Placeholder(data: emptyHome, style: commonStyle, key: .noResultsKey)
+        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: homePlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
+        return provider
+    }
+    static var coursesPlaceholders: PlaceholdersProvider {
+        let coursePlaceholder = Placeholder(data: emptyCourses, style: commonStyle, key: .noResultsKey)
+        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: coursePlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
+        return provider
+    }
+    static var notifsPlaceholders: PlaceholdersProvider {
+        let notificationPlaceholder = Placeholder(data: emptyNotifications, style: commonStyle, key: .noResultsKey)
+        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: notificationPlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
+        return provider
+    }
+}
+
 class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T
     public typealias JSON = String
@@ -227,3 +285,6 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }
+
+
+

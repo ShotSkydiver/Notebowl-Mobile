@@ -9,39 +9,53 @@
 import Foundation
 import UIKit
 import Kingfisher
+import HGPlaceholders
 
-class HomeFeedViewController: UITableVCWithNavbarImage {
+class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
     var posts: [Post]!
     var loadingView: NBLoadingView!
     
-    @IBOutlet var bulletinTableView: UITableView!
+    @IBOutlet var bulletinTableView: HomeTableView!
+    
+    var placeholderTableView: TableView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.bulletinTableView.delegate = self
-        self.bulletinTableView.dataSource = self
-        
+        bulletinTableView.delegate = self
+        bulletinTableView.dataSource = self
         self.tempLoadingViewSetup()
+        
+        placeholderTableView = bulletinTableView
+        placeholderTableView?.placeholderDelegate = self
+        
+        
         self.getPosts()
     }
 
     func tempLoadingViewSetup() {
         self.loadingView = NBLoadingView()
-        
         self.view.addSubview(self.loadingView)
         self.loadingView.addUntitled2Animation()
+    }
+    
+    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
+        placeholderTableView?.showDefault()
+        
+        self.getPosts()
     }
     
     func getPosts() {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-                self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "8")!)
+                self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
+            
                 self.bulletinTableView.reloadData()
                 self.loadingView.showLoadView(false)
             }
     }
 }
+
 
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -55,11 +69,16 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "homeFeedCell", for: indexPath) as! HomeFeedTableViewCell
         let postForCell = self.posts[indexPath.row]
-        cell.post = postForCell
+        if (cell.post == nil) {
+            print("post nil")
+            cell.post = postForCell
+        }
+        
+        
         
         DispatchQueue.main.async {
-            cell.updateLikes(animated: false)
-            
+            cell.updateLikeButton(animated: false)
+            //cell.updatePostText()
         }
         
         cell.postContent.text = postForCell.text
@@ -71,5 +90,29 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
         cell.showCell(true)
         return cell
+    }
+}
+
+
+class NotebowlLogoNavigationItem: UINavigationItem {
+    
+    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
+    
+    private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
+    private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 270, height: 22))
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.image = nbLogo
+        logoContainer.addSubview(logoImageView)
+        self.titleView = logoContainer
+        
+    }
+}
+
+class HomeTableView: TableView {
+    override func customSetup() {
+        placeholdersProvider = .homeFeedPlaceholders
     }
 }

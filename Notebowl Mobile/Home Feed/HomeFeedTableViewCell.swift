@@ -23,6 +23,7 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
 
     var post: Post?
     
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -38,45 +39,73 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-
+        print("didselected")
+        // self.likeButton.setSelected(selected: selected, animated: true)
     }
 
     @IBAction func likeButtonPressed() {
+        print("pressed")
         if (!self.likeButton.isSelected) {
-            DispatchQueue.main.async {
-                _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
-                self.post!.refresh()
-                self.updateLikes(animated: true)
+            // self.likedBool = false
+                // self.updateLikeButton(animated: true)
+
+            // DispatchQueue.main.async {
+            _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid]) { _ in
+                print("after del")
+                self.post!.updateLikes()
             }
+
+            // }
         }
         else if (self.likeButton.isSelected) {
-            DispatchQueue.main.async {
-                _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
-                self.post!.refresh()
-                self.updateLikes(animated: true)
+            // self.likedBool = true
+
+            // DispatchQueue.main.async {
+            _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"]) { _ in
+                print("after post")
+                self.post!.updateLikes()
             }
+            
+            
+                // self.updatePostText()
+            // }
+        }
+        
+        DispatchQueue.main.async {
+            
+        self.postLikes.text = "\(self.post!.postLikes!.count)"
         }
     }
     
-    func updateLikes(animated: Bool) {
-
-        switch (self.post!.postLikes!.count) {
-        case 1:
-            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) like")
-            break
-        default:
-            self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0) likes")
-            break
-        }
-        switch (self.post!.postComments!.count) {
-        case 1:
-            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comment")
-            break
-        default:
-            self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comments")
-            break
-        }
-        self.likeButton.setSelected(selected: self.post!.likedByCurrentUser!, animated: animated)
+    func updateLikeButton(animated: Bool) {
+ 
+            self.likeButton.setSelected(selected: self.post!.likedByCurrentUser!, animated: animated)
+        
+  
+            // self.likeButton.setSelected(selected: self.likedBool, animated: animated)
+        
+    }
+    
+    func updatePostText() {
+        // DispatchQueue.main.async {
+            switch (self.post!.postLikes!.count) {
+            case 1:
+                self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0)")
+                break
+            default:
+                self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0)")
+                break
+            }
+            switch (self.post!.postComments!.count) {
+            case 1:
+                self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comment")
+                break
+            default:
+                self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comments")
+                break
+            }
+            
+        // }
     }
     
 }
