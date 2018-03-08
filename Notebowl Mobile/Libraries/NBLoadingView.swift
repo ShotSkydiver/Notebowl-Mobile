@@ -31,10 +31,13 @@ class NBLoadingView: UIView, CAAnimationDelegate {
     init() {
         let dimensions: CGFloat = 170
         if let window = UIApplication.shared.keyWindow {
+            
+            
             let centerX = (window.center.x-(dimensions/2))
             let centerY = ((window.center.y-141)-(dimensions/2))
-            super.init(frame: CGRect(x: centerX, y: centerY, width: dimensions, height: dimensions))
             
+            super.init(frame: CGRect(x: centerX, y: centerY, width: dimensions, height: dimensions))
+        
             self.alpha = 0.0
             
             setupProperties()
@@ -203,7 +206,8 @@ class NBLoadingView: UIView, CAAnimationDelegate {
 	
     
     func showLoadView(_ show: Bool, completionHandler: (() -> Swift.Void)? = nil) {
-        UIView.animate(withDuration: 0.3, animations: {
+        
+        UIView.animate(withDuration: 0.3, delay: 0.0, animations: {
             self.alpha = show ? 1.0 : 0.0
         }) { (_) in
             if (completionHandler != nil) {

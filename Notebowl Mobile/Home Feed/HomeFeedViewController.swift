@@ -14,6 +14,7 @@ import HGPlaceholders
 class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
     var posts: [Post]!
     var loadingView: NBLoadingView!
+    var bgView: UIView!
     
     @IBOutlet var bulletinTableView: HomeTableView!
     
@@ -28,14 +29,13 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
         placeholderTableView = bulletinTableView
         placeholderTableView?.placeholderDelegate = self
         
-        
         self.getPosts()
     }
 
     func tempLoadingViewSetup() {
         self.loadingView = NBLoadingView()
-        self.view.addSubview(self.loadingView)
-        self.loadingView.addUntitled2Animation()
+        self.bgView = UIView(loadingView: self.loadingView)
+        self.view.addSubview(bgView)
     }
     
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
@@ -48,11 +48,12 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-                self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
+            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
             
-                self.bulletinTableView.reloadData()
-                self.loadingView.showLoadView(false)
-            }
+            self.bulletinTableView.reloadData()
+            
+            self.bgView.showViewAnimated(false)
+        }
     }
 }
 

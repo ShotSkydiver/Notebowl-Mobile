@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        
+        UIApplication.shared.statusBarStyle = .lightContent
         return true
     }
 

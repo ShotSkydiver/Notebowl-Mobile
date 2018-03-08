@@ -15,12 +15,14 @@ import HGPlaceholders
 class NotificationsTableViewController: UITableViewController, PlaceholderDelegate {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
-    
+    var bgView: UIView!
     var placeholderTableView: TableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tempLoadingViewSetup()
+        self.loadingView = NBLoadingView()
+        self.bgView = UIView(loadingView: self.loadingView)
+        self.view.addSubview(bgView)
         
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
@@ -28,17 +30,12 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         self.getNotifications()
     }
     
-    func tempLoadingViewSetup() {
-        self.loadingView = NBLoadingView()
-        self.view.addSubview(self.loadingView)
-        self.loadingView.addUntitled2Animation()
-    }
-    
     func getNotifications() {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
             self.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc", limit: "10")
+            if (self.notifications.isEmpty) { self.loadingView.alpha = 0.0 }
             var unreadCount = 0
             for notification in self.notifications {
                 if !notification.statusBool {
@@ -51,7 +48,7 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
             
             self.tableView.reloadData()
-            self.loadingView.showLoadView(false)
+            self.bgView.showViewAnimated(false)
         }
     }
     

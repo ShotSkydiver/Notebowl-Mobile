@@ -121,7 +121,6 @@ public extension UITableViewCell {
 extension UserDefaults {
     struct Keys {
         private init() {}
-        
         static let HasUserLoggedIn = "hasUserLoggedIn"
     }
     
@@ -185,6 +184,25 @@ public extension UIImage {
     }
 }
 
+extension UIView {
+    convenience init(loadingView: NBLoadingView) {
+        self.init(frame: UIScreen.main.bounds)
+        
+        self.backgroundColor = UIColor.groupTableViewBackground
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.addSubview(loadingView)
+        loadingView.addUntitled2Animation()
+        
+    }
+
+    func showViewAnimated(_ show: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.alpha = show ? 1.0 : 0.0
+        }
+    }
+}
+
 extension PlaceholdersProvider {
     
     static var emptyHome: PlaceholderData {
@@ -220,7 +238,7 @@ extension PlaceholdersProvider {
         nbStyle.titleColor = .darkText
         nbStyle.subtitleColor = #colorLiteral(red: 0.3098039216, green: 0.3098039216, blue: 0.3098039216, alpha: 1)
         nbStyle.isAnimated = true
-        nbStyle.titleFont = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        nbStyle.titleFont = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         nbStyle.subtitleFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
         nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 12.0, weight: .regular)
         return nbStyle

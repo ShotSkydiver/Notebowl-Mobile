@@ -10,11 +10,10 @@ import Foundation
 import UIKit
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
-    // #2B7EB6 for new dark bg
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         UITabBar.appearance().tintColor = UIColor.darkGray
-        UIApplication.shared.statusBarStyle = .lightContent
         UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
         self.delegate = self
         
