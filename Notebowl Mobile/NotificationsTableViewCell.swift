@@ -21,7 +21,7 @@ class NotificationsTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
+        self.userAvatar.layer.cornerRadius = 3.0
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
     }
@@ -33,7 +33,7 @@ class NotificationsTableViewCell: UITableViewCell {
     func updateReadStatus() {
         DispatchQueue.main.async {
             if (!self.notification!.statusBool) {
-                self.backgroundColor = #colorLiteral(red: 0.231372549, green: 0.6509803922, blue: 0.8862745098, alpha: 0.1000000015)
+                self.backgroundColor = #colorLiteral(red: 0.9294117647, green: 0.9529411765, blue: 0.9803921569, alpha: 1)
             }
             else if (self.notification!.statusBool) {
                 self.backgroundColor = UIColor.white

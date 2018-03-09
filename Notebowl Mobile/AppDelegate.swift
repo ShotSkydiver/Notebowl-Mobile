@@ -8,6 +8,7 @@
 
 import UIKit
 import UserNotifications
+import Bugsnag
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.set(hasUserLoggedIn: false)
         }
         UIApplication.shared.statusBarStyle = .lightContent
+        
+        Bugsnag.start(withApiKey: "12cf23ad6b3bdaad994837ef65f38b55")
+        
         return true
     }
 

@@ -27,7 +27,7 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.userAvatar.layer.cornerRadius = self.userAvatar.frame.size.height*0.5
+        self.userAvatar.layer.cornerRadius = 3.0
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
  

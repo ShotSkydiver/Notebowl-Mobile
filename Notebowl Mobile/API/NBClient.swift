@@ -43,6 +43,8 @@ public class NBClient {
         return urlBuilder
     }
     
+
+    
     public func initArray<T>(from array: [T]) -> [T]? where T: Object {
         var mutableArray = array
         for item in mutableArray {

@@ -32,6 +32,22 @@ extension ItemType {
     }
 }
 
+public enum GradeType: String {
+    case points = "Points"
+    case completion = "(In)complete"
+    case percent = "Percentage"
+    case letter = "Letter Grade"
+}
+
+public struct DefaultValues {
+    var DEFAULT_CURVE_AMOUNT = 0
+    var DEFAULT_GRADING_PRECISION = 1
+    // static let DEFAULT_GRADING_TYPE =
+    var DEFAULT_LETTER_GRADE_TITLES = ["F", "D", "C", "B", "A"]
+    var DEFAULT_LETTER_GRADE_MEDIAN = [30, 65, 75, 85, 95]
+    var DEFAULT_LETTER_GRADE_VALUES = [0, 60, 70, 80, 90]
+}
+
 @objc public class Object: NSObject, Mappable {
     
     var createdAt: Date!
@@ -120,6 +136,22 @@ class Course: Object {
     var units: Int?
     var location: String?
     var desc: String?
+    var gradeBase: String?
+    var gradeCurve: Int?
+    var gradePrecision: Int!
+    var customGradeScale: Bool!
+    var gradeScaleTitles: String!
+    var gradeScaleValues: String!
+    var gradeType: String!
+    var pointsEnabled: Bool!
+    var dropLowestGrade: Bool!
+    var weightedGrades: Bool!
+    var availableDate: Date!
+    var endDate: Date!
+    
+    public var gradeGPAEnabled: Bool { return gradeBase?.compare("gpa").rawValue == 0 ? true : false }
+    public var isAvailable: Bool { return Date().isBetween(availableDate, endDate, includeBounds: true) }
+    
     var courseCode: String { return (subject + " " + number) }
     
     public var lastUpdated: String?
@@ -142,6 +174,18 @@ class Course: Object {
         units <- map["units"]
         location <- map["location"]
         desc <- map["description"]
+        gradeBase <- map["gradeBase"]
+        gradeCurve <- map["gradeCurveAmount"]
+        gradePrecision <- map["gradePrecision"]
+        customGradeScale <- map["gradeScaleCustom"]
+        gradeScaleTitles <- map["gradeScaleTitles"]
+        gradeScaleValues <- map["gradeScaleValues"]
+        gradeType <- map["gradeType"]
+        pointsEnabled <- map["pointsEnabled"]
+        dropLowestGrade <- map["useDropLowest"]
+        weightedGrades <- map["useWeightedGrades"]
+        availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
+        endDate <- (map["endDate"], ISO8601FixedDateTransform())
     }
     
     override public func refresh() {
@@ -167,12 +211,20 @@ class Assignment: Object {
     
     var title: String!
     var points: Int?
-    var dueDate: Date?
-    var availableDate: Date?
+    var dueDate: Date!
+    var availableDate: Date!
     var desc: String?
+    var gradeOnly: Bool!
+    var gradeType: GradeType!
+    var gradesPublished: Bool!
+    var allowLateSubmission: Bool!
     var category: URL!
+    var parent: Course!
     
-    var userGrade: Grade?
+    public var gradeString: String!
+    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isInToday) }
+    public var isPastDue: Bool { return dueDate.isInPast }
+    public var getStatus: String { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
     
     override class var routeType: ItemType { return .assignment }
     
@@ -188,12 +240,109 @@ class Assignment: Object {
         dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         desc <- map["description"]
+        gradeOnly <- map["gradeOnly"]
+        gradeType <- (map["gradeType"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
+        gradesPublished <- map["gradesPublished"]
+        allowLateSubmission <- map["lateSubmissionPermitted"]
+        parent <- (map["_parent"], ObjectTransform<Course>())
         category <- (map["_category"], URLTransform())
     }
     
-    public func getUserGrade() {
-        userGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")?.first
+    public func getGradeString() {
+        self.gradeString = getUserGrade()
+    }
+    
+    func getRoundedGradePercent(grade: Double) -> Double {
+        let rawPercent = grade / Double(self.points!) * 100
+        let percentRounded = rawPercent.rounded(toPlaces: self.parent.gradePrecision)
+        return percentRounded
+    }
+    
+    public func getUserGrade() -> String {
+        guard let userGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")?.first else { return "-" }
+        guard let gradePoints = userGrade.grade else { return "-" }
 
+        if self.gradeType == .completion {
+            return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
+        }
+            
+        else if self.gradeType == .percent && self.parent.gradeGPAEnabled {
+            var rawPercent = gradePoints / Double(self.points!) * 100
+            rawPercent = rawPercent / 100 * 4
+            let gpaValue = rawPercent.rounded(toPlaces: self.parent.gradePrecision)
+            return String(format: "%.2f", gpaValue)
+        }
+            
+        else if self.gradeType == .percent {
+            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
+            return String(format: "%.2f", percentFormatted)
+        }
+          
+        
+        else if self.gradeType == .letter {
+            let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
+            
+            var titles = DefaultValues().DEFAULT_LETTER_GRADE_TITLES
+            var values = DefaultValues().DEFAULT_LETTER_GRADE_VALUES
+            
+            if (self.parent.customGradeScale) {
+                let yUni: Unicode.Scalar = "ÿ"
+                var yCharSet = CharacterSet.init()
+                yCharSet.insert(yUni)
+                titles = self.parent.gradeScaleTitles.components(separatedBy: yCharSet)
+                let tempValues = self.parent.gradeScaleValues.components(separatedBy: yCharSet)
+                for item in tempValues {
+                    values[tempValues.index(of: item)!] = Int(item)!
+                }
+            }
+            
+            if (percentGrade < 0) {
+                return titles[0].uppercased()
+            }
+            else {
+                for value in values {
+                    let indexAfter = values.index(after: values.index(of: value)!)
+                    if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
+                        return titles[values.index(of: value)!].uppercased()
+                    }
+                }
+            }
+            return "error!"
+        }
+        
+        return "\(Int(gradePoints))"
+        
+        
+        // for percentage grades
+        // rawPercent = ( userGrade.grade / self.points ) * 100
+        // round rawPercent value using grade precision value from course
+        // self.gradeString = formatted rawPercent
+        
+            // for percentage grades when displaying grades as gpa is enabled
+            //
+        
+        
+        // for letter grades
+        // rawPercent = ( userGrade.grade / self.points ) * 100
+        // round rawPercent value using grade precision value from course
+        // check if course is using a custom grading scale
+            // handle custom grading scale by parsing title and value strings from course
+        // if rawPercent value is 0 or less than 0
+            // self.gradeString = "F"
+        // else iterate through a for loop that compares each letter grade (A, B, C,) to the rawPercent
+            // self.gradeString = whichever letter grade matches our rawPercent value
+        
+        
+        
+        // for complete grades
+        // if userGrade.grade == self.points
+            // self.gradeString = "Complete"
+        // else if userGrade.grade == 0
+            // self.gradeString = "Incomplete"
+        
+        
+        // for handling when points are disabled for this course
+        // self.gradeString = "-"
     }
 }
 
@@ -221,7 +370,7 @@ class Category: Object {
 }
 
 class Grade: Object {
-    var grade: NSDecimalNumber?
+    var grade: Double?
     
     override class var routeType: ItemType { return .grade }
     
@@ -231,7 +380,7 @@ class Grade: Object {
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        grade <- (map["grade"], NSDecimalNumberTransform())
+        grade <- map["grade"]
     }
 }
 

@@ -17,14 +17,17 @@ class CourseAssignmentsTableView: UITableViewController {
     var categories: [Category]!
     
     var loadingView: NBLoadingView!
+    var bgView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = selectedCourse.courseCode
         self.categories = self.selectedCourse.categories
         
-        loadingView = NBLoadingView()
-        self.view.addSubview(loadingView!)
-        loadingView.addUntitled2Animation()
+        self.loadingView = NBLoadingView()
+        self.bgView = UIView(loadingView: self.loadingView)
+        self.view.addSubview(bgView)
+        
         self.getTableData()
     }
     
@@ -32,7 +35,10 @@ class CourseAssignmentsTableView: UITableViewController {
         loadingView.showLoadView(true)
         DispatchQueue.main.async {
             self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
-
+            for assignment in self.assignments {
+                assignment.getGradeString()
+            }
+    
             for category in self.categories! {
                 let filtered = self.assignments.filter({ $0.category.absoluteString == category.url.absoluteString })
                 if (filtered.count > 0) {
@@ -43,7 +49,7 @@ class CourseAssignmentsTableView: UITableViewController {
                 }
             }
             self.tableView.reloadData()
-            self.loadingView.showLoadView(false)
+            self.bgView.showViewAnimated(false)
         }
     }
     
@@ -69,8 +75,18 @@ class CourseAssignmentsTableView: UITableViewController {
         
         let assignmentForCell = self.data[self.categories[indexPath.section]]?[indexPath.row]
         cell.assignmentName.text = assignmentForCell?.title
-        cell.assignmentPoints.text = String(format: "-/%d", (assignmentForCell?.points!)!)
+        if (assignmentForCell?.gradeOnly)! {
+            cell.assignmentDesc.text = ""
+        }
+        else {
+            cell.assignmentDesc.text = assignmentForCell?.desc
+        }
+        cell.assignmentPoints.text = ("\(assignmentForCell?.points! ?? 0)")
         cell.dueDate.text = assignmentForCell?.dueDate?.relativelyFormatted
+        
+        cell.assignmentGrade.text = assignmentForCell?.gradeString
+        cell.assignmentStatus.text = assignmentForCell?.getStatus
+        
         cell.showCell(true)
         
         return cell

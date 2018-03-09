@@ -12,8 +12,10 @@ import UIKit
 class CourseAssignmentViewCell: UITableViewCell {
     
     @IBOutlet weak var assignmentName: UILabel!
+    @IBOutlet weak var assignmentDesc: UILabel!
     @IBOutlet weak var assignmentGrade: UILabel!
     @IBOutlet weak var assignmentPoints: UILabel!
+    @IBOutlet weak var assignmentStatus: UILabel!
     @IBOutlet weak var dueDate: UILabel!
     
     override func awakeFromNib() {

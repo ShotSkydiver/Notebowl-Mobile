@@ -1,4 +1,5 @@
 PODS:
+  - Bugsnag (5.15.4)
   - Disk (0.3.3)
   - FaveButton (2.0.3)
   - HGPlaceholders (0.3.0)
@@ -6,6 +7,7 @@ PODS:
   - ObjectMapper (3.1.0)
 
 DEPENDENCIES:
+  - Bugsnag
   - Disk
   - FaveButton (from `https://github.com/okipol88/fave-button`, branch `feature/selectionWithoutAnimation`)
   - HGPlaceholders
@@ -23,12 +25,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/okipol88/fave-button
 
 SPEC CHECKSUMS:
+  Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   Kingfisher: 98e6d5b5e807645743e8ed5ececd25d688d38452
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
 
-PODFILE CHECKSUM: ff33d639e500698e0edde022a633c46225657433
+PODFILE CHECKSUM: 4b095ea85b5c0599eff3eb748149909c7fe2f348
 
 COCOAPODS: 1.4.0

@@ -40,7 +40,6 @@ class UITableVCWithNavbarImage: UIViewController {
         
         setupUI()
         
-        // self.navbarImageView.kf.indicatorType = .activity
         self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.3))])
     }
     
@@ -82,7 +81,7 @@ class UITableVCWithNavbarImage: UIViewController {
         if #available(iOS 11.0, *) { navigationController?.navigationBar.prefersLargeTitles = false }
         guard let navigationBar = self.navigationController?.navigationBar else { return }
         navigationBar.addSubview(navbarImageView)
-        navbarImageView.layer.cornerRadius = Const.ImageSizeForLargeState / 2
+        navbarImageView.layer.cornerRadius = 3.0
         navbarImageView.clipsToBounds = true
         navbarImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
