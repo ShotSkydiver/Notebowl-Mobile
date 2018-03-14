@@ -20,6 +20,8 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var postComments: UILabel!
     @IBOutlet weak var postLikes: UILabel!
     @IBOutlet weak var likeButton: FaveButton!
+    @IBOutlet weak var commentButton: FaveButton!
+    @IBOutlet weak var likeActivityIndicator: UIActivityIndicatorView!
 
     var post: Post?
     
@@ -30,7 +32,9 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
         self.userAvatar.layer.cornerRadius = 3.0
         self.userAvatar.clipsToBounds = true
         self.userAvatar.layer.masksToBounds = true
- 
+        
+        
+
         self.likeButton.delegate = self
     }
     
@@ -39,73 +43,44 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        print("didselected")
-        // self.likeButton.setSelected(selected: selected, animated: true)
+        print("didselected: ", selected)
+        self.likeActivityIndicator.showViewAnimated(true)
+        self.postLikes.showViewAnimated(false)
+        self.likeActivityIndicator.startAnimating()
+        
+        DispatchQueue.main.async {
+            if (!self.likeButton.isSelected) {
+                _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+            }
+            else if (self.likeButton.isSelected) {
+                _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
+            }
+            self.post!.updateLikes()
+            self.updatePostText()
+            
+            self.postLikes.showViewAnimated(true)
+            self.likeActivityIndicator.showViewAnimated(false)
+            self.likeActivityIndicator.stopAnimating()
+        }
+    }
+    
+    @IBAction func commentButtonPressed() {
+        
     }
 
     @IBAction func likeButtonPressed() {
-        print("pressed")
-        if (!self.likeButton.isSelected) {
-            // self.likedBool = false
-                // self.updateLikeButton(animated: true)
-
-            // DispatchQueue.main.async {
-            _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid]) { _ in
-                print("after del")
-                self.post!.updateLikes()
-            }
-
-            // }
-        }
-        else if (self.likeButton.isSelected) {
-            // self.likedBool = true
-
-            // DispatchQueue.main.async {
-            _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"]) { _ in
-                print("after post")
-                self.post!.updateLikes()
-            }
-            
-            
-                // self.updatePostText()
-            // }
-        }
         
-        DispatchQueue.main.async {
-            
-        self.postLikes.text = "\(self.post!.postLikes!.count)"
-        }
     }
     
     func updateLikeButton(animated: Bool) {
- 
-            self.likeButton.setSelected(selected: self.post!.likedByCurrentUser!, animated: animated)
-        
-  
-            // self.likeButton.setSelected(selected: self.likedBool, animated: animated)
-        
+        self.likeButton.setSelected(selected: self.post!.likedByCurrentUser!, animated: animated)
     }
     
     func updatePostText() {
-        // DispatchQueue.main.async {
-            switch (self.post!.postLikes!.count) {
-            case 1:
-                self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0)")
-                break
-            default:
-                self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0)")
-                break
-            }
-            switch (self.post!.postComments!.count) {
-            case 1:
-                self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comment")
-                break
-            default:
-                self.postComments.text = ("\(self.post!.postComments?.count ?? 0) comments")
-                break
-            }
-            
-        // }
+        self.postLikes.text = ("\(self.post!.postLikes?.count ?? 0)")
+        self.postComments.text = ("\(self.post!.postComments?.count ?? 0)")
     }
+    
+    
     
 }

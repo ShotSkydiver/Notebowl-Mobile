@@ -74,12 +74,8 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
             cell.post = postForCell
         }
         
-        
-        
-        DispatchQueue.main.async {
-            cell.updateLikeButton(animated: false)
-            //cell.updatePostText()
-        }
+        cell.updateLikeButton(animated: false)
+        cell.updatePostText()
         
         cell.postContent.text = postForCell.text
         cell.postedDate.text = postForCell.updatedAt.relativelyFormatted
