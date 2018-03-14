@@ -79,10 +79,16 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.postContent.text = postForCell.text
         cell.postedDate.text = postForCell.updatedAt.relativelyFormatted
-        cell.userName.text = postForCell._creator.fullName
         
         let placeholderimg = UIImage(named: "Default Avatar")
-        cell.userAvatar.kf.setImage(with: postForCell._creator.profileThumbUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
+        if postForCell.isAnonymous {
+            cell.userName.text = "Anonymous"
+        }
+        else {
+            cell.userName.text = postForCell._creator!.fullName
+            cell.userAvatar.kf.setImage(with: postForCell._creator!.profileThumbUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
+        }
+        
 
         cell.showCell(true)
         return cell

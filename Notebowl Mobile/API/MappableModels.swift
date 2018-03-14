@@ -438,7 +438,7 @@ class Post: Object {
     var isAnonymous: Bool!
     var pinned: Bool!
     var text: String?
-    var _creator: User!
+    var _creator: User?
     var _parent: Course?
     
     public var postLikes: [Like]?
@@ -459,8 +459,9 @@ class Post: Object {
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
         text <- map["text"]
-
-        _creator <- (map["_creator"], ObjectTransform<User>())
+        if !isAnonymous {
+            _creator <- (map["_creator"], ObjectTransform<User>())
+        }
         _parent <- map["_parent"]
     }
     
