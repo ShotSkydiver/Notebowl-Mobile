@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Bugsnag
 
 class RootViewController: UIViewController {
     
@@ -49,6 +50,8 @@ class RootViewController: UIViewController {
         
             _ = NBClient.shared.getCurrentUser()
             
+            let delegate = UIApplication.shared.delegate as! AppDelegate
+            delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
         }
     }
 }

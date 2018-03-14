@@ -49,7 +49,6 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
         
         DispatchQueue.main.async {
             self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
-            
             self.bulletinTableView.reloadData()
             
             self.bgView.showViewAnimated(false)

@@ -23,11 +23,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         UIApplication.shared.statusBarStyle = .lightContent
         
-        Bugsnag.start(withApiKey: "12cf23ad6b3bdaad994837ef65f38b55")
         
         return true
     }
 
+    
+    func startBugsnag(user: User) {
+        let bugConfig = BugsnagConfiguration()
+        bugConfig.apiKey = "572ce3fbfa0c590dcfbc69519080d42e"
+        bugConfig.setUser(user.resourceKey, withName: user.fullName, andEmail: user.email!)
+        Bugsnag.start(with: bugConfig)
+        
+    }
+    
     func registerNotifications() {
         #if arch(i386) || arch(x86_64)
         print("is simulator!")

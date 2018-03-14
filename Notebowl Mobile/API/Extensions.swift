@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import ObjectMapper
 import HGPlaceholders
+import Bugsnag
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -292,6 +293,13 @@ class ObjectTransform<T: Object>: TransformType {
     func transformFromJSON(_ value: Any?) -> T? {
         let r = Just.get((value as! String), params: ["uuid": UIDevice().uuid])
         print("objtransform req: ", r.url!)
+        if r.statusCode != 200 || !r.ok {
+            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
+                                        reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
+                                        userInfo:nil)
+            Bugsnag.notify(exception)
+            
+        }
         let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
         return finalmap
     }

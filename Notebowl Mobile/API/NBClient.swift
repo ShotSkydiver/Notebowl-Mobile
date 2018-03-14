@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Disk
 import ObjectMapper
+import Bugsnag
 
 public class NBClient {
     
@@ -61,6 +62,13 @@ public class NBClient {
         
         let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         print("getmappable request: ", r.url!)
+        
+        if r.statusCode != 200 || !r.ok {
+            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
+                                        reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
+                userInfo:nil)
+            Bugsnag.notify(exception)
+        }
         
         if r.ok {
                 let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)

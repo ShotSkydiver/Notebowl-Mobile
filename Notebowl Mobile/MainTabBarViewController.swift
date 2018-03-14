@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Bugsnag
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
@@ -24,6 +25,9 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         let delegate = UIApplication.shared.delegate as! AppDelegate
         delegate.registerNotifications()
+        
+        
+        
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
