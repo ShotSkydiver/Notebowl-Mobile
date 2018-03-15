@@ -34,7 +34,7 @@ class RootViewController: UIViewController {
             guard let webViewRootNavController = segue.destination as? UINavigationController, let progressWebVC = webViewRootNavController.topViewController as? ProgressWebViewController else {
                 return
             }
-            progressWebVC.url = URL(string: ("https://demo.nbstage.com/bulletin?returnUrl=" + UIDevice().deviceQuery))
+            progressWebVC.url = URL(string: ("https://\(NBClient.shared.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.navigationItem.title = "Notebowl Login"

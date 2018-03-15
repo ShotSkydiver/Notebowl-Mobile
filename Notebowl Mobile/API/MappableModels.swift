@@ -28,7 +28,7 @@ extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
         
-        return ("https://demo.nbstage.com/api/v1.0/" + route)
+        return ("https://\(NBClient.shared.baseUrl)/api/v1.0/" + route)
     }
 }
 
@@ -575,7 +575,7 @@ class Notification: Object {
     
     func getUrlForAvatar() -> URL? {
         let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://demo.nbstage.com/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
+        let sttt = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
         var imageUrl = URL(string: sttt)
         imageUrl?.appendQueryParameters(params)
         return imageUrl

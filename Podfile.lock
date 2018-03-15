@@ -1,6 +1,5 @@
 PODS:
   - Bugsnag (5.15.4)
-  - Disk (0.3.3)
   - FaveButton (2.0.3)
   - HGPlaceholders (0.3.0)
   - Kingfisher (4.6.3)
@@ -8,30 +7,27 @@ PODS:
 
 DEPENDENCIES:
   - Bugsnag
-  - Disk
-  - FaveButton (from `https://github.com/okipol88/fave-button`, branch `feature/selectionWithoutAnimation`)
+  - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - HGPlaceholders
   - Kingfisher (~> 4.0)
   - ObjectMapper (~> 3.1)
 
 EXTERNAL SOURCES:
   FaveButton:
-    :branch: feature/selectionWithoutAnimation
-    :git: https://github.com/okipol88/fave-button
+    :git: https://github.com/ShotSkydiver/fave-button
 
 CHECKOUT OPTIONS:
   FaveButton:
-    :commit: a8af7d902e3d962c8aa466b4a5f9039de2fe452e
-    :git: https://github.com/okipol88/fave-button
+    :commit: f864e4f961e66f00de8278fdfc6abc6b4bc4be98
+    :git: https://github.com/ShotSkydiver/fave-button
 
 SPEC CHECKSUMS:
   Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
-  Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   Kingfisher: 98e6d5b5e807645743e8ed5ececd25d688d38452
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
 
-PODFILE CHECKSUM: 4b095ea85b5c0599eff3eb748149909c7fe2f348
+PODFILE CHECKSUM: ad07385682d9ffc3e11ef35278c7bc9a6ee1d094
 
 COCOAPODS: 1.4.0

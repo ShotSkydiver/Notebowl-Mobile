@@ -317,7 +317,7 @@ class ImageTransform: TransformType {
 
         var imageURL = URL(string: (value as! String))
         if (imageURL?.baseURL == nil) {
-            imageURL = URL(string: (value as! String), relativeTo: URL(string: "https://demo.nbstage.com"))
+            imageURL = URL(string: (value as! String), relativeTo: URL(string: "https://\(NBClient.shared.baseUrl)"))
         }
         return imageURL!.absoluteURL
     }

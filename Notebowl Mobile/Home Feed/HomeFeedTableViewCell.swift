@@ -53,7 +53,7 @@ class HomeFeedTableViewCell: UITableViewCell, FaveButtonDelegate {
                 _ = Just.delete(self.post!.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
             }
             else if (self.likeButton.isSelected) {
-                _ = Just.post("https://demo.nbstage.com/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
+                _ = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.post!.url.absoluteString)"])
             }
             self.post!.updateLikes()
             self.updatePostText()

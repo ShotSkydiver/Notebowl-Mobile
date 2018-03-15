@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        NBClient.shared.baseUrl = "platform.notebowl.com"
+        
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
@@ -61,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         print("Device Token: \(token)")
         
-        _ = Just.get("https://demo.nbstage.com/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
+        _ = Just.get("https://\(NBClient.shared.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
         
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

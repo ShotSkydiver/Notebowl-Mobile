@@ -8,14 +8,14 @@
 
 import Foundation
 import UIKit
-import Disk
 import ObjectMapper
 import Bugsnag
 
 public class NBClient {
     
     public static let shared = NBClient()
-    public static let defaultUrl = "https://demo.nbstage.com/api/v1.0/credentials"
+    public var baseUrl: String = "demo.nbstage.com"
+    public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
     
     private init() { }
