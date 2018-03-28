@@ -48,7 +48,7 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
         self.loadingView.showLoadView(true)
         
         DispatchQueue.main.async {
-            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
+            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "4")!)
             self.bulletinTableView.reloadData()
             
             self.bgView.showViewAnimated(false)
@@ -90,11 +90,17 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         self.performSegue(withIdentifier: "postDetailSegue", sender: tableView.cellForRow(at: indexPath) as! HomeFeedPostCell)
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("cellforrowat")
         let cell = HomeFeedPostCell.dequeue(from: tableView)!
         let post = self.posts[indexPath.row]
         
+        
+        
         cell.configure(post: post)
+        //tableView.beginUpdates()
+        //tableView.endUpdates()
         return cell
     }
 }
@@ -119,5 +125,64 @@ class NotebowlLogoNavigationItem: UINavigationItem {
 class HomeTableView: TableView {
     override func customSetup() {
         placeholdersProvider = .homeFeedPlaceholders
+    }
+}
+
+
+public class ScaleAspectFitImageView : UIImageView {
+    /// constraint to maintain same aspect ratio as the image
+    private var aspectRatioConstraint:NSLayoutConstraint? = nil
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder:aDecoder)
+        self.setup()
+    }
+    
+    public override init(frame:CGRect) {
+        super.init(frame:frame)
+        self.setup()
+    }
+    
+    public override init(image: UIImage!) {
+        super.init(image:image)
+        self.setup()
+    }
+    
+    public override init(image: UIImage!, highlightedImage: UIImage?) {
+        super.init(image:image,highlightedImage:highlightedImage)
+        self.setup()
+    }
+    
+    override public var image: UIImage? {
+        didSet {
+            self.updateAspectRatioConstraint()
+        }
+    }
+    
+    private func setup() {
+        self.contentMode = .scaleAspectFit
+        self.updateAspectRatioConstraint()
+    }
+    
+    /// Removes any pre-existing aspect ratio constraint, and adds a new one based on the current image
+    private func updateAspectRatioConstraint() {
+        // remove any existing aspect ratio constraint
+        if let c = self.aspectRatioConstraint {
+            self.removeConstraint(c)
+        }
+        self.aspectRatioConstraint = nil
+        
+        if let imageSize = image?.size, imageSize.height != 0
+        {
+            let aspectRatio = imageSize.width / imageSize.height
+            let c = NSLayoutConstraint(item: self, attribute: .width,
+                                       relatedBy: .equal,
+                                       toItem: self, attribute: .height,
+                                       multiplier: aspectRatio, constant: 0)
+            // a priority above fitting size level and below low
+            c.priority = UILayoutPriority(rawValue: UILayoutPriority.RawValue(Double((UILayoutPriority.defaultLow.rawValue + UILayoutPriority.fittingSizeLevel).rawValue) / 2.0))
+            self.addConstraint(c)
+            self.aspectRatioConstraint = c
+        }
     }
 }

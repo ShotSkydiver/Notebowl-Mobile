@@ -26,8 +26,10 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var likeButton: FaveButton!
     @IBOutlet weak var commentButton: FaveButton!
     @IBOutlet weak var likeActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var heightConst: NSLayoutConstraint!
     
     var postForCell: Post!
+    var imageIsSet: Bool = false
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -47,6 +49,9 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         userAvatar.layer.cornerRadius = 3.0
         userAvatar.clipsToBounds = true
         userAvatar.layer.masksToBounds = true
+        
+        // postAttachments.image = UIImage(named: "anon")
+        heightConst.constant = 4.0
         postAttachments.layer.cornerRadius = 3.0
         postAttachments.clipsToBounds = true
         postAttachments.layer.masksToBounds = true
@@ -67,19 +72,27 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         }
         else {
             userName.text = post._creator!.fullName
-            userAvatar.kf.setImage(with: post._creator!.profileThumbUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+            userAvatar.kf.setImage(with: post._creator!.profileUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
         }
-        
+
         if (!post.postAttachments.isEmpty) {
             if (post.postAttachments.first!.type.contains("image")) {
+                print("postattachment set")
+                heightConst.constant = 140.0
+                postAttachments.kf.indicatorType = .activity
                 postAttachments.kf.setImage(with: post.postAttachments.first!.locationUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
             }
         }
-        
+        else {
+            heightConst.constant = 0.0
+            // postAttachments.isHidden = true
+        }
+
         self.postForCell = post
-        
+ 
         setNeedsLayout()
         layoutIfNeeded()
+        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

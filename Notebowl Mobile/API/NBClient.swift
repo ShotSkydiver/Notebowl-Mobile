@@ -14,7 +14,7 @@ import Bugsnag
 public class NBClient {
     
     public static let shared = NBClient()
-    public var baseUrl: String = "platform.notebowl.com"
+    public var baseUrl: String = "demo.nbstage.com"
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
     

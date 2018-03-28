@@ -48,17 +48,16 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         super.viewDidLoad()
         
         self.comments = self.post.postComments
+        /*
         for comment in self.comments {
             comment.getAttachments()
         }
-        
-        HomeFeedPostCell.register(in: tableView)
-        HomeFeedCommentCell.register(in: tableView)
+        */
+        HomeFeedPostCell.register(in: self.tableView)
+        HomeFeedCommentCell.register(in: self.tableView)
         
         setupInputBar()
         viewIsLoaded = true
-        
-        // tableView.reloadData()
     }
     
     func setupInputBar() {
@@ -114,7 +113,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             }
     
         ]
-        // items.forEach { $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1) }
+        items.forEach { $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1) }
         
         bar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)

@@ -456,6 +456,11 @@ class Post: Object {
     override public func refresh() {
         print("refresh post")
         self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        
+        for comment in self.postComments {
+            comment.getAttachments()
+        }
+        
         self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         updateLikes()
     }

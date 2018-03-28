@@ -16,7 +16,10 @@ class HomeFeedCommentCell: UITableViewCell {
     @IBOutlet weak var commentContent: UILabel!
     @IBOutlet weak var commentAttachments: UIImageView!
     @IBOutlet weak var postedDate: UILabel!
-
+    @IBOutlet weak var heightConst: NSLayoutConstraint!
+    
+    var commentForCell: Comment!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         initSetup()
@@ -36,27 +39,45 @@ class HomeFeedCommentCell: UITableViewCell {
         userAvatar.layer.cornerRadius = 3.0
         userAvatar.clipsToBounds = true
         userAvatar.layer.masksToBounds = true
+        heightConst.constant = 4.0
         commentAttachments.layer.cornerRadius = 3.0
         commentAttachments.clipsToBounds = true
         commentAttachments.layer.masksToBounds = true
     }
     
     func configure(comment: Comment) {
+        
+        commentContent.text = comment.text
+        postedDate.text = comment.updatedAt.relativelyFormatted
+        
         if comment.isAnonymous {
             userName.text = "Anonymous"
         }
         else {
             userName.text = comment.creator?.fullName
-            userAvatar.kf.setImage(with: comment.creator!.profileThumbUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+            userAvatar.kf.setImage(with: comment.creator!.profileUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
         }
+        
         if (!comment.commentAttachments.isEmpty) {
+            print("commentattachments not empty")
             if (comment.commentAttachments.first!.type.contains("image")) {
+                print("commentattachment set")
+                heightConst.constant = 100.0
+                commentAttachments.kf.indicatorType = .activity
                 commentAttachments.kf.setImage(with: comment.commentAttachments.first!.locationUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
             }
         }
+        else {
+            print("commentattachments empty")
+            heightConst.constant = 0.0
+            // postAttachments.isHidden = true
+        }
 
-        commentContent.text = comment.text
-        postedDate.text = comment.updatedAt.relativelyFormatted
+        self.commentForCell = comment
+        
+        setNeedsLayout()
+        layoutIfNeeded()
+        
     }
 }
 
