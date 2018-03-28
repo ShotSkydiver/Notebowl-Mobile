@@ -19,6 +19,7 @@ public enum ItemType: String {
     case university = "universities"
     case enrollment = "enrollments"
     case post = "posts"
+    case attachment = "attachments"
     case comment = "comments"
     case like = "likes"
     case notification = "notifications"
@@ -42,7 +43,6 @@ public enum GradeType: String {
 public struct DefaultValues {
     var DEFAULT_CURVE_AMOUNT = 0
     var DEFAULT_GRADING_PRECISION = 1
-    // static let DEFAULT_GRADING_TYPE =
     var DEFAULT_LETTER_GRADE_TITLES = ["F", "D", "C", "B", "A"]
     var DEFAULT_LETTER_GRADE_MEDIAN = [30, 65, 75, 85, 95]
     var DEFAULT_LETTER_GRADE_VALUES = [0, 60, 70, 80, 90]
@@ -205,8 +205,6 @@ class Course: Object {
     }
 }
 
-
-
 class Assignment: Object {
     
     var title: String!
@@ -311,38 +309,7 @@ class Assignment: Object {
         }
         
         return "\(Int(gradePoints))"
-        
-        
-        // for percentage grades
-        // rawPercent = ( userGrade.grade / self.points ) * 100
-        // round rawPercent value using grade precision value from course
-        // self.gradeString = formatted rawPercent
-        
-            // for percentage grades when displaying grades as gpa is enabled
-            //
-        
-        
-        // for letter grades
-        // rawPercent = ( userGrade.grade / self.points ) * 100
-        // round rawPercent value using grade precision value from course
-        // check if course is using a custom grading scale
-            // handle custom grading scale by parsing title and value strings from course
-        // if rawPercent value is 0 or less than 0
-            // self.gradeString = "F"
-        // else iterate through a for loop that compares each letter grade (A, B, C,) to the rawPercent
-            // self.gradeString = whichever letter grade matches our rawPercent value
-        
-        
-        
-        // for complete grades
-        // if userGrade.grade == self.points
-            // self.gradeString = "Complete"
-        // else if userGrade.grade == 0
-            // self.gradeString = "Incomplete"
-        
-        
-        // for handling when points are disabled for this course
-        // self.gradeString = "-"
+
     }
 }
 
@@ -441,9 +408,10 @@ class Post: Object {
     var _creator: User?
     var _parent: Course?
     
-    public var postLikes: [Like]?
-    public var postComments: [Comment]?
-    public var likedByCurrentUser: Bool?
+    public var postLikes: [Like]!
+    public var postComments: [Comment]!
+    public var postAttachments: [Attachment]!
+    public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .post }
@@ -462,12 +430,17 @@ class Post: Object {
         if !isAnonymous {
             _creator <- (map["_creator"], ObjectTransform<User>())
         }
-        _parent <- map["_parent"]
+        _parent <- (map["_parent"], ObjectTransform<Course>())
     }
     
     func updateLikes() {
         self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        if postLikes!.count > 0 {
+        if postLikes.isEmpty {
+            self.likedByCurrentUser = false
+            return
+        }
+        
+        if postLikes.count > 0 {
             for like in postLikes! {
                 if (like._owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
                     self.likedByCurrentUser = true
@@ -477,42 +450,29 @@ class Post: Object {
                     self.likedByCurrentUser = false
                 }
             }
-        }
-        else if postLikes!.count == 0 {
-            self.likedByCurrentUser = false
         }
     }
     
     override public func refresh() {
         print("refresh post")
-        self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        
-        if postLikes!.count > 0 {
-            for like in postLikes! {
-                if (like._owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-                    self.likedByCurrentUser = true
-                    self.likeFromCurrentUser = like
-                }
-                else {
-                    self.likedByCurrentUser = false
-                }
-            }
-        }
-        else if postLikes!.count == 0 {
-            self.likedByCurrentUser = false
-        }
+        self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        updateLikes()
     }
 }
 
-class Comment: Object {
+class Attachment: Object {
+    var fileExt: String!
+    var downloadUrl: URL!
+    var locationUrl: URL!
+    var thumbnailUrl: String?
+    var attachmentName: String!
+    var attachmentType: String!
+    var type: String!
+    var parent: Object?
+    var owner: User?
     
-    var editedAt: Date?
-    var isAnonymous: Bool!
-    var text: String?
-    var _creator: User?
-    
-    override class var routeType: ItemType { return .comment }
+    override class var routeType: ItemType { return .attachment }
     
     required public init?(map: Map) {
         super.init(map: map)
@@ -521,10 +481,50 @@ class Comment: Object {
     override func mapping(map: Map) {
         super.mapping(map: map)
         
+        fileExt <- map["extension"]
+        downloadUrl <- (map["downloadUrl"], URLTransform())
+        locationUrl <- (map["location"], URLTransform())
+        thumbnailUrl <- map["thumbnailUrl"]
+        attachmentName <- map["attachmentName"]
+        attachmentType <- map["attachmentType"]
+        type <- map["type"]
+        parent <- (map["_parent"], ObjectTransform<Object>())
+        owner <- (map["_owner"], ObjectTransform<User>())
+    }
+    
+}
+
+class Comment: Object {
+    
+    var editedAt: Date?
+    var isAnonymous: Bool!
+    var text: String!
+    var creator: User?
+    var parent: URL!
+    
+    public var commentAttachments: [Attachment]!
+    
+    override class var routeType: ItemType { return .comment }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
-        _creator <- (map["_creator"], ObjectTransform<User>())
+        parent <- (map["_parent"], URLTransform())
+        // if !isAnonymous {
+            creator <- (map["_creator"], ObjectTransform<User>())
+        // }
+        
+    }
+    
+    public func getAttachments() {
+        self.commentAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
     }
 }
 

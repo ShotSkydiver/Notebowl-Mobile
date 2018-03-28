@@ -13,7 +13,10 @@
 		85250A11202A1BE90003A416 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85250A10202A1BE90003A416 /* Login.storyboard */; };
 		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
+		852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
+		853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */; };
+		853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */; };
 		85348E7720463E3A00ABD877 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85348E7520463E3A00ABD877 /* Enums.swift */; };
 		85348E7820463E3A00ABD877 /* ProgressWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */; };
 		8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8534A19E2045CF1B0001B5BA /* RootViewController.swift */; };
@@ -23,7 +26,6 @@
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
-		85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */; };
 		85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
@@ -32,6 +34,8 @@
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
+		85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */; };
+		85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */; };
 		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,8 +61,11 @@
 		85250A10202A1BE90003A416 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
 		85250A12202A2DC50003A416 /* NBLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBLoadingView.swift; sourceTree = "<group>"; };
 		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
+		852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedPostTableViewController.swift; sourceTree = "<group>"; };
 		8529E5622047D0B700D1E41D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedPostCell.swift; sourceTree = "<group>"; };
+		853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedPostCell.xib; sourceTree = "<group>"; };
 		85348E7520463E3A00ABD877 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressWebViewController.swift; sourceTree = "<group>"; };
 		8534A19E2045CF1B0001B5BA /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -69,7 +76,6 @@
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
-		85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedTableViewCell.swift; sourceTree = "<group>"; };
 		85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableVCWithNavbarImage.swift; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* Notebowl Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Notebowl Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,6 +88,8 @@
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
+		85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedCommentCell.swift; sourceTree = "<group>"; };
+		85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedCommentCell.xib; sourceTree = "<group>"; };
 		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,9 +171,9 @@
 			isa = PBXGroup;
 			children = (
 				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
+				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
 				85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */,
 				85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */,
-				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
 			);
 			path = "Courses View";
 			sourceTree = "<group>";
@@ -174,7 +182,11 @@
 			isa = PBXGroup;
 			children = (
 				85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */,
-				85CC9BFA202B905B001CABB0 /* HomeFeedTableViewCell.swift */,
+				853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */,
+				853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */,
+				852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */,
+				85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */,
+				85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */,
 			);
 			path = "Home Feed";
 			sourceTree = "<group>";
@@ -347,6 +359,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */,
+				85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */,
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */,
 				85250A11202A1BE90003A416 /* Login.storyboard in Resources */,
@@ -412,17 +426,21 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AyLoading/AyLoading.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
 				"${BUILT_PRODUCTS_DIR}/HGPlaceholders/HGPlaceholders.framework",
+				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AyLoading.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HGPlaceholders.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 			);
@@ -446,17 +464,19 @@
 				85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */,
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
+				853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
+				852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */,
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
-				85CC9BFB202B905B001CABB0 /* HomeFeedTableViewCell.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
+				85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */,
 				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -612,7 +632,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -639,7 +659,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";

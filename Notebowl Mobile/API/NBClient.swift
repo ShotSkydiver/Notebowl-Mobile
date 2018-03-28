@@ -14,7 +14,7 @@ import Bugsnag
 public class NBClient {
     
     public static let shared = NBClient()
-    public var baseUrl: String = "demo.nbstage.com"
+    public var baseUrl: String = "platform.notebowl.com"
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
     
@@ -33,7 +33,6 @@ public class NBClient {
         let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
         print("result of delete req: ", deleteReq.statusCode)
         UserDefaults.set(hasUserLoggedIn: false)
-
     }
     
     public func buildFilterString(from items: [Object]) -> String {
@@ -43,8 +42,6 @@ public class NBClient {
         }
         return urlBuilder
     }
-    
-
     
     public func initArray<T>(from array: [T]) -> [T]? where T: Object {
         var mutableArray = array
@@ -56,10 +53,8 @@ public class NBClient {
         return mutableArray
     }
 
-    
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
-        
         let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         print("getmappable request: ", r.url!)
         
@@ -69,7 +64,6 @@ public class NBClient {
                 userInfo:nil)
             Bugsnag.notify(exception)
         }
-        
         if r.ok {
                 let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
                 objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)

@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import Bugsnag
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
@@ -17,7 +16,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         UITabBar.appearance().tintColor = UIColor.darkGray
         UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
         self.delegate = self
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -25,9 +23,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         let delegate = UIApplication.shared.delegate as! AppDelegate
         delegate.registerNotifications()
-        
-        
-        
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {

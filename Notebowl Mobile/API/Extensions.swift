@@ -75,11 +75,11 @@ public extension Date {
         let now = Date()
         var tense: String = "default"
         var components: DateComponents!
-        if (self.isInFuture || self.isInToday) {
+        if (self.isInFuture) {
             components = Calendar.current.dateComponents( [.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: now, to: self)
             tense = ""
         }
-        else if (self.isInPast) {
+        else if (self.isInPast || self.isInToday) {
             components = Calendar.current.dateComponents( [.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: self, to: now)
             tense = "ago"
         }
@@ -151,7 +151,6 @@ extension UserDefaults {
         let userDefaults = UserDefaults.standard
         userDefaults.set(hasUserLoggedIn, forKey: UserDefaults.Keys.HasUserLoggedIn)
     }
-
 }
 
 public extension UIDevice {
@@ -178,7 +177,6 @@ public extension UIDevice {
         let finalEncoded = (base + params.encodeURIComponent()!)
         return finalEncoded
     }
-    
 }
 
 public extension UIImage {
@@ -225,6 +223,25 @@ extension UIView {
         UIView.animate(withDuration: 0.3) {
             self.alpha = show ? 1.0 : 0.0
         }
+    }
+}
+
+public extension Bool {
+    @discardableResult public mutating func toggle() -> Bool {
+        self = !self
+        return self
+    }
+}
+
+public extension UITableView {
+
+    public func scrollToBottom(animated: Bool = true) {
+        let bottomOffset = CGPoint(x: 0, y: contentSize.height - bounds.size.height)
+        setContentOffset(bottomOffset, animated: animated)
+    }
+
+    public func scrollToTop(animated: Bool = true) {
+        setContentOffset(CGPoint.zero, animated: animated)
     }
 }
 

@@ -22,10 +22,10 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        bulletinTableView.delegate = self
-        bulletinTableView.dataSource = self
-        self.tempLoadingViewSetup()
         
+        HomeFeedPostCell.register(in: bulletinTableView)
+
+        self.tempLoadingViewSetup()
         placeholderTableView = bulletinTableView
         placeholderTableView?.placeholderDelegate = self
         
@@ -54,6 +54,25 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
             self.bgView.showViewAnimated(false)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
+        super.viewWillAppear(animated)
+        
+        if selectedRowIndexPath != nil {
+            print("reloading")
+            self.bulletinTableView.reloadData()
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let senderCell = sender as? HomeFeedPostCell {
+            let indexPath = self.bulletinTableView.indexPath(for: senderCell)!
+            let destVC = segue.destination as! HomeFeedPostViewController
+            destVC.currentIndex = indexPath
+            destVC.post = self.posts[indexPath.row]
+        }
+    }
 }
 
 
@@ -66,35 +85,19 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         return 0
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        self.performSegue(withIdentifier: "postDetailSegue", sender: tableView.cellForRow(at: indexPath) as! HomeFeedPostCell)
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "homeFeedCell", for: indexPath) as! HomeFeedTableViewCell
-        let postForCell = self.posts[indexPath.row]
-        if (cell.post == nil) {
-            print("post nil")
-            cell.post = postForCell
-        }
+        let cell = HomeFeedPostCell.dequeue(from: tableView)!
+        let post = self.posts[indexPath.row]
         
-        cell.updateLikeButton(animated: false)
-        cell.updatePostText()
-        
-        cell.postContent.text = postForCell.text
-        cell.postedDate.text = postForCell.updatedAt.relativelyFormatted
-        
-        let placeholderimg = UIImage(named: "Default Avatar")
-        if postForCell.isAnonymous {
-            cell.userName.text = "Anonymous"
-        }
-        else {
-            cell.userName.text = postForCell._creator!.fullName
-            cell.userAvatar.kf.setImage(with: postForCell._creator!.profileThumbUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
-        }
-        
-
-        cell.showCell(true)
+        cell.configure(post: post)
         return cell
     }
 }
-
 
 class NotebowlLogoNavigationItem: UINavigationItem {
     

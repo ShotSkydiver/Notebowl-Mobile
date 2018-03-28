@@ -12,7 +12,7 @@ import Kingfisher
 
 class UITableVCWithNavbarImage: UIViewController {
     
-    public let navbarImageView = UIImageView(image: UIImage(named: "Default Avatar"))
+    public let navbarImageView = UIImageView(image: UIImage(named: "male-user"))
     
     private struct Const {
         /// Image height/width for Large NavBar state
@@ -24,7 +24,7 @@ class UITableVCWithNavbarImage: UIViewController {
         /// Margin from bottom anchor of NavBar to bottom anchor of Image for Small NavBar state
         static let ImageBottomMarginForSmallState: CGFloat = 12
         /// Image height/width for Small NavBar state
-        static let ImageSizeForSmallState: CGFloat = 32
+        static let ImageSizeForSmallState: CGFloat = 30
         /// Height of NavBar for Small state. Usually it's just 44
         static let NavBarHeightSmallState: CGFloat = 44
         /// Height of NavBar for Large state. Usually it's just 96.5 but if you have a custom font for the title, please make sure to edit this value since it changes the height for Large state of NavBar
@@ -39,8 +39,8 @@ class UITableVCWithNavbarImage: UIViewController {
         navbarImageView.addGestureRecognizer(tapGestureRecognizer)
         
         setupUI()
-        
-        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.3))])
+        let placeholderimg = UIImage(named: "male-user")
+        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,7 +81,9 @@ class UITableVCWithNavbarImage: UIViewController {
         if #available(iOS 11.0, *) { navigationController?.navigationBar.prefersLargeTitles = false }
         guard let navigationBar = self.navigationController?.navigationBar else { return }
         navigationBar.addSubview(navbarImageView)
-        navbarImageView.layer.cornerRadius = 3.0
+        navbarImageView.layer.cornerRadius = Const.ImageSizeForLargeState/2
+        navbarImageView.layer.borderWidth = 1.0
+        navbarImageView.layer.borderColor = UIColor.lightGray.cgColor
         navbarImageView.clipsToBounds = true
         navbarImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -118,11 +120,5 @@ class UITableVCWithNavbarImage: UIViewController {
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: xTranslation, y: yTranslation)
     }
-    /*
-    func showImage(_ show: Bool) {
-        UIView.animate(withDuration: 0.2) {
-            self.navbarImageView.alpha = show ? 1.0 : 0.0
-        }
-    }
-    */
+
 }

@@ -115,8 +115,9 @@ open class ProgressWebViewController: UIViewController {
     
     override open func loadView() {
         let webConfiguration = WKWebViewConfiguration()
-        let webView = WKWebView(frame: .zero, configuration: webConfiguration)
+        let webView = WKWebView(frame: UIScreen.main.bounds, configuration: webConfiguration)
         
+        webView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         webView.uiDelegate = self
         webView.navigationDelegate = self
         webView.scrollView.delegate = self

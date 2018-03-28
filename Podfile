@@ -8,5 +8,7 @@ target 'Notebowl Mobile' do
     pod 'FaveButton', :git => 'https://github.com/ShotSkydiver/fave-button'
     pod 'HGPlaceholders'
     pod 'Bugsnag'
+    pod 'InputBarAccessoryView'
+    pod 'AyLoading', '~>2.0.1'
 end
 

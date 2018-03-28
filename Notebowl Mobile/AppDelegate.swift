@@ -12,7 +12,6 @@ import Bugsnag
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -25,17 +24,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         UIApplication.shared.statusBarStyle = .lightContent
         
-        
         return true
     }
 
-    
     func startBugsnag(user: User) {
         let bugConfig = BugsnagConfiguration()
         bugConfig.apiKey = "572ce3fbfa0c590dcfbc69519080d42e"
         bugConfig.setUser(user.resourceKey, withName: user.fullName, andEmail: user.email!)
         Bugsnag.start(with: bugConfig)
-        
     }
     
     func registerNotifications() {
