@@ -44,12 +44,14 @@ class RootViewController: UIViewController {
             progressWebVC.disableZoom = true
             progressWebVC.headers = ["browser": "in-app browser"]
             progressWebVC.delegate = self
+            progressWebVC.extendedLayout = true
            
         }
         
         else if segue.identifier! == "presentTabBarView" {
-        
+            print("segue id tabbarview")
             _ = NBClient.shared.getCurrentUser()
+            NBClient.shared.updateUserAvatar()
             
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.startBugsnag(user: NBClient.shared.getCurrentUser())

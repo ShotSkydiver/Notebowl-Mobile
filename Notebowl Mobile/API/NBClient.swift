@@ -10,30 +10,84 @@ import Foundation
 import UIKit
 import ObjectMapper
 import Bugsnag
+import Kingfisher
+import Disk
+import moa
 
 public class NBClient {
     
     public static let shared = NBClient()
-    public var baseUrl: String = "demo.nbstage.com"
+    public var baseUrl: String = "platform.notebowl.com"
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
+    public var currentUserPic: UIImage!
+    public var userProfilePicURL: URL!
     
     private init() { }
     
-    public func getCurrentUser() -> User {
+    public func getCurrentUser(force: Bool? = false) -> User {
         NSLog("doing currentuser")
-        if (self.currentUser == nil) {
+        if (self.currentUser == nil) || (force)! {
             NSLog("currentuser null")
             self.currentUser = self.getMappable(User.self)?.first
         }
         return self.currentUser!
     }
     
+    public func updateUserAvatar(image: UIImage? = nil) {
+        if image != nil {
+            self.currentUserPic = image!
+            try? Disk.save(image!, to: .caches, as: "profilepic.jpg")
+        }
+        else if image == nil {
+            if Disk.exists("profilepic.jpg", in: .caches) {
+                let localImage = try? Disk.retrieve("profilepic.jpg", from: .caches, as: UIImage.self)
+                self.currentUserPic = localImage!
+            }
+            else {
+                Moa.settings.requestTimeoutSeconds = 15
+                Moa.logger = MoaConsoleLogger
+                
+                let moa = Moa()
+                moa.onSuccess = { moaImage in
+                    print("image loaded!")
+                    self.currentUserPic = moaImage
+                    try? Disk.save(moaImage, to: .caches, as: "profilepic.jpg")
+                    return self.currentUserPic
+                }
+                moa.url = self.currentUser?.profileUrl.absoluteString
+                
+                // self.currentUserPic = UIImage(named: "Default Avatar")
+            }
+        }
+        
+    }
+    
+    /*
+    public func getProfilePicResource() -> URL! {
+        let rpcGet = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/getProfilePicture")
+        var rpcGetUrl = URL(string: rpcGet)
+        let params = ["uuid": UIDevice().uuid]
+        rpcGetUrl?.appendQueryParameters(params)
+        
+        let redirReq = Just.head(rpcGetUrl!)
+        let redirUrl = redirReq.response!.url!.absoluteURL
+        print("result: ", redirUrl)
+        // let res = ImageResource(downloadURL: redirUrl, cacheKey: NBClient.shared.getCurrentUser().resourceKey)
+        // self.userProfilePicRes = res
+        self.userProfilePicURL = redirUrl
+        return self.userProfilePicURL
+    }
+    */
+    
     public func logoutUser() {
         let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
-        print("result of delete req: ", deleteReq.statusCode)
-        UserDefaults.set(hasUserLoggedIn: false)
+        if deleteReq.ok {
+            UserDefaults.set(hasUserLoggedIn: false)
+        }
+        
     }
+
     
     public func buildFilterString(from items: [Object]) -> String {
         var urlBuilder: String = ""

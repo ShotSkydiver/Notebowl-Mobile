@@ -10,5 +10,11 @@ target 'Notebowl Mobile' do
     pod 'Bugsnag'
     pod 'InputBarAccessoryView'
     pod 'AyLoading', '~>2.0.1'
+    pod 'DeckTransition', '~> 2.0'
+    pod 'MMUploadImage'
+    pod 'Disk', '~> 0.3.3'
+    pod 'FaceAware'
+    pod 'moa', '~> 9.0'
+    pod 'TLPhotoPicker'
 end
 

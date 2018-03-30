@@ -6,15 +6,21 @@
 //  Copyright © 2018 Notebowl. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import Kingfisher
+import AyLoading
+import FaveButton
+import moa
 
-class HomeFeedCommentCell: UITableViewCell {
+class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var commentContent: UILabel!
     @IBOutlet weak var commentAttachments: UIImageView!
+    @IBOutlet weak var commentLikes: UILabel!
+    @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var heightConst: NSLayoutConstraint!
     
@@ -46,7 +52,8 @@ class HomeFeedCommentCell: UITableViewCell {
     }
     
     func configure(comment: Comment) {
-        
+        commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
+        commentLikes.text = comment.commentLikes.isEmpty ? "0" : "\(comment.commentLikes.count)"
         commentContent.text = comment.text
         postedDate.text = comment.updatedAt.relativelyFormatted
         
@@ -54,30 +61,49 @@ class HomeFeedCommentCell: UITableViewCell {
             userName.text = "Anonymous"
         }
         else {
-            userName.text = comment.creator?.fullName
-            userAvatar.kf.setImage(with: comment.creator!.profileUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+            userName.text = comment.creator!.fullName
+            
+            if comment.creator!.userIsCurrentUser {
+                userAvatar.image = NBClient.shared.currentUserPic
+            }
+            else if !(comment.creator!.userIsCurrentUser) {
+                userAvatar.moa.url = comment.creator!.profileUrl.absoluteString
+            }
         }
         
         if (!comment.commentAttachments.isEmpty) {
-            print("commentattachments not empty")
             if (comment.commentAttachments.first!.type.contains("image")) {
-                print("commentattachment set")
-                heightConst.constant = 100.0
-                commentAttachments.kf.indicatorType = .activity
-                commentAttachments.kf.setImage(with: comment.commentAttachments.first!.locationUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+                heightConst.constant = 160.0
+                commentAttachments.kf.setImage(with: comment.commentAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                    self.setNeedsLayout()
+                })
             }
         }
         else {
-            print("commentattachments empty")
             heightConst.constant = 0.0
-            // postAttachments.isHidden = true
         }
-
         self.commentForCell = comment
         
         setNeedsLayout()
         layoutIfNeeded()
         
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+        commentLikes.ay.startLoading()
+        
+        DispatchQueue.main.async {
+            if (!self.commentLikeButton.isSelected) {
+                _ = Just.delete(self.commentForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+            }
+            else if (self.commentLikeButton.isSelected) {
+                _ = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+            }
+            self.commentForCell.updateLikes()
+            self.commentLikes.text = self.commentForCell.commentLikes.isEmpty ? "0" : "\(self.commentForCell.commentLikes.count)"
+            
+            self.commentLikes.ay.stopLoading()
+        }
     }
 }
 

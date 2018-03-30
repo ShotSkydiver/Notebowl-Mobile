@@ -81,10 +81,11 @@ public class User: Object {
     var lastName: String!
     var email: String?
     var profileUrl: URL!
-    var profileThumbUrl: URL!
     var university: University?
     
     var fullName: String { return (firstName + " " + lastName) }
+    
+    public var userIsCurrentUser: Bool { return resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false }
     
     override class var routeType: ItemType { return .user }
     
@@ -98,7 +99,6 @@ public class User: Object {
         lastName <- map["lastName"]
         email <- map["email"]
         profileUrl <- (map["profileUrl"], ImageTransform())
-        profileThumbUrl <- (map["profileThumbUrl"], ImageTransform())
 
     }
 }
@@ -153,6 +153,7 @@ class Course: Object {
     public var isAvailable: Bool { return Date().isBetween(availableDate, endDate, includeBounds: true) }
     
     var courseCode: String { return (subject + " " + number) }
+    var courseFullName: String { return (courseCode + ": " + name) }
     
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval?
@@ -284,7 +285,7 @@ class Assignment: Object {
             var values = DefaultValues().DEFAULT_LETTER_GRADE_VALUES
             
             if (self.parent.customGradeScale) {
-                let yUni: Unicode.Scalar = "ÿ"
+                let yUni: Unicode.Scalar = ";"
                 var yCharSet = CharacterSet.init()
                 yCharSet.insert(yUni)
                 titles = self.parent.gradeScaleTitles.components(separatedBy: yCharSet)
@@ -405,8 +406,8 @@ class Post: Object {
     var isAnonymous: Bool!
     var pinned: Bool!
     var text: String?
-    var _creator: User?
-    var _parent: Course?
+    var creator: User?
+    var parent: Course?
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -427,10 +428,10 @@ class Post: Object {
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
         text <- map["text"]
-        if !isAnonymous {
-            _creator <- (map["_creator"], ObjectTransform<User>())
-        }
-        _parent <- (map["_parent"], ObjectTransform<Course>())
+        // if !isAnonymous {
+            creator <- (map["_creator"], ObjectTransform<User>())
+        // }
+        parent <- (map["_parent"], ObjectTransform<Course>())
     }
     
     func updateLikes() {
@@ -439,10 +440,9 @@ class Post: Object {
             self.likedByCurrentUser = false
             return
         }
-        
         if postLikes.count > 0 {
             for like in postLikes! {
-                if (like._owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
                     self.likedByCurrentUser = true
                     self.likeFromCurrentUser = like
                 }
@@ -452,15 +452,8 @@ class Post: Object {
             }
         }
     }
-    
     override public func refresh() {
-        print("refresh post")
         self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        
-        for comment in self.postComments {
-            comment.getAttachments()
-        }
-        
         self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         updateLikes()
     }
@@ -494,7 +487,15 @@ class Attachment: Object {
         attachmentType <- map["attachmentType"]
         type <- map["type"]
         parent <- (map["_parent"], ObjectTransform<Object>())
-        owner <- (map["_owner"], ObjectTransform<User>())
+        // owner <- (map["_owner"], ObjectTransform<User>())
+    }
+    
+    func getUrlForAvatar() -> URL? {
+        let params = ["uuid": UIDevice().uuid]
+        let sttt = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
+        var imageUrl = URL(string: sttt)
+        imageUrl?.appendQueryParameters(params)
+        return imageUrl
     }
     
 }
@@ -508,6 +509,9 @@ class Comment: Object {
     var parent: URL!
     
     public var commentAttachments: [Attachment]!
+    public var commentLikes: [Like]!
+    public var likedByCurrentUser: Bool!
+    public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .comment }
     
@@ -531,10 +535,28 @@ class Comment: Object {
     public func getAttachments() {
         self.commentAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
     }
+    public func updateLikes() {
+        self.commentLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        if commentLikes.isEmpty {
+            self.likedByCurrentUser = false
+            return
+        }
+        if commentLikes.count > 0 {
+            for like in commentLikes! {
+                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+                    self.likedByCurrentUser = true
+                    self.likeFromCurrentUser = like
+                }
+                else {
+                    self.likedByCurrentUser = false
+                }
+            }
+        }
+    }
 }
 
 class Like: Object {
-    var _owner: User!
+    var owner: User!
     
     override class var routeType: ItemType { return .like }
     
@@ -545,7 +567,7 @@ class Like: Object {
     override func mapping(map: Map) {
         super.mapping(map: map)
         
-        _owner <- (map["_owner"], ObjectTransform<User>())
+        owner <- (map["_owner"], ObjectTransform<User>())
     }
 }
 

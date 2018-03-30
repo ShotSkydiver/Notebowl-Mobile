@@ -11,6 +11,7 @@ import UIKit
 import ObjectMapper
 import HGPlaceholders
 import Bugsnag
+import TLPhotoPicker
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -198,6 +199,84 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return newImage
     }
+    
+    /// EAKit: Returns base64 string
+    public var base64EncodedString: String? {
+        return self.compressed(quality: 1.0)?.base64EncodedString
+    }
+    
+    /// EAKit: Compressed UIImage from original UIImage.
+    ///
+    /// - Parameter quality: The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality), (default is 0.5).
+    /// - Returns: optional UIImage (if applicable).
+    public func compressed(quality: CGFloat = 0.5) -> UIImage? {
+        guard let data = compressedData(quality: quality) else { return nil }
+        return UIImage(data: data)
+    }
+    
+    /// EAKit: Compressed UIImage data from original UIImage.
+    ///
+    /// - Parameter quality: The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality), (default is 0.5).
+    /// - Returns: optional Data (if applicable).
+    public func compressedData(quality: CGFloat = 0.5) -> Data? {
+        return UIImageJPEGRepresentation(self, quality)
+    }
+    
+    /// EAKit: UIImage Cropped to CGRect.
+    ///
+    /// - Parameter rect: CGRect to crop UIImage to.
+    /// - Returns: cropped UIImage
+    public func cropped(to rect: CGRect) -> UIImage {
+        guard rect.size.height < size.height && rect.size.height < size.height else { return self }
+        guard let image: CGImage = cgImage?.cropping(to: rect) else { return self }
+        return UIImage(cgImage: image)
+    }
+}
+
+public extension UIImageView {
+    
+    /// EAKit: Set image from a URL.
+    ///
+    /// - Parameters:
+    ///   - url: URL of image.
+    ///   - contentMode: imageView content mode (default is .scaleAspectFit).
+    ///   - placeHolder: optional placeholder image
+    ///   - completionHandler: optional completion handler to run when download finishs (default is nil).
+    public func download(
+        from url: URL,
+        contentMode: UIViewContentMode = .scaleAspectFit,
+        placeholder: UIImage? = nil,
+        completionHandler: ((UIImage?) -> Void)? = nil) {
+        
+        image = placeholder
+        self.contentMode = contentMode
+        URLSession.shared.dataTask(with: url) { (data, response, _) in
+            guard
+                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                let data = data,
+                let image = UIImage(data: data)
+                else {
+                    completionHandler?(nil)
+                    return
+            }
+            DispatchQueue.main.async {
+                self.image = image
+                completionHandler?(image)
+            }
+            }.resume()
+    }
+    
+}
+
+extension TLPhotosPickerViewController {
+   
+    
+    func wrapNavigationControllerWithoutBar() -> UINavigationController {
+        let navController = UINavigationController(rootViewController: self)
+        navController.navigationBar.isHidden = true
+        return navController
+    }
 }
 
 extension Double {
@@ -244,6 +323,41 @@ public extension UITableView {
         setContentOffset(CGPoint.zero, animated: animated)
     }
 }
+
+public extension UIViewController {
+    public var extendedLayout: Bool {
+        set {
+            extendedLayoutIncludesOpaqueBars = !newValue
+            edgesForExtendedLayout = newValue ? .all : []
+        }
+        get {
+            return edgesForExtendedLayout != []
+        }
+    }
+}
+
+extension UIWindow {
+    public var visibleViewController: UIViewController? {
+        return UIWindow.visibleViewController(from: rootViewController)
+    }
+    
+    public static func visibleViewController(from viewController: UIViewController?) -> UIViewController? {
+        switch viewController {
+        case let navigationController as UINavigationController:
+            return UIWindow.visibleViewController(from: navigationController.visibleViewController ?? navigationController.topViewController)
+            
+        case let tabBarController as UITabBarController:
+            return UIWindow.visibleViewController(from: tabBarController.selectedViewController)
+            
+        case let presentingViewController where viewController?.presentedViewController != nil:
+            return UIWindow.visibleViewController(from: presentingViewController?.presentedViewController)
+            
+        default:
+            return viewController
+        }
+    }
+}
+
 
 extension PlaceholdersProvider {
     

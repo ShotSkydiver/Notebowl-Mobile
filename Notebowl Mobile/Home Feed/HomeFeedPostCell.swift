@@ -13,6 +13,7 @@ import UIKit
 import Kingfisher
 import FaveButton
 import AyLoading
+import moa
 
 class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
@@ -22,6 +23,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var postComments: UILabel!
     @IBOutlet weak var postLikes: UILabel!
+    @IBOutlet weak var courseForPost: UILabel!
     @IBOutlet weak var postAttachments: UIImageView!
     @IBOutlet weak var likeButton: FaveButton!
     @IBOutlet weak var commentButton: FaveButton!
@@ -50,7 +52,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         userAvatar.clipsToBounds = true
         userAvatar.layer.masksToBounds = true
         
-        // postAttachments.image = UIImage(named: "anon")
         heightConst.constant = 4.0
         postAttachments.layer.cornerRadius = 3.0
         postAttachments.clipsToBounds = true
@@ -65,29 +66,35 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
         postContent.text = post.text
+        courseForPost.text = post.parent!.courseFullName
         postedDate.text = post.updatedAt.relativelyFormatted
         
         if post.isAnonymous {
             userName.text = "Anonymous"
         }
         else {
-            userName.text = post._creator!.fullName
-            userAvatar.kf.setImage(with: post._creator!.profileUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+            userName.text = post.creator!.fullName
+            
+            if post.creator!.userIsCurrentUser {
+                userAvatar.image = NBClient.shared.currentUserPic
+            }
+            else if !(post.creator!.userIsCurrentUser) {
+                userAvatar.moa.url = post.creator!.profileUrl.absoluteString
+            }
         }
-
+        
         if (!post.postAttachments.isEmpty) {
             if (post.postAttachments.first!.type.contains("image")) {
-                print("postattachment set")
-                heightConst.constant = 140.0
-                postAttachments.kf.indicatorType = .activity
-                postAttachments.kf.setImage(with: post.postAttachments.first!.locationUrl, placeholder: UIImage(named: "Default Avatar"), options: [.transition(.fade(0.3))])
+                heightConst.constant = 200.0
+                
+                postAttachments.kf.setImage(with: post.postAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                    self.setNeedsLayout()
+                })
             }
         }
         else {
             heightConst.constant = 0.0
-            // postAttachments.isHidden = true
         }
-
         self.postForCell = post
  
         setNeedsLayout()
@@ -100,9 +107,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        // likeActivityIndicator.showViewAnimated(true)
-        // postLikes.showViewAnimated(false)
-        // likeActivityIndicator.startAnimating()
         postLikes.ay.startLoading()
         
         DispatchQueue.main.async {
@@ -115,9 +119,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
             self.postForCell.updateLikes()
             self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
             
-            // self.postLikes.showViewAnimated(true)
-            // self.likeActivityIndicator.showViewAnimated(false)
-            // self.likeActivityIndicator.stopAnimating()
             self.postLikes.ay.stopLoading()
         }
     }

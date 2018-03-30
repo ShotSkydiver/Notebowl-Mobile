@@ -46,11 +46,12 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
     
     func getPosts() {
         self.loadingView.showLoadView(true)
+        self.bgView.showViewAnimated(true)
         
         DispatchQueue.main.async {
-            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "4")!)
+            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, sortBy: "updatedAt:desc", limit: "6")!)
             self.bulletinTableView.reloadData()
-            
+                        
             self.bgView.showViewAnimated(false)
         }
     }
@@ -63,6 +64,8 @@ class HomeFeedViewController: UITableVCWithNavbarImage, PlaceholderDelegate {
             print("reloading")
             self.bulletinTableView.reloadData()
         }
+        
+     
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -95,12 +98,8 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         print("cellforrowat")
         let cell = HomeFeedPostCell.dequeue(from: tableView)!
         let post = self.posts[indexPath.row]
-        
-        
-        
+
         cell.configure(post: post)
-        //tableView.beginUpdates()
-        //tableView.endUpdates()
         return cell
     }
 }

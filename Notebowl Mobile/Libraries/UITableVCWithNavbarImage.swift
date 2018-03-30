@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import Kingfisher
+import DeckTransition
+import FaceAware
 
 class UITableVCWithNavbarImage: UIViewController {
     
@@ -38,38 +40,20 @@ class UITableVCWithNavbarImage: UIViewController {
         navbarImageView.isUserInteractionEnabled = true
         navbarImageView.addGestureRecognizer(tapGestureRecognizer)
         
+        navbarImageView.image = NBClient.shared.currentUserPic
+        navbarImageView.focusOnFaces = true
+        navbarImageView.contentMode = .scaleAspectFill
         setupUI()
-        let placeholderimg = UIImage(named: "male-user")
-        self.navbarImageView.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: placeholderimg, options: [.transition(.fade(0.3))])
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        let menu = UIAlertController(title: "Options", message: "Manage your profile and other app settings.", preferredStyle: .actionSheet)
-        
-        let editProfilePic = UIAlertAction(title: "Change Profile Picture", style: .default) { (action) in
-            
-        }
-        let logoutUser = UIAlertAction(title: "Logout", style: .destructive) { (action) in
-            print("logout")
-            NBClient.shared.logoutUser()
-            
-            self.dismiss(animated: true, completion: nil)
-        }
-        let dismiss = UIAlertAction(title: "Close", style: .cancel) { (action) in
-            
-        }
-        menu.addAction(editProfilePic)
-        menu.addAction(logoutUser)
-        menu.addAction(dismiss)
-        self.present(menu, animated: true, completion: nil)
+    
+        self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
     
     @objc func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -122,3 +106,4 @@ class UITableVCWithNavbarImage: UIViewController {
     }
 
 }
+

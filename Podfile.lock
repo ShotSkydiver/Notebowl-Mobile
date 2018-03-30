@@ -1,20 +1,32 @@
 PODS:
   - AyLoading (2.0.1)
   - Bugsnag (5.15.4)
+  - DeckTransition (2.0.0)
+  - Disk (0.3.3)
+  - FaceAware (1.2.0)
   - FaveButton (2.0.3)
   - HGPlaceholders (0.3.0)
   - InputBarAccessoryView (1.5.4)
   - Kingfisher (4.6.3)
+  - MMUploadImage (2.0.8)
+  - moa (9.0.2)
   - ObjectMapper (3.1.0)
+  - TLPhotoPicker (1.5.2)
 
 DEPENDENCIES:
   - AyLoading (~> 2.0.1)
   - Bugsnag
+  - DeckTransition (~> 2.0)
+  - Disk (~> 0.3.3)
+  - FaceAware
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - HGPlaceholders
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
+  - MMUploadImage
+  - moa (~> 9.0)
   - ObjectMapper (~> 3.1)
+  - TLPhotoPicker
 
 EXTERNAL SOURCES:
   FaveButton:
@@ -28,12 +40,18 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AyLoading: 7c803c3f456a134cc196f58f7dc35646874bb3e1
   Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
+  DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
+  Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
+  FaceAware: 421436f9d16aacdb26ffcf8e5a39a1dd68630395
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   InputBarAccessoryView: d59b2fa4b227ce58e8f61398489f80017e265739
   Kingfisher: 98e6d5b5e807645743e8ed5ececd25d688d38452
+  MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
+  moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
+  TLPhotoPicker: 6e4e912b94985e3c989088bcd92a0179aeeeb975
 
-PODFILE CHECKSUM: 7dd564d6e3a34d3a5bdfa491d4169663aadd0a6d
+PODFILE CHECKSUM: ff94da2db3ce63fd7f3cbdae483314fed0af4177
 
 COCOAPODS: 1.4.0
