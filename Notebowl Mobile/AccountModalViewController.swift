@@ -243,17 +243,5 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
             self.present(UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert), animated: true, completion: nil)
         }
     }
-    
-    
-    
-    /*
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        dismiss(animated: true, completion: {
-            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                self.containerToMaster?.uploadImage(image: pickedImage)
-            }
-        })
-    }
-    */
 }
 

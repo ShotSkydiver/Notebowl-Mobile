@@ -62,12 +62,23 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         }
         else {
             userName.text = comment.creator!.fullName
-            
+            /*
             if comment.creator!.userIsCurrentUser {
                 userAvatar.image = NBClient.shared.currentUserPic
             }
             else if !(comment.creator!.userIsCurrentUser) {
                 userAvatar.moa.url = comment.creator!.profileUrl.absoluteString
+            }
+            */
+            
+            if comment.creator!.resourceKey == NBClient.shared.currentUser!.resourceKey {
+                userAvatar.image = NBClient.shared.currentUserPic
+            }
+            else {
+                
+                userAvatar.kf.setImage(with: comment.creator!.profileUrl, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                    self.setNeedsLayout()
+                })
             }
         }
         

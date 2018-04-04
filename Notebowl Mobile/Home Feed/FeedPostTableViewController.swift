@@ -144,7 +144,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         
-        let jsonPayload: Any? = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.parent!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
+        let jsonPayload: Any? = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
         let post = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/comments", params: ["uuid": UIDevice().uuid], json: jsonPayload)
         
         let finalmap = Mapper<Comment>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!

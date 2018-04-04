@@ -41,7 +41,7 @@ class RootViewController: UIViewController {
             progressWebVC.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             progressWebVC.doneBarButtonItemPosition = .none
             progressWebVC.toolbarItemTypes = []
-            progressWebVC.disableZoom = true
+            progressWebVC.disableZoom = false
             progressWebVC.headers = ["browser": "in-app browser"]
             progressWebVC.delegate = self
             progressWebVC.extendedLayout = true

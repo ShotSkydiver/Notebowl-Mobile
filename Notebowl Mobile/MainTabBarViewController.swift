@@ -15,7 +15,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         UITabBar.appearance().tintColor = UIColor.darkGray
         UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
-        //UINavigationBar.appearance().bar = #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1)
         self.delegate = self
     }
     

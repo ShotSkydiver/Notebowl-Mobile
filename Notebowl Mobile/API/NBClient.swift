@@ -22,7 +22,7 @@ public class NBClient {
     public var currentUser: User?
     public var currentUserPic: UIImage!
     public var userProfilePicURL: URL!
-    
+ 
     private init() { }
     
     public func getCurrentUser(force: Bool? = false) -> User {
@@ -35,6 +35,7 @@ public class NBClient {
     }
     
     public func updateUserAvatar(image: UIImage? = nil) {
+        
         if image != nil {
             self.currentUserPic = image!
             try? Disk.save(image!, to: .caches, as: "profilepic.jpg")
@@ -45,49 +46,27 @@ public class NBClient {
                 self.currentUserPic = localImage!
             }
             else {
-                Moa.settings.requestTimeoutSeconds = 15
-                Moa.logger = MoaConsoleLogger
-                
-                let moa = Moa()
-                moa.onSuccess = { moaImage in
-                    print("image loaded!")
-                    self.currentUserPic = moaImage
-                    try? Disk.save(moaImage, to: .caches, as: "profilepic.jpg")
-                    return self.currentUserPic
+                let req = Just.get(NBClient.shared.currentUser!.profileUrl)
+                if req.ok {
+                    print("userimage req ok")
+                    let finalImg = UIImage(data: req.content!)
+                    self.currentUserPic = finalImg!
+                    try? Disk.save(finalImg!, to: .caches, as: "profilepic.jpg")
                 }
-                moa.url = self.currentUser?.profileUrl.absoluteString
-                
-                // self.currentUserPic = UIImage(named: "Default Avatar")
+
             }
         }
         
     }
     
-    /*
-    public func getProfilePicResource() -> URL! {
-        let rpcGet = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/getProfilePicture")
-        var rpcGetUrl = URL(string: rpcGet)
-        let params = ["uuid": UIDevice().uuid]
-        rpcGetUrl?.appendQueryParameters(params)
-        
-        let redirReq = Just.head(rpcGetUrl!)
-        let redirUrl = redirReq.response!.url!.absoluteURL
-        print("result: ", redirUrl)
-        // let res = ImageResource(downloadURL: redirUrl, cacheKey: NBClient.shared.getCurrentUser().resourceKey)
-        // self.userProfilePicRes = res
-        self.userProfilePicURL = redirUrl
-        return self.userProfilePicURL
-    }
-    */
-    
     public func logoutUser() {
         let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
         if deleteReq.ok {
+            try? Disk.remove("profilepic.jpg", from: .caches)
+            NBClient.shared.currentUser = nil
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        
     }
-
     
     public func buildFilterString(from items: [Object]) -> String {
         var urlBuilder: String = ""

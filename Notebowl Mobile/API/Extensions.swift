@@ -12,6 +12,8 @@ import ObjectMapper
 import HGPlaceholders
 import Bugsnag
 import TLPhotoPicker
+import Kingfisher
+import moa
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -421,6 +423,7 @@ class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T
     public typealias JSON = String
     
+    
     func transformFromJSON(_ value: Any?) -> T? {
         let r = Just.get((value as! String), params: ["uuid": UIDevice().uuid])
         print("objtransform req: ", r.url!)
@@ -441,19 +444,55 @@ class ObjectTransform<T: Object>: TransformType {
 }
 
 class ImageTransform: TransformType {
-    public typealias Object = URL
+    public typealias Object = UIImage
     public typealias JSON = String
+    private let isCurrentUser: Bool
     
-    func transformFromJSON(_ value: Any?) -> URL? {
-
-        var imageURL = URL(string: (value as! String))
-        if (imageURL?.baseURL == nil) {
-            imageURL = URL(string: (value as! String), relativeTo: URL(string: "https://\(NBClient.shared.baseUrl)"))
-        }
-        return imageURL!.absoluteURL
+    public init(isCurrentUser: Bool = false) {
+        self.isCurrentUser = isCurrentUser
     }
     
-    func transformToJSON(_ value: URL?) -> String? {
+    
+    func transformFromJSON(_ value: Any?) -> UIImage? {
+        var imageURL = URL(string: (value as! String))
+        var returnImage: UIImage!
+        
+        if isCurrentUser {
+            NBClient.shared.updateUserAvatar()
+            
+            if NBClient.shared.currentUserPic != nil {
+                return NBClient.shared.currentUserPic
+            }
+            else {
+                let req = Just.get(imageURL!)
+                if req.ok {
+                    let imageDl = UIImage(data: req.content!)
+                    NBClient.shared.updateUserAvatar(image: imageDl)
+                    
+                    return imageDl
+                }
+            }
+        }
+        else if !isCurrentUser {
+            
+             Moa.settings.requestTimeoutSeconds = 12
+             Moa.logger = MoaConsoleLogger
+             let moa = Moa()
+            
+             moa.onSuccess = { moaImage in
+                 print("image loaded!")
+                 returnImage = moaImage
+                
+                 return returnImage
+             }
+             moa.url = imageURL!.absoluteString
+        }
+        
+        return returnImage
+        
+    }
+    
+    func transformToJSON(_ value: UIImage?) -> String? {
         return nil
     }
 }

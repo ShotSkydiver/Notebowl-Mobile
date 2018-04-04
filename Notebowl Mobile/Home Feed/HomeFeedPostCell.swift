@@ -52,7 +52,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         userAvatar.clipsToBounds = true
         userAvatar.layer.masksToBounds = true
         
-        heightConst.constant = 4.0
+        heightConst.constant = 0.0
         postAttachments.layer.cornerRadius = 3.0
         postAttachments.clipsToBounds = true
         postAttachments.layer.masksToBounds = true
@@ -66,7 +66,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
         postContent.text = post.text
-        courseForPost.text = post.parent!.courseFullName
+        courseForPost.text = post.owner!.courseFullName
         postedDate.text = post.updatedAt.relativelyFormatted
         
         if post.isAnonymous {
@@ -75,15 +75,20 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         else {
             userName.text = post.creator!.fullName
             
-            if post.creator!.userIsCurrentUser {
+            if post.creator!.resourceKey == NBClient.shared.currentUser!.resourceKey {
                 userAvatar.image = NBClient.shared.currentUserPic
             }
-            else if !(post.creator!.userIsCurrentUser) {
-                userAvatar.moa.url = post.creator!.profileUrl.absoluteString
+            else {
+            
+                userAvatar.kf.setImage(with: post.creator!.profileUrl, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                    self.setNeedsLayout()
+                })
             }
+         
+            
         }
         
-        if (!post.postAttachments.isEmpty) {
+        if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
             if (post.postAttachments.first!.type.contains("image")) {
                 heightConst.constant = 200.0
                 

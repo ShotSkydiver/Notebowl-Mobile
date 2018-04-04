@@ -85,8 +85,6 @@ public class User: Object {
     
     var fullName: String { return (firstName + " " + lastName) }
     
-    public var userIsCurrentUser: Bool { return resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false }
-    
     override class var routeType: ItemType { return .user }
     
     required public init?(map: Map) {
@@ -98,7 +96,7 @@ public class User: Object {
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
-        profileUrl <- (map["profileUrl"], ImageTransform())
+        profileUrl <- (map["profileUrl"], URLTransform())
 
     }
 }
@@ -407,7 +405,7 @@ class Post: Object {
     var pinned: Bool!
     var text: String?
     var creator: User?
-    var parent: Course?
+    var owner: Course?
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -431,7 +429,7 @@ class Post: Object {
         // if !isAnonymous {
             creator <- (map["_creator"], ObjectTransform<User>())
         // }
-        parent <- (map["_parent"], ObjectTransform<Course>())
+        owner <- (map["_owner"], ObjectTransform<Course>())
     }
     
     func updateLikes() {

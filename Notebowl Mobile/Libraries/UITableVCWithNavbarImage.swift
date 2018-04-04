@@ -11,6 +11,7 @@ import UIKit
 import Kingfisher
 import DeckTransition
 import FaceAware
+import moa
 
 class UITableVCWithNavbarImage: UIViewController {
     
@@ -35,12 +36,29 @@ class UITableVCWithNavbarImage: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("view loaded")
     
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
         navbarImageView.isUserInteractionEnabled = true
         navbarImageView.addGestureRecognizer(tapGestureRecognizer)
         
-        navbarImageView.image = NBClient.shared.currentUserPic
+        /*
+        if NBClient.shared.currentUserPic == nil {
+            print("logging in for the first time!")
+            Moa.logger = MoaConsoleLogger
+            let moa = Moa()
+            moa.onSuccessAsync = { moaImage in
+                print("image loaded!")
+                NBClient.shared.updateUserAvatar(image: moaImage)
+                return moaImage
+            }
+            navbarImageView.moa.url = NBClient.shared.currentUser!.profileUrl.absoluteString
+        }
+        else {
+            */
+            navbarImageView.image = NBClient.shared.currentUserPic
+        // }
+        
         navbarImageView.focusOnFaces = true
         navbarImageView.contentMode = .scaleAspectFill
         setupUI()
