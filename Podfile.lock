@@ -7,11 +7,11 @@ PODS:
   - FaveButton (2.0.3)
   - HGPlaceholders (0.3.0)
   - InputBarAccessoryView (1.5.4)
-  - Kingfisher (4.6.3)
+  - Kingfisher (4.7.0)
   - MMUploadImage (2.0.8)
   - moa (9.0.2)
   - ObjectMapper (3.1.0)
-  - TLPhotoPicker (1.5.2)
+  - TLPhotoPicker (1.5.7)
 
 DEPENDENCIES:
   - AyLoading (~> 2.0.1)
@@ -27,6 +27,21 @@ DEPENDENCIES:
   - moa (~> 9.0)
   - ObjectMapper (~> 3.1)
   - TLPhotoPicker
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AyLoading
+    - Bugsnag
+    - DeckTransition
+    - Disk
+    - FaceAware
+    - HGPlaceholders
+    - InputBarAccessoryView
+    - Kingfisher
+    - MMUploadImage
+    - moa
+    - ObjectMapper
+    - TLPhotoPicker
 
 EXTERNAL SOURCES:
   FaveButton:
@@ -46,12 +61,12 @@ SPEC CHECKSUMS:
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   InputBarAccessoryView: d59b2fa4b227ce58e8f61398489f80017e265739
-  Kingfisher: 98e6d5b5e807645743e8ed5ececd25d688d38452
+  Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
-  TLPhotoPicker: 6e4e912b94985e3c989088bcd92a0179aeeeb975
+  TLPhotoPicker: 3f654630fbc5296835f7f64abffd228d79c377f8
 
 PODFILE CHECKSUM: ff94da2db3ce63fd7f3cbdae483314fed0af4177
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

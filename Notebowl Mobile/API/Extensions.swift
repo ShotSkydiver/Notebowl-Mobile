@@ -202,32 +202,19 @@ public extension UIImage {
         return newImage
     }
     
-    /// EAKit: Returns base64 string
     public var base64EncodedString: String? {
         return self.compressed(quality: 1.0)?.base64EncodedString
     }
-    
-    /// EAKit: Compressed UIImage from original UIImage.
-    ///
-    /// - Parameter quality: The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality), (default is 0.5).
-    /// - Returns: optional UIImage (if applicable).
+
     public func compressed(quality: CGFloat = 0.5) -> UIImage? {
         guard let data = compressedData(quality: quality) else { return nil }
         return UIImage(data: data)
     }
-    
-    /// EAKit: Compressed UIImage data from original UIImage.
-    ///
-    /// - Parameter quality: The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality), (default is 0.5).
-    /// - Returns: optional Data (if applicable).
+ 
     public func compressedData(quality: CGFloat = 0.5) -> Data? {
         return UIImageJPEGRepresentation(self, quality)
     }
-    
-    /// EAKit: UIImage Cropped to CGRect.
-    ///
-    /// - Parameter rect: CGRect to crop UIImage to.
-    /// - Returns: cropped UIImage
+
     public func cropped(to rect: CGRect) -> UIImage {
         guard rect.size.height < size.height && rect.size.height < size.height else { return self }
         guard let image: CGImage = cgImage?.cropping(to: rect) else { return self }
@@ -237,13 +224,6 @@ public extension UIImage {
 
 public extension UIImageView {
     
-    /// EAKit: Set image from a URL.
-    ///
-    /// - Parameters:
-    ///   - url: URL of image.
-    ///   - contentMode: imageView content mode (default is .scaleAspectFit).
-    ///   - placeHolder: optional placeholder image
-    ///   - completionHandler: optional completion handler to run when download finishs (default is nil).
     public func download(
         from url: URL,
         contentMode: UIViewContentMode = .scaleAspectFit,
@@ -268,12 +248,10 @@ public extension UIImageView {
             }
             }.resume()
     }
-    
 }
 
 extension TLPhotosPickerViewController {
    
-    
     func wrapNavigationControllerWithoutBar() -> UINavigationController {
         let navController = UINavigationController(rootViewController: self)
         navController.navigationBar.isHidden = true

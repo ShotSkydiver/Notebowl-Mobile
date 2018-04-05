@@ -19,6 +19,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var comments: [Comment]!
     var anonymousToggle: Bool = false
     var viewIsLoaded = false
+    var attachmentFileId: String!
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -82,15 +83,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             makeButton(named: "invisible")
                 .onTouchUpInside { _ in
                     self.anonymousToggle.toggle()
-                // }.onSelected {
-                    // $0.tintColor = UIColor.clear
-                    // $0.image = UIImage(named: "anon-blue")?.withRenderingMode(.alwaysTemplate)
-                // }.onDeselected {
-                    // $0.tintColor = UIColor.clear
-                    // $0.image = UIImage(named: "anon")?.withRenderingMode(.alwaysTemplate)
+                }.onSelected {
+                    $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                }.onDeselected {
+                    $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1)
                 }.onKeyboardEditingBegins { (button) in
                     print("keyboardediting began")
-                    // self.tableView.scrollToBottom(animated: true)
                 
             },
             bar.sendButton.configure {
@@ -148,6 +146,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         let post = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/comments", params: ["uuid": UIDevice().uuid], json: jsonPayload)
         
         let finalmap = Mapper<Comment>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!
+        
+        let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+        let attachment = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
+        
+        finalmap.getAttachments()
+        finalmap.updateLikes()
+        
         self.comments.append(finalmap)
         self.post.postComments = self.comments
     
@@ -155,7 +160,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if #available(iOS 11.0, *) {
             tableView.performBatchUpdates({
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .right)
+                tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .fade)
             }) { (_) in
                 print("updates complete")
             }
@@ -163,21 +168,21 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         else {
             tableView.beginUpdates()
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .right)
+            tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .fade)
             tableView.endUpdates()
         }
-        
-        tableView.scrollToRow(at: IndexPath(row: self.comments.count-1, section: 1), at: .bottom, animated: true)
+        // tableView.scrollToRow(at: IndexPath(row: self.comments.count-1, section: 1), at: .bottom, animated: true)
         
         setupInputBar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        /// self.post.refresh()
     }
     
     func resetInput() {
+        self.attachmentFileId = ""
+        self.anonymousToggle = false
         bar.inputTextView.resignFirstResponder()
         bar.inputManagers.removeAll()
         let newBar = InputBarAccessoryView()
@@ -225,6 +230,16 @@ extension HomeFeedPostViewController: UIImagePickerControllerDelegate, UINavigat
         dismiss(animated: true, completion: {
             if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
                 self.attachmentManager.handleInput(of: pickedImage)
+                
+                self.bar.sendButton.isEnabled = false
+ 
+                if #available(iOS 11.0, *) {
+                    self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: pickedImage, fileName: info[UIImagePickerControllerImageURL] as! URL, mediaType: info[UIImagePickerControllerMediaType] as! String))
+                } else {
+                    self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: pickedImage, fileName: info[UIImagePickerControllerReferenceURL] as! URL, mediaType: info[UIImagePickerControllerMediaType] as! String))
+                }
+
+                self.bar.sendButton.isEnabled = true
             }
         })
     }

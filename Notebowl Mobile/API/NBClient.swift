@@ -17,7 +17,17 @@ import moa
 public class NBClient {
     
     public static let shared = NBClient()
-    public var baseUrl: String = "platform.notebowl.com"
+    
+    #if DEBUG
+    enum Environment: String {
+        case Production = "platform.notebowl.com"
+        case Staging = "demo.nbstage.com"
+    }
+    public let baseUrl = Environment.Staging.rawValue
+    #else
+    public let baseUrl = NSBundle.mainBundle().infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
+    #endif
+    
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
     public var currentUserPic: UIImage!
@@ -57,6 +67,21 @@ public class NBClient {
             }
         }
         
+    }
+    
+    public func uploadToFiles(attachment: UIImage, fileName: URL, mediaType: String) -> String {
+        let realFileName = fileName.lastPathComponent
+        
+        let postUrl = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/files/upload")
+        let attReq = Just.post(
+            postUrl,
+            params: ["uuid": UIDevice().uuid],
+            files:["files[]":.data(realFileName, attachment.compressedData()!, "image/jpeg")])
+        
+        let res = (attReq.json as AnyObject).value(forKeyPath: "result")
+        let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
+        print("OK! ", fileid)
+        return fileid
     }
     
     public func logoutUser() {
