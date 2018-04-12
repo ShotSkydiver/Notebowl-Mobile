@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14111" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -430,7 +430,88 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6hY-Pb-yLX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1843.4782608695652" y="2605.434782608696"/>
+            <point key="canvasLocation" x="1719" y="2567"/>
+        </scene>
+        <!--Create New Post View Controller-->
+        <scene sceneID="Jmm-C8-2Cm">
+            <objects>
+                <viewController id="HMo-CO-fYR" customClass="CreateNewPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="1sn-Lb-ABr">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" placeholder="Share an update or ask a question..." minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sb7-Fl-bs7">
+                                <rect key="frame" x="81" y="104" width="314" height="271"/>
+                                <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <textInputTraits key="textInputTraits" spellCheckingType="yes" keyboardAppearance="light"/>
+                            </textField>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bLz-kn-epM">
+                                <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="65W-dT-KbR"/>
+                                </constraints>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem largeTitleDisplayMode="never" id="hcz-xE-HcV">
+                                        <barButtonItem key="leftBarButtonItem" title="Dismiss" id="XaM-lz-BPi">
+                                            <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <connections>
+                                                <action selector="dismissButtonAction:" destination="HMo-CO-fYR" id="iBQ-md-oeu"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" id="Z22-f6-zfW" customClass="PostButtonNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="bJt-gw-CTl">
+                                <rect key="frame" x="20" y="104" width="46" height="46"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="46" id="Gjd-SR-jZi"/>
+                                    <constraint firstAttribute="width" constant="46" id="eAi-6P-UvX"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
+                                        <real key="value" value="0.5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="DSM-8Y-8h4" firstAttribute="trailing" secondItem="sb7-Fl-bs7" secondAttribute="trailing" constant="19" id="31W-ol-Oun"/>
+                            <constraint firstItem="sb7-Fl-bs7" firstAttribute="leading" secondItem="bJt-gw-CTl" secondAttribute="trailing" constant="15" id="Bf6-Fq-dbd"/>
+                            <constraint firstItem="bJt-gw-CTl" firstAttribute="top" secondItem="sb7-Fl-bs7" secondAttribute="top" id="FaL-0a-uR0"/>
+                            <constraint firstItem="sb7-Fl-bs7" firstAttribute="top" secondItem="bLz-kn-epM" secondAttribute="bottom" constant="40" id="Nay-7Q-zCu"/>
+                            <constraint firstItem="bJt-gw-CTl" firstAttribute="leading" secondItem="1sn-Lb-ABr" secondAttribute="leadingMargin" id="hhx-Zd-8Rg"/>
+                            <constraint firstItem="DSM-8Y-8h4" firstAttribute="bottom" secondItem="sb7-Fl-bs7" secondAttribute="bottom" constant="361" id="onA-Ed-cp1"/>
+                            <constraint firstItem="bLz-kn-epM" firstAttribute="top" secondItem="DSM-8Y-8h4" secondAttribute="top" id="p9u-4K-zeg"/>
+                            <constraint firstItem="bLz-kn-epM" firstAttribute="leading" secondItem="1sn-Lb-ABr" secondAttribute="leading" id="peV-5U-aYV"/>
+                            <constraint firstAttribute="trailing" secondItem="bLz-kn-epM" secondAttribute="trailing" id="tgc-60-ZMI"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="DSM-8Y-8h4"/>
+                    </view>
+                    <connections>
+                        <outlet property="dismissButton" destination="XaM-lz-BPi" id="XcM-IR-Spc"/>
+                        <outlet property="fakeNavBar" destination="bLz-kn-epM" id="GyY-v7-r8k"/>
+                        <outlet property="postButtonBarItem" destination="Z22-f6-zfW" id="NPc-An-bsc"/>
+                        <outlet property="postTextField" destination="sb7-Fl-bs7" id="eqE-K0-Ysd"/>
+                        <outlet property="userAvatar" destination="bJt-gw-CTl" id="wcs-ti-wKM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jKt-Iz-hbs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2560.8695652173915" y="2543.4782608695655"/>
         </scene>
         <!--Account Modal Table View Controller-->
         <scene sceneID="wL2-0R-fO4">
@@ -555,12 +636,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="54c-7F-6UD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2621.0144927536235" y="2716.304347826087"/>
+            <point key="canvasLocation" x="1628" y="3160"/>
         </scene>
         <!--Recents-->
         <scene sceneID="vUx-WI-Ovy">
             <objects>
-                <navigationController id="hUS-W2-ld6" sceneMemberID="viewController">
+                <navigationController id="hUS-W2-ld6" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Recents" image="bell-vector" id="ykP-pp-fDG"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C0V-xe-Ww4">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -582,7 +663,7 @@
         <!--Profile Nav Controller-->
         <scene sceneID="ite-OS-Tnq">
             <objects>
-                <navigationController title="Profile Nav Controller" id="h5w-W2-6Qi" sceneMemberID="viewController">
+                <navigationController title="Profile Nav Controller" id="h5w-W2-6Qi" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Latest" image="today_apps-vector" id="Lho-Gi-jfY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -608,11 +689,11 @@
         <scene sceneID="h3d-lu-Lpk">
             <objects>
                 <viewController title="Latest" extendedLayoutIncludesOpaqueBars="YES" id="XYy-Qd-okh" customClass="HomeFeedViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="b3w-2R-CKG">
+                    <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="b3w-2R-CKG">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72" customClass="HomeTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="2" sectionFooterHeight="15" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72" customClass="HomeTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -630,13 +711,21 @@
                             <constraint firstAttribute="bottom" secondItem="yJQ-xz-W72" secondAttribute="bottom" id="V5A-qn-jJn"/>
                             <constraint firstItem="yJQ-xz-W72" firstAttribute="top" secondItem="b3w-2R-CKG" secondAttribute="top" id="rI4-bS-B3h"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="r09-M8-rM9"/>
+                        <viewLayoutGuide key="safeArea" id="9BZ-cF-c0c"/>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="oYZ-wD-P4s" customClass="NotebowlLogoNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="oYZ-wD-P4s" customClass="NotebowlLogoNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target">
+                        <barButtonItem key="rightBarButtonItem" title="Profile" image="male-user" id="YSv-Aa-2vd">
+                            <inset key="imageInsets" minX="10" minY="-4" maxX="-12" maxY="-10"/>
+                            <connections>
+                                <action selector="userProfileButton:" destination="XYy-Qd-okh" id="ipX-KB-WIA"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="bulletinTableView" destination="yJQ-xz-W72" id="uP8-mC-bmr"/>
                         <segue destination="kph-Ic-KZb" kind="show" identifier="postDetailSegue" id="HDG-8d-5j3"/>
                         <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueDeck" customClass="DeckSegue" customModule="DeckTransition" id="Ssj-YJ-Jbk"/>
+                        <segue destination="HMo-CO-fYR" kind="presentation" identifier="createPostSegue" id="Ffz-FF-4VI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NcF-z0-kmO" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -647,7 +736,7 @@
         <scene sceneID="LWz-jU-F1G">
             <objects>
                 <tableViewController title="Post Detail" hidesBottomBarWhenPushed="YES" id="kph-Ic-KZb" customClass="HomeFeedPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="1" id="gWs-Cs-Laa">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="10" contentViewInsetsToSafeArea="NO" id="gWs-Cs-Laa">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -659,7 +748,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aBT-R8-zhj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2741" y="1824"/>
+            <point key="canvasLocation" x="2832" y="1764"/>
         </scene>
         <!--Root View-->
         <scene sceneID="UZy-wh-fI0">
@@ -724,7 +813,7 @@
         <!--Courses Nav Controller-->
         <scene sceneID="Zu3-of-Cjb">
             <objects>
-                <navigationController title="Courses Nav Controller" id="HSI-fu-8pP" sceneMemberID="viewController">
+                <navigationController title="Courses Nav Controller" id="HSI-fu-8pP" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Courses" image="book-vector" id="GaJ-TT-zS9"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0JD-ga-Hq1">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -748,6 +837,7 @@
         <image name="Default Avatar" width="360" height="360"/>
         <image name="bell-vector" width="30" height="30"/>
         <image name="book-vector" width="30" height="30"/>
+        <image name="male-user" width="50" height="50"/>
         <image name="today_apps-vector" width="30" height="30"/>
         <image name="uni-image-gray" width="1000" height="667"/>
     </resources>

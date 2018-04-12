@@ -13,7 +13,7 @@ import UIKit
 import Kingfisher
 import FaveButton
 import AyLoading
-import moa
+import Haptica
 
 class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
@@ -24,7 +24,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var postComments: UILabel!
     @IBOutlet weak var postLikes: UILabel!
     @IBOutlet weak var courseForPost: UILabel!
-    @IBOutlet weak var postAttachments: UIImageView!
+    @IBOutlet weak var postAttachments: ProfileImageView!
     @IBOutlet weak var likeButton: FaveButton!
     @IBOutlet weak var commentButton: FaveButton!
     @IBOutlet weak var likeActivityIndicator: UIActivityIndicatorView!
@@ -48,14 +48,12 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func initSetup() {
-        userAvatar.layer.cornerRadius = 3.0
-        userAvatar.clipsToBounds = true
-        userAvatar.layer.masksToBounds = true
-        
         heightConst.constant = 0.0
-        postAttachments.layer.cornerRadius = 3.0
-        postAttachments.clipsToBounds = true
-        postAttachments.layer.masksToBounds = true
+        // postAttachments.clipsToBounds = false
+        // postAttachments.layer.masksToBounds = false
+        
+        likeButton.isHaptic = true
+        likeButton.hapticType = .impact(.light)
         
         selectedBackgroundView?.backgroundColor = UIColor.cyan
     }
@@ -90,7 +88,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
             if (post.postAttachments.first!.type.contains("image")) {
-                heightConst.constant = 200.0
+                heightConst.constant = 220.0
                 
                 postAttachments.kf.setImage(with: post.postAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                     self.setNeedsLayout()

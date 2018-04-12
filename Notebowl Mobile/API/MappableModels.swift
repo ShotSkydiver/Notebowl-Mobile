@@ -154,7 +154,7 @@ class Course: Object {
     var courseFullName: String { return (courseCode + ": " + name) }
     
     public var lastUpdated: String?
-    public var secondsSinceGradeUpdate: TimeInterval?
+    public var secondsSinceGradeUpdate: TimeInterval!
 
     public var categories: [Category]!
         

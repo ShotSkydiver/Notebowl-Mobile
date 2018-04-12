@@ -11,14 +11,14 @@ import UIKit
 import Kingfisher
 import AyLoading
 import FaveButton
-import moa
+import Haptica
 
 class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var commentContent: UILabel!
-    @IBOutlet weak var commentAttachments: UIImageView!
+    @IBOutlet weak var commentAttachments: ProfileImageView!
     @IBOutlet weak var commentLikes: UILabel!
     @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
@@ -42,13 +42,10 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func initSetup() {
-        userAvatar.layer.cornerRadius = 3.0
-        userAvatar.clipsToBounds = true
-        userAvatar.layer.masksToBounds = true
         heightConst.constant = 4.0
-        commentAttachments.layer.cornerRadius = 3.0
-        commentAttachments.clipsToBounds = true
-        commentAttachments.layer.masksToBounds = true
+        
+        commentLikeButton.isHaptic = true
+        commentLikeButton.hapticType = .impact(.light)
     }
     
     func configure(comment: Comment) {
@@ -76,7 +73,7 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         
         if (!comment.commentAttachments.isEmpty) {
             if (comment.commentAttachments.first!.type.contains("image")) {
-                heightConst.constant = 160.0
+                heightConst.constant = 180.0
                 commentAttachments.kf.setImage(with: comment.commentAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                     self.setNeedsLayout()
                 })

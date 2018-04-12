@@ -38,7 +38,8 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     override func viewDidLoad() {
         super.viewDidLoad()
         modalPresentationCapturesStatusBarAppearance = true
-   
+        self.setNeedsStatusBarAppearanceUpdate()
+        
         currentUser = NBClient.shared.getCurrentUser()
         updateInfo()
         
@@ -53,7 +54,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
             let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
             let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
             
-            homeViewController.navbarImageView.image = self.newImage
+            //homeViewController.navbarImageView.image = self.newImage
             
         }
         profilePicture.failBlock = {
@@ -62,6 +63,8 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         profilePicture.style = .sector
         profilePicture.autoCompleted = true
     }
+    
+    
  
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -238,6 +241,11 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
             NBClient.shared.logoutUser()
             let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
             rootViewController.dismiss(animated: true, completion: nil)
+        }
+        else if cell.reuseIdentifier == "appearanceCell" {
+            let urlObj = NSURL.init(string:UIApplicationOpenSettingsURLString)
+            UIApplication.shared.open(urlObj! as URL, options: [ : ], completionHandler: { Success in
+                })
         }
         else {
             self.present(UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert), animated: true, completion: nil)

@@ -1,30 +1,34 @@
 PODS:
   - AyLoading (2.0.1)
   - Bugsnag (5.15.4)
+  - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
   - Disk (0.3.3)
   - FaceAware (1.2.0)
   - FaveButton (2.0.3)
+  - FeedbackSlack (0.1.0)
+  - Haptica (2.0.1)
   - HGPlaceholders (0.3.0)
   - InputBarAccessoryView (1.5.4)
   - Kingfisher (4.7.0)
   - MMUploadImage (2.0.8)
-  - moa (9.0.2)
   - ObjectMapper (3.1.0)
   - TLPhotoPicker (1.5.7)
 
 DEPENDENCIES:
   - AyLoading (~> 2.0.1)
   - Bugsnag
+  - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
   - Disk (~> 0.3.3)
   - FaceAware
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
+  - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`, tag `0.1.0`)
+  - Haptica
   - HGPlaceholders
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
   - MMUploadImage
-  - moa (~> 9.0)
   - ObjectMapper (~> 3.1)
   - TLPhotoPicker
 
@@ -32,41 +36,50 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AyLoading
     - Bugsnag
+    - ButtonProgressBar-iOS
     - DeckTransition
     - Disk
     - FaceAware
+    - Haptica
     - HGPlaceholders
     - InputBarAccessoryView
     - Kingfisher
     - MMUploadImage
-    - moa
     - ObjectMapper
     - TLPhotoPicker
 
 EXTERNAL SOURCES:
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
+  FeedbackSlack:
+    :git: https://github.com/ShotSkydiver/SlackFeedback
+    :tag: 0.1.0
 
 CHECKOUT OPTIONS:
   FaveButton:
-    :commit: f864e4f961e66f00de8278fdfc6abc6b4bc4be98
+    :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
+  FeedbackSlack:
+    :git: https://github.com/ShotSkydiver/SlackFeedback
+    :tag: 0.1.0
 
 SPEC CHECKSUMS:
   AyLoading: 7c803c3f456a134cc196f58f7dc35646874bb3e1
   Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
+  ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
   FaceAware: 421436f9d16aacdb26ffcf8e5a39a1dd68630395
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
+  FeedbackSlack: 220c51a4a2317dea1f621b89e53ed09e90b4bd88
+  Haptica: 8dbc771b1eb764454ce66092c4cfc6b29dcb6cb7
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   InputBarAccessoryView: d59b2fa4b227ce58e8f61398489f80017e265739
   Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
   TLPhotoPicker: 3f654630fbc5296835f7f64abffd228d79c377f8
 
-PODFILE CHECKSUM: ff94da2db3ce63fd7f3cbdae483314fed0af4177
+PODFILE CHECKSUM: 95b8e20fbc387c4a8dbe7280b38a77562cf5c085
 
 COCOAPODS: 1.5.0

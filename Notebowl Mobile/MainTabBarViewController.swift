@@ -13,6 +13,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setNeedsStatusBarAppearanceUpdate()
         UITabBar.appearance().tintColor = UIColor.darkGray
         UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
         self.delegate = self
@@ -25,6 +26,10 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         delegate.registerNotifications()
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if selectedViewController == nil || viewController == selectedViewController {
             return false
@@ -36,5 +41,18 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         UIView.transition(from: fromView!, to: toView!, duration: 0.3, options: [.transitionCrossDissolve], completion: nil)
         
         return true
+    }
+}
+
+class RootNavigationBarVC: UINavigationController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.setNeedsStatusBarAppearanceUpdate()
+
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }

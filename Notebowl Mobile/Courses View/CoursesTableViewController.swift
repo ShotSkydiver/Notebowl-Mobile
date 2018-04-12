@@ -25,15 +25,36 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
+        setupNavBar()
+        
         self.getTableData()
+    }
+    
+    func setupNavBar() {
+        navigationController?.navigationBar.shadowImage = UIImage.init()
+        
+        navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
+        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
+        navigationController?.navigationBar.layer.shadowRadius = 5.5
+        navigationController?.navigationBar.layer.shadowOpacity = 0.7
+        navigationController?.navigationBar.layer.masksToBounds = false
+        
+        self.view.layer.masksToBounds = false
+        
     }
     
     func getTableData() {
         self.loadingView.showLoadView(true)
 
         DispatchQueue.main.async {
-            let currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
+            var currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
+            if currentTermFilter.count < 10 {
+                print("current term filter: ", currentTermFilter)
+                currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:forever-term\"]", sortBy: "updatedAt:desc", limit: "1")!)
+            }
             self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10")!)
+            
+            self.courses.sort() { $0.secondsSinceGradeUpdate > $1.secondsSinceGradeUpdate }
             self.tableView.reloadData()
             self.bgView.showViewAnimated(false)
         }

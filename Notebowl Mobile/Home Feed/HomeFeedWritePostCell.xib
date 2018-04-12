@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14111" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="newPostCell" rowHeight="100" id="KGk-i7-Jjw" customClass="HomeFeedWritePostCell" customModule="Notebowl_Mobile" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="99.666666666666671"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="pfI-Tx-KWH" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                        <rect key="frame" x="20" y="27" width="46" height="46"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="46" id="Ho3-sa-OkS"/>
+                            <constraint firstAttribute="height" constant="46" id="QkF-cY-8fi"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadious">
+                                <real key="value" value="3"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                    <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Share an update or ask a question..." adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-Da-NxA">
+                        <rect key="frame" x="78" y="27" width="316" height="46"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
+                        <textInputTraits key="textInputTraits"/>
+                        <connections>
+                            <action selector="dummyTextFieldTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="gQW-BY-toI"/>
+                        </connections>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="XXb-Da-NxA" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="3dP-4y-k9E"/>
+                    <constraint firstItem="pfI-Tx-KWH" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="EAO-Qg-0z0"/>
+                    <constraint firstItem="XXb-Da-NxA" firstAttribute="top" secondItem="pfI-Tx-KWH" secondAttribute="top" id="FGa-55-CIa"/>
+                    <constraint firstItem="pfI-Tx-KWH" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="QTq-B0-c1r"/>
+                    <constraint firstItem="XXb-Da-NxA" firstAttribute="bottom" secondItem="pfI-Tx-KWH" secondAttribute="bottom" id="T1S-54-kGP"/>
+                    <constraint firstItem="XXb-Da-NxA" firstAttribute="leading" secondItem="pfI-Tx-KWH" secondAttribute="trailing" constant="12" id="nNb-Z6-oDQ"/>
+                    <constraint firstItem="pfI-Tx-KWH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="16" id="vZ0-8t-Cai"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="dummyTextField" destination="XXb-Da-NxA" id="A0k-vo-G2J"/>
+                <outlet property="userAvatar" destination="pfI-Tx-KWH" id="4wh-gK-E2A"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Default Avatar" width="360" height="360"/>
+    </resources>
+</document>

@@ -9,19 +9,25 @@
 import UIKit
 import UserNotifications
 import Bugsnag
+import FeedbackSlack
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#mobile-feedback", subjects: [
+            "Bug",
+            "Question",
+            "Looks good!"
+            ])
         
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        UIApplication.shared.statusBarStyle = .lightContent
+        // UIApplication.shared.statusBarStyle = .lightContent
         
         return true
     }
@@ -82,7 +88,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        let aps = userInfo["aps"] as! [String: AnyObject]
+        // let aps = userInfo["aps"] as! [String: AnyObject]
         
         if response.actionIdentifier == "viewActionIdentifier" {
             print("view action")

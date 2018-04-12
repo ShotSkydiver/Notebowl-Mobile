@@ -59,6 +59,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         HomeFeedCommentCell.register(in: self.tableView)
         
         setupInputBar()
+        
+        tableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
+        
         viewIsLoaded = true
     }
     
@@ -171,7 +174,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .fade)
             tableView.endUpdates()
         }
-        // tableView.scrollToRow(at: IndexPath(row: self.comments.count-1, section: 1), at: .bottom, animated: true)
         
         setupInputBar()
     }
@@ -198,7 +200,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 10.0 : 5.0
+        return section == 0 ? 0.0 : 5.0
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

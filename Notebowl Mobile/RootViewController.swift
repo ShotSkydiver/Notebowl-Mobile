@@ -14,6 +14,7 @@ class RootViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setNeedsStatusBarAppearanceUpdate()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -26,6 +27,10 @@ class RootViewController: UIViewController {
         else if UserDefaults.hasUserLoggedIn {
             self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
         }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 
 
@@ -47,6 +52,7 @@ class RootViewController: UIViewController {
             progressWebVC.extendedLayout = true
            
         }
+  
         
         else if segue.identifier! == "presentTabBarView" {
             print("segue id tabbarview")

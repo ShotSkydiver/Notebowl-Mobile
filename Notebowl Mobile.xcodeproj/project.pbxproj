@@ -22,11 +22,13 @@
 		8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8534A19E2045CF1B0001B5BA /* RootViewController.swift */; };
 		85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */; };
 		85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */; };
+		85689C502077F154003FF721 /* CreateNewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
+		85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */; };
+		85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
-		85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */; };
 		85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */; };
 		85E0700C206EE3A90001A222 /* CustomCameraCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E07009206EE3A90001A222 /* CustomCameraCell.swift */; };
 		85E0700D206EE3A90001A222 /* CustomCameraCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85E0700A206EE3A90001A222 /* CustomCameraCell.xib */; };
@@ -46,7 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		854EAEEC1F84491A008E03BA /* Embed Frameworks */ = {
+		856A57C6207820AD0080ADAA /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -79,12 +81,14 @@
 		8534A19E2045CF1B0001B5BA /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsTableView.swift; sourceTree = "<group>"; };
 		85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentCellView.swift; sourceTree = "<group>"; };
+		85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewPostViewController.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
+		85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedWritePostCell.swift; sourceTree = "<group>"; };
+		85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedWritePostCell.xib; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
-		85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableVCWithNavbarImage.swift; sourceTree = "<group>"; };
 		85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountModalViewController.swift; sourceTree = "<group>"; };
 		85E07009206EE3A90001A222 /* CustomCameraCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCameraCell.swift; sourceTree = "<group>"; };
 		85E0700A206EE3A90001A222 /* CustomCameraCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomCameraCell.xib; sourceTree = "<group>"; };
@@ -158,7 +162,6 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				85CC9BFC202B9095001CABB0 /* UITableVCWithNavbarImage.swift */,
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
 			);
@@ -200,6 +203,9 @@
 			isa = PBXGroup;
 			children = (
 				85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */,
+				85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */,
+				85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */,
+				85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */,
 				853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */,
 				853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */,
 				852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */,
@@ -279,7 +285,7 @@
 				85E2918A1F5F619300172C46 /* Frameworks */,
 				85E2918B1F5F619300172C46 /* Resources */,
 				BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */,
-				854EAEEC1F84491A008E03BA /* Embed Frameworks */,
+				856A57C6207820AD0080ADAA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -384,6 +390,7 @@
 			files = (
 				853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */,
 				85E0700D206EE3A90001A222 /* CustomCameraCell.xib in Resources */,
+				85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */,
 				85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */,
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */,
@@ -437,33 +444,37 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AyLoading/AyLoading.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
+				"${BUILT_PRODUCTS_DIR}/ButtonProgressBar-iOS/ButtonProgressBar_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/DeckTransition/DeckTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
 				"${BUILT_PRODUCTS_DIR}/FaceAware/FaceAware.framework",
 				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
+				"${BUILT_PRODUCTS_DIR}/FeedbackSlack/FeedbackSlack.framework",
 				"${BUILT_PRODUCTS_DIR}/HGPlaceholders/HGPlaceholders.framework",
+				"${BUILT_PRODUCTS_DIR}/Haptica/Haptica.framework",
 				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/MMUploadImage/MMUploadImage.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/TLPhotoPicker/TLPhotoPicker.framework",
-				"${BUILT_PRODUCTS_DIR}/moa/moa.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AyLoading.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ButtonProgressBar_iOS.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeckTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaceAware.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FeedbackSlack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HGPlaceholders.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Haptica.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMUploadImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TLPhotoPicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/moa.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -493,15 +504,16 @@
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85E07010206EE3E70001A222 /* PreviewView.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
+				85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
 				852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */,
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85E0700E206EE3A90001A222 /* PhotoCaptureDelegate.swift in Sources */,
-				85CC9BFD202B9095001CABB0 /* UITableVCWithNavbarImage.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
 				85E0700C206EE3A90001A222 /* CustomCameraCell.swift in Sources */,
+				85689C502077F154003FF721 /* CreateNewPostViewController.swift in Sources */,
 				85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */,
 				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
 			);
@@ -609,6 +621,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -726,6 +742,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -844,6 +864,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1014,6 +1038,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1042,6 +1070,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
+					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -14,7 +14,9 @@ target 'Notebowl Mobile' do
     pod 'MMUploadImage'
     pod 'Disk', '~> 0.3.3'
     pod 'FaceAware'
-    pod 'moa', '~> 9.0'
     pod 'TLPhotoPicker'
+    pod 'Haptica'
+    pod 'ButtonProgressBar-iOS'
+    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback', :tag => '0.1.0'
 end
 

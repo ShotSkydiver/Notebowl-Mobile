@@ -13,7 +13,6 @@ import HGPlaceholders
 import Bugsnag
 import TLPhotoPicker
 import Kingfisher
-import moa
 
 enum CodingError : Error {
     case RuntimeError(String)
@@ -110,7 +109,7 @@ public extension Date {
         }
         return "just now"
     }
-
+    
     public var isInFuture: Bool {
         return self > Date()
     }
@@ -248,6 +247,77 @@ public extension UIImageView {
             }
             }.resume()
     }
+}
+
+@IBDesignable class ProfileImageView:UIImageView {
+    
+    @IBInspectable var dashedBorder: Bool = false {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    @IBInspectable var isCircular: Bool = false {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    @IBInspectable var cornerRadious: CGFloat = 5 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    @IBInspectable var borderColorImg: UIColor = UIColor.blue {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    @IBInspectable var borderWidthImg: CGFloat = 0.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.layoutIfNeeded()
+        self.applyProperties()
+    }
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)!
+        self.setNeedsDisplay()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.setNeedsDisplay()
+    }
+    
+    override func layoutSubviews() {
+        self.applyProperties()
+    }
+    func applyProperties()
+    {
+        let shapeLayer:CAShapeLayer = CAShapeLayer()
+        let frameSize = self.frame.size
+        let shapeRect = CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height)
+        
+        shapeLayer.bounds = shapeRect
+        shapeLayer.position = CGPoint(x: frameSize.width/2, y: frameSize.height/2)
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.strokeColor = borderColorImg.cgColor
+        shapeLayer.lineWidth = borderWidthImg
+        shapeLayer.lineJoin = kCALineJoinRound
+        if dashedBorder{
+            shapeLayer.lineDashPattern = [6,3]
+        }
+        shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious).cgPath
+        self.layer.cornerRadius = isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious
+        self.layer.masksToBounds = true
+        self.layer.addSublayer(shapeLayer)
+        //self.layer.insertSublayer(shapeLayer, at: 0)
+    }
+    
 }
 
 extension TLPhotosPickerViewController {
@@ -420,7 +490,7 @@ class ObjectTransform<T: Object>: TransformType {
         return nil
     }
 }
-
+/*
 class ImageTransform: TransformType {
     public typealias Object = UIImage
     public typealias JSON = String
@@ -432,7 +502,7 @@ class ImageTransform: TransformType {
     
     
     func transformFromJSON(_ value: Any?) -> UIImage? {
-        var imageURL = URL(string: (value as! String))
+        let imageURL = URL(string: (value as! String))
         var returnImage: UIImage!
         
         if isCurrentUser {
@@ -474,7 +544,7 @@ class ImageTransform: TransformType {
         return nil
     }
 }
-
+*/
 class ISO8601FixedDateTransform: DateFormatterTransform {
     
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")

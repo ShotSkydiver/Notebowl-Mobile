@@ -12,7 +12,6 @@ import ObjectMapper
 import Bugsnag
 import Kingfisher
 import Disk
-import moa
 
 public class NBClient {
     
@@ -25,7 +24,7 @@ public class NBClient {
     }
     public let baseUrl = Environment.Staging.rawValue
     #else
-    public let baseUrl = NSBundle.mainBundle().infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
+    public let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
     #endif
     
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
@@ -37,6 +36,7 @@ public class NBClient {
     
     public func getCurrentUser(force: Bool? = false) -> User {
         NSLog("doing currentuser")
+        
         if (self.currentUser == nil) || (force)! {
             NSLog("currentuser null")
             self.currentUser = self.getMappable(User.self)?.first

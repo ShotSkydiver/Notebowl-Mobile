@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>136026</string>
+	<string>136032</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -35,6 +35,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Use the camera to take a picture and use it as your profile picture!</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Temporary</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Temporary</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Post photos as attachments to your posts and comments!</string>
 	<key>UIBackgroundModes</key>
@@ -63,6 +67,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<true/>
 </dict>
 </plist>
