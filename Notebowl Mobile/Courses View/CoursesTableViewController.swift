@@ -47,12 +47,22 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
         self.loadingView.showLoadView(true)
 
         DispatchQueue.main.async {
-            var currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
-            if currentTermFilter.count < 10 {
-                print("current term filter: ", currentTermFilter)
-                currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:forever-term\"]", sortBy: "updatedAt:desc", limit: "1")!)
+            let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "10")!
+            
+            var coursesArray = [Course]()
+            
+            for enrollment in enrollments {
+                if enrollment.statusIsAccepted {
+                    print("appending course!")
+                    let courseItem = enrollment.parent
+                    if courseItem?.resourceKey != nil {
+                        print("appending a course to the array")
+                        courseItem!.refresh()
+                        coursesArray.append(courseItem!)
+                    }
+                }
             }
-            self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10")!)
+            self.courses = coursesArray
             
             self.courses.sort() { $0.secondsSinceGradeUpdate > $1.secondsSinceGradeUpdate }
             self.tableView.reloadData()

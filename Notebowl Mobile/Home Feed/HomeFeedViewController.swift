@@ -81,14 +81,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         self.bgView.showViewAnimated(true)
         
         DispatchQueue.main.async {
-            var currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:spring-2018\"]", sortBy: "updatedAt:desc", limit: "1")!)
-            if currentTermFilter.count < 10 {
-                print("current term filter: ", currentTermFilter)
-                currentTermFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Term.self, filters: "[\"permalink:IN:forever-term\"]", sortBy: "updatedAt:desc", limit: "1")!)
-            }
-            
-            let courseFilter = NBClient.shared.buildFilterString(from: NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"_term:IN:\(currentTermFilter)\"]", sortBy: "updatedAt:desc", limit: "10")!)!)
-            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:IN:\(courseFilter)\",\"_parent:IN:\(courseFilter)\"]", sortBy: "updatedAt:desc", limit: "6")!)
+                        self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "6")!)
             self.bulletinTableView.reloadData()
            
             self.bgView.showViewAnimated(false)

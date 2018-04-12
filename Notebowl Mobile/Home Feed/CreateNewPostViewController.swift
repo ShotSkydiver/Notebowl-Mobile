@@ -147,6 +147,8 @@ class PostButtonNavigationItem: UIBarButtonItem {
         super.init(coder: aDecoder)
         
         postButton.setTitle("Post", for: .normal)
+        postButton.setBackgroundColor(color: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
+        postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
         postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
         
         logoContainer.addSubview(postButton)

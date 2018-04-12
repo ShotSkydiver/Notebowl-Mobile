@@ -122,7 +122,7 @@ class Term: Object {
         termStart <- (map["termStart"], ISO8601FixedDateTransform())
         termEnd <- (map["termEnd"], ISO8601FixedDateTransform())
         termAvailable <- (map["termAvailable"], ISO8601FixedDateTransform())
-        university <- (map["_university"], ObjectTransform<University>())
+        // university <- (map["_university"], ObjectTransform<University>())
     }
 }
 
@@ -201,6 +201,7 @@ class Course: Object {
             self.lastUpdated = self.updatedAt?.relativelyFormatted
             self.secondsSinceGradeUpdate = self.secondsSinceUpdate
         }
+        
     }
 }
 
@@ -377,10 +378,15 @@ class University: Object {
 
 class Enrollment: Object {
     
-    var role: String?
-    var status: String?
+    var role: String!
+    var status: String!
     var user: User!
-    var parent: Course?
+    var parent: Course!
+    
+    public var statusIsAccepted: Bool {
+        if status.contains("Accepted") { return true }
+        else { return false }
+    }
     
     override class var routeType: ItemType { return .enrollment }
     
@@ -393,8 +399,8 @@ class Enrollment: Object {
         
         role <- map["role"]
         status <- map["status"]
-        user <- map["_user"]
-        parent <- map["_parent"]
+        user <- (map["_user"], ObjectTransform<User>())
+        parent <- (map["_parent"], ObjectTransform<Course>())
     }
 }
 
@@ -404,8 +410,8 @@ class Post: Object {
     var isAnonymous: Bool!
     var pinned: Bool!
     var text: String?
-    var creator: User?
-    var owner: Course?
+    var creator: User!
+    var owner: Course!
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
