@@ -17,6 +17,6 @@ target 'Notebowl Mobile' do
     pod 'TLPhotoPicker'
     pod 'Haptica'
     pod 'ButtonProgressBar-iOS'
-    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback', :tag => '0.1.0'
+    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback', :tag => '0.1.2'
 end
 
