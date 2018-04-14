@@ -91,7 +91,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onDeselected {
                     $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1)
                 }.onKeyboardEditingBegins { (button) in
-                    print("keyboardediting began")
+                    TTLog.debug("keyboardediting began")
                 
             },
             bar.sendButton.configure {
@@ -137,7 +137,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             }.onDeselected {
                 $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1)
             }.onTouchUpInside { _ in
-                print("tapped")
+                TTLog.debug("tapped")
         }
     }
     
@@ -165,7 +165,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .fade)
             }) { (_) in
-                print("updates complete")
+                TTLog.debug("updates complete")
             }
         }
         else {
@@ -235,11 +235,7 @@ extension HomeFeedPostViewController: UIImagePickerControllerDelegate, UINavigat
                 
                 self.bar.sendButton.isEnabled = false
  
-                if #available(iOS 11.0, *) {
-                    self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: pickedImage, fileName: info[UIImagePickerControllerImageURL] as! URL, mediaType: info[UIImagePickerControllerMediaType] as! String))
-                } else {
-                    self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: pickedImage, fileName: info[UIImagePickerControllerReferenceURL] as! URL, mediaType: info[UIImagePickerControllerMediaType] as! String))
-                }
+                self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: pickedImage))
 
                 self.bar.sendButton.isEnabled = true
             }

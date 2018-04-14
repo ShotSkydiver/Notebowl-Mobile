@@ -44,7 +44,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         updateInfo()
         
         profilePicture.completedBlock = {
-            print("completedblock")
+            TTLog.debug("completedblock")
             self.dismissWithUpdate = true
             
             NBClient.shared.updateUserAvatar(image: self.newImage)
@@ -58,7 +58,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
             
         }
         profilePicture.failBlock = {
-            print("failed")
+            TTLog.debug("failed")
         }
         profilePicture.style = .sector
         profilePicture.autoCompleted = true
@@ -116,14 +116,14 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
             params: ["uuid": UIDevice().uuid],
             files:["files[]":.data("profile.jpg", image.compressedData()!, "image/jpeg")],
             asyncProgressHandler: { p in
-                print("progress: ", p.percent)
+                TTLog.debug("progress: ", p.percent)
                 
                 self.profilePicture.uploadImage(image: image, progress: p.percent)
                 
         }
         ) { r in
             if r.ok {
-                print("OK!")
+                TTLog.debug("OK!")
                 // self.profilePicture.uploadCompleted()
             }
             else {
@@ -145,7 +145,7 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
     func setupMenuForAlert() {
         let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         PHPhotoLibrary.requestAuthorization({ (auth) in
-            print("authstatus: ", auth)
+            TTLog.debug("authstatus: ", auth)
         })
         
         // let imagePicker = UIImagePickerController()
@@ -203,7 +203,7 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
             }
             else {
                 asset.cloudImageDownload(progressBlock: { (progress) in
-                    print("download from cloud progress: ", progress)
+                    TTLog.debug("download from cloud progress: ", progress)
                     
                 }, completionBlock: { (image) in
                     if let image = image {

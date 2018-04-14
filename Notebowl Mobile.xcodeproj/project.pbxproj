@@ -23,6 +23,7 @@
 		85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */; };
 		85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */; };
 		85689C502077F154003FF721 /* CreateNewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */; };
+		856CC94D20813BED0096A13F /* TTLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856CC94C20813BED0096A13F /* TTLog.swift */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */; };
@@ -82,6 +83,7 @@
 		85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsTableView.swift; sourceTree = "<group>"; };
 		85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentCellView.swift; sourceTree = "<group>"; };
 		85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewPostViewController.swift; sourceTree = "<group>"; };
+		856CC94C20813BED0096A13F /* TTLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TTLog.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				856CC94C20813BED0096A13F /* TTLog.swift */,
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
 			);
@@ -456,6 +459,8 @@
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/MMUploadImage/MMUploadImage.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/RLBAlertsPickers/RLBAlertsPickers.framework",
+				"${BUILT_PRODUCTS_DIR}/RSKPlaceholderTextView/RSKPlaceholderTextView.framework",
 				"${BUILT_PRODUCTS_DIR}/TLPhotoPicker/TLPhotoPicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -474,6 +479,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMUploadImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RLBAlertsPickers.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKPlaceholderTextView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TLPhotoPicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -489,6 +496,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */,
+				856CC94D20813BED0096A13F /* TTLog.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				85348E7720463E3A00ABD877 /* Enums.swift in Sources */,
 				8501CDF61FFBF5D800C853CE /* Just.swift in Sources */,

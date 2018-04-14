@@ -79,7 +79,7 @@ class PhotoCaptureProcessor: NSObject {
                 do {
                     try FileManager.default.removeItem(atPath: livePhotoCompanionMoviePath)
                 } catch {
-                    print("Could not remove file at url: \(livePhotoCompanionMoviePath)")
+                    TTLog.debug("Could not remove file at url: \(livePhotoCompanionMoviePath)")
                 }
             }
         }
@@ -109,7 +109,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
         if let error = error {
-            print("Error capturing photo: \(error)")
+            TTLog.debug("Error capturing photo: \(error)")
         } else {
             photoData = photo.fileDataRepresentation()
         }
@@ -120,7 +120,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingLivePhotoToMovieFileAt outputFileURL: URL, duration: CMTime, photoDisplayTime: CMTime, resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
         if error != nil {
-            print("Error processing live photo companion movie: \(String(describing: error))")
+            TTLog.debug("Error processing live photo companion movie: \(String(describing: error))")
             return
         }
         livePhotoCompanionMovieURL = outputFileURL
@@ -128,13 +128,13 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
         if let error = error {
-            print("Error capturing photo: \(error)")
+            TTLog.debug("Error capturing photo: \(error)")
             didFinish()
             return
         }
         
         guard let photoData = photoData else {
-            print("No photo data resource")
+            TTLog.debug("No photo data resource")
             didFinish()
             return
         }
@@ -159,7 +159,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
                     
                 }, completionHandler: { _, error in
                     if let error = error {
-                        print("Error occurered while saving photo to photo library: \(error)")
+                        TTLog.debug("Error occurered while saving photo to photo library: \(error)")
                     }
                     
                     self.didFinish()

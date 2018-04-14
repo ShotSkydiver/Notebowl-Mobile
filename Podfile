@@ -9,7 +9,7 @@ target 'Notebowl Mobile' do
     pod 'HGPlaceholders'
     pod 'Bugsnag'
     pod 'InputBarAccessoryView'
-    pod 'AyLoading', '~>2.0.1'
+    pod 'AyLoading', :git => 'https://github.com/ShotSkydiver/AyLoading'
     pod 'DeckTransition', '~> 2.0'
     pod 'MMUploadImage'
     pod 'Disk', '~> 0.3.3'
@@ -17,6 +17,8 @@ target 'Notebowl Mobile' do
     pod 'TLPhotoPicker'
     pod 'Haptica'
     pod 'ButtonProgressBar-iOS'
-    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback', :tag => '0.1.2'
+    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
+    pod 'RLBAlertsPickers', :git => 'https://github.com/ShotSkydiver/Alerts-Pickers'
+    pod 'RSKPlaceholderTextView'
 end
 

@@ -164,13 +164,13 @@ class CustomCameraCell: TLPhotoCollectionViewCell, AVCaptureFileOutputRecordingD
                     self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
                 }
             } else {
-                print("Could not add video device input to the session")
+                TTLog.debug("Could not add video device input to the session")
                 setupResult = .configurationFailed
                 session.commitConfiguration()
                 return
             }
         } catch {
-            print("Could not create video device input: \(error)")
+            TTLog.debug("Could not create video device input: \(error)")
             setupResult = .configurationFailed
             session.commitConfiguration()
             return
@@ -180,7 +180,7 @@ class CustomCameraCell: TLPhotoCollectionViewCell, AVCaptureFileOutputRecordingD
             session.addOutput(photoOutput)
             photoOutput.isHighResolutionCaptureEnabled = true
         } else {
-            print("Could not add photo output to the session")
+            TTLog.debug("Could not add photo output to the session")
             setupResult = .configurationFailed
             session.commitConfiguration()
             return
@@ -264,7 +264,7 @@ class CustomCameraCell: TLPhotoCollectionViewCell, AVCaptureFileOutputRecordingD
                 do {
                     try FileManager.default.removeItem(atPath: path)
                 } catch {
-                    print("Could not remove file at url: \(outputFileURL)")
+                    TTLog.debug("Could not remove file at url: \(outputFileURL)")
                 }
             }
         }
@@ -272,7 +272,7 @@ class CustomCameraCell: TLPhotoCollectionViewCell, AVCaptureFileOutputRecordingD
         var success = true
         
         if error != nil {
-            print("Movie file finishing error: \(String(describing: error))")
+            TTLog.debug("Movie file finishing error: \(String(describing: error))")
             success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
         }
         
@@ -288,7 +288,7 @@ class CustomCameraCell: TLPhotoCollectionViewCell, AVCaptureFileOutputRecordingD
                         creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
                     }, completionHandler: { success, error in
                         if !success {
-                            print("Could not save movie to photo library: \(String(describing: error))")
+                            TTLog.debug("Could not save movie to photo library: \(String(describing: error))")
                         }
                         cleanUp()
                     }

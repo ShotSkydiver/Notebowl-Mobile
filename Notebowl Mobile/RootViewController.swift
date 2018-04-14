@@ -55,7 +55,7 @@ class RootViewController: UIViewController {
   
         
         else if segue.identifier! == "presentTabBarView" {
-            print("segue id tabbarview")
+            TTLog.debug("segue id tabbarview")
             _ = NBClient.shared.getCurrentUser()
             NBClient.shared.updateUserAvatar()
             
@@ -69,7 +69,7 @@ class RootViewController: UIViewController {
 extension RootViewController: ProgressWebViewControllerDelegate {
     
     func progressWebViewController(_ controller: ProgressWebViewController, didFinish url: URL) {
-        print("progresswebview didfinish: ", controller.url!.absoluteString)
+        TTLog.debug("progresswebview didfinish: ", controller.url!.absoluteString)
         var components = URLComponents(url: controller.url!.absoluteURL, resolvingAgainstBaseURL: false)
         let pathComponents = components!.path
         if (pathComponents == "/gateway/services/mobile/register") {

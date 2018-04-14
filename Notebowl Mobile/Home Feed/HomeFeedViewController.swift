@@ -14,6 +14,7 @@ import QuartzCore
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     var posts: [Post]!
+    var courses: [Course]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
     var profileImage: UIImage!
@@ -81,7 +82,23 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         self.bgView.showViewAnimated(true)
         
         DispatchQueue.main.async {
-                        self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "6")!)
+            if (self.courses == nil) || (self.courses.isEmpty) {
+                
+                let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "12")!
+                var coursesArray = [Course]()
+                
+                for enrollment in enrollments {
+                    if enrollment.statusIsAccepted {
+                        let courseItem = enrollment.parent
+                        if courseItem?.resourceKey != nil {
+                            // courseItem!.refresh()
+                            coursesArray.append(courseItem!)
+                        }
+                    }
+                }
+                self.courses = coursesArray
+            }
+            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "6")!)
             self.bulletinTableView.reloadData()
            
             self.bgView.showViewAnimated(false)
@@ -93,7 +110,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         super.viewWillAppear(animated)
         
         if selectedRowIndexPath != nil {
-            print("reloading")
+            TTLog.debug("reloading")
             self.bulletinTableView.reloadData()
         }
     }
@@ -108,6 +125,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
             destVC.currentAvatar = self.profileImage
+            destVC.coursesForPicker = self.courses
         }
     }
     
@@ -160,7 +178,7 @@ class NotebowlLogoNavigationItem: UINavigationItem {
     let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
     
     private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
-    private let logoImageView = UIImageView(frame: CGRect(x: 22, y: 0, width: 270, height: 22))
+    private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 270, height: 22))
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

@@ -1,5 +1,5 @@
 PODS:
-  - AyLoading (2.0.1)
+  - AyLoading (2.0.4)
   - Bugsnag (5.15.4)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
@@ -13,28 +13,31 @@ PODS:
   - Kingfisher (4.7.0)
   - MMUploadImage (2.0.8)
   - ObjectMapper (3.1.0)
-  - TLPhotoPicker (1.5.7)
+  - RLBAlertsPickers (1.2.1)
+  - RSKPlaceholderTextView (3.0.0)
+  - TLPhotoPicker (1.6.1)
 
 DEPENDENCIES:
-  - AyLoading (~> 2.0.1)
+  - AyLoading (from `https://github.com/ShotSkydiver/AyLoading`)
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
   - Disk (~> 0.3.3)
   - FaceAware
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
-  - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`, tag `0.1.2`)
+  - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
   - Haptica
   - HGPlaceholders
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
   - MMUploadImage
   - ObjectMapper (~> 3.1)
+  - RLBAlertsPickers (from `https://github.com/ShotSkydiver/Alerts-Pickers`)
+  - RSKPlaceholderTextView
   - TLPhotoPicker
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
-    - AyLoading
     - Bugsnag
     - ButtonProgressBar-iOS
     - DeckTransition
@@ -46,25 +49,35 @@ SPEC REPOS:
     - Kingfisher
     - MMUploadImage
     - ObjectMapper
+    - RSKPlaceholderTextView
     - TLPhotoPicker
 
 EXTERNAL SOURCES:
+  AyLoading:
+    :git: https://github.com/ShotSkydiver/AyLoading
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :git: https://github.com/ShotSkydiver/SlackFeedback
-    :tag: 0.1.2
+  RLBAlertsPickers:
+    :git: https://github.com/ShotSkydiver/Alerts-Pickers
 
 CHECKOUT OPTIONS:
+  AyLoading:
+    :commit: a2142f6721dfcdfd0ccbeb272fb31599d9eb5955
+    :git: https://github.com/ShotSkydiver/AyLoading
   FaveButton:
     :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
+    :commit: 0e5032ad6d9b83081a32d2476ee428f1729a6839
     :git: https://github.com/ShotSkydiver/SlackFeedback
-    :tag: 0.1.2
+  RLBAlertsPickers:
+    :commit: 4a29404185a86ee2d05b006c4bcdfe259132b805
+    :git: https://github.com/ShotSkydiver/Alerts-Pickers
 
 SPEC CHECKSUMS:
-  AyLoading: 7c803c3f456a134cc196f58f7dc35646874bb3e1
+  AyLoading: 1220f7fc210d1e3d5253eda0cde4a1cc0ea42d81
   Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
@@ -78,8 +91,10 @@ SPEC CHECKSUMS:
   Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
-  TLPhotoPicker: 3f654630fbc5296835f7f64abffd228d79c377f8
+  RLBAlertsPickers: af015487d11ceb3a449978ff19afc6ac531c9572
+  RSKPlaceholderTextView: 0ce73a19998e236323b3f1f16bf4a4e4a76c2c28
+  TLPhotoPicker: 1ae4b11970eaa40c4a5ba7803f1566121e7927ef
 
-PODFILE CHECKSUM: b14e489d8d6784c85e7db7158d805f8a52e9d287
+PODFILE CHECKSUM: d2e5c6bda041ec60895049c922e577f125248051
 
 COCOAPODS: 1.5.0

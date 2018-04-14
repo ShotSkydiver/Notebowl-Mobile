@@ -48,15 +48,14 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
 
         DispatchQueue.main.async {
             let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "10")!
-            
             var coursesArray = [Course]()
             
             for enrollment in enrollments {
                 if enrollment.statusIsAccepted {
-                    print("appending course!")
+                    TTLog.debug("appending course!")
                     let courseItem = enrollment.parent
                     if courseItem?.resourceKey != nil {
-                        print("appending a course to the array")
+                        TTLog.debug("appending a course to the array")
                         courseItem!.refresh()
                         coursesArray.append(courseItem!)
                     }

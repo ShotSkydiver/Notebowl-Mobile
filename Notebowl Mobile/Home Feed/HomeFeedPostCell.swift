@@ -59,7 +59,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func configure(post: Post) {
-        print("configure")
+        TTLog.debug("configure")
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
@@ -113,6 +113,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         postLikes.ay.startLoading()
         
         DispatchQueue.main.async {
+        // DispatchQueue.global(qos: .background).async {
             if (!self.likeButton.isSelected) {
                 _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
             }
@@ -120,7 +121,10 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
                 _ = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
             }
             self.postForCell.updateLikes()
-            self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
+            
+            // DispatchQueue.main.async {
+                self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
+            // }
             
             self.postLikes.ay.stopLoading()
         }

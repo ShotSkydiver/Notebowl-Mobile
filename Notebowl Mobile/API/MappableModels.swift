@@ -519,6 +519,9 @@ class Comment: Object {
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
+    public var likedByCurrentUserManualTest: Bool = false
+    
+    
     override class var routeType: ItemType { return .comment }
     
     required public init?(map: Map) {

@@ -93,6 +93,7 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         commentLikes.ay.startLoading()
         
         DispatchQueue.main.async {
+        // DispatchQueue.global(qos: .background).async {
             if (!self.commentLikeButton.isSelected) {
                 _ = Just.delete(self.commentForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
             }

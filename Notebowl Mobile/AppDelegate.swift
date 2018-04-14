@@ -41,16 +41,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func registerNotifications() {
         #if arch(i386) || arch(x86_64)
-        print("is simulator!")
+        TTLog.debug("is simulator!")
         return
         #endif
         
         if !(UIApplication.shared.isRegisteredForRemoteNotifications) {
-            print("not registered!")
+            TTLog.debug("not registered!")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { allow, error in
                 if allow {
-                    print("notifications allowed")
+                    TTLog.debug("notifications allowed")
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             }
@@ -62,18 +62,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()
-        print("Device Token: \(token)")
+        TTLog.debug("Device Token: \(token)")
         
         _ = Just.get("https://\(NBClient.shared.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
         
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("fail ", error.localizedDescription)
+        TTLog.debug("fail ", error.localizedDescription)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
         let aps = userInfo["aps"] as! [String: AnyObject]
-        print("aps fg: ", aps)
+        TTLog.debug("aps fg: ", aps)
  
     }
 }
@@ -81,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
-        print("willpresent ", userInfo)
+        TTLog.debug("willpresent ", userInfo)
         
         completionHandler([.alert])
     }
@@ -91,7 +91,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // let aps = userInfo["aps"] as! [String: AnyObject]
         
         if response.actionIdentifier == "viewActionIdentifier" {
-            print("view action")
+            TTLog.debug("view action")
         }
 
         completionHandler()

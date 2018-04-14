@@ -474,7 +474,7 @@ class ObjectTransform<T: Object>: TransformType {
     
     func transformFromJSON(_ value: Any?) -> T? {
         let r = Just.get((value as! String), params: ["uuid": UIDevice().uuid])
-        print("objtransform req: ", r.url!)
+        TTLog.debug("objtransform req: ", r.url!)
         if r.statusCode != 200 || !r.ok {
             let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
                                         reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
@@ -528,7 +528,7 @@ class ImageTransform: TransformType {
              let moa = Moa()
             
              moa.onSuccess = { moaImage in
-                 print("image loaded!")
+                 TTLog.debug("image loaded!")
                  returnImage = moaImage
                 
                  return returnImage

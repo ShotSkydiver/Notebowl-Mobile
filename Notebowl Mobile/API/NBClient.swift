@@ -58,7 +58,7 @@ public class NBClient {
             else {
                 let req = Just.get(NBClient.shared.currentUser!.profileUrl)
                 if req.ok {
-                    print("userimage req ok")
+                    TTLog.debug("userimage req ok")
                     let finalImg = UIImage(data: req.content!)
                     self.currentUserPic = finalImg!
                     try? Disk.save(finalImg!, to: .caches, as: "profilepic.jpg")
@@ -69,18 +69,17 @@ public class NBClient {
         
     }
     
-    public func uploadToFiles(attachment: UIImage, fileName: URL, mediaType: String) -> String {
-        let realFileName = fileName.lastPathComponent
+    public func uploadToFiles(attachment: UIImage) -> String {
         
         let postUrl = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/files/upload")
         let attReq = Just.post(
             postUrl,
             params: ["uuid": UIDevice().uuid],
-            files:["files[]":.data(realFileName, attachment.compressedData()!, "image/jpeg")])
+            files:["files[]":.data("attachment.jpg", attachment.compressedData()!, "image/jpeg")])
         
         let res = (attReq.json as AnyObject).value(forKeyPath: "result")
         let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
-        print("OK! ", fileid)
+        TTLog.debug("OK! ", fileid)
         return fileid
     }
     
@@ -114,7 +113,7 @@ public class NBClient {
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
         let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
-        print("getmappable request: ", r.url!)
+        TTLog.debug("getmappable request: ", r.url!)
         
         if r.statusCode != 200 || !r.ok {
             let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
