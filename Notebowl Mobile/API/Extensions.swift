@@ -509,8 +509,8 @@ class ObjectTransform<T: Object>: TransformType {
     
     func transformFromJSON(_ value: Any?) -> T? {
         let urlToGet = value as! String
-        
-        if let keyExists = NBClient.shared.storedObjects[urlToGet] {
+        let url = URL(string: urlToGet)
+        if let keyExists = NBClient.shared.storedObjects[url!.lastPathComponent] {
             print("key exists!")
             return keyExists as? T
         }
@@ -525,7 +525,7 @@ class ObjectTransform<T: Object>: TransformType {
                 
             }
             let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            NBClient.shared.storedObjects[urlToGet] = finalmap
+            NBClient.shared.storedObjects[url!.lastPathComponent] = finalmap
             return finalmap
         }
     }

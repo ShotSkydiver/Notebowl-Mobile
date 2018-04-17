@@ -35,6 +35,8 @@ class CourseAssignmentsTableView: UITableViewController {
         loadingView.showLoadView(true)
         DispatchQueue.main.async {
             self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+            self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+            
             for assignment in self.assignments {
                 assignment.getGradeString()
             }

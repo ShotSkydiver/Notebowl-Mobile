@@ -195,6 +195,7 @@ class Course: Object {
             return
         }
         else {
+            /*
             categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
             
             let assignmentsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")!)
@@ -209,6 +210,11 @@ class Course: Object {
                 self.secondsSinceGradeUpdate = self.secondsSinceUpdate
             }
             self.refreshedOnce = true
+            */
+            
+            
+            
+            // self.lastUpdated = self.updatedAt?.relativelyFormatted
         }
         
     }
@@ -390,7 +396,8 @@ class Enrollment: Object {
     var role: String!
     var status: String!
     var user: User!
-    var parent: Course!
+    var parent: URL!
+    var lastAccessDate: Date?
     
     public var statusIsAccepted: Bool {
         if status.contains("Accepted") { return true }
@@ -409,7 +416,9 @@ class Enrollment: Object {
         role <- map["role"]
         status <- map["status"]
         user <- (map["_user"], ObjectTransform<User>())
-        parent <- (map["_parent"], ObjectTransform<Course>())
+        // parent <- (map["_parent"], ObjectTransform<Course>())
+        parent <- (map["_parent"], URLTransform())
+        lastAccessDate <- (map["lastAccessDate"], ISO8601FixedDateTransform())
     }
 }
 

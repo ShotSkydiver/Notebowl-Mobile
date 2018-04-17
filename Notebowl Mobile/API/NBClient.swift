@@ -22,7 +22,7 @@ public class NBClient {
         case Production = "platform.notebowl.com"
         case Staging = "demo.nbstage.com"
     }
-    public let baseUrl = Environment.Staging.rawValue
+    public let baseUrl = Environment.Production.rawValue
     #else
     public let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
     #endif

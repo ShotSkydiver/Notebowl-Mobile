@@ -49,21 +49,32 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
 
         DispatchQueue.main.async {
             let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
-            var coursesArray = [Course]()
+            
+            var resourceKeys: String = ""
             
             for enrollment in enrollments {
+                
                 if enrollment.statusIsAccepted {
-                    TTLog.debug("appending course!")
-                    let courseItem = enrollment.parent
-                    if courseItem?.resourceKey != nil {
-                        TTLog.debug("appending a course to the array")
-                        courseItem!.refresh()
-                        coursesArray.append(courseItem!)
+                    resourceKeys = (resourceKeys + enrollment.parent.lastPathComponent + ",")
+                }
+            }
+            self.courses = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")
+            
+            for enrollment in enrollments {
+                for course in self.courses {
+                    if enrollment.parent == course.url {
+                        if enrollment.lastAccessDate != nil {
+                            course.lastUpdated = enrollment.lastAccessDate!.relativelyFormatted
+                            course.secondsSinceGradeUpdate = enrollment.lastAccessDate!.timeIntervalSinceReferenceDate
+                        }
+                        else {
+                            course.lastUpdated = "never"
+                            course.secondsSinceGradeUpdate = course.secondsSinceUpdate
+                        }
+                        
                     }
                 }
             }
-            self.courses = coursesArray
-            
             self.courses.sort() { $0.secondsSinceGradeUpdate > $1.secondsSinceGradeUpdate }
             self.tableView.reloadData()
             self.bgView.showViewAnimated(false)

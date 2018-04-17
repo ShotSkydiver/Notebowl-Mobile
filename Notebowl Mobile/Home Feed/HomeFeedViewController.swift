@@ -85,18 +85,15 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
             if (self.courses == nil) || (self.courses.isEmpty) {
                 
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
-                var coursesArray = [Course]()
                 
+                var resourceKeys: String = ""
+
                 for enrollment in enrollments {
                     if enrollment.statusIsAccepted {
-                        let courseItem = enrollment.parent
-                        if courseItem?.resourceKey != nil {
-                            // courseItem!.refresh()
-                            coursesArray.append(courseItem!)
-                        }
+                        resourceKeys = (resourceKeys + enrollment.parent.lastPathComponent + ",")
                     }
                 }
-                self.courses = coursesArray
+                self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
             }
             self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "8")!)
             self.bulletinTableView.reloadData()
