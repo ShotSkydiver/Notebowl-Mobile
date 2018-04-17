@@ -23,8 +23,7 @@ protocol ContainerToMaster {
 class AccountModalViewController: UIViewController, ContainerToMaster {
     var currentUser: User!
     
-    
-    @IBOutlet weak var profilePicture: UIImageView!
+    @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userEmail: UILabel!
     @IBOutlet weak var doneButton: UIButton!
@@ -81,6 +80,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
 
         profilePicture.image = NBClient.shared.currentUserPic
         profilePicture.focusOnFaces = true
+        profilePicture.contentMode = .scaleAspectFill
 
         userName.text = currentUser.fullName
         userEmail.text = currentUser.email

@@ -375,12 +375,27 @@
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="wDo-wn-hmU">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="wDo-wn-hmU" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                 <rect key="frame" x="152" y="78" width="110" height="110"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="110" id="O2j-U4-VBx"/>
                                     <constraint firstAttribute="width" constant="110" id="m7d-we-Xr6"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isCircular" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="colorShadow">
+                                        <color key="value" cocoaTouchSystemColor="darkTextColor"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="size" keyPath="offsetShadow">
+                                        <size key="value" width="1" height="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="opacityShadow">
+                                        <real key="value" value="0.81999999999999995"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="radiusShadow">
+                                        <real key="value" value="3"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </imageView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
                                 <rect key="frame" x="-1" y="299" width="415" height="437"/>
@@ -449,7 +464,7 @@
                                 <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <items>
                                     <navigationItem largeTitleDisplayMode="never" id="hcz-xE-HcV">
-                                        <barButtonItem key="leftBarButtonItem" title="Dismiss" image="close-vector" id="XaM-lz-BPi">
+                                        <barButtonItem key="leftBarButtonItem" image="close-vector" id="XaM-lz-BPi">
                                             <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <action selector="dismissButtonAction:" destination="HMo-CO-fYR" id="iBQ-md-oeu"/>
@@ -716,7 +731,6 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="oYZ-wD-P4s" customClass="NotebowlLogoNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" id="YSv-Aa-2vd">
-                            <inset key="imageInsets" minX="0.0" minY="-4" maxX="0.0" maxY="0.0"/>
                             <connections>
                                 <action selector="userProfileButton:" destination="XYy-Qd-okh" id="ipX-KB-WIA"/>
                             </connections>

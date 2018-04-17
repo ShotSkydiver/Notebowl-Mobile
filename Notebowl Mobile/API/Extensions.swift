@@ -249,7 +249,7 @@ public extension UIImageView {
     }
 }
 
-@IBDesignable class ProfileImageView:UIImageView {
+@IBDesignable class ProfileImageView: UIImageView {
     
     @IBInspectable var dashedBorder: Bool = false {
         didSet {
@@ -277,6 +277,35 @@ public extension UIImageView {
         }
     }
     
+    @IBInspectable var colorShadow: UIColor = UIColor.darkGray {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
+    @IBInspectable var offsetShadow: CGSize = .zero {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+
+    @IBInspectable var opacityShadow: Float = 0.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
+    @IBInspectable var radiusShadow: CGFloat = 0.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
+    @IBInspectable var pathShadow: CGPath? = nil {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -313,9 +342,15 @@ public extension UIImageView {
         }
         shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious).cgPath
         self.layer.cornerRadius = isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious
+        
+        self.layer.shadowColor = colorShadow.cgColor
+        self.layer.shadowOffset = offsetShadow
+        self.layer.shadowOpacity = opacityShadow
+        self.layer.shadowRadius = radiusShadow
+        self.layer.shadowPath = pathShadow
+        
         self.layer.masksToBounds = true
         self.layer.addSublayer(shapeLayer)
-        //self.layer.insertSublayer(shapeLayer, at: 0)
     }
     
 }

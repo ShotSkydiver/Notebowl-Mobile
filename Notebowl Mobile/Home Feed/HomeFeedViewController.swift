@@ -38,7 +38,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         
         setupNavBar()
         
-        self.automaticallyAdjustsScrollViewInsets = false
+        //self.automaticallyAdjustsScrollViewInsets = false
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         self.getPosts()
     }
@@ -175,18 +175,20 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
 class NotebowlLogoNavigationItem: UINavigationItem {
     
-    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
+    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
     
     private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
-    private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 270, height: 22))
+    private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.image = nbLogo
+        
+        // logoImageView.
         logoContainer.addSubview(logoImageView)
         self.titleView = logoContainer
-        
+        // logoContainer.centerYAnchor
     }
 }
 

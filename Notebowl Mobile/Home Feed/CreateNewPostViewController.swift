@@ -22,13 +22,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var postTextView: RSKPlaceholderTextView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var dismissButton: UIBarButtonItem!
-    /*
-    @IBOutlet weak var photoLibraryButton: UIBarButtonItem!
-    @IBOutlet weak var cameraButton: UIBarButtonItem!
-    @IBOutlet weak var coursePickerButton: UIBarButtonItem!
-    @IBOutlet weak var anonymousButton: UIBarButtonItem!
-    @IBOutlet weak var inputBarView: PostInputBarAccessoryView!
-    */
     @IBOutlet weak var fakeNavBar: UINavigationBar!
     @IBOutlet weak var postButtonBarItem: PostButtonNavigationItem!
     
@@ -86,8 +79,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         userAvatar.contentMode = .scaleAspectFill
         
         postTextView.delegate = self
-        // postTextView.textContainerInset = UIEdgeInsets(top: 0, left: 8, bottom: 8, right: 8)
-        // postTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
         
     }

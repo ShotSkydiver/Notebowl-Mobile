@@ -21,14 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             "Question",
             "Looks good!"
             ])
-        
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        // UIApplication.shared.statusBarStyle = .lightContent
-        
         return true
     }
 
