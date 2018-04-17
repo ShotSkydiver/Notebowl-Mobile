@@ -31,6 +31,8 @@ public class NBClient {
     public var currentUser: User?
     public var currentUserPic: UIImage!
     public var userProfilePicURL: URL!
+    
+    public var storedObjects = [String: Object]()
  
     private init() { }
     

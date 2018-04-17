@@ -84,7 +84,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
                 
-                let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "12")!
+                let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
                 var coursesArray = [Course]()
                 
                 for enrollment in enrollments {
@@ -98,7 +98,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                 }
                 self.courses = coursesArray
             }
-            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "6")!)
+            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "8")!)
             self.bulletinTableView.reloadData()
            
             self.bgView.showViewAnimated(false)

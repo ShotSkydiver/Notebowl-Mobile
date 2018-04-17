@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import HGPlaceholders
+import QuartzCore
 
 class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
     var courses: [Course]!
@@ -47,7 +48,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
         self.loadingView.showLoadView(true)
 
         DispatchQueue.main.async {
-            let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "10")!
+            let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
             var coursesArray = [Course]()
             
             for enrollment in enrollments {

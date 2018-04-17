@@ -155,6 +155,8 @@ class Course: Object {
     
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval!
+    
+    public var refreshedOnce: Bool = false
 
     public var categories: [Category]!
         
@@ -188,18 +190,25 @@ class Course: Object {
     }
     
     override public func refresh() {
-        categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        
-        let assignmentsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")!)
-        let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsFilter)\"]", sortBy: "updatedAt:desc", limit: "1")
-        
-        if (recentGrade?.first != nil) {
-            self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
-            self.secondsSinceGradeUpdate = recentGrade?.first!.secondsSinceUpdate
+        if self.refreshedOnce {
+            print("no need to refresh")
+            return
         }
         else {
-            self.lastUpdated = self.updatedAt?.relativelyFormatted
-            self.secondsSinceGradeUpdate = self.secondsSinceUpdate
+            categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+            
+            let assignmentsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")!)
+            let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsFilter)\"]", sortBy: "updatedAt:desc", limit: "1")
+            
+            if (recentGrade?.first != nil) {
+                self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
+                self.secondsSinceGradeUpdate = recentGrade?.first!.secondsSinceUpdate
+            }
+            else {
+                self.lastUpdated = self.updatedAt?.relativelyFormatted
+                self.secondsSinceGradeUpdate = self.secondsSinceUpdate
+            }
+            self.refreshedOnce = true
         }
         
     }
@@ -457,9 +466,11 @@ class Post: Object {
         }
     }
     override public func refresh() {
-        self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        updateLikes()
+        
+            self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+            self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+            updateLikes()
+        
     }
 }
 
@@ -519,7 +530,7 @@ class Comment: Object {
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
-    public var likedByCurrentUserManualTest: Bool = false
+    public var updatedOnce: Bool = false
     
     
     override class var routeType: ItemType { return .comment }
@@ -561,6 +572,7 @@ class Comment: Object {
                 }
             }
         }
+        self.updatedOnce = true
     }
 }
 

@@ -11,6 +11,7 @@ import UIKit
 import ObjectMapper
 import Kingfisher
 import HGPlaceholders
+import QuartzCore
 
 class NotificationsTableViewController: UITableViewController, PlaceholderDelegate {
     var notifications: [Notification]!

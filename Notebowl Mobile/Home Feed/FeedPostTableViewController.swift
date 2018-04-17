@@ -51,8 +51,15 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         self.comments = self.post.postComments
         
         for comment in self.comments {
-            comment.getAttachments()
-            comment.updateLikes()
+            if !comment.updatedOnce {
+                print("comment not updated once")
+                comment.getAttachments()
+                comment.updateLikes()
+                comment.updatedOnce = true
+            }
+            else {
+                print("comment updatedonce")
+            }
         }
         
         HomeFeedPostCell.register(in: self.tableView)

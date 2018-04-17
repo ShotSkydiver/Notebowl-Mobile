@@ -508,78 +508,33 @@ class ObjectTransform<T: Object>: TransformType {
     
     
     func transformFromJSON(_ value: Any?) -> T? {
-        let r = Just.get((value as! String), params: ["uuid": UIDevice().uuid])
-        TTLog.debug("objtransform req: ", r.url!)
-        if r.statusCode != 200 || !r.ok {
-            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
-                                        reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
-                                        userInfo:nil)
-            Bugsnag.notify(exception)
-            
+        let urlToGet = value as! String
+        
+        if let keyExists = NBClient.shared.storedObjects[urlToGet] {
+            print("key exists!")
+            return keyExists as? T
         }
-        let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-        return finalmap
+        else {
+            let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
+            TTLog.debug("objtransform req: ", r.url!)
+            if r.statusCode != 200 || !r.ok {
+                let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
+                                            reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
+                                            userInfo:nil)
+                Bugsnag.notify(exception)
+                
+            }
+            let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+            NBClient.shared.storedObjects[urlToGet] = finalmap
+            return finalmap
+        }
     }
     
     func transformToJSON(_ value: T?) -> String? {
         return nil
     }
 }
-/*
-class ImageTransform: TransformType {
-    public typealias Object = UIImage
-    public typealias JSON = String
-    private let isCurrentUser: Bool
-    
-    public init(isCurrentUser: Bool = false) {
-        self.isCurrentUser = isCurrentUser
-    }
-    
-    
-    func transformFromJSON(_ value: Any?) -> UIImage? {
-        let imageURL = URL(string: (value as! String))
-        var returnImage: UIImage!
-        
-        if isCurrentUser {
-            NBClient.shared.updateUserAvatar()
-            
-            if NBClient.shared.currentUserPic != nil {
-                return NBClient.shared.currentUserPic
-            }
-            else {
-                let req = Just.get(imageURL!)
-                if req.ok {
-                    let imageDl = UIImage(data: req.content!)
-                    NBClient.shared.updateUserAvatar(image: imageDl)
-                    
-                    return imageDl
-                }
-            }
-        }
-        else if !isCurrentUser {
-            
-             Moa.settings.requestTimeoutSeconds = 12
-             Moa.logger = MoaConsoleLogger
-             let moa = Moa()
-            
-             moa.onSuccess = { moaImage in
-                 TTLog.debug("image loaded!")
-                 returnImage = moaImage
-                
-                 return returnImage
-             }
-             moa.url = imageURL!.absoluteString
-        }
-        
-        return returnImage
-        
-    }
-    
-    func transformToJSON(_ value: UIImage?) -> String? {
-        return nil
-    }
-}
-*/
+
 class ISO8601FixedDateTransform: DateFormatterTransform {
     
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")
@@ -588,6 +543,3 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }
-
-
-
