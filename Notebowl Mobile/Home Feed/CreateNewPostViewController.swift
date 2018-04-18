@@ -14,12 +14,11 @@ import Photos
 import PhotosUI
 import ButtonProgressBar_iOS
 import RLBAlertsPickers
-import RSKPlaceholderTextView
 import ObjectMapper
 
 class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
-    @IBOutlet weak var postTextView: RSKPlaceholderTextView!
+    @IBOutlet weak var postTextView: PlaceholderTextView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var dismissButton: UIBarButtonItem!
     @IBOutlet weak var fakeNavBar: UINavigationBar!
@@ -29,7 +28,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         let bar = InputBarAccessoryView()
         // bar.delegate = self
         return bar
-        }()
+    }()
     
     lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()

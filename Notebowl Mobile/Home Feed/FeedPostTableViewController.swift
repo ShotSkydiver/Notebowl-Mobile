@@ -48,14 +48,15 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.comments = self.post.postComments
+        // self.comments = self.post.postComments
+        self.comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent == self.post.url }) as! [Comment]
         
         for comment in self.comments {
             if !comment.updatedOnce {
                 print("comment not updated once")
                 comment.getAttachments()
                 comment.updateLikes()
-                comment.updatedOnce = true
+                //comment.updatedOnce = true
             }
             else {
                 print("comment updatedonce")
@@ -156,15 +157,20 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         let post = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/comments", params: ["uuid": UIDevice().uuid], json: jsonPayload)
         
         let finalmap = Mapper<Comment>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!
+        NBClient.shared.storedTypes[Comment.classIdentifier]?.append(finalmap)
         
         let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
         let attachment = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
         
+        let finalmapAtt = Mapper<Attachment>().map(JSONObject: (attachment.json as AnyObject).value(forKeyPath: "result")!)!
+        NBClient.shared.storedTypes[Attachment.classIdentifier]?.append(finalmapAtt)
+        
         finalmap.getAttachments()
         finalmap.updateLikes()
         
-        self.comments.append(finalmap)
-        self.post.postComments = self.comments
+        // self.comments.append(finalmap)
+        self.post.refresh()
+        self.comments = self.post.postComments
     
         inputBar.inputTextView.text = String()
         if #available(iOS 11.0, *) {

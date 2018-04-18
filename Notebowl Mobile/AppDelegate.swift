@@ -10,6 +10,7 @@ import UIKit
 import UserNotifications
 import Bugsnag
 import FeedbackSlack
+import Tamamushi
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,6 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
+        
+        UIApplication.shared.statusBarView?.backgroundColor = .white
+        TMGradientNavigationBar().setInitialBarGradientColor(direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
+ 
         return true
     }
 

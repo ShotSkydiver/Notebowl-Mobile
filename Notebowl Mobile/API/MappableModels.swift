@@ -58,6 +58,10 @@ public struct DefaultValues {
     
     class var routeType: ItemType { return .user }
     
+    class var classIdentifier: ObjectIdentifier {
+        return ObjectIdentifier(self)
+    }
+    
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     
     public func refresh() { }
@@ -220,7 +224,7 @@ class Course: Object {
     }
 }
 
-class Assignment: Object {
+public class Assignment: Object {
     
     var title: String!
     var points: Int?
@@ -245,7 +249,7 @@ class Assignment: Object {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         title <- map["title"]
@@ -422,7 +426,7 @@ class Enrollment: Object {
     }
 }
 
-class Post: Object {
+public class Post: Object {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -443,7 +447,7 @@ class Post: Object {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
@@ -456,8 +460,12 @@ class Post: Object {
         owner <- (map["_owner"], ObjectTransform<Course>())
     }
     
+    
     func updateLikes() {
-        self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        // self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        // self.postLikes = NBClient.shared.storedLikes.filter({ $0.parent == self.url })
+        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
+        
         if postLikes.isEmpty {
             self.likedByCurrentUser = false
             return
@@ -476,14 +484,21 @@ class Post: Object {
     }
     override public func refresh() {
         
-            self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-            self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-            updateLikes()
+        // self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        
+        // self.postComments = NBClient.shared.storedComments.filter({ $0.parent == self.url })
+        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent == self.url }) as! [Comment]
+        
+        // self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        // self.postAttachments = NBClient.shared.storedAttachments.filter({ $0.parent!.url == self.url })
+        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
+        
+        updateLikes()
         
     }
 }
 
-class Attachment: Object {
+public class Attachment: Object {
     var fileExt: String!
     var downloadUrl: URL!
     var locationUrl: URL!
@@ -491,7 +506,7 @@ class Attachment: Object {
     var attachmentName: String!
     var attachmentType: String!
     var type: String!
-    var parent: Object?
+    var parent: URL!
     var owner: User?
     
     override class var routeType: ItemType { return .attachment }
@@ -500,7 +515,7 @@ class Attachment: Object {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         fileExt <- map["extension"]
@@ -510,7 +525,7 @@ class Attachment: Object {
         attachmentName <- map["attachmentName"]
         attachmentType <- map["attachmentType"]
         type <- map["type"]
-        parent <- (map["_parent"], ObjectTransform<Object>())
+        parent <- (map["_parent"],  URLTransform())
         // owner <- (map["_owner"], ObjectTransform<User>())
     }
     
@@ -526,7 +541,7 @@ class Attachment: Object {
     
 }
 
-class Comment: Object {
+public class Comment: Object {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -548,7 +563,7 @@ class Comment: Object {
         super.init(map: map)
     }
 
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
@@ -562,10 +577,13 @@ class Comment: Object {
     }
     
     public func getAttachments() {
-        self.commentAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        // self.commentAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
     }
     public func updateLikes() {
-        self.commentLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        // self.commentLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
+        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
+        
         if commentLikes.isEmpty {
             self.likedByCurrentUser = false
             return
@@ -585,8 +603,9 @@ class Comment: Object {
     }
 }
 
-class Like: Object {
+public class Like: Object {
     var owner: User!
+    var parent: URL!
     
     override class var routeType: ItemType { return .like }
     
@@ -594,10 +613,11 @@ class Like: Object {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         owner <- (map["_owner"], ObjectTransform<User>())
+        parent <- (map["_parent"], URLTransform())
     }
 }
 

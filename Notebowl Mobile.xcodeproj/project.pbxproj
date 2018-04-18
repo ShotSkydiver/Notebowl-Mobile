@@ -29,6 +29,8 @@
 		85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */; };
 		85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
+		85C5EA99208793A0005B8A22 /* NBSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5EA98208793A0005B8A22 /* NBSocket.swift */; };
+		85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC2DE920873267007073BD /* PlaceholderTextView.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
 		85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */; };
 		85E0700C206EE3A90001A222 /* CustomCameraCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E07009206EE3A90001A222 /* CustomCameraCell.swift */; };
@@ -90,6 +92,8 @@
 		85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedWritePostCell.swift; sourceTree = "<group>"; };
 		85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedWritePostCell.xib; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
+		85C5EA98208793A0005B8A22 /* NBSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBSocket.swift; sourceTree = "<group>"; };
+		85CC2DE920873267007073BD /* PlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
 		85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountModalViewController.swift; sourceTree = "<group>"; };
 		85E07009206EE3A90001A222 /* CustomCameraCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCameraCell.swift; sourceTree = "<group>"; };
@@ -164,6 +168,7 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				85CC2DE920873267007073BD /* PlaceholderTextView.swift */,
 				856CC94C20813BED0096A13F /* TTLog.swift */,
 				85250A12202A2DC50003A416 /* NBLoadingView.swift */,
 				85250A13202A2DC50003A416 /* QCMethod.swift */,
@@ -186,6 +191,7 @@
 				8531ACB21FC4EA9F00EC72FA /* Extensions.swift */,
 				8501CDF51FFBF5D800C853CE /* Just.swift */,
 				85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */,
+				85C5EA98208793A0005B8A22 /* NBSocket.swift */,
 				85FF86102006A1BA0080D223 /* MappableModels.swift */,
 			);
 			path = API;
@@ -460,8 +466,10 @@
 				"${BUILT_PRODUCTS_DIR}/MMUploadImage/MMUploadImage.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/RLBAlertsPickers/RLBAlertsPickers.framework",
-				"${BUILT_PRODUCTS_DIR}/RSKPlaceholderTextView/RSKPlaceholderTextView.framework",
+				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/TLPhotoPicker/TLPhotoPicker.framework",
+				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -480,8 +488,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMUploadImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RLBAlertsPickers.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKPlaceholderTextView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TLPhotoPicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -508,6 +518,7 @@
 				853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */,
 				85E07012206EE5180001A222 /* CustomPhotoPickerViewController.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
+				85C5EA99208793A0005B8A22 /* NBSocket.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85E07010206EE3E70001A222 /* PreviewView.swift in Sources */,
@@ -517,6 +528,7 @@
 				852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */,
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
+				85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */,
 				85E0700E206EE3A90001A222 /* PhotoCaptureDelegate.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,

@@ -11,6 +11,8 @@ import UIKit
 import Kingfisher
 import HGPlaceholders
 import QuartzCore
+import SocketIO
+import Tamamushi
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     var posts: [Post]!
@@ -18,6 +20,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     var loadingView: NBLoadingView!
     var bgView: UIView!
     var profileImage: UIImage!
+    
     
     @IBOutlet var bulletinTableView: HomeTableView!
     
@@ -41,8 +44,13 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         //self.automaticallyAdjustsScrollViewInsets = false
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         self.getPosts()
+        
     }
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+   
     func tempLoadingViewSetup() {
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
@@ -53,9 +61,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         return .lightContent
     }
     
-    func setupNavBar() {
+    func setupNavBar() {        
         navigationController?.navigationBar.shadowImage = UIImage.init()
-
         navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
         navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         navigationController?.navigationBar.layer.shadowRadius = 5.5
@@ -67,6 +74,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     }
     
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {
+        // TTLog.warning("socket connection: ", NBSocket.shared.socketManager.status)
+        
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
     
@@ -94,8 +103,72 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                     }
                 }
                 self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
+                if NBClient.shared.storedTypes[Course.classIdentifier] == nil {
+                    NBClient.shared.storedTypes[Course.classIdentifier] = self.courses
+                }
+                else {
+                    for course in self.courses {
+                        if NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == course.resourceKey}) == nil {
+                            print("course doesn't exist!")
+                            NBClient.shared.storedTypes[Course.classIdentifier]!.append(course)
+                        }
+                    }
+                }
             }
-            self.posts = NBClient.shared.initArray(from: NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "8")!)
+
+            self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "updatedAt:desc", limit: "10")
+            
+            var comments: [Comment]! = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.posts))\"]")!
+            
+            let filterString = (NBClient.shared.buildFilterString(from: self.posts) + (NBClient.shared.buildFilterString(from: comments)))
+            
+            
+            if NBClient.shared.storedTypes[Comment.classIdentifier] == nil {
+                NBClient.shared.storedTypes[Comment.classIdentifier] = comments
+            }
+            else {
+                for comment in comments {
+                    if NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: {$0.resourceKey == comment.resourceKey}) == nil {
+                        print("comment doesn't exist!")
+                        NBClient.shared.storedTypes[Comment.classIdentifier]!.append(comment)
+                    }
+                }
+            }
+            
+            
+            let likes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(filterString)\"]")!
+            if NBClient.shared.storedTypes[Like.classIdentifier] == nil {
+                NBClient.shared.storedTypes[Like.classIdentifier] = likes
+            }
+            else {
+                for like in likes {
+                    if NBClient.shared.storedTypes[Like.classIdentifier]!.first(where: {$0.resourceKey == like.resourceKey}) == nil {
+                        NBClient.shared.storedTypes[Like.classIdentifier]!.append(like)
+                    }
+                }
+            }
+            
+            
+            let attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(filterString)\"]")!
+            
+            if NBClient.shared.storedTypes[Attachment.classIdentifier] == nil {
+                NBClient.shared.storedTypes[Attachment.classIdentifier] = attachments
+            }
+            else {
+                for attachment in attachments {
+                    if NBClient.shared.storedTypes[Attachment.classIdentifier]!.first(where: {$0.resourceKey == attachment.resourceKey}) == nil {
+                        NBClient.shared.storedTypes[Attachment.classIdentifier]!.append(attachment)
+                    }
+                }
+            }
+            
+            self.posts = NBClient.shared.initArray(from: self.posts)
+            
+            
+            
+            
+            
+            
             self.bulletinTableView.reloadData()
            
             self.bgView.showViewAnimated(false)

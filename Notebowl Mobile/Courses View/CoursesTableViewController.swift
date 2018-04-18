@@ -50,15 +50,24 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
         DispatchQueue.main.async {
             let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
             
+            var cachedCourses = [Course]()
             var resourceKeys: String = ""
-            
             for enrollment in enrollments {
-                
                 if enrollment.statusIsAccepted {
-                    resourceKeys = (resourceKeys + enrollment.parent.lastPathComponent + ",")
+                    
+                    if let objectExists = NBClient.shared.storedTypes[Course.classIdentifier]?.first(where: {$0.resourceKey == enrollment.parent.lastPathComponent }) {
+                        print("course exists!")
+                        cachedCourses.append((objectExists as! Course))
+                    }
+                    else {
+                        print("course doesn't exist!")
+                        resourceKeys = (resourceKeys + enrollment.parent.lastPathComponent + ",")
+                    }
                 }
             }
+            
             self.courses = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")
+            self.courses.append(contentsOf: cachedCourses)
             
             for enrollment in enrollments {
                 for course in self.courses {

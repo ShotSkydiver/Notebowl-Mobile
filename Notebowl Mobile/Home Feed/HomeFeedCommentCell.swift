@@ -12,6 +12,7 @@ import Kingfisher
 import AyLoading
 import FaveButton
 import Haptica
+import ObjectMapper
 
 class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     
@@ -96,9 +97,12 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         // DispatchQueue.global(qos: .background).async {
             if (!self.commentLikeButton.isSelected) {
                 _ = Just.delete(self.commentForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+                NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.commentForCell.likeFromCurrentUser!)
             }
             else if (self.commentLikeButton.isSelected) {
-                _ = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                let reqLike = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
+                NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
             }
             self.commentForCell.updateLikes()
             self.commentLikes.text = self.commentForCell.commentLikes.isEmpty ? "0" : "\(self.commentForCell.commentLikes.count)"

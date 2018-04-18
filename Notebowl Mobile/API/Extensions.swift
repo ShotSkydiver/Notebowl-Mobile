@@ -167,6 +167,16 @@ public extension UIDevice {
         return identifier
     }
     
+    public var isX: Bool {
+        // case "iPhone10,3", "iPhone10,6":                return "iPhone X"
+        if modelName.contains("iPhone10,3") || modelName.contains("iPhone10,6") {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
     var uuid: String {
         return identifierForVendor!.uuidString
     }
@@ -200,6 +210,7 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return newImage
     }
+    
     
     public var base64EncodedString: String? {
         return self.compressed(quality: 1.0)?.base64EncodedString
@@ -307,6 +318,12 @@ public extension UIImageView {
         }
     }
     
+    @IBInspectable var masksToBounds: Bool = true {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layoutIfNeeded()
@@ -349,7 +366,7 @@ public extension UIImageView {
         self.layer.shadowRadius = radiusShadow
         self.layer.shadowPath = pathShadow
         
-        self.layer.masksToBounds = true
+        self.layer.masksToBounds = masksToBounds
         self.layer.addSublayer(shapeLayer)
     }
     
@@ -443,6 +460,14 @@ extension UIWindow {
     }
 }
 
+extension UIApplication {
+    var statusBarView: UIView? {
+        if responds(to: Selector("statusBar")) {
+            return value(forKey: "statusBar") as? UIView
+        }
+        return nil
+    }
+}
 
 extension PlaceholdersProvider {
     
@@ -510,10 +535,15 @@ class ObjectTransform<T: Object>: TransformType {
     func transformFromJSON(_ value: Any?) -> T? {
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
-        if let keyExists = NBClient.shared.storedObjects[url!.lastPathComponent] {
+        
+        if let keyExists = NBClient.shared.storedTypes[T.classIdentifier] {
             print("key exists!")
-            return keyExists as? T
         }
+        if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
+            print("object exists!")
+            return objectExists as? T
+        }
+
         else {
             let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
             TTLog.debug("objtransform req: ", r.url!)
@@ -525,7 +555,15 @@ class ObjectTransform<T: Object>: TransformType {
                 
             }
             let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            NBClient.shared.storedObjects[url!.lastPathComponent] = finalmap
+            
+            if NBClient.shared.storedTypes[T.classIdentifier] == nil {
+                NBClient.shared.storedTypes[T.classIdentifier] = [finalmap!]
+            }
+            else {
+                NBClient.shared.storedTypes[T.classIdentifier]!.append(finalmap!)
+            }
+            
+            
             return finalmap
         }
     }

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Bugsnag
+import SocketIO
 
 class RootViewController: UIViewController {
     
@@ -61,6 +62,9 @@ class RootViewController: UIViewController {
             
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
+            
+            NBSocket.shared.setupSocket()
+            // NBSocket.shared.registerForUser()
         }
     }
 }

@@ -14,6 +14,8 @@ import Kingfisher
 import FaveButton
 import AyLoading
 import Haptica
+import ObjectMapper
+import SocketIO
 
 class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
@@ -49,8 +51,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
     func initSetup() {
         heightConst.constant = 0.0
-        // postAttachments.clipsToBounds = false
-        // postAttachments.layer.masksToBounds = false
         
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
@@ -77,13 +77,10 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
                 userAvatar.image = NBClient.shared.currentUserPic
             }
             else {
-            
                 userAvatar.kf.setImage(with: post.creator!.profileUrl, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                     self.setNeedsLayout()
                 })
             }
-         
-            
         }
         
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
@@ -102,7 +99,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
  
         setNeedsLayout()
         layoutIfNeeded()
-        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -113,18 +109,23 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         postLikes.ay.startLoading()
         
         DispatchQueue.main.async {
-        // DispatchQueue.global(qos: .background).async {
+
             if (!self.likeButton.isSelected) {
                 _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+                NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.postForCell.likeFromCurrentUser!)
+                
             }
+                
             else if (self.likeButton.isSelected) {
-                _ = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                let reqLike = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
+                NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
             }
-            self.postForCell.updateLikes()
             
-            // DispatchQueue.main.async {
-                self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
-            // }
+            
+            self.postForCell.updateLikes()
+   
+            self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
             
             self.postLikes.ay.stopLoading()
         }

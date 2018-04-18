@@ -12,6 +12,7 @@ import ObjectMapper
 import Bugsnag
 import Kingfisher
 import Disk
+import SocketIO
 
 public class NBClient {
     
@@ -26,19 +27,18 @@ public class NBClient {
     #else
     public let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
     #endif
-    
+ 
     public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
     public var currentUser: User?
     public var currentUserPic: UIImage!
     public var userProfilePicURL: URL!
     
-    public var storedObjects = [String: Object]()
- 
+    public var storedTypes = [ObjectIdentifier: [Object]!]()
+    
     private init() { }
     
     public func getCurrentUser(force: Bool? = false) -> User {
-        NSLog("doing currentuser")
-        
+        NSLog("doing currentuser ")
         if (self.currentUser == nil) || (force)! {
             NSLog("currentuser null")
             self.currentUser = self.getMappable(User.self)?.first
@@ -47,7 +47,6 @@ public class NBClient {
     }
     
     public func updateUserAvatar(image: UIImage? = nil) {
-        
         if image != nil {
             self.currentUserPic = image!
             try? Disk.save(image!, to: .caches, as: "profilepic.jpg")
@@ -65,10 +64,8 @@ public class NBClient {
                     self.currentUserPic = finalImg!
                     try? Disk.save(finalImg!, to: .caches, as: "profilepic.jpg")
                 }
-
             }
         }
-        
     }
     
     public func uploadToFiles(attachment: UIImage) -> String {
@@ -78,7 +75,6 @@ public class NBClient {
             postUrl,
             params: ["uuid": UIDevice().uuid],
             files:["files[]":.data("attachment.jpg", attachment.compressedData()!, "image/jpeg")])
-        
         let res = (attReq.json as AnyObject).value(forKeyPath: "result")
         let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
         TTLog.debug("OK! ", fileid)
@@ -108,7 +104,6 @@ public class NBClient {
             item.refresh()
         }
         mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-        
         return mutableArray
     }
 
@@ -133,5 +128,4 @@ public class NBClient {
  
         return objectResult
     }
-    
 }
