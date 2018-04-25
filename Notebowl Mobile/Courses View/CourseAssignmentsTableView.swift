@@ -34,7 +34,26 @@ class CourseAssignmentsTableView: UITableViewController {
     func getTableData() {
         loadingView.showLoadView(true)
         DispatchQueue.main.async {
-            self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+            
+            if NBClient.shared.storedTypes[Assignment.classIdentifier] != nil {
+                self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]!.filter({ ($0 as! Assignment).parent.resourceKey == self.selectedCourse.resourceKey }) as! [Assignment]
+                
+                if self.assignments.isEmpty || self.assignments == nil {
+                    self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+                    
+                    for assignment in self.assignments {
+                        if NBClient.shared.storedTypes[Assignment.classIdentifier]!.first(where: {$0.resourceKey == assignment.resourceKey}) == nil {
+                            NBClient.shared.storedTypes[Assignment.classIdentifier]!.append(assignment)
+                        }
+                    }
+                }
+            }
+            else if NBClient.shared.storedTypes[Assignment.classIdentifier] == nil {
+                self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+                NBClient.shared.storedTypes[Assignment.classIdentifier] = self.assignments
+            }
+            
+            
             self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
             
             for assignment in self.assignments {

@@ -18,11 +18,12 @@ public class NBClient {
     
     public static let shared = NBClient()
     
-    #if DEBUG
+    
     enum Environment: String {
         case Production = "platform.notebowl.com"
         case Staging = "demo.nbstage.com"
     }
+    #if DEBUG
     public let baseUrl = Environment.Production.rawValue
     #else
     public let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
@@ -33,7 +34,10 @@ public class NBClient {
     public var currentUserPic: UIImage!
     public var userProfilePicURL: URL!
     
+    // public let queue = DispatchQueue(label: "testQueue", qos: .background)
+    
     public var storedTypes = [ObjectIdentifier: [Object]!]()
+    // public var storedTypes = [Object: [Object]!]()
     
     private init() { }
     
@@ -103,12 +107,31 @@ public class NBClient {
         for item in mutableArray {
             item.refresh()
         }
-        mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
+        if mutableArray is [Course] {
+            TTLog.debug("mutablearray is course!")
+            mutableArray.sort() { ($0 as! Course).secondsSinceGradeUpdate > ($1 as! Course).secondsSinceGradeUpdate }
+        }
+        else {
+            mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
+        }
+        
         return mutableArray
     }
+    
+    public let keyDictForStoredTypes: Dictionary<ObjectIdentifier, Object.Type> = [
+        User.classIdentifier: User.self,
+        Course.classIdentifier: Course.self,
+        Assignment.classIdentifier: Assignment.self,
+        Post.classIdentifier: Post.self,
+        Comment.classIdentifier: Comment.self,
+        Like.classIdentifier: Like.self,
+        Attachment.classIdentifier: Attachment.self,
+        Notification.classIdentifier: Notification.self
+    ]
 
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
+
         let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         TTLog.debug("getmappable request: ", r.url!)
         
@@ -118,10 +141,39 @@ public class NBClient {
                 userInfo:nil)
             Bugsnag.notify(exception)
         }
+        
         if r.ok {
-                let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-                objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+            let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+            
+            /*
+            if objectResult == nil || (objectResult?.isEmpty)! {
+                TTLog.debug("getmappable result nil")
+                return nil
+            }
+            for object in objectResult! {
+                if let objectExists = NBClient.shared.storedTypes[someObject.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey }) {
+                    
+                }
+            }
+ 
+            if NBClient.shared.storedTypes[someObject.classIdentifier] == nil {
+                NBClient.shared.storedTypes[someObject.classIdentifier] = objectResult!
+            }
+            
+            else {
+                for object in objectResult! {
+                    // object.refresh()
+                    if NBClient.shared.storedTypes[someObject.classIdentifier]!.first(where: {$0.resourceKey == object.resourceKey}) == nil {
+                        NBClient.shared.storedTypes[someObject.classIdentifier]!.append(object)
+                    }
+                }
+            }
+            */
         }
+        
+        
+        
         if (completionHandler != nil){
             completionHandler!(objectResult)
         }

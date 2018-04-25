@@ -685,7 +685,7 @@
         <!--Profile Nav Controller-->
         <scene sceneID="ite-OS-Tnq">
             <objects>
-                <navigationController title="Profile Nav Controller" id="h5w-W2-6Qi" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController title="Profile Nav Controller" extendedLayoutIncludesOpaqueBars="YES" id="h5w-W2-6Qi" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Latest" image="today_apps-vector" id="Lho-Gi-jfY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -840,6 +840,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0JD-ga-Hq1">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                         <color key="barTintColor" red="0.20392156859999999" green="0.28235294119999998" blue="0.36470588240000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">

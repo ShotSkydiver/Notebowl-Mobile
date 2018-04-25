@@ -25,6 +25,16 @@ public enum ItemType: String {
     case notification = "notifications"
 }
 
+
+public enum Action {
+    case updated
+    case deleted
+}
+public enum NotificationType: String {
+    case created = "created"
+    case updated = "updated"
+    case deleted = "deleted"
+}
 extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
@@ -48,8 +58,102 @@ public struct DefaultValues {
     var DEFAULT_LETTER_GRADE_VALUES = [0, 60, 70, 80, 90]
 }
 
-@objc public class Object: NSObject, Mappable {
+
+class Generic: StaticMappable {
     
+    var action: String!
+    var itemType: String?
+    
+    public var actionType: Action {
+        if action.contains("updated") { return .updated }
+        else { return .deleted }
+    }
+    
+    class func objectForMapping(map: Map) -> BaseMappable? {
+        if let itemType: String = map["itemType"].value() {
+            switch itemType {
+            case "User":
+                
+                return Response<User>()
+                //return Response(type: User.self)
+            case "Course":
+                return Response<Course>()
+            case "Assignment":
+                return Response<Assignment>()
+            case "Grade":
+                return Response<Grade>()
+            case "Enrollment":
+                return Response<Enrollment>()
+            case "Post":
+                return Response<Post>()
+            case "Attachment":
+                return Response<Attachment>()
+            case "Comment":
+                return Response<Comment>()
+            case "Like":
+                return Response<Like>()
+            case "Notification":
+                return Response<Notification>()
+            default:
+                return Generic()
+            }
+        }
+        return nil
+    }
+    
+    init(){
+        
+    }
+    
+    func mapping(map: Map) {
+        action <- map["action"]
+        itemType <- map["itemType"]
+    }
+}
+
+
+class Response<T>: Generic where T: Object {
+    
+    // var action: String!
+    var updateUrl: T?
+    var updatedAt: Date!
+    
+    /*
+    public var actionType: Action {
+        if action.contains("updated") { return .updated }
+        else { return .deleted }
+    }
+    */
+    /*
+    public init(type: T.Type){
+        objectType = type
+    }
+    */
+    public override init(){
+        
+    }
+    
+    public required init?(map: Map) { }
+    
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        // action <- map["action"]
+        
+        // NSClassFromString(response.itemType) as! Object.Type
+        // type <- map["itemType"]
+        //itemType <- (map["itemType"], TransformOf<T.Type, String>(fromJSON: { _ in type(of: T) }, toJSON: { $0!.rawValue }))
+        
+        // let aClass = NSClassFromString(itemType) as! Object.Type
+        
+        updateUrl <- (map["updateUrl"], ObjectTransform<T>(action: self.actionType))
+        
+        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
+        
+    }
+}
+
+@objc(Object) public class Object: NSObject, Mappable {
+
     var createdAt: Date!
     var updatedAt: Date!
     var itemType: String!
@@ -58,10 +162,11 @@ public struct DefaultValues {
     
     class var routeType: ItemType { return .user }
     
+    
     class var classIdentifier: ObjectIdentifier {
         return ObjectIdentifier(self)
     }
-    
+
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     
     public func refresh() { }
@@ -71,6 +176,7 @@ public struct DefaultValues {
     override init() {}
  
     public func mapping(map: Map) {
+        
         createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         itemType <- map["itemType"]
@@ -79,7 +185,7 @@ public struct DefaultValues {
     }
 }
 
-public class User: Object {
+@objc(User) public class User: Object {
 
     var firstName: String!
     var lastName: String!
@@ -96,6 +202,7 @@ public class User: Object {
     }
     
     override public func mapping(map: Map) {
+        
         super.mapping(map: map)
         firstName <- map["firstName"]
         lastName <- map["lastName"]
@@ -105,7 +212,7 @@ public class User: Object {
     }
 }
 
-class Term: Object {
+@objc(Term) class Term: Object {
     
     var title: String?
     var termStart: Date!
@@ -130,7 +237,7 @@ class Term: Object {
     }
 }
 
-class Course: Object {
+@objc(Course) class Course: Object {
     
     var name: String!
     var number: String!
@@ -163,6 +270,8 @@ class Course: Object {
     public var refreshedOnce: Bool = false
 
     public var categories: [Category]!
+    
+    public var enrollmentForUser: Enrollment!
         
     override class var routeType: ItemType { return .course }
     
@@ -194,11 +303,18 @@ class Course: Object {
     }
     
     override public func refresh() {
-        if self.refreshedOnce {
-            print("no need to refresh")
-            return
+ 
+        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent.absoluteURL.lastPathComponent == self.resourceKey }) as! Enrollment
+        
+        if enrollmentForUser.lastAccessDate != nil {
+            self.lastUpdated = ("last accessed " + enrollmentForUser.lastAccessDate!.relativelyFormatted)
+            self.secondsSinceGradeUpdate = enrollmentForUser.lastAccessDate!.timeIntervalSinceReferenceDate
         }
         else {
+            self.lastUpdated = "never accessed"
+            self.secondsSinceGradeUpdate = self.secondsSinceUpdate
+        }
+            
             /*
             categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
             
@@ -219,12 +335,12 @@ class Course: Object {
             
             
             // self.lastUpdated = self.updatedAt?.relativelyFormatted
-        }
+        
         
     }
 }
 
-public class Assignment: Object {
+@objc(Assignment) public class Assignment: Object {
     
     var title: String!
     var points: Int?
@@ -332,7 +448,7 @@ public class Assignment: Object {
     }
 }
 
-class Category: Object {
+@objc(Category) class Category: Object {
     var title: String!
     var weight: Int!
     var isExtraCredit: Bool!
@@ -355,7 +471,7 @@ class Category: Object {
     }
 }
 
-class Grade: Object {
+@objc(Grade) class Grade: Object {
     var grade: Double?
     
     override class var routeType: ItemType { return .grade }
@@ -370,7 +486,7 @@ class Grade: Object {
     }
 }
 
-class University: Object {
+@objc(University) class University: Object {
     
     var profileLogo: String?
     var defaultLogo: String?
@@ -395,11 +511,12 @@ class University: Object {
     }
 }
 
-class Enrollment: Object {
+@objc(Enrollment) class Enrollment: Object {
     
     var role: String!
     var status: String!
     var user: User!
+    // var parent: Course?
     var parent: URL!
     var lastAccessDate: Date?
     
@@ -420,13 +537,15 @@ class Enrollment: Object {
         role <- map["role"]
         status <- map["status"]
         user <- (map["_user"], ObjectTransform<User>())
-        // parent <- (map["_parent"], ObjectTransform<Course>())
+        // if self.itemType.contains("CourseUser") {
+        //    parent <- (map["_parent"], ObjectTransform<Course>())
+        // }
         parent <- (map["_parent"], URLTransform())
         lastAccessDate <- (map["lastAccessDate"], ISO8601FixedDateTransform())
     }
 }
 
-public class Post: Object {
+@objc(Post) public class Post: Object {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -498,7 +617,7 @@ public class Post: Object {
     }
 }
 
-public class Attachment: Object {
+@objc(Attachment) public class Attachment: Object {
     var fileExt: String!
     var downloadUrl: URL!
     var locationUrl: URL!
@@ -541,7 +660,7 @@ public class Attachment: Object {
     
 }
 
-public class Comment: Object {
+@objc(Comment) public class Comment: Object {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -601,9 +720,14 @@ public class Comment: Object {
         }
         self.updatedOnce = true
     }
+    
+    override public func refresh() {
+        updateLikes()
+        getAttachments()
+    }
 }
 
-public class Like: Object {
+@objc(Like) public class Like: Object {
     var owner: User!
     var parent: URL!
     
@@ -621,18 +745,23 @@ public class Like: Object {
     }
 }
 
-class Notification: Object {
+@objc(Notification) class Notification: Object {
 
     var status: String?
     var text: String?
-    var type: String?
-    var parent: Object?
-    var name: String?
+    var type: String!
+    var parent: URL!
+    var name: String!
     
-    public var statusBool: Bool {
-        if status == nil { return false }
-        else { return true }
-    }
+    public var statusBool: Bool { return status == nil ? false : true }
+        // if status == nil { return false }
+        // else { return true }
+    // }
+    // { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
+    public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
+        // if action.contains("updated") { return .updated }
+        // else { return .deleted }
+    // }
     
     override class var routeType: ItemType { return .notification }
         
@@ -647,7 +776,7 @@ class Notification: Object {
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]
-        parent <- (map["_parent"], ObjectTransform<Object>())
+        parent <- (map["_parent"], URLTransform())
     }
     
     func getUrlForAvatar() -> URL? {

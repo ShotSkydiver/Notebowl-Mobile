@@ -77,6 +77,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         userAvatar.focusOnFaces = true
         userAvatar.contentMode = .scaleAspectFill
         
+        dismissButton.image = dismissButton.image!.filled(withColor: (UIImage().createGradientImage(size: 35).gradientColor)).withRenderingMode(.alwaysOriginal)
+        
         postTextView.delegate = self
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
         
@@ -135,16 +137,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         
         cameraButton = makeButton(image: "add_photo-vector")
         cameraButton.onSelected { camButton in
-            /*
-            let alert = UIAlertController(style: .actionSheet)
-            alert.addPhotoLibraryPicker(flow: .vertical, paging: false, selection: PhotoLibraryPickerViewController.Selection.single(action: { (asset) in
-                let selectedAsset = asset
-                let selectedImage = self.imageFromAsset(asset: selectedAsset!)
-                self.attachmentManager.handleInput(of: selectedImage!)
-            }))
-            alert.addAction(title: "Cancel", style: .cancel)
-            self.present(alert, animated: true, completion: nil)
-            */
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
             imagePicker.sourceType = .camera
@@ -180,7 +172,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         anonymousButton = makeButton(image: "public-vector")
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
-            anonButton.tintColor = self.anonymousToggle ? UIColor.darkGray : #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+            anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
         
         // bar.setLeftStackViewWidthConstant(to: 58, animated: viewIsLoaded)
@@ -196,9 +188,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         return InputBarButtonItem()
             .configure {
                 $0.spacing = .fixed(10)
-                $0.image = UIImage(named: image)?.withRenderingMode(.alwaysTemplate)
+                $0.image = UIImage(named: image)!.filled(withColor: (UIImage().createGradientImage(size: 70).gradientColor)).withRenderingMode(.alwaysOriginal)
                 $0.setSize(CGSize(width: 30, height: 30), animated: viewIsLoaded)
-                $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                // $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                 
         }
     }
@@ -256,7 +248,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
         
         self.dismiss(animated: true, completion: {
-            homeViewController.getPosts()
+            // homeViewController.getPosts()
         })
     }
     
@@ -352,7 +344,9 @@ class PostButtonNavigationItem: UIBarButtonItem {
         
         postButton.setTitle("Post", for: .normal)
         postButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .caption1)
-        postButton.setBackgroundColor(color: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
+        
+        postButton.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
+        // postButton.setBackgroundColor(color: UIImage().createGradientImage(size: 110).gradientColor)
         postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
         postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
         

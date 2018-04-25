@@ -24,13 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ])
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
+        defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
         
-        UIApplication.shared.statusBarView?.backgroundColor = .white
-        TMGradientNavigationBar().setInitialBarGradientColor(direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
- 
+        
         return true
     }
 
@@ -77,6 +77,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let aps = userInfo["aps"] as! [String: AnyObject]
         TTLog.debug("aps fg: ", aps)
  
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        TTLog.debug("didbecomeactive!")
+        
+    }
+    func applicationWillResignActive(_ application: UIApplication) {
+        TTLog.debug("resignactive!")
+    }
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        TTLog.debug("in background!")
+    }
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        TTLog.debug("enter foreground!")
+    }
+    func applicationWillTerminate(_ application: UIApplication) {
+        TTLog.debug("will terminate!")
     }
 }
 

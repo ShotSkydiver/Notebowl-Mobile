@@ -8,7 +8,9 @@
 
 import Foundation
 import UIKit
-import Tamamushi
+import QuartzCore
+import ObjectMapper
+import SocketIO
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
@@ -16,38 +18,79 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
         
-        let grad = createGradientImage()
-        
-        UITabBar.appearance().tintColor = UIColor(patternImage: grad)
-        self.tabBar.items![0].selectedImage = self.tabBar.items![0].selectedImage?.filled(withColor: UIColor(patternImage: grad))
-        UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
-        
         self.delegate = self
+ 
+        // self.tabBar.selectedItem!.selectedImage = self.tabBar.selectedItem!.selectedImage!.filled(withColor: UIColor(patternImage: grad))
+        
+        // UINavigationBar.appearance().tintColor = UIColor.groupTableViewBackground
+        
+        // registerSocketHandler()
+        
+        
+        
         self.tabBar.items![2].badgeColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-        let unreads = NBClient.shared.getMappable(Notification.self, filters: "[\"_status:IS_NULL:true\"]", sortBy: "updatedAt:desc")!
-        print("unread notifs: ", unreads.count)
+        
+        let notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc")!
+        
+        if NBClient.shared.storedTypes[Notification.classIdentifier] == nil {
+            NBClient.shared.storedTypes[Notification.classIdentifier] = notifications
+        }
+        else {
+            for notification in notifications {
+                if NBClient.shared.storedTypes[Notification.classIdentifier]!.first(where: {$0.resourceKey == notification.resourceKey}) == nil {
+                    NBClient.shared.storedTypes[Notification.classIdentifier]!.append(notification)
+                }
+            }
+        }
+        
+        let unreads = NBClient.shared.storedTypes[Notification.classIdentifier]?.filter({ ($0 as! Notification).statusBool == false }) as! [Notification]
         self.tabBar.items![2].badgeValue = String(format: "%d", (unreads.count))
     }
     
-    func createGradientImage() -> UIImage {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [#colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1).cgColor, #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1).cgColor]
-        
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
-        let frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        gradientLayer.frame = frame
-        
-        UIGraphicsBeginImageContext(gradientLayer.frame.size)
-        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
-        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return outputImage!
+    func registerSocketHandler() {
+        /*
+        NBSocket.shared.socket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
+            TTLog.info("socket tabs: on response: ", data)
+            guard let message = data[0] as? String else { return }
+            if let data = message.data(using: .utf8) {
+                do {
+                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
+                    TTLog.warning("socket: mapping response")
+                    let mapped = Mapper<Generic>().map(JSON: JSON)!
+                    TTLog.warning("socket: mapped! ", mapped)
+                    
+                    if (mapped.itemType?.contains("Notification"))! {
+                        TTLog.info("notification!")
+                        
+                        var badgeVal = Int((self.tabBar.items![2].badgeValue)!)
+                        badgeVal = badgeVal! + 1
+                        DispatchQueue.main.async {
+                            self.tabBarController?.tabBar.items![2].badgeValue = String(format: "%d", badgeVal!)
+                        }
+                    }
+                    else {
+                        TTLog.info("something else!")
+                    }
+                }
+                catch let error {
+                    print("Error parsing json: \(error)")
+                }
+            }
+        }
+        */
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        let gradColor = UIImage().createGradientImage(size: 40).gradientColor
+        
+        self.tabBar.items![0].selectedImage = self.tabBar.items![0].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
+        self.tabBar.items![1].selectedImage = self.tabBar.items![1].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
+        self.tabBar.items![2].selectedImage = self.tabBar.items![2].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
+        
+        self.tabBar.tintColor = UIImage().createGradientImage(size: 50).gradientColor
+        // self.tabBar.unselectedItemTintColor = UIColor.darkGray
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -59,6 +102,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
+    
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if selectedViewController == nil || viewController == selectedViewController {
@@ -78,6 +122,12 @@ class RootNavigationBarVC: UINavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // self.navigationBar.barTintColor = UIColor.clear
+        
+        
+        
+        
         
         self.setNeedsStatusBarAppearanceUpdate()
     }

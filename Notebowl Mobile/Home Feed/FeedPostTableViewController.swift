@@ -77,31 +77,30 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         resetInput()
         
         let items = [
-            makeButton(named: "camera").onTextViewDidChange { button, textView in
+            makeButton(named: "add_photo-vector").onTextViewDidChange { button, textView in
                 button.isEnabled = textView.text.isEmpty
-                }.onSelected {
-                    $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                }.onSelected { photoButton in
+                    //$0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                    let imagePicker = UIImagePickerController()
+                    imagePicker.delegate = self
+                    imagePicker.sourceType = .camera
+                    self.present(imagePicker, animated: true, completion: nil)
             },
-            makeButton(named: "picture")
-                .onSelected {
-                    $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+            makeButton(named: "add_library-vector")
+                .onSelected { libraryButton in
+                    //$0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                     let imagePicker = UIImagePickerController()
                     imagePicker.delegate = self
                     imagePicker.sourceType = .photoLibrary
                     self.present(imagePicker, animated: true, completion: nil)
             },
             .flexibleSpace,
-            makeButton(named: "invisible")
-                .onTouchUpInside { _ in
+            makeButton(named: "public-vector")
+                .onSelected { anonButton in
                     self.anonymousToggle.toggle()
-                }.onSelected {
-                    $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-                }.onDeselected {
-                    $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1)
-                }.onKeyboardEditingBegins { (button) in
-                    TTLog.debug("keyboardediting began")
-                
+                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
             },
+          
             bar.sendButton.configure {
                 $0.layer.cornerRadius = 8
                 $0.layer.borderWidth = 1.5
@@ -113,8 +112,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = UIColor.groupTableViewBackground
+                    // $0.setBackgroundImage(UIImage().filled(withColor: .groupTableViewBackground), for: .disabled)
                 }.onEnabled {
-                    $0.backgroundColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                    // $0.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
+                    // UIColor(patternImage: grad)
+                    $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 90)))
                     $0.layer.borderColor = UIColor.clear.cgColor
                 }.onSelected {
                     $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
@@ -123,11 +125,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             }
     
         ]
-        items.forEach { $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1) }
-        
+        // items.forEach { $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1) }
+        bar.inputTextView.placeholder = "Write a comment..."
         bar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
-        
+        bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
         // expand button
         
         bar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
@@ -138,15 +140,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return InputBarButtonItem()
             .configure {
                 $0.spacing = .fixed(10)
-                $0.image = UIImage(named: named)?.withRenderingMode(.alwaysTemplate)
-                $0.setSize(CGSize(width: 26, height: 26), animated: viewIsLoaded)
-            }.onSelected {
-                $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-            }.onDeselected {
-                $0.tintColor = #colorLiteral(red: 0.168627451, green: 0.168627451, blue: 0.168627451, alpha: 1)
-            }.onTouchUpInside { _ in
-                TTLog.debug("tapped")
-        }
+                $0.image = UIImage(named: named)!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
+                $0.setSize(CGSize(width: 30, height: 30), animated: viewIsLoaded)
+            }
+        
     }
     
     

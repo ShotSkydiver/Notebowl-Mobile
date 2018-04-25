@@ -21,6 +21,7 @@ target 'Notebowl Mobile' do
     pod 'RLBAlertsPickers', :git => 'https://github.com/ShotSkydiver/Alerts-Pickers'
     pod 'Tamamushi'
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
+    pod 'Newly'
 end
 
 post_install do |installer|

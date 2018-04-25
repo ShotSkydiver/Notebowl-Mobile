@@ -29,6 +29,7 @@ public extension Decodable {
             let topLevel = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
             guard let nestedJson = (topLevel as AnyObject).value(forKeyPath: keyPath) else { throw CodingError.RuntimeError("Cannot decode data to object")  }
             let nestedData = try JSONSerialization.data(withJSONObject: nestedJson)
+            
             self = try JSONDecoder().decode(Self.self, from: nestedData)
             return
         }
@@ -211,6 +212,27 @@ public extension UIImage {
         return newImage
     }
     
+    public func createGradientImage(size: Int) -> UIImage {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [#colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1).cgColor, #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1).cgColor]
+        
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        let frame = CGRect(x: 0, y: 0, width: size, height: size)
+        gradientLayer.frame = frame
+        
+        UIGraphicsBeginImageContext(gradientLayer.frame.size)
+        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return outputImage!
+    }
+    //let grad = UIImage().createGradientImage()
+    // let gradColor = UIColor(patternImage: grad)
+    public var gradientColor: UIColor {
+        // let grad = createGradientImage(size: 40)
+        return UIColor(patternImage: self)
+    }
     
     public var base64EncodedString: String? {
         return self.compressed(quality: 1.0)?.base64EncodedString
@@ -530,7 +552,11 @@ extension PlaceholdersProvider {
 class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T
     public typealias JSON = String
+    private let actionType: Action
     
+    public init(action: Action = .updated) {
+        self.actionType = action
+    }
     
     func transformFromJSON(_ value: Any?) -> T? {
         let urlToGet = value as! String
@@ -538,10 +564,24 @@ class ObjectTransform<T: Object>: TransformType {
         
         if let keyExists = NBClient.shared.storedTypes[T.classIdentifier] {
             print("key exists!")
+            
         }
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
             print("object exists!")
-            return objectExists as? T
+            if self.actionType == .deleted {
+                TTLog.debug("action type: delete!")
+                if T.routeType == .notification || T.routeType == .enrollment {
+                    TTLog.debug("notification about deleted!")
+                    return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
+                    
+                }
+                else {
+                    return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
+                }
+            }
+            else {
+                return objectExists as? T
+            }
         }
 
         else {
@@ -555,11 +595,14 @@ class ObjectTransform<T: Object>: TransformType {
                 
             }
             let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+            // if T.routeType != .course { finalmap?.refresh() }
+            finalmap?.refresh()
             
             if NBClient.shared.storedTypes[T.classIdentifier] == nil {
                 NBClient.shared.storedTypes[T.classIdentifier] = [finalmap!]
             }
-            else {
+                
+            else if NBClient.shared.storedTypes[T.classIdentifier]!.first(where: {$0.resourceKey == finalmap!.resourceKey}) == nil {
                 NBClient.shared.storedTypes[T.classIdentifier]!.append(finalmap!)
             }
             
@@ -581,3 +624,15 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }
+
+public let valueForObjectType: Dictionary<ObjectIdentifier, Object.Type> = [
+    User.classIdentifier: User.self,
+    Course.classIdentifier: Course.self,
+    Assignment.classIdentifier: Assignment.self,
+    Post.classIdentifier: Post.self,
+    Comment.classIdentifier: Comment.self,
+    Like.classIdentifier: Like.self,
+    Attachment.classIdentifier: Attachment.self,
+    Notification.classIdentifier: Notification.self
+]
+

@@ -74,6 +74,8 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     }
     
     func updateInfo() {
+        doneButton.tintColor = UIImage().createGradientImage(size: 50).gradientColor
+        
         profilePicture.layer.cornerRadius = profilePicture.frame.width*0.5
         profilePicture.clipsToBounds = true
         profilePicture.layer.masksToBounds = true
@@ -248,7 +250,10 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
                 })
         }
         else {
-            self.present(UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert), animated: true, completion: nil)
+            let alert = UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
         }
     }
 }
