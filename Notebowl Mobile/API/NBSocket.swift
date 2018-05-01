@@ -8,49 +8,30 @@
 
 import Foundation
 import UIKit
-import ObjectMapper
-import Bugsnag
-import Kingfisher
-import Disk
 import SocketIO
 
-public class NBSocket {
+class NBSocket {
     
-    public static let shared = NBSocket()
-
-    public let socketUrl = "https://socket.\((NBClient.Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
+    static let shared: NBSocket = {
+        TTLog.debug("socket shared init")
+        let instance = NBSocket()
+        instance.registerHandlers()
+        instance.manager.connect()
+        return instance
+    }()
     
-    public var socketConfig: SocketIOClientConfiguration = [
-        .log(true),
-        .secure(true),
-        .selfSigned(true),
-        .forceNew(true)
-    ]
-    public var socket: SocketIOClient!
-    public var socketManager: SocketManager!
+    let manager = SocketManager(socketURL: URL(string: NBClient.socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
     
     private init() { }
     
-    
-    public func setupSocket() {
-        TTLog.warning("setup socket")
-        socketManager = SocketManager(socketURL: URL(string: socketUrl)!, config: socketConfig)
-        socket = socketManager.defaultSocket
-        registerHandlers()
-        socketManager.connect()
+    func registerForUser() {
+        manager.defaultSocket.emit("register", "platform:status")
+        manager.defaultSocket.emit("register", NBClient.shared.getCurrentUser().resourceKey)
     }
     
-    public func registerForUser() {
-        TTLog.warning("registerforuser: ", socketManager.status)
-        socket.emit("register", "platform:status")
-        socket.emit("register", NBClient.shared.getCurrentUser().resourceKey)
-    }
-    
-    public func registerHandlers() {
-        TTLog.warning("register socket handlers")
-        
-        socket.on(clientEvent: .connect) { (data, ackEmitter) in
-            TTLog.warning("socket connected")
+    func registerHandlers() {
+        manager.defaultSocket.on(clientEvent: .connect) { (data, ackEmitter) in
+            TTLog.socket("connected")
             self.registerForUser()
         }
         /*
@@ -80,11 +61,12 @@ public class NBSocket {
             }
         }
         */
-        socket.on("platform:status") { (data, ackEmitter) in
+        /*
+        manager.defaultSocket.on("platform:status") { (data, ackEmitter) in
             TTLog.warning("socket received platform status, ", data)
         }
-        
-        // socket.onAny {print("Got event: \($0.event), with items: \($0.items!)")}
+        */
+        // manager.defaultSocket.onAny {TTLog.testing("Got event: \($0.event), with items: \($0.items!)")}
     }
     
     

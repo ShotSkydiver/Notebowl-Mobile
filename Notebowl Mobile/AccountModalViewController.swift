@@ -12,16 +12,15 @@ import Photos
 import DeckTransition
 import Kingfisher
 import MMUploadImage
-import Disk
 import FaceAware
-import TLPhotoPicker
 
 protocol ContainerToMaster {
-    func uploadImage(image:UIImage)
+    func startUpload(image:UIImage)
+    func uploadingImage()
 }
 
 class AccountModalViewController: UIViewController, ContainerToMaster {
-    var currentUser: User!
+    //var currentUser: User!
     
     @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -30,41 +29,22 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     @IBOutlet var containerView: UIView!
     
     var containerViewController: AccountModalTableViewController?
-    var newImage: UIImage!
     var menu: UIAlertController!
     var dismissWithUpdate: Bool = false
+    var progress: Float = 0.0
+    var selectedImage: UIImage!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         modalPresentationCapturesStatusBarAppearance = true
         self.setNeedsStatusBarAppearanceUpdate()
         
-        currentUser = NBClient.shared.getCurrentUser()
+        //currentUser = NBClient.shared.getCurrentUser()
         updateInfo()
-        
-        profilePicture.completedBlock = {
-            TTLog.debug("completedblock")
-            self.dismissWithUpdate = true
-            
-            NBClient.shared.updateUserAvatar(image: self.newImage)
-            
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-            let tabbarViewController = rootViewController.presentedViewController as! MainTabBarViewController
-            let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
-            let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
-            
-            //homeViewController.navbarImageView.image = self.newImage
-            
-        }
-        profilePicture.failBlock = {
-            TTLog.debug("failed")
-        }
-        profilePicture.style = .sector
-        profilePicture.autoCompleted = true
-    }
-    
-    
  
+        profilePicture.style = .wave
+        
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "modalEmbedSegue" {
@@ -76,16 +56,24 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     func updateInfo() {
         doneButton.tintColor = UIImage().createGradientImage(size: 50).gradientColor
         
-        profilePicture.layer.cornerRadius = profilePicture.frame.width*0.5
-        profilePicture.clipsToBounds = true
-        profilePicture.layer.masksToBounds = true
+        //profilePicture.layer.cornerRadius = profilePicture.frame.width*0.5
+        //profilePicture.clipsToBounds = true
+        //profilePicture.layer.masksToBounds = true
 
-        profilePicture.image = NBClient.shared.currentUserPic
-        profilePicture.focusOnFaces = true
+        profilePicture.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    .forceTransition,
+                                    .keepCurrentImageWhileLoading
+            ]
+        )
+        
+        // profilePicture.image = NBClient.shared.currentUserPic
+        ///profilePicture.focusOnFaces = true
         profilePicture.contentMode = .scaleAspectFill
 
-        userName.text = currentUser.fullName
-        userEmail.text = currentUser.email
+        userName.text = NBClient.shared.getCurrentUser().fullName
+        userEmail.text = NBClient.shared.getCurrentUser().email
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -94,13 +82,14 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     
     @IBAction func done(_ sender: Any) {
         if dismissWithUpdate {
+            /*
             let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
             let tabbarViewController = rootViewController.presentedViewController as! MainTabBarViewController
             let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
             let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
-            
+            */
             self.dismiss(animated: true, completion: {
-                homeViewController.getPosts()
+                //homeViewController.getPosts()
             })
         }
         else {
@@ -109,34 +98,39 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         
     }
     
-    public func uploadImage(image: UIImage) {
-        self.newImage = image
+    func startUpload(image: UIImage) {
+        self.progress = 0.1
+        self.selectedImage = image
+        self.profilePicture.uploadImage(image: selectedImage, progress: progress)
+    }
+    
+    public func uploadingImage() {
+        let postUrl = ("https://\(NBClient.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture")
         
-        let postUrl = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/users/" + self.currentUser.resourceKey + "/changeProfilePicture")
-        _ = Just.post(
-            postUrl,
-            params: ["uuid": UIDevice().uuid],
-            files:["files[]":.data("profile.jpg", image.compressedData()!, "image/jpeg")],
-            asyncProgressHandler: { p in
-                TTLog.debug("progress: ", p.percent)
-                
-                self.profilePicture.uploadImage(image: image, progress: p.percent)
-                
+        Just.post(postUrl,
+                  params: ["uuid": UIDevice().uuid],
+                  files:["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
+                  asyncProgressHandler:{ p in
+                    print(p.percent)
+                    DispatchQueue.main.async(execute: {
+                        // self.progress = (self.progress + p.percent <= 1.0) ? self.progress + p.percent : 1.0
+                        // if p.percent < 1.0 {
+                            self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
+                        // }
+                        // else if p.percent == 1.0 {
+                            // self.profilePicture.uploadCompleted()
+                        // }
+                    })
+                    
+        }){ r in
+            print(r.ok)
+            self.profilePicture.uploadCompleted()
         }
-        ) { r in
-            if r.ok {
-                TTLog.debug("OK!")
-                // self.profilePicture.uploadCompleted()
-            }
-            else {
-                // self.profilePicture.uploadImageFail()
-            }
-        }
+        
     }
 }
 
-class AccountModalTableViewController: UITableViewController, TLPhotosPickerViewControllerDelegate {
-    var selectedAssets = [TLPHAsset]()
+class AccountModalTableViewController: UITableViewController {
     var containerToMaster: ContainerToMaster?
     
     override func viewDidLoad() {
@@ -146,26 +140,24 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
     
     func setupMenuForAlert() {
         let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        PHPhotoLibrary.requestAuthorization({ (auth) in
-            TTLog.debug("authstatus: ", auth)
-        })
-        
-        // let imagePicker = UIImagePickerController()
-        // imagePicker.delegate = self
+        //PHPhotoLibrary.requestAuthorization({ (auth) in
+        //    TTLog.debug("authstatus: ", auth)
+        //})
         
         let takePhoto = UIAlertAction(title: "Take Photo", style: .default) { (action) in
-            /*
-            imagePicker.sourceType = .camera
-            imagePicker.cameraDevice = .front
-            self.present(imagePicker, animated: true, completion: nil)
-            */
-            
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                imagePicker.sourceType = .camera
+                self.present(imagePicker, animated: true, completion: nil)
+            }
+            else { return }
         }
         let choosePhoto = UIAlertAction(title: "Choose Photo", style: .default) { (action) in
-            /*
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
             imagePicker.sourceType = .photoLibrary
             self.present(imagePicker, animated: true, completion: nil)
-            */
             
         }
         let removePhoto = UIAlertAction(title: "Remove Photo", style: .destructive) { (action) in
@@ -176,44 +168,10 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
         }
         menu.addAction(takePhoto)
         menu.addAction(choosePhoto)
-        // menu.addAction(removePhoto)
+        menu.addAction(removePhoto)
         menu.addAction(cancel)
         
         self.present(menu, animated: true, completion: nil)
-    }
-    
-    
-    func handleNoCameraPermissions(picker: TLPhotosPickerViewController) {
-        let alert = UIAlertController(title: "", message: "No camera permissions!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        picker.present(alert, animated: true, completion: nil)
-    }
-    func handleNoAlbumPermissions(picker: TLPhotosPickerViewController) {
-        picker.dismiss(animated: true) {
-            let alert = UIAlertController(title: "", message: "Denied album permissions!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func dismissPhotoPicker(withTLPHAssets: [TLPHAsset]) {
-        self.selectedAssets = withTLPHAssets
-        
-        if let asset = self.selectedAssets.first {
-            if let image = asset.fullResolutionImage {
-                self.containerToMaster?.uploadImage(image: image)
-            }
-            else {
-                asset.cloudImageDownload(progressBlock: { (progress) in
-                    TTLog.debug("download from cloud progress: ", progress)
-                    
-                }, completionBlock: { (image) in
-                    if let image = image {
-                        self.containerToMaster?.uploadImage(image: image)
-                    }
-                })
-            }
-        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -221,23 +179,7 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
             return
         }
         if cell.reuseIdentifier == "changeProfileCell" {
-            // setupMenuForAlert()
-            let vc = TLPhotosPickerViewController()
-            vc.delegate = self
-            var config = TLPhotosPickerConfigure()
-            if #available(iOS 10.2, *) {
-                config.cameraCellNibSet = (nibName: "CustomCameraCell", bundle: Bundle.main)
-            }
-            config.allowedLivePhotos = false
-            
-            config.numberOfColumn = 3
-            config.allowedVideo = false
-            config.allowedVideoRecording = false
-            config.singleSelectedMode = true
-            config.maxSelectedAssets = 1
-            config.selectedColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-            vc.configure = config
-            self.present(vc, animated: true, completion: nil)
+            setupMenuForAlert()
         }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.logoutUser()
@@ -258,3 +200,18 @@ class AccountModalTableViewController: UITableViewController, TLPhotosPickerView
     }
 }
 
+
+extension AccountModalTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        // dismiss(animated: true, completion: {
+            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                self.containerToMaster?.startUpload(image: pickedImage)
+            }
+        // })
+        picker.dismiss(animated: true, completion: {
+            self.containerToMaster?.uploadingImage()
+        })
+        
+    }
+}

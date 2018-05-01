@@ -43,9 +43,6 @@
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                             <color key="textColor" red="0.23921568627450979" green="0.23921568627450979" blue="0.23921568627450979" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last updated 20 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JVM-eO-vC0">
                                             <rect key="frame" x="20" y="87" width="174" height="22"/>
@@ -56,12 +53,6 @@
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="lastLineFillPercent">
-                                                    <integer key="value" value="70"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNI 123" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6o-pc-MXg">
                                             <rect key="frame" x="20" y="11" width="126" height="25"/>
@@ -71,12 +62,6 @@
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="lastLineFillPercent">
-                                                    <integer key="value" value="50"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
                                         </label>
                                     </subviews>
                                     <constraints>
@@ -90,14 +75,8 @@
                                         <constraint firstItem="f6o-pc-MXg" firstAttribute="top" secondItem="Ps4-PC-bv9" secondAttribute="topMargin" id="fME-Wy-wKq"/>
                                         <constraint firstItem="6ey-pg-wYE" firstAttribute="trailing" secondItem="Ps4-PC-bv9" secondAttribute="trailingMargin" id="yuh-xQ-vAm"/>
                                     </constraints>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                                    </userDefinedRuntimeAttributes>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <outlet property="courseNumber" destination="f6o-pc-MXg" id="H5E-ES-Ubo"/>
                                     <outlet property="courseTitle" destination="6ey-pg-wYE" id="04d-o2-iij"/>
@@ -106,9 +85,6 @@
                                 </connections>
                             </tableViewCell>
                         </prototypes>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
-                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="JtQ-y2-5t3" id="0aD-Ck-aAL"/>
                             <outlet property="delegate" destination="JtQ-y2-5t3" id="C55-LL-7ha"/>
@@ -288,11 +264,11 @@
                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="notificationCell" rowHeight="120" id="LQj-lU-URH" customClass="NotificationsTableViewCell" customModule="Notebowl_Mobile" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="notificationCell" rowHeight="120" id="LQj-lU-URH" customClass="NotificationsTableViewCell" customModule="Notebowl_Mobile" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="29" width="414" height="120"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="LQj-lU-URH" id="pqE-zy-miK">
-                                    <rect key="frame" x="0.0" y="0.0" width="376" height="119.66666666666667"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="LQj-lU-URH" id="pqE-zy-miK">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="119.66666666666667"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="UFQ-7V-M4f" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
@@ -308,7 +284,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jhJ-JY-ZkJ">
-                                            <rect key="frame" x="79" y="11" width="289" height="74"/>
+                                            <rect key="frame" x="79" y="11" width="315" height="74"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                             <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -403,8 +379,8 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="masksToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
-                                <rect key="frame" x="-1" y="299" width="415" height="437"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
+                                <rect key="frame" x="-1" y="275" width="415" height="462"/>
                                 <connections>
                                     <segue destination="Uj0-lf-bbg" kind="embed" identifier="modalEmbedSegue" id="76K-cC-xfv"/>
                                 </connections>
@@ -427,12 +403,12 @@
                             <constraint firstItem="H4c-aE-x18" firstAttribute="leading" secondItem="GhE-Kp-WMQ" secondAttribute="leading" constant="315" id="36n-oZ-Ff0"/>
                             <constraint firstItem="8eD-xA-dGG" firstAttribute="top" secondItem="51f-BM-76n" secondAttribute="bottom" constant="1" id="I7b-Zh-SZq"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="trailing" secondItem="8eD-xA-dGG" secondAttribute="trailing" id="OCU-Bn-Ubi"/>
-                            <constraint firstItem="DF6-VU-Tez" firstAttribute="bottom" secondItem="GhE-Kp-WMQ" secondAttribute="bottom" id="OqV-kd-KBs"/>
+                            <constraint firstItem="DF6-VU-Tez" firstAttribute="bottom" secondItem="GhE-Kp-WMQ" secondAttribute="bottom" constant="1" id="OqV-kd-KBs"/>
                             <constraint firstItem="DF6-VU-Tez" firstAttribute="centerX" secondItem="8eD-xA-dGG" secondAttribute="centerX" id="Osh-Ed-SPx"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="leading" secondItem="8eD-xA-dGG" secondAttribute="leading" id="Px3-M8-fn5"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="trailing" secondItem="wb6-PP-gt4" secondAttribute="trailingMargin" id="Znl-Xs-CAO"/>
                             <constraint firstItem="wDo-wn-hmU" firstAttribute="centerX" secondItem="51f-BM-76n" secondAttribute="centerX" id="cO0-oJ-Yjl"/>
-                            <constraint firstItem="DF6-VU-Tez" firstAttribute="top" secondItem="8eD-xA-dGG" secondAttribute="bottom" constant="42" id="frE-Sa-ZNd"/>
+                            <constraint firstItem="DF6-VU-Tez" firstAttribute="top" secondItem="8eD-xA-dGG" secondAttribute="bottom" constant="18" id="frE-Sa-ZNd"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="top" secondItem="wDo-wn-hmU" secondAttribute="bottom" constant="14" id="k6L-2F-t5s"/>
                             <constraint firstItem="H4c-aE-x18" firstAttribute="trailing" secondItem="51f-BM-76n" secondAttribute="trailing" id="m0z-WI-Mmj"/>
                             <constraint firstAttribute="trailing" secondItem="DF6-VU-Tez" secondAttribute="trailing" id="pDg-CC-FNY"/>
@@ -451,7 +427,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6hY-Pb-yLX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1719" y="2567"/>
+            <point key="canvasLocation" x="1718.840579710145" y="2566.304347826087"/>
         </scene>
         <!--Create New Post View Controller-->
         <scene sceneID="Jmm-C8-2Cm">
@@ -540,7 +516,7 @@
             <objects>
                 <tableViewController id="Uj0-lf-bbg" customClass="AccountModalTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="oVn-mr-N6M">
-                        <rect key="frame" x="0.0" y="0.0" width="415" height="437"/>
+                        <rect key="frame" x="0.0" y="0.0" width="415" height="462"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>

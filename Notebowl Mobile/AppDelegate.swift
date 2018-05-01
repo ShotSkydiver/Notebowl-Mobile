@@ -30,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.set(hasUserLoggedIn: false)
         }
         
-        
         return true
     }
 
@@ -66,8 +65,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
         
-        _ = Just.get("https://\(NBClient.shared.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
+        //let alert = UIAlertController(title: "Token", message: "\(token)", preferredStyle: .alert)
+        //alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         
+        let reqNotif = Just.get("https://\(NBClient.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
+        TTLog.debug("notif register: ", reqNotif)
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)

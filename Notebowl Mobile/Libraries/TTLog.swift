@@ -14,7 +14,7 @@ struct TTLog {
     private static let logTextFormat = "[%@] %@:%@ %@ %@: %@"
     
     public enum TTLogType {
-        case verbose, info, warning, debug, error
+        case verbose, info, warning, debug, error, socket, testing
         
         var description: String {
             return String(describing: self).uppercased()
@@ -27,6 +27,8 @@ struct TTLog {
             case .warning: return "⚠️" + self.description
             case .debug:   return "👻" + self.description
             case .error:   return "❌" + self.description
+            case .socket:   return "🔌" + self.description
+            case .testing:   return "❓" + self.description
             }
         }
     }
@@ -50,6 +52,12 @@ struct TTLog {
     public static func error(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file, line: Int = #line, function: String = #function) {
         log(.error, items, separator, terminator, file, line, function)
     }
+    public static func socket(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file, line: Int = #line, function: String = #function) {
+        log(.socket, items, separator, terminator, file, line, function)
+    }
+    public static func testing(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file, line: Int = #line, function: String = #function) {
+        log(.testing, items, separator, terminator, file, line, function)
+    }
     
     private static func log(_ type: TTLogType ,_ items: [Any], _ separator: String, _ terminator: String, _ file: String, _ line: Int, _ function: String) {
         #if DEBUG
@@ -66,8 +74,8 @@ struct TTLog {
                                         type.tagText,
                                         items.map({ String(describing: $0) }).joined(separator: separator),
                                         ]
-            let result = String(format: logTextFormat, arguments: arguments) + terminator
-            Swift.print(result, separator: "", terminator: "")
+            let result = terminator + String(format: logTextFormat, arguments: arguments) + terminator
+            Swift.print(result, separator: "")
         }
         #endif
     }

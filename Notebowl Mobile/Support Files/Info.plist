@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>136050</string>
+	<string>136059</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -39,6 +39,8 @@
 	<string>Temporary</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Temporary</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This is not real!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Post photos as attachments to your posts and comments!</string>
 	<key>UIBackgroundModes</key>

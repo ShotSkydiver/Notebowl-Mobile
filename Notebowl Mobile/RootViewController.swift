@@ -34,13 +34,12 @@ class RootViewController: UIViewController {
         return .lightContent
     }
 
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier! == "presentLoginView" {
             guard let webViewRootNavController = segue.destination as? UINavigationController, let progressWebVC = webViewRootNavController.topViewController as? ProgressWebViewController else {
                 return
             }
-            progressWebVC.url = URL(string: ("https://\(NBClient.shared.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
+            progressWebVC.url = URL(string: ("https://\(NBClient.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.navigationItem.title = "Notebowl Login"
@@ -51,20 +50,15 @@ class RootViewController: UIViewController {
             progressWebVC.headers = ["browser": "in-app browser"]
             progressWebVC.delegate = self
             progressWebVC.extendedLayout = true
-           
         }
-  
-        
+            
         else if segue.identifier! == "presentTabBarView" {
-            TTLog.debug("segue id tabbarview")
-            _ = NBClient.shared.getCurrentUser()
-            NBClient.shared.updateUserAvatar()
+            _ = NBClient.shared
             
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
             
-            NBSocket.shared.setupSocket()
-            // NBSocket.shared.registerForUser()
+            _ = NBSocket.shared
         }
     }
 }
@@ -77,7 +71,7 @@ extension RootViewController: ProgressWebViewControllerDelegate {
         var components = URLComponents(url: controller.url!.absoluteURL, resolvingAgainstBaseURL: false)
         let pathComponents = components!.path
         if (pathComponents == "/gateway/services/mobile/register") {
-            _ = NBClient.shared.getCurrentUser()
+           //  _ = NBClient.shared.getCurrentUser()
             UserDefaults.set(hasUserLoggedIn: true)
 
             controller.dismiss(animated: true, completion: nil)

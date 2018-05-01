@@ -549,25 +549,40 @@ extension PlaceholdersProvider {
     }
 }
 
+class ImageTransform: TransformType {
+    public typealias Object = UIImage
+    public typealias JSON = String
+    
+    func transformFromJSON(_ value: Any?) -> UIImage? {
+        let urlToGet = value as! String
+        
+        
+        
+        return UIImage().createGradientImage(size: 40)
+    }
+    
+    func transformToJSON(_ value: UIImage?) -> String? {
+        return nil
+    }
+}
+
 class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T
     public typealias JSON = String
     private let actionType: Action
+    private let updateDate: Date?
     
-    public init(action: Action = .updated) {
+    public init(action: Action = .updated, update: Date? = nil) {
         self.actionType = action
+        self.updateDate = update
     }
     
     func transformFromJSON(_ value: Any?) -> T? {
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
-        
-        if let keyExists = NBClient.shared.storedTypes[T.classIdentifier] {
-            print("key exists!")
-            
-        }
+
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            print("object exists!")
+            // TTLog.debug("object exists! ", objectExists.url.absoluteString)
             if self.actionType == .deleted {
                 TTLog.debug("action type: delete!")
                 if T.routeType == .notification || T.routeType == .enrollment {
@@ -576,12 +591,30 @@ class ObjectTransform<T: Object>: TransformType {
                     
                 }
                 else {
+                    TTLog.debug("delete object!")
                     return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
                 }
             }
             else {
+                
+                if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
+                    TTLog.debug("new object is more recent than existing object!")
+                    // TODO: THIS MIGHT SLOW THINGS WAY THE HELL DOWN BECAUSE IT"S GOING TO BE RELOADING AND REMAPPING EVERY TIME IT'S UPDATED
+                    
+                    let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
+                    let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
+                    
+                    finalmap?.refresh()
+                    
+                    NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
+                    return finalmap
+                }
+                objectExists.refresh()
                 return objectExists as? T
             }
+        }
+        else if self.actionType == .deleted {
+            return nil
         }
 
         else {
@@ -595,14 +628,18 @@ class ObjectTransform<T: Object>: TransformType {
                 
             }
             let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            // if T.routeType != .course { finalmap?.refresh() }
-            finalmap?.refresh()
+            //if T.routeType != .course {
+                finalmap?.refresh()
+            finalmap?.firstTimeLoading = true
+            //}
+            
             
             if NBClient.shared.storedTypes[T.classIdentifier] == nil {
                 NBClient.shared.storedTypes[T.classIdentifier] = [finalmap!]
             }
                 
             else if NBClient.shared.storedTypes[T.classIdentifier]!.first(where: {$0.resourceKey == finalmap!.resourceKey}) == nil {
+                
                 NBClient.shared.storedTypes[T.classIdentifier]!.append(finalmap!)
             }
             

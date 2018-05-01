@@ -39,7 +39,7 @@ extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
         
-        return ("https://\(NBClient.shared.baseUrl)/api/v1.0/" + route)
+        return ("https://\(NBClient.baseUrl)/api/v1.0/" + route)
     }
 }
 
@@ -73,9 +73,7 @@ class Generic: StaticMappable {
         if let itemType: String = map["itemType"].value() {
             switch itemType {
             case "User":
-                
                 return Response<User>()
-                //return Response(type: User.self)
             case "Course":
                 return Response<Course>()
             case "Assignment":
@@ -84,9 +82,13 @@ class Generic: StaticMappable {
                 return Response<Grade>()
             case "Enrollment":
                 return Response<Enrollment>()
+            case "CourseUser":
+                return Response<Enrollment>()
             case "Post":
                 return Response<Post>()
             case "Attachment":
+                return Response<Attachment>()
+            case "AttachmentS3":
                 return Response<Attachment>()
             case "Comment":
                 return Response<Comment>()
@@ -100,7 +102,6 @@ class Generic: StaticMappable {
         }
         return nil
     }
-    
     init(){
         
     }
@@ -111,43 +112,20 @@ class Generic: StaticMappable {
     }
 }
 
-
 class Response<T>: Generic where T: Object {
     
-    // var action: String!
     var updateUrl: T?
     var updatedAt: Date!
     
-    /*
-    public var actionType: Action {
-        if action.contains("updated") { return .updated }
-        else { return .deleted }
-    }
-    */
-    /*
-    public init(type: T.Type){
-        objectType = type
-    }
-    */
-    public override init(){
-        
-    }
+    public override init() {}
     
     public required init?(map: Map) { }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
-        // action <- map["action"]
-        
-        // NSClassFromString(response.itemType) as! Object.Type
-        // type <- map["itemType"]
-        //itemType <- (map["itemType"], TransformOf<T.Type, String>(fromJSON: { _ in type(of: T) }, toJSON: { $0!.rawValue }))
-        
-        // let aClass = NSClassFromString(itemType) as! Object.Type
-        
-        updateUrl <- (map["updateUrl"], ObjectTransform<T>(action: self.actionType))
         
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
+        updateUrl <- (map["updateUrl"], ObjectTransform<T>(action: self.actionType, update: updatedAt))
         
     }
 }
@@ -166,8 +144,20 @@ class Response<T>: Generic where T: Object {
     class var classIdentifier: ObjectIdentifier {
         return ObjectIdentifier(self)
     }
+    
+    class func objectExistsInCache(keyToCompare: String!) -> Bool {
+        // if NBClient.shared.storedTypes[User.classIdentifier]!.first(where: { $0.})
+        
+        if NBClient.shared.storedTypes[classIdentifier]!.first(where: { $0.resourceKey == keyToCompare }) != nil {
+            return true
+        }
+        return false
+    }
+    
+    public var firstTimeLoading: Bool!
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
+    public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
     
     public func refresh() { }
     
@@ -183,6 +173,8 @@ class Response<T>: Generic where T: Object {
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]
     }
+    
+    
 }
 
 @objc(User) public class User: Object {
@@ -191,6 +183,7 @@ class Response<T>: Generic where T: Object {
     var lastName: String!
     var email: String?
     var profileUrl: URL!
+    // var profileUrl: UIImage!
     var university: University?
     
     var fullName: String { return (firstName + " " + lastName) }
@@ -207,8 +200,8 @@ class Response<T>: Generic where T: Object {
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
+        // profileUrl <- (map["profileUrl"], ImageTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
-
     }
 }
 
@@ -271,7 +264,8 @@ class Response<T>: Generic where T: Object {
 
     public var categories: [Category]!
     
-    public var enrollmentForUser: Enrollment!
+    public var enrollmentForUser: Enrollment?
+    public var enrollmentExists: Bool!
         
     override class var routeType: ItemType { return .course }
     
@@ -303,40 +297,29 @@ class Response<T>: Generic where T: Object {
     }
     
     override public func refresh() {
- 
-        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent.absoluteURL.lastPathComponent == self.resourceKey }) as! Enrollment
+        if firstTimeLoading != nil {
+            if firstTimeLoading { firstTimeLoading = false }
+        }
         
-        if enrollmentForUser.lastAccessDate != nil {
-            self.lastUpdated = ("last accessed " + enrollmentForUser.lastAccessDate!.relativelyFormatted)
-            self.secondsSinceGradeUpdate = enrollmentForUser.lastAccessDate!.timeIntervalSinceReferenceDate
+        if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
+            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent!.resourceKey == self.resourceKey }) as? Enrollment
+            
+            /*
+            if enrollmentForUser.lastAccessDate != nil {
+                self.lastUpdated = ("last accessed " + enrollmentForUser.lastAccessDate!.relativelyFormatted)
+                self.secondsSinceGradeUpdate = enrollmentForUser.lastAccessDate!.timeIntervalSinceReferenceDate
+            }
+            else {
+                self.lastUpdated = "never accessed"
+                self.secondsSinceGradeUpdate = self.secondsSinceUpdate
+            }
         }
         else {
             self.lastUpdated = "never accessed"
             self.secondsSinceGradeUpdate = self.secondsSinceUpdate
         }
-            
-            /*
-            categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-            
-            let assignmentsFilter = NBClient.shared.buildFilterString(from: NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")!)
-            let recentGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(assignmentsFilter)\"]", sortBy: "updatedAt:desc", limit: "1")
-            
-            if (recentGrade?.first != nil) {
-                self.lastUpdated = recentGrade?.first!.updatedAt?.relativelyFormatted
-                self.secondsSinceGradeUpdate = recentGrade?.first!.secondsSinceUpdate
-            }
-            else {
-                self.lastUpdated = self.updatedAt?.relativelyFormatted
-                self.secondsSinceGradeUpdate = self.secondsSinceUpdate
-            }
-            self.refreshedOnce = true
-            */
-            
-            
-            
-            // self.lastUpdated = self.updatedAt?.relativelyFormatted
-        
-        
+        */
+    }
     }
 }
 
@@ -393,6 +376,7 @@ class Response<T>: Generic where T: Object {
     
     public func getUserGrade() -> String {
         guard let userGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")?.first else { return "-" }
+        
         guard let gradePoints = userGrade.grade else { return "-" }
 
         if self.gradeType == .completion {
@@ -516,8 +500,9 @@ class Response<T>: Generic where T: Object {
     var role: String!
     var status: String!
     var user: User!
+    // var user: URL!
     // var parent: Course?
-    var parent: URL!
+    var parent: Course?
     var lastAccessDate: Date?
     
     public var statusIsAccepted: Bool {
@@ -533,15 +518,26 @@ class Response<T>: Generic where T: Object {
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+        /// TO ASK: WILL USER PROPERTY ALWAYS BE THE CURRENT USER  - - - - EXCEPT IN INSTANCES WHERE WE ARE PROFESSOR
         role <- map["role"]
         status <- map["status"]
-        user <- (map["_user"], ObjectTransform<User>())
+        
+        if role.contains("Professor") {
+            user <- (map["_user"], ObjectTransform<User>())
+        }
+        else if role.contains("Student") {
+            user = NBClient.shared.getCurrentUser()
+        }
+        
+        // user <- (map["_user"], URLTransform())
         // if self.itemType.contains("CourseUser") {
-        //    parent <- (map["_parent"], ObjectTransform<Course>())
+            parent <- (map["_parent"], ObjectTransform<Course>())
         // }
-        parent <- (map["_parent"], URLTransform())
+        // parent <- (map["_parent"], URLTransform())
         lastAccessDate <- (map["lastAccessDate"], ISO8601FixedDateTransform())
+    }
+    override public func refresh() {
+        // self.user = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
     }
 }
 
@@ -581,10 +577,7 @@ class Response<T>: Generic where T: Object {
     
     
     func updateLikes() {
-        // self.postLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        // self.postLikes = NBClient.shared.storedLikes.filter({ $0.parent == self.url })
         self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
-        
         if postLikes.isEmpty {
             self.likedByCurrentUser = false
             return
@@ -602,18 +595,12 @@ class Response<T>: Generic where T: Object {
         }
     }
     override public func refresh() {
+        self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
         
-        // self.postComments = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        
-        // self.postComments = NBClient.shared.storedComments.filter({ $0.parent == self.url })
         self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent == self.url }) as! [Comment]
-        
-        // self.postAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
-        // self.postAttachments = NBClient.shared.storedAttachments.filter({ $0.parent!.url == self.url })
+        self.postComments = NBClient.shared.initArray(from: self.postComments)
         self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
-        
         updateLikes()
-        
     }
 }
 
@@ -650,14 +637,11 @@ class Response<T>: Generic where T: Object {
     
     func getUrlForAvatar() -> URL? {
         let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
+        let sttt = ("https://\(NBClient.baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
         var imageUrl = URL(string: sttt)
         imageUrl?.appendQueryParameters(params)
         return imageUrl
     }
-    
-    
-    
 }
 
 @objc(Comment) public class Comment: Object {
@@ -675,7 +659,6 @@ class Response<T>: Generic where T: Object {
     
     public var updatedOnce: Bool = false
     
-    
     override class var routeType: ItemType { return .comment }
     
     required public init?(map: Map) {
@@ -692,36 +675,34 @@ class Response<T>: Generic where T: Object {
         // if !isAnonymous {
             creator <- (map["_creator"], ObjectTransform<User>())
         // }
-        
     }
     
     public func getAttachments() {
-        // self.commentAttachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
     }
     public func updateLikes() {
-        // self.commentLikes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")
         self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
         
-        if commentLikes.isEmpty {
+        if commentLikes.isEmpty || commentLikes == nil {
             self.likedByCurrentUser = false
+            self.likeFromCurrentUser = nil
             return
         }
-        if commentLikes.count > 0 {
-            for like in commentLikes! {
-                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-                    self.likedByCurrentUser = true
-                    self.likeFromCurrentUser = like
-                }
-                else {
-                    self.likedByCurrentUser = false
-                }
+        for like in commentLikes {
+            if like.currentUserLiked {
+                self.likedByCurrentUser = true
+                self.likeFromCurrentUser = like
+                break
+            }
+            else {
+                self.likedByCurrentUser = false
+                self.likeFromCurrentUser = nil
             }
         }
-        self.updatedOnce = true
     }
     
     override public func refresh() {
+        self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator?.resourceKey }) as? User
         updateLikes()
         getAttachments()
     }
@@ -730,6 +711,8 @@ class Response<T>: Generic where T: Object {
 @objc(Like) public class Like: Object {
     var owner: User!
     var parent: URL!
+    
+    public var currentUserLiked: Bool { return owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false}
     
     override class var routeType: ItemType { return .like }
     
@@ -743,6 +726,10 @@ class Response<T>: Generic where T: Object {
         owner <- (map["_owner"], ObjectTransform<User>())
         parent <- (map["_parent"], URLTransform())
     }
+    
+    override public func refresh() {
+        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner.resourceKey }) as! User
+    }
 }
 
 @objc(Notification) class Notification: Object {
@@ -753,15 +740,11 @@ class Response<T>: Generic where T: Object {
     var parent: URL!
     var name: String!
     
-    public var statusBool: Bool { return status == nil ? false : true }
-        // if status == nil { return false }
-        // else { return true }
-    // }
-    // { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
+    public var unseenBool: Bool { return status == nil ? true : false }
+    public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
-        // if action.contains("updated") { return .updated }
-        // else { return .deleted }
-    // }
+    
+    public var userPictureUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture"))?.appendingQueryParameters(["uuid": UIDevice().uuid]))!}
     
     override class var routeType: ItemType { return .notification }
         
@@ -777,14 +760,6 @@ class Response<T>: Generic where T: Object {
         text <- map["text"]
         type <- map["type"]
         parent <- (map["_parent"], URLTransform())
-    }
-    
-    func getUrlForAvatar() -> URL? {
-        let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
-        var imageUrl = URL(string: sttt)
-        imageUrl?.appendQueryParameters(params)
-        return imageUrl
     }
     
 }

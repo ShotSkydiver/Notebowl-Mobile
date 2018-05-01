@@ -19,7 +19,7 @@ import SocketIO
 
 class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
-    @IBOutlet weak var userAvatar: UIImageView!
+    @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var postContent: UILabel!
     @IBOutlet weak var postedDate: UILabel!
@@ -65,7 +65,9 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
         postContent.text = post.text
         courseForPost.text = post.owner!.courseFullName
-        postedDate.text = post.updatedAt.relativelyFormatted
+        postedDate.text = post.createdAt.relativelyFormatted
+        
+        backgroundColor = post.pinned ? #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 0.1000000015) : UIColor(hexString: "#fdfdfd")
         
         if post.isAnonymous {
             userName.text = "Anonymous"
@@ -73,7 +75,18 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         else {
             userName.text = post.creator!.fullName
             
-            if post.creator!.resourceKey == NBClient.shared.currentUser!.resourceKey {
+            // if NBClient.shared.storedTypes[User.classIdentifier]!.first(where: { $0.})
+            
+            userAvatar.kf.setImage(with: post.creator.profileUrl,
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    // .forceTransition,
+                                    .keepCurrentImageWhileLoading
+                ]
+            )
+            
+            /*
+            if post.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                 userAvatar.image = NBClient.shared.currentUserPic
             }
             else {
@@ -81,6 +94,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
                     self.setNeedsLayout()
                 })
             }
+            */
         }
         
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
@@ -106,28 +120,22 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        postLikes.ay.startLoading()
+        // postLikes.ay.startLoading()
         
         DispatchQueue.main.async {
-
             if (!self.likeButton.isSelected) {
                 _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
-                NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.postForCell.likeFromCurrentUser!)
-                
+                // NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.postForCell.likeFromCurrentUser!)
             }
-                
             else if (self.likeButton.isSelected) {
-                let reqLike = Just.post("https://\(NBClient.shared.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
-                let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
-                NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
+                let reqLike = Just.post("https://\(NBClient.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                
+                // let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
+                // NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
             }
-            
-            
-            self.postForCell.updateLikes()
-   
-            self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
-            
-            self.postLikes.ay.stopLoading()
+            // self.postForCell.updateLikes()
+            // self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
+            // self.postLikes.ay.stopLoading()
         }
     }
     

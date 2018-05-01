@@ -138,35 +138,29 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
     }
     
     func registerSocketHandler() {
-        /*
-        NBSocket.shared.socket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            TTLog.info("socket courses: on response: ", data)
+        NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
             guard let message = data[0] as? String else { return }
             if let data = message.data(using: .utf8) {
                 do {
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    TTLog.warning("socket: mapping response")
+                    // let updateUrl: URL = URL(string: JSON["updateUrl"] as! String)!
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    TTLog.warning("socket: mapped! ", mapped)
-                    
-                    if (mapped.itemType?.contains("Enrollment"))! {
-                        self.getTableData()
-                    }
-                    else {
-                        TTLog.info("something else!")
-                        if self.tabBarController?.tabBar.selectedItem == self.tabBarController?.tabBar.items![0] {
-                            if UIWindow().visibleViewController is HomeFeedPostViewController {
-                                TTLog.info("feed post VC is visible!")
-                                // let detailVC = self.presentedViewController as? HomeFeedPostViewController
-                            }
-                            else if UIWindow().visibleViewController is HomeFeedViewController {
-                                TTLog.info("home feed is visible!")
-                                self.getTableData()
+                    if mapped.itemType!.contains("CourseUser") {
+                        let mappedEnroll = mapped as! Response<Enrollment>
+                        
+                        //TODO: WTF COUNTS AS LASTACCESSDATE AND WHY DOES IT NEVER NOT BECOME NULL
+                        if mappedEnroll.actionType != .deleted {
+                            if let courseForEnroll = (NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == mappedEnroll.updateUrl!.resourceKey }) as? Course) {
+                                courseForEnroll.refresh()
                             }
                         }
-                        else {
-                            self.needsUpdate = true
-                        }
+                        NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
+                        self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
+                        
+                        self.tableView.beginUpdates()
+                        // self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                        self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                        self.tableView.endUpdates()
                     }
                 }
                 catch let error {
@@ -174,7 +168,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
                 }
             }
         }
-        */
     }
     
     func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {

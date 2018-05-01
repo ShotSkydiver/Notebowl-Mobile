@@ -28,7 +28,7 @@
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadious">
-                                <real key="value" value="3"/>
+                                <real key="value" value="4"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -39,31 +39,31 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7D-eu-6Ki">
-                        <rect key="frame" x="72" y="11" width="322" height="17"/>
+                        <rect key="frame" x="72" y="11" width="322" height="20"/>
                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="43 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91y-cT-n0p">
-                        <rect key="frame" x="72" y="28" width="199" height="14"/>
+                        <rect key="frame" x="72" y="31" width="199" height="16"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="14" id="4mk-dd-zs4"/>
+                            <constraint firstAttribute="height" constant="16" id="4mk-dd-zs4"/>
                             <constraint firstAttribute="width" constant="199" id="EYG-1A-hvG"/>
                         </constraints>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="nVa-gT-T2T">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="nVa-gT-T2T" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="72" y="92" width="322" height="102"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="102" id="cBG-Pz-tLp"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="4"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadious">
+                                <real key="value" value="3"/>
                             </userDefinedRuntimeAttribute>
-                            <userDefinedRuntimeAttribute type="boolean" keyPath="maskToBounds" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="masksToBounds" value="YES"/>
                         </userDefinedRuntimeAttributes>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UC2-dx-Jnt" customClass="FaveButton" customModule="FaveButton">
@@ -98,7 +98,7 @@
                 <constraints>
                     <constraint firstItem="91y-cT-n0p" firstAttribute="leading" secondItem="83o-xB-MPP" secondAttribute="leading" id="1m5-qM-22s"/>
                     <constraint firstItem="nVa-gT-T2T" firstAttribute="top" secondItem="83o-xB-MPP" secondAttribute="bottom" constant="8" id="2Dt-v9-13g"/>
-                    <constraint firstItem="83o-xB-MPP" firstAttribute="top" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="13" id="6VJ-6g-knP"/>
+                    <constraint firstItem="83o-xB-MPP" firstAttribute="top" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="8" id="6VJ-6g-knP"/>
                     <constraint firstItem="Dci-7R-6eS" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="D8H-1G-X4Q"/>
                     <constraint firstItem="Dci-7R-6eS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GJz-CT-bjj"/>
                     <constraint firstItem="91y-cT-n0p" firstAttribute="top" secondItem="G7D-eu-6Ki" secondAttribute="bottom" id="I70-pM-d7S"/>
@@ -110,7 +110,7 @@
                     <constraint firstItem="UC2-dx-Jnt" firstAttribute="leading" secondItem="nVa-gT-T2T" secondAttribute="leading" id="QvU-54-ONM"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="trailing" secondItem="83o-xB-MPP" secondAttribute="trailing" id="UbI-ja-YNd"/>
                     <constraint firstItem="nVa-gT-T2T" firstAttribute="top" secondItem="83o-xB-MPP" secondAttribute="bottom" constant="8" id="WKu-kK-gWA"/>
-                    <constraint firstItem="Dci-7R-6eS" firstAttribute="bottom" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="13" id="Yyb-es-vOd"/>
+                    <constraint firstItem="Dci-7R-6eS" firstAttribute="bottom" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="8" id="Yyb-es-vOd"/>
                     <constraint firstAttribute="bottomMargin" secondItem="nVa-gT-T2T" secondAttribute="bottom" constant="35" id="hhB-G1-99Z"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="leading" secondItem="Dci-7R-6eS" secondAttribute="trailing" constant="8" id="kE1-OA-3Cc"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="mrn-SF-EbP"/>

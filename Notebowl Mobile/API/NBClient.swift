@@ -10,44 +10,62 @@ import Foundation
 import UIKit
 import ObjectMapper
 import Bugsnag
-import Kingfisher
 import Disk
 import SocketIO
 
-public class NBClient {
+class NBClient {
     
-    public static let shared = NBClient()
-    
+    static let shared: NBClient = {
+        TTLog.debug("client shared init")
+        let instance = NBClient()
+        instance.getCurrentUser()
+        instance.updateUserAvatar()
+        return instance
+    }()
     
     enum Environment: String {
         case Production = "platform.notebowl.com"
         case Staging = "demo.nbstage.com"
     }
     #if DEBUG
-    public let baseUrl = Environment.Production.rawValue
+    static let baseUrl = Environment.Production.rawValue
     #else
-    public let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
+    static let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
     #endif
- 
-    public static let defaultUrl = "https://\(NBClient.shared.baseUrl)/api/v1.0/credentials"
-    public var currentUser: User?
+    
+    static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
+    
+    private var currentUser: User!
     public var currentUserPic: UIImage!
-    public var userProfilePicURL: URL!
-    
-    // public let queue = DispatchQueue(label: "testQueue", qos: .background)
-    
+
     public var storedTypes = [ObjectIdentifier: [Object]!]()
-    // public var storedTypes = [Object: [Object]!]()
     
     private init() { }
     
-    public func getCurrentUser(force: Bool? = false) -> User {
-        NSLog("doing currentuser ")
-        if (self.currentUser == nil) || (force)! {
-            NSLog("currentuser null")
-            self.currentUser = self.getMappable(User.self)?.first
+    func getCurrentUser() -> User {
+        if currentUser == nil {
+            let req = Just.get(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
+            if req.statusCode != 200 {
+                fatalError()
+            }
+            let reqJson = (req.json as AnyObject).value(forKeyPath: "result")!
+            let map = Mapper<User>().map(JSONObject: reqJson)!
+            
+            currentUser = map
+            
+            if storedTypes[User.classIdentifier] == nil {
+                storedTypes[User.classIdentifier] = [currentUser]
+            }
+            else if storedTypes[User.classIdentifier]!.first(where: {$0.resourceKey == currentUser.resourceKey}) == nil {
+                storedTypes[User.classIdentifier]!.append(currentUser)
+            }
         }
-        return self.currentUser!
+        else {
+            if let storedUser = storedTypes[User.classIdentifier]!.first(where: { $0.resourceKey == currentUser.resourceKey }) {
+                currentUser = storedUser as! User
+            }
+        }
+        return currentUser
     }
     
     public func updateUserAvatar(image: UIImage? = nil) {
@@ -61,7 +79,7 @@ public class NBClient {
                 self.currentUserPic = localImage!
             }
             else {
-                let req = Just.get(NBClient.shared.currentUser!.profileUrl)
+                let req = Just.get(currentUser.profileUrl)
                 if req.ok {
                     TTLog.debug("userimage req ok")
                     let finalImg = UIImage(data: req.content!)
@@ -74,7 +92,7 @@ public class NBClient {
     
     public func uploadToFiles(attachment: UIImage) -> String {
         
-        let postUrl = ("https://\(NBClient.shared.baseUrl)/rpc/v1.0/files/upload")
+        let postUrl = ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload")
         let attReq = Just.post(
             postUrl,
             params: ["uuid": UIDevice().uuid],
@@ -86,10 +104,10 @@ public class NBClient {
     }
     
     public func logoutUser() {
-        let deleteReq = Just.delete(NBClient.defaultUrl, params: ["uuid": UIDevice().uuid])
+        let deleteReq = Just.delete(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
         if deleteReq.ok {
             try? Disk.remove("profilepic.jpg", from: .caches)
-            NBClient.shared.currentUser = nil
+            currentUser = nil
             UserDefaults.set(hasUserLoggedIn: false)
         }
     }
@@ -103,31 +121,27 @@ public class NBClient {
     }
     
     public func initArray<T>(from array: [T]) -> [T]? where T: Object {
+        
         var mutableArray = array
         for item in mutableArray {
             item.refresh()
         }
+        /*
         if mutableArray is [Course] {
-            TTLog.debug("mutablearray is course!")
             mutableArray.sort() { ($0 as! Course).secondsSinceGradeUpdate > ($1 as! Course).secondsSinceGradeUpdate }
         }
-        else {
-            mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
+        */
+        if mutableArray is [Comment] {
+            mutableArray.sort() { $0.secondsSinceCreation < $1.secondsSinceCreation }
         }
-        
+        else if mutableArray is [Post] {
+            mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
+        }
+        else {
+            mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
+        }
         return mutableArray
     }
-    
-    public let keyDictForStoredTypes: Dictionary<ObjectIdentifier, Object.Type> = [
-        User.classIdentifier: User.self,
-        Course.classIdentifier: Course.self,
-        Assignment.classIdentifier: Assignment.self,
-        Post.classIdentifier: Post.self,
-        Comment.classIdentifier: Comment.self,
-        Like.classIdentifier: Like.self,
-        Attachment.classIdentifier: Attachment.self,
-        Notification.classIdentifier: Notification.self
-    ]
 
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
@@ -141,38 +155,10 @@ public class NBClient {
                 userInfo:nil)
             Bugsnag.notify(exception)
         }
-        
         if r.ok {
             let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
             objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
-            
-            /*
-            if objectResult == nil || (objectResult?.isEmpty)! {
-                TTLog.debug("getmappable result nil")
-                return nil
-            }
-            for object in objectResult! {
-                if let objectExists = NBClient.shared.storedTypes[someObject.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey }) {
-                    
-                }
-            }
- 
-            if NBClient.shared.storedTypes[someObject.classIdentifier] == nil {
-                NBClient.shared.storedTypes[someObject.classIdentifier] = objectResult!
-            }
-            
-            else {
-                for object in objectResult! {
-                    // object.refresh()
-                    if NBClient.shared.storedTypes[someObject.classIdentifier]!.first(where: {$0.resourceKey == object.resourceKey}) == nil {
-                        NBClient.shared.storedTypes[someObject.classIdentifier]!.append(object)
-                    }
-                }
-            }
-            */
         }
-        
-        
         
         if (completionHandler != nil){
             completionHandler!(objectResult)

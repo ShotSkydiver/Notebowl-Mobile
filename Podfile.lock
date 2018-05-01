@@ -1,6 +1,7 @@
 PODS:
   - AyLoading (2.0.4)
-  - Bugsnag (5.15.4)
+  - BadgeControl (1.0.6)
+  - Bugsnag (5.15.5)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
   - Disk (0.3.3)
@@ -12,17 +13,21 @@ PODS:
   - InputBarAccessoryView (1.5.4)
   - Kingfisher (4.7.0)
   - MMUploadImage (2.0.8)
-  - Newly (0.3.1)
   - ObjectMapper (3.1.0)
   - RLBAlertsPickers (1.2.1)
   - Socket.IO-Client-Swift (13.1.3):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
+  - SteviaLayout (4.2.0)
   - Tamamushi (0.1.3)
-  - TLPhotoPicker (1.6.1)
+  - TLPhotoPicker (1.6.4)
+  - ViewAnimator (2.0.1)
+  - YPImagePicker (2.8.1):
+    - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
   - AyLoading (from `https://github.com/ShotSkydiver/AyLoading`)
+  - BadgeControl
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -35,15 +40,17 @@ DEPENDENCIES:
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
   - MMUploadImage
-  - Newly
   - ObjectMapper (~> 3.1)
   - RLBAlertsPickers (from `https://github.com/ShotSkydiver/Alerts-Pickers`)
   - Socket.IO-Client-Swift (~> 13.1.0)
   - Tamamushi
   - TLPhotoPicker
+  - ViewAnimator
+  - YPImagePicker
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - BadgeControl
     - Bugsnag
     - ButtonProgressBar-iOS
     - DeckTransition
@@ -54,12 +61,14 @@ SPEC REPOS:
     - InputBarAccessoryView
     - Kingfisher
     - MMUploadImage
-    - Newly
     - ObjectMapper
     - Socket.IO-Client-Swift
     - Starscream
+    - SteviaLayout
     - Tamamushi
     - TLPhotoPicker
+    - ViewAnimator
+    - YPImagePicker
 
 EXTERNAL SOURCES:
   AyLoading:
@@ -87,7 +96,8 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AyLoading: 1220f7fc210d1e3d5253eda0cde4a1cc0ea42d81
-  Bugsnag: df1d395695ddf795aa35c23ef4eaef4a04ddcffd
+  BadgeControl: 553b5f9d9afecee835a14d03079fd27fabe13dd9
+  Bugsnag: 82788750cec86630828bb7dd250943f8356c53ea
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
   Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
@@ -99,14 +109,16 @@ SPEC CHECKSUMS:
   InputBarAccessoryView: d59b2fa4b227ce58e8f61398489f80017e265739
   Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  Newly: bb5e45327fd2a9df138b2e03bf939e0d42e69e42
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
   RLBAlertsPickers: af015487d11ceb3a449978ff19afc6ac531c9572
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
-  TLPhotoPicker: 1ae4b11970eaa40c4a5ba7803f1566121e7927ef
+  TLPhotoPicker: 44614f74f08f15e636f33fca84758034b6498866
+  ViewAnimator: 0c70ee4e1dfbe9d4f129407f81db91f6948900aa
+  YPImagePicker: 7b44e0ca5e969a18e83cd3b54cec2e0cb287a40e
 
-PODFILE CHECKSUM: 7f3651b68122ce777241ec27893a26a96549c1a4
+PODFILE CHECKSUM: ba26858e0a2ab90403b83c7a472b1e91dac5d362
 
 COCOAPODS: 1.5.0
