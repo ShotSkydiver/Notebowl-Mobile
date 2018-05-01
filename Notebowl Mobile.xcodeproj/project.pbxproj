@@ -33,11 +33,6 @@
 		85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC2DE920873267007073BD /* PlaceholderTextView.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
 		85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */; };
-		85E0700C206EE3A90001A222 /* CustomCameraCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E07009206EE3A90001A222 /* CustomCameraCell.swift */; };
-		85E0700D206EE3A90001A222 /* CustomCameraCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85E0700A206EE3A90001A222 /* CustomCameraCell.xib */; };
-		85E0700E206EE3A90001A222 /* PhotoCaptureDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E0700B206EE3A90001A222 /* PhotoCaptureDelegate.swift */; };
-		85E07010206EE3E70001A222 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E0700F206EE3E70001A222 /* PreviewView.swift */; };
-		85E07012206EE5180001A222 /* CustomPhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E07011206EE5180001A222 /* CustomPhotoPickerViewController.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
@@ -96,11 +91,6 @@
 		85CC2DE920873267007073BD /* PlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
 		85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountModalViewController.swift; sourceTree = "<group>"; };
-		85E07009206EE3A90001A222 /* CustomCameraCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCameraCell.swift; sourceTree = "<group>"; };
-		85E0700A206EE3A90001A222 /* CustomCameraCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomCameraCell.xib; sourceTree = "<group>"; };
-		85E0700B206EE3A90001A222 /* PhotoCaptureDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCaptureDelegate.swift; sourceTree = "<group>"; };
-		85E0700F206EE3E70001A222 /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		85E07011206EE5180001A222 /* CustomPhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPhotoPickerViewController.swift; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* Notebowl Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Notebowl Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85E291951F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -227,11 +217,6 @@
 		85CC9BF5202B8E68001CABB0 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				85E0700F206EE3E70001A222 /* PreviewView.swift */,
-				85E07011206EE5180001A222 /* CustomPhotoPickerViewController.swift */,
-				85E07009206EE3A90001A222 /* CustomCameraCell.swift */,
-				85E0700A206EE3A90001A222 /* CustomCameraCell.xib */,
-				85E0700B206EE3A90001A222 /* PhotoCaptureDelegate.swift */,
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
 				856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */,
 				85250A0E202A1B730003A416 /* DefaultPreferences.plist */,
@@ -357,6 +342,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.NearFieldCommunicationTagReading = {
+								enabled = 0;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -398,7 +386,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */,
-				85E0700D206EE3A90001A222 /* CustomCameraCell.xib in Resources */,
 				85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */,
 				85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */,
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
@@ -451,12 +438,9 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AyLoading/AyLoading.framework",
-				"${BUILT_PRODUCTS_DIR}/BadgeControl/BadgeControl.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/ButtonProgressBar-iOS/ButtonProgressBar_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/DeckTransition/DeckTransition.framework",
-				"${BUILT_PRODUCTS_DIR}/Disk/Disk.framework",
 				"${BUILT_PRODUCTS_DIR}/FaceAware/FaceAware.framework",
 				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
 				"${BUILT_PRODUCTS_DIR}/FeedbackSlack/FeedbackSlack.framework",
@@ -469,20 +453,13 @@
 				"${BUILT_PRODUCTS_DIR}/RLBAlertsPickers/RLBAlertsPickers.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
-				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
-				"${BUILT_PRODUCTS_DIR}/TLPhotoPicker/TLPhotoPicker.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
-				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
-				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AyLoading.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BadgeControl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ButtonProgressBar_iOS.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeckTransition.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Disk.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaceAware.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FeedbackSlack.framework",
@@ -495,11 +472,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RLBAlertsPickers.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TLPhotoPicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -524,12 +497,10 @@
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
 				853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */,
-				85E07012206EE5180001A222 /* CustomPhotoPickerViewController.swift in Sources */,
 				85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */,
 				85C5EA99208793A0005B8A22 /* NBSocket.swift in Sources */,
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
-				85E07010206EE3E70001A222 /* PreviewView.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
 				85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
@@ -537,10 +508,8 @@
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */,
-				85E0700E206EE3A90001A222 /* PhotoCaptureDelegate.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,
-				85E0700C206EE3A90001A222 /* CustomCameraCell.swift in Sources */,
 				85689C502077F154003FF721 /* CreateNewPostViewController.swift in Sources */,
 				85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */,
 				85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */,
@@ -627,7 +596,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -662,7 +631,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = TestFlight;
 		};
@@ -747,7 +716,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -784,7 +753,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Staging;
 		};
@@ -869,7 +838,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -901,12 +870,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "27fff1c4-2fc1-42d5-8b0a-cf2f5d0cf2e9";
+				PROVISIONING_PROFILE = "b688d251-72c5-4838-86fc-28607af256ca";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Prod;
 		};
@@ -991,7 +960,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1044,7 +1013,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -1075,12 +1044,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "27fff1c4-2fc1-42d5-8b0a-cf2f5d0cf2e9";
+				PROVISIONING_PROFILE = "b688d251-72c5-4838-86fc-28607af256ca";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1111,7 +1080,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

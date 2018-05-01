@@ -11,7 +11,6 @@ import UIKit
 import QuartzCore
 import ObjectMapper
 import SocketIO
-import BadgeControl
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     

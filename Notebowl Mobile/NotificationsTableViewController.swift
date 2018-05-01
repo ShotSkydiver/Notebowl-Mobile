@@ -13,16 +13,13 @@ import Kingfisher
 import HGPlaceholders
 import QuartzCore
 import Tamamushi
-import BadgeControl
 
 class NotificationsTableViewController: UITableViewController, PlaceholderDelegate {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
     var placeholderTableView: TableView?
-    
-    var badge: BadgeController!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loadingView = NBLoadingView()

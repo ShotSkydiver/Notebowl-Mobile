@@ -20,7 +20,6 @@ protocol ContainerToMaster {
 }
 
 class AccountModalViewController: UIViewController, ContainerToMaster {
-    //var currentUser: User!
     
     @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -39,7 +38,6 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         modalPresentationCapturesStatusBarAppearance = true
         self.setNeedsStatusBarAppearanceUpdate()
         
-        //currentUser = NBClient.shared.getCurrentUser()
         updateInfo()
  
         profilePicture.style = .wave
@@ -140,6 +138,7 @@ class AccountModalTableViewController: UITableViewController {
     
     func setupMenuForAlert() {
         let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
         //PHPhotoLibrary.requestAuthorization({ (auth) in
         //    TTLog.debug("authstatus: ", auth)
         //})
@@ -168,8 +167,14 @@ class AccountModalTableViewController: UITableViewController {
         }
         menu.addAction(takePhoto)
         menu.addAction(choosePhoto)
-        menu.addAction(removePhoto)
+        // menu.addAction(removePhoto)
         menu.addAction(cancel)
+        
+        if let popoverController = menu.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
         
         self.present(menu, animated: true, completion: nil)
     }

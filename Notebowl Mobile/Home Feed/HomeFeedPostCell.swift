@@ -12,7 +12,6 @@ import Foundation
 import UIKit
 import Kingfisher
 import FaveButton
-import AyLoading
 import Haptica
 import ObjectMapper
 import SocketIO

@@ -379,7 +379,7 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="masksToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <containerView opaque="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
                                 <rect key="frame" x="-1" y="275" width="415" height="462"/>
                                 <connections>
                                     <segue destination="Uj0-lf-bbg" kind="embed" identifier="modalEmbedSegue" id="76K-cC-xfv"/>
@@ -400,7 +400,6 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="wDo-wn-hmU" firstAttribute="top" secondItem="GhE-Kp-WMQ" secondAttribute="top" constant="58" id="31P-ml-qok"/>
-                            <constraint firstItem="H4c-aE-x18" firstAttribute="leading" secondItem="GhE-Kp-WMQ" secondAttribute="leading" constant="315" id="36n-oZ-Ff0"/>
                             <constraint firstItem="8eD-xA-dGG" firstAttribute="top" secondItem="51f-BM-76n" secondAttribute="bottom" constant="1" id="I7b-Zh-SZq"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="trailing" secondItem="8eD-xA-dGG" secondAttribute="trailing" id="OCU-Bn-Ubi"/>
                             <constraint firstItem="DF6-VU-Tez" firstAttribute="bottom" secondItem="GhE-Kp-WMQ" secondAttribute="bottom" constant="1" id="OqV-kd-KBs"/>
@@ -410,7 +409,7 @@
                             <constraint firstItem="wDo-wn-hmU" firstAttribute="centerX" secondItem="51f-BM-76n" secondAttribute="centerX" id="cO0-oJ-Yjl"/>
                             <constraint firstItem="DF6-VU-Tez" firstAttribute="top" secondItem="8eD-xA-dGG" secondAttribute="bottom" constant="18" id="frE-Sa-ZNd"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="top" secondItem="wDo-wn-hmU" secondAttribute="bottom" constant="14" id="k6L-2F-t5s"/>
-                            <constraint firstItem="H4c-aE-x18" firstAttribute="trailing" secondItem="51f-BM-76n" secondAttribute="trailing" id="m0z-WI-Mmj"/>
+                            <constraint firstItem="H4c-aE-x18" firstAttribute="trailing" secondItem="GhE-Kp-WMQ" secondAttribute="trailing" constant="-20" id="m0z-WI-Mmj"/>
                             <constraint firstAttribute="trailing" secondItem="DF6-VU-Tez" secondAttribute="trailing" id="pDg-CC-FNY"/>
                             <constraint firstItem="H4c-aE-x18" firstAttribute="top" secondItem="GhE-Kp-WMQ" secondAttribute="top" constant="12" id="s7l-Fb-oE9"/>
                             <constraint firstItem="51f-BM-76n" firstAttribute="leading" secondItem="wb6-PP-gt4" secondAttribute="leadingMargin" id="ymJ-xb-A7j"/>

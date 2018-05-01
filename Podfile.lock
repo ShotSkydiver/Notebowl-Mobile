@@ -1,10 +1,7 @@
 PODS:
-  - AyLoading (2.0.4)
-  - BadgeControl (1.0.6)
   - Bugsnag (5.15.5)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
-  - Disk (0.3.3)
   - FaceAware (1.2.0)
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
@@ -18,20 +15,12 @@ PODS:
   - Socket.IO-Client-Swift (13.1.3):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
-  - SteviaLayout (4.2.0)
   - Tamamushi (0.1.3)
-  - TLPhotoPicker (1.6.4)
-  - ViewAnimator (2.0.1)
-  - YPImagePicker (2.8.1):
-    - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
-  - AyLoading (from `https://github.com/ShotSkydiver/AyLoading`)
-  - BadgeControl
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
-  - Disk (~> 0.3.3)
   - FaceAware
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
@@ -44,17 +33,12 @@ DEPENDENCIES:
   - RLBAlertsPickers (from `https://github.com/ShotSkydiver/Alerts-Pickers`)
   - Socket.IO-Client-Swift (~> 13.1.0)
   - Tamamushi
-  - TLPhotoPicker
-  - ViewAnimator
-  - YPImagePicker
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
-    - BadgeControl
     - Bugsnag
     - ButtonProgressBar-iOS
     - DeckTransition
-    - Disk
     - FaceAware
     - Haptica
     - HGPlaceholders
@@ -64,15 +48,9 @@ SPEC REPOS:
     - ObjectMapper
     - Socket.IO-Client-Swift
     - Starscream
-    - SteviaLayout
     - Tamamushi
-    - TLPhotoPicker
-    - ViewAnimator
-    - YPImagePicker
 
 EXTERNAL SOURCES:
-  AyLoading:
-    :git: https://github.com/ShotSkydiver/AyLoading
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
@@ -81,9 +59,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ShotSkydiver/Alerts-Pickers
 
 CHECKOUT OPTIONS:
-  AyLoading:
-    :commit: a2142f6721dfcdfd0ccbeb272fb31599d9eb5955
-    :git: https://github.com/ShotSkydiver/AyLoading
   FaveButton:
     :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
@@ -95,12 +70,9 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ShotSkydiver/Alerts-Pickers
 
 SPEC CHECKSUMS:
-  AyLoading: 1220f7fc210d1e3d5253eda0cde4a1cc0ea42d81
-  BadgeControl: 553b5f9d9afecee835a14d03079fd27fabe13dd9
   Bugsnag: 82788750cec86630828bb7dd250943f8356c53ea
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
-  Disk: d1f55cd61f6ca20f368232d0c6e37e3c3dfcb63e
   FaceAware: 421436f9d16aacdb26ffcf8e5a39a1dd68630395
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
@@ -113,12 +85,8 @@ SPEC CHECKSUMS:
   RLBAlertsPickers: af015487d11ceb3a449978ff19afc6ac531c9572
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
-  TLPhotoPicker: 44614f74f08f15e636f33fca84758034b6498866
-  ViewAnimator: 0c70ee4e1dfbe9d4f129407f81db91f6948900aa
-  YPImagePicker: 7b44e0ca5e969a18e83cd3b54cec2e0cb287a40e
 
-PODFILE CHECKSUM: ba26858e0a2ab90403b83c7a472b1e91dac5d362
+PODFILE CHECKSUM: 05f88b8af48a2d644c9af33a3c7c5d7628148dba
 
 COCOAPODS: 1.5.0

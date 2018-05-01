@@ -14,7 +14,6 @@ import QuartzCore
 import SocketIO
 import ObjectMapper
 import Tamamushi
-import BadgeControl
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     var posts: [Post]!
@@ -33,8 +32,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
-        
-        // profileImage = NBClient.shared.currentUserPic
         
         HomeFeedWritePostCell.register(in: bulletinTableView)
         HomeFeedPostCell.register(in: bulletinTableView)
@@ -157,6 +154,19 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                     for course in self.courses {
                         if NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == course.resourceKey}) == nil {
                             NBClient.shared.storedTypes[Course.classIdentifier]!.append(course)
+                        }
+                    }
+                }
+                // self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
+                let categories: [Category]! = NBClient.shared.initArray(from: NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.courses))\"]")!)
+                
+                if NBClient.shared.storedTypes[Category.classIdentifier] == nil {
+                    NBClient.shared.storedTypes[Category.classIdentifier] = categories
+                }
+                else {
+                    for category in categories {
+                        if NBClient.shared.storedTypes[Category.classIdentifier]!.first(where: {$0.resourceKey == category.resourceKey}) == nil {
+                            NBClient.shared.storedTypes[Category.classIdentifier]!.append(category)
                         }
                     }
                 }

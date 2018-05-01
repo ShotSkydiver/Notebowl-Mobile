@@ -17,11 +17,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        /*
+        #if DEBUG
         FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
             "Bug",
             "Question",
             "Looks good!"
             ])
+        #else
+        #endif
+        */
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
         defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")

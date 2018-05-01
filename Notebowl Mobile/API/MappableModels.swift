@@ -304,6 +304,7 @@ class Response<T>: Generic where T: Object {
         if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
             enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent!.resourceKey == self.resourceKey }) as? Enrollment
             
+            
             /*
             if enrollmentForUser.lastAccessDate != nil {
                 self.lastUpdated = ("last accessed " + enrollmentForUser.lastAccessDate!.relativelyFormatted)

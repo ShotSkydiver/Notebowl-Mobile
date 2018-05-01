@@ -158,11 +158,9 @@ open class ProgressWebViewController: UIViewController {
             }
         }
         
-        if #available(iOS 11.0, *) {
-            webView?.scrollView.contentInsetAdjustmentBehavior = .never
-        } else {
-            webView?.scrollView.isScrollEnabled = false
-        }
+     
+        webView?.scrollView.contentInsetAdjustmentBehavior = .never
+        
         
         if let url = url {
             load(url)

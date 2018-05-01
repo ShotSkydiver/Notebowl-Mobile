@@ -1,4 +1,4 @@
-platform :ios, '10.0'
+platform :ios, '11.0'
 
 target 'Notebowl Mobile' do
   use_frameworks!
@@ -9,21 +9,15 @@ target 'Notebowl Mobile' do
     pod 'HGPlaceholders'
     pod 'Bugsnag'
     pod 'InputBarAccessoryView'
-    pod 'AyLoading', :git => 'https://github.com/ShotSkydiver/AyLoading'
     pod 'DeckTransition', '~> 2.0'
     pod 'MMUploadImage'
-    pod 'Disk', '~> 0.3.3'
     pod 'FaceAware'
-    pod 'TLPhotoPicker'
     pod 'Haptica'
     pod 'ButtonProgressBar-iOS'
     pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
     pod 'RLBAlertsPickers', :git => 'https://github.com/ShotSkydiver/Alerts-Pickers'
     pod 'Tamamushi'
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
-    pod 'ViewAnimator'
-    pod 'YPImagePicker'
-    pod 'BadgeControl'
 end
 
 post_install do |installer|

@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import AyLoading
 import InputBarAccessoryView
 import ObjectMapper
 import SocketIO

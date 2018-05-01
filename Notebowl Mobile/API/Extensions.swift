@@ -11,7 +11,6 @@ import UIKit
 import ObjectMapper
 import HGPlaceholders
 import Bugsnag
-import TLPhotoPicker
 import Kingfisher
 
 enum CodingError : Error {
@@ -392,15 +391,6 @@ public extension UIImageView {
         self.layer.addSublayer(shapeLayer)
     }
     
-}
-
-extension TLPhotosPickerViewController {
-   
-    func wrapNavigationControllerWithoutBar() -> UINavigationController {
-        let navController = UINavigationController(rootViewController: self)
-        navController.navigationBar.isHidden = true
-        return navController
-    }
 }
 
 extension Double {

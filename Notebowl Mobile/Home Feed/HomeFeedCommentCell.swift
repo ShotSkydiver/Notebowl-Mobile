@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import Kingfisher
-import AyLoading
 import FaveButton
 import Haptica
 import ObjectMapper

@@ -177,6 +177,13 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 self.pinnedButton.isEnabled = (self.selectedCourse.enrollmentForUser?.role.contains("Professor"))!
             }
             alert.addAction(title: "Done", style: .cancel)
+            
+            if let popoverController = alert.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            
             self.present(alert, animated: true, completion: nil)
         }
         
@@ -212,25 +219,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    func imageFromAsset(asset: PHAsset) -> UIImage? {
-        let manager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        var theImage: UIImage?
-        
-        options.isSynchronous = true
-        // options.deliveryMode = .highQualityFormat
-        options.version = .original
-        
-        manager.requestImageData(for: asset, options: options) { (imageData, someString, imageOrientation, imageInfo) in
-            TTLog.debug("requestimagedata result: ", imageInfo)
-            if let data = imageData {
-                theImage = UIImage(data: data)
-            }
-        }
-        return theImage
-    }
-    
-    
     @objc func postButtonTapped() {
         postTextView.resignFirstResponder()
         TTLog.debug("begin postbuttontapped")
@@ -256,12 +244,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         
         TTLog.debug("do dismiss")
-        /*
-        let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-        let tabbarViewController = rootViewController.presentedViewController as! MainTabBarViewController
-        let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
-        let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
-        */
+
         self.dismiss(animated: true, completion: {
             // self.postTextView.resignFirstResponder()
             // homeViewController.getPosts()
@@ -283,9 +266,7 @@ extension CreateNewPostViewController: UIImagePickerControllerDelegate, UINaviga
             if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
                 TTLog.debug("imagepicker dismissed")
                 self.attachmentManager.handleInput(of: pickedImage)
-                
-                
-                
+        
             }
         })
     }

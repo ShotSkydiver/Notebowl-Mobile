@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import ObjectMapper
 import Bugsnag
-import Disk
 import SocketIO
 
 class NBClient {
@@ -19,7 +18,6 @@ class NBClient {
         TTLog.debug("client shared init")
         let instance = NBClient()
         instance.getCurrentUser()
-        instance.updateUserAvatar()
         return instance
     }()
     
@@ -68,28 +66,6 @@ class NBClient {
         return currentUser
     }
     
-    public func updateUserAvatar(image: UIImage? = nil) {
-        if image != nil {
-            self.currentUserPic = image!
-            try? Disk.save(image!, to: .caches, as: "profilepic.jpg")
-        }
-        else if image == nil {
-            if Disk.exists("profilepic.jpg", in: .caches) {
-                let localImage = try? Disk.retrieve("profilepic.jpg", from: .caches, as: UIImage.self)
-                self.currentUserPic = localImage!
-            }
-            else {
-                let req = Just.get(currentUser.profileUrl)
-                if req.ok {
-                    TTLog.debug("userimage req ok")
-                    let finalImg = UIImage(data: req.content!)
-                    self.currentUserPic = finalImg!
-                    try? Disk.save(finalImg!, to: .caches, as: "profilepic.jpg")
-                }
-            }
-        }
-    }
-    
     public func uploadToFiles(attachment: UIImage) -> String {
         
         let postUrl = ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload")
@@ -106,7 +82,6 @@ class NBClient {
     public func logoutUser() {
         let deleteReq = Just.delete(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
         if deleteReq.ok {
-            try? Disk.remove("profilepic.jpg", from: .caches)
             currentUser = nil
             UserDefaults.set(hasUserLoggedIn: false)
         }
