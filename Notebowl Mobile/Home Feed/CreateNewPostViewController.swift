@@ -27,7 +27,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
-        // bar.delegate = self
         return bar
     }()
     
@@ -44,17 +43,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     var coursePickerButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
     var pinnedButton: InputBarButtonItem!
-    
-    /*
-    override var inputAccessoryView: UIView? {
-        return bar
-    }
-    */
+
     override var canBecomeFirstResponder: Bool {
         return true
     }
 
-    
     var viewIsLoaded = false
     var currentAvatar: UIImage!
     var coursesForPicker: [Course]!
@@ -83,8 +76,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                                 .keepCurrentImageWhileLoading
             ]
         )
-        
-        // userAvatar.image = currentAvatar
         // userAvatar.focusOnFaces = true
         // userAvatar.contentMode = .scaleAspectFill
         
@@ -92,7 +83,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         
         postTextView.delegate = self
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -103,7 +93,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         TTLog.debug("shouldbeginediting")
-        // textView.inputAccessoryView = bar
         return true
     }
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -114,16 +103,13 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     func textViewDidChange(_ textView: UITextView) {
         TTLog.debug("didchange")
-        // self.cameraButton.isEnabled = textView.text.isEmpty
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
     
-    
     func setupInputBar() {
-        TTLog.debug("setupinputbar")
         bar.inputManagers = [attachmentManager]
         // reloadInputViews()
         
@@ -136,7 +122,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         bar.padding = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         
         bar.invalidateIntrinsicContentSize()
-        
         
         photoLibraryButton = makeButton(image: "add_library-vector")
         photoLibraryButton.onSelected { libButton in
@@ -187,10 +172,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.present(alert, animated: true, completion: nil)
         }
         
-        anonymousButton = makeButton(image: "public-vector")
+        anonymousButton = makeButton(image: "hide-vector")
+        anonymousButton.configure {
+            $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+            
+        }
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
-            anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
+            anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "pin-vector")
         pinnedButton.onSelected { pinButton in
@@ -199,11 +188,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         pinnedButton.isEnabled = (selectedCourse.enrollmentForUser?.role.contains("Professor"))!
         
-        // bar.setLeftStackViewWidthConstant(to: 58, animated: viewIsLoaded)
-        // bar.setRightStackViewWidthConstant(to: 38, animated: viewIsLoaded)
-        
         bar.setStackViewItems([photoLibraryButton,cameraButton,InputBarButtonItem.flexibleSpace,coursePickerButton,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
-        // bar.setStackViewItems([bar.sendButton,InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: viewIsLoaded)
         
         bar.isTranslucent = true
     }
@@ -214,14 +199,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 $0.spacing = .fixed(10)
                 $0.image = UIImage(named: image)!.filled(withColor: (UIImage().createGradientImage(size: 70).gradientColor)).withRenderingMode(.alwaysOriginal)
                 $0.setSize(CGSize(width: 30, height: 30), animated: viewIsLoaded)
-                // $0.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-                
         }
     }
     
     @objc func postButtonTapped() {
         postTextView.resignFirstResponder()
-        TTLog.debug("begin postbuttontapped")
         self.postButtonBarItem.postButton.startIndeterminate()
         // self.postButtonBarItem.postButton.setProgress(progress: 0.0, true)
         DispatchQueue.main.async(qos: .background, flags: []) {
@@ -242,8 +224,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 self.postButtonBarItem.postButton.triggerCompletion()
             }
         }
-        
-        TTLog.debug("do dismiss")
 
         self.dismiss(animated: true, completion: {
             // self.postTextView.resignFirstResponder()
@@ -260,13 +240,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 extension CreateNewPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        TTLog.debug("finishpickingmedia")
-    
         dismiss(animated: true, completion: {
             if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                TTLog.debug("imagepicker dismissed")
                 self.attachmentManager.handleInput(of: pickedImage)
-        
             }
         })
     }
@@ -275,7 +251,6 @@ extension CreateNewPostViewController: UIImagePickerControllerDelegate, UINaviga
 extension CreateNewPostViewController: AttachmentManagerDelegate {
     
     func setAttachmentManager(active: Bool) {
-        
         let topStackView = bar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
@@ -296,7 +271,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate {
     
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
         setAttachmentManager(active: shouldBecomeVisible)
-        
     }
 
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
@@ -304,7 +278,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate {
     }
     
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        // self.postButtonBarItem.isEnabled = manager.attachments.count > 0
         switch attachment {
         case .image(let image):
             self.postButtonBarItem.postButton.startIndeterminate(withTimePeriod: 0.7, andTimePadding: 0.2)
@@ -319,17 +292,12 @@ extension CreateNewPostViewController: AttachmentManagerDelegate {
         default:
             print("nope")
         }
-        
-        
-        
-        
     }
     
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         // self.postButtonBarItem.isEnabled = manager.attachments.count > 0
     }
 }
-
 
 class PostButtonNavigationItem: UIBarButtonItem {
     

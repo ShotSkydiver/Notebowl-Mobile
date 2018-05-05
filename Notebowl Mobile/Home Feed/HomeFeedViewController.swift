@@ -20,10 +20,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     var courses: [Course]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
-    // var profileImage: UIImage!
-    
-    var viewIsLoaded = false
-    var needsUpdate = false
     
     @IBOutlet var bulletinTableView: HomeTableView!
     
@@ -45,14 +41,12 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         self.getPosts()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         TTLog.info("viewdidappear")
         TTLog.socket("registered handlers: ", NBSocket.shared.manager.defaultSocket.handlers.count)
-        
     }
    
     func tempLoadingViewSetup() {
@@ -74,7 +68,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         navigationController?.navigationBar.layer.masksToBounds = false
         
         self.view.layer.masksToBounds = false
-
     }
     
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {
@@ -122,8 +115,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         self.bgView.showViewAnimated(true)
 
         DispatchQueue.main.async {
-            TTLog.testing("async homefeed update begin")
-    
             if (self.courses == nil) || (self.courses.isEmpty) {
                 
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
@@ -144,7 +135,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                         resourceKeys = (resourceKeys + enrollment.parent!.url.absoluteURL.lastPathComponent + ",")
                     }
                 }
-                
                 self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
                 
                 if NBClient.shared.storedTypes[Course.classIdentifier] == nil {
@@ -157,7 +147,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                         }
                     }
                 }
-                // self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
                 let categories: [Category]! = NBClient.shared.initArray(from: NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.courses))\"]")!)
                 
                 if NBClient.shared.storedTypes[Category.classIdentifier] == nil {
@@ -171,26 +160,16 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                     }
                 }
             }
-            
             self.getData()
-            
             self.bulletinTableView.reloadData()
-           
-            if !self.viewIsLoaded {
-                self.viewIsLoaded = true
-            }
-            
+   
             self.loadOtherTabs()
-            
-            TTLog.testing("async homefeed update end")
-            
+
             self.bgView.showViewAnimated(false)
-        
         }
     }
     
     func getData() {
-        
         self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
         if NBClient.shared.storedTypes[Post.classIdentifier] == nil {
             NBClient.shared.storedTypes[Post.classIdentifier] = self.posts
@@ -240,9 +219,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                 }
             }
         }
-        
         self.posts = NBClient.shared.initArray(from: self.posts)
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -264,7 +241,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            // destVC.currentAvatar = self.profileImage
             destVC.coursesForPicker = self.courses
             destVC.selectedCourse = self.courses.first!
         }
@@ -273,30 +249,30 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
-    
-    
+
     func registerSocketHandler() {
-        
         NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            TTLog.info("socket: on response: ", data)
             guard let message = data[0] as? String else { return }
             if let data = message.data(using: .utf8) {
                 do {
+                    
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    TTLog.warning("socket: mapped! ", mapped)
                     
                     if (mapped.itemType?.contains("Post"))! {
                         let mappedPost = mapped as! Response<Post>
                         let indexOfPost = self.posts.index(of: mappedPost.updateUrl!)
-                        
-                        var sorting = NBClient.shared.storedTypes[Post.classIdentifier] as! [Post]
-                        sorting.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
+                        /*
+                        var sorting = (NBClient.shared.storedTypes[Post.classIdentifier] as! [Post])
                         NBClient.shared.storedTypes[Post.classIdentifier] = sorting
                         self.posts = NBClient.shared.storedTypes[Post.classIdentifier] as! [Post]
+                        */
+                        
+                        // TODO: DOES THIS CODE ACTUALLY CORRECTLY UPDATE THE CACHED POSTS???
+                        NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
+                        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
                         
                         if mappedPost.actionType == .updated {
-                            
                             self.bulletinTableView.beginUpdates()
                             self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                             self.bulletinTableView.endUpdates()
@@ -332,7 +308,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                             self.bulletinTableView.endUpdates()
                         }
                     }
-                        
                     else if (mapped.itemType?.contains("Like"))! {
                         let mappedLike = mapped as! Response<Like>
                         var indexOfPost: Int?
@@ -370,21 +345,12 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                         
                     else if (mapped.itemType?.contains("User"))! {
                         let mappedUser = mapped as! Response<User>
-                        
-                        // let postsByUser = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({ ($0 as! Post).creator.resourceKey == mappedUser.updateUrl!.resourceKey }) as! [Post]
-                        // for post in postsByUser {
                         for post in self.posts {
-                            // post.creator = mappedUser.updateUrl!
                             post.refresh()
                         }
-                        
                         if mappedUser.updateUrl!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                             // NBClient.shared.getCurrentUser()
                         }
-                        else {
-                            
-                        }
-                        
                         self.bulletinTableView.beginUpdates()
                         self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                         self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
@@ -394,7 +360,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                     else if (mapped.itemType?.contains("CourseUser"))! {
                         let mappedEnrollment = mapped as! Response<Enrollment>
                         if mappedEnrollment.updateUrl!.parent!.firstTimeLoading {
-                            TTLog.debug("first time!")
                             let loadingView2 = NBLoadingView()
                             UIApplication.shared.keyWindow?.addSubview(loadingView2)
                             loadingView2.addUntitled2Animation()
@@ -412,11 +377,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                             mappedEnrollment.updateUrl!.parent!.refresh()
   
                         }
-
-                        if mappedEnrollment.actionType == .updated {
-
-                        }
-                        else if mappedEnrollment.actionType == .deleted {
+                        if mappedEnrollment.actionType == .deleted {
                             NBClient.shared.storedTypes[Course.classIdentifier]!.removeAll(mappedEnrollment.updateUrl!.parent!)
                             
                             let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner.resourceKey == mappedEnrollment.updateUrl!.parent!.resourceKey }) as! [Post]
@@ -445,7 +406,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
                 }
             }
         }
-        
     }
 }
 
@@ -462,7 +422,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             self.performSegue(withIdentifier: "createPostSegue", sender: nil)
         }
-        
         else if indexPath.section == 1 {
             self.performSegue(withIdentifier: "postDetailSegue", sender: tableView.cellForRow(at: indexPath) as! HomeFeedPostCell)
         }
@@ -471,17 +430,14 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = HomeFeedWritePostCell.dequeue(from: tableView)!
-            
-            // cell.userAvatar.kf.indicatorType = .activity
-            // cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl, placeholder: nil, options: [.transition(.fade(0.4))])
+
             cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                         options: [
                             .transition(ImageTransition.fade(0.3)),
-                            .forceTransition,
+                            // .forceTransition,
                             .keepCurrentImageWhileLoading
                 ]
             )
-            // cell.userAvatar.focusOnFaces = true
             cell.userAvatar.contentMode = .scaleAspectFill
             
             return cell
@@ -489,18 +445,15 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         else {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
             let post = self.posts[indexPath.row]
-            
             cell.configure(post: post)
             return cell
         }
     }
 }
 
-
 class NotebowlLogoNavigationItem: UINavigationItem {
     
     let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
-    
     private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
     private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
     
@@ -508,11 +461,9 @@ class NotebowlLogoNavigationItem: UINavigationItem {
         super.init(coder: aDecoder)
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.image = nbLogo
-        
-        // logoImageView.
+
         logoContainer.addSubview(logoImageView)
         self.titleView = logoContainer
-        // logoContainer.centerYAnchor
     }
 }
 

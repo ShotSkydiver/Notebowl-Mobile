@@ -11,22 +11,27 @@ import UserNotifications
 import Bugsnag
 import FeedbackSlack
 import Tamamushi
+import ObjectMapper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    
+    var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        /*
-        #if DEBUG
+        
+        // #if DEBUG
+        
         FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
             "Bug",
             "Question",
             "Looks good!"
             ])
-        #else
-        #endif
-        */
+ 
+        // #else
+        // #endif
+ 
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
         defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
@@ -93,12 +98,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) {
         TTLog.debug("resignactive!")
     }
+    
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         TTLog.debug("in background!")
+        NBSocket.shared.manager.disconnect()
+        
+        disconnectDate = Date()
     }
     func applicationWillEnterForeground(_ application: UIApplication) {
         TTLog.debug("enter foreground!")
+        NBSocket.shared.manager.connect()
+        let formatter = DateFormatter.iso8061
+        let dateString = formatter.string(from: self.disconnectDate)
+        var reconnectUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/operations/reconnect"))?.appendingQueryParameters(["since": dateString,"uuid": UIDevice().uuid]))!}
+        let recReq = Just.get(reconnectUrl)
+        let nestedData = try? JSONSerialization.data(withJSONObject: (recReq.json as AnyObject).value(forKeyPath: "result")!)
+        let result = Mapper<Generic>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
     }
+    
+    
     func applicationWillTerminate(_ application: UIApplication) {
         TTLog.debug("will terminate!")
     }

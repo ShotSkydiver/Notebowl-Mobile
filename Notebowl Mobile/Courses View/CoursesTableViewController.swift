@@ -18,7 +18,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
     var loadingView: NBLoadingView!
     var bgView: UIView!
     var placeholderTableView: TableView?
-    var needsUpdate = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,15 +38,10 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if self.needsUpdate {
-            getTableData(animated: true)
-            self.needsUpdate = false
-        }
     }
     
     func setupNavBar() {
         navigationController?.navigationBar.shadowImage = UIImage.init()
-        
         navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
         navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         navigationController?.navigationBar.layer.shadowRadius = 7.5
@@ -55,7 +49,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
         navigationController?.navigationBar.layer.masksToBounds = false
         
         self.view.layer.masksToBounds = false
-        
     }
     
     func getTableData(animated: Bool? = false) {
@@ -63,55 +56,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
             self.loadingView.showLoadView(true)
             self.bgView.showViewAnimated(true)
         }
-        
-        // NBClient.shared.queue.async {
-        // DispatchQueue.global(qos: .background).async {
         DispatchQueue.main.async {
-            TTLog.error("async courses update begin")
-            
-            // let enrollments = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter({ ($0 as! Enrollment).parent. == self.url }) as! [Comment]
-            // let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
-            
-            
-            /*
-            var cachedCourses = [Course]()
-            var resourceKeys: String = ""
-            for enrollment in enrollments {
-                if enrollment.statusIsAccepted {
-                    if let objectExists = NBClient.shared.storedTypes[Course.classIdentifier]?.first(where: {$0.resourceKey == enrollment.parent!.resourceKey }) {
-                        print("course exists!")
-                        cachedCourses.append((objectExists as! Course))
-                    }
-                    else {
-                        print("course doesn't exist!")
-                        resourceKeys = (resourceKeys + enrollment.parent!.resourceKey + ",")
-                    }
-                }
-            }
-            if resourceKeys.count > 3 {
-                
-            }
-            self.courses = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")
-            self.courses.append(contentsOf: cachedCourses)
-            */
-            
-            /*
-            for enrollment in enrollments {
-                for course in self.courses {
-                    if enrollment.parent!.resourceKey == course.resourceKey {
-                        if enrollment.lastAccessDate != nil {
-                            course.lastUpdated = ("last accessed" + enrollment.lastAccessDate!.relativelyFormatted)
-                            course.secondsSinceGradeUpdate = enrollment.lastAccessDate!.timeIntervalSinceReferenceDate
-                        }
-                        else {
-                            course.lastUpdated = "never accessed"
-                            course.secondsSinceGradeUpdate = course.secondsSinceUpdate
-                        }
-                    }
-                }
-            }
-            */
-            
             if self.courses == nil {
                 TTLog.error("this shouldn't be nil!")
                 if NBClient.shared.storedTypes[Course.classIdentifier]! != nil {
@@ -119,21 +64,13 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
                 }
                 else {
                     TTLog.error("courses stored cache is nil!")
-                    
                 }
             }
-            
-            
-            // .filter({ ($0 as! Enrollment).parent. == self.url }) as! [Comment]
-            
-            // self.courses.sort() { $0.secondsSinceGradeUpdate > $1.secondsSinceGradeUpdate }
             self.tableView.reloadData()
             
-            // DispatchQueue.main.async {
             if animated! {
                 self.bgView.showViewAnimated(false)
             }
-            // }
         }
     }
     
@@ -143,7 +80,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
             if let data = message.data(using: .utf8) {
                 do {
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    // let updateUrl: URL = URL(string: JSON["updateUrl"] as! String)!
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
                     if mapped.itemType!.contains("CourseUser") {
                         let mappedEnroll = mapped as! Response<Enrollment>

@@ -80,6 +80,8 @@ class NBClient {
     }
     
     public func logoutUser() {
+        NBSocket.shared.manager.defaultSocket.removeAllHandlers()
+        NBSocket.shared.manager.disconnect()
         let deleteReq = Just.delete(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
         if deleteReq.ok {
             currentUser = nil

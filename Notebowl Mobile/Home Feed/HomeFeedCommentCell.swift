@@ -12,6 +12,7 @@ import Kingfisher
 import FaveButton
 import Haptica
 import ObjectMapper
+import NVActivityIndicatorView
 
 class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     
@@ -20,6 +21,7 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var commentContent: UILabel!
     @IBOutlet weak var commentAttachments: ProfileImageView!
     @IBOutlet weak var commentLikes: UILabel!
+    @IBOutlet weak var likeRefresh: NVActivityIndicatorView!
     @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var heightConst: NSLayoutConstraint!
@@ -33,7 +35,6 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
     
     override func prepareForReuse() {
@@ -50,6 +51,10 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
     
     func configure(comment: Comment) {
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
+        if likeRefresh.isAnimating {
+            likeRefresh.stopAnimating()
+            commentLikes.showViewAnimated(true)
+        }
         commentLikes.text = comment.commentLikes.isEmpty ? "0" : "\(comment.commentLikes.count)"
         commentContent.text = comment.text
         postedDate.text = comment.createdAt.relativelyFormatted
@@ -59,7 +64,6 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         }
         else {
             userName.text = comment.creator!.fullName
-            
             userAvatar.kf.setImage(with: comment.creator!.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
@@ -67,18 +71,6 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
                                     .keepCurrentImageWhileLoading
                 ]
             )
-            
-            
-            /*
-            if comment.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
-                userAvatar.image = NBClient.shared.currentUserPic
-            }
-            else {
-                userAvatar.kf.setImage(with: comment.creator!.profileUrl, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
-                    self.setNeedsLayout()
-                })
-            }
-            */
         }
         
         if (!comment.commentAttachments.isEmpty) {
@@ -93,30 +85,21 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
             heightConst.constant = 0.0
         }
         self.commentForCell = comment
-        
         setNeedsLayout()
         layoutIfNeeded()
-        
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        // commentLikes.ay.startLoading()
-        // commentLikes.ay.isLoading
+        commentLikes.showViewAnimated(false)
+        likeRefresh.startAnimating()
         DispatchQueue.main.async {
             TTLog.testing("starting async like post/delete")
             if (!self.commentLikeButton.isSelected) {
                 _ = Just.delete(self.commentForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
-                // NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.commentForCell.likeFromCurrentUser!)
             }
             else if (self.commentLikeButton.isSelected) {
                 let reqLike = Just.post("https://\(NBClient.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
-                // let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
-                // NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
             }
-            TTLog.testing("end async like post/delete")
-            // self.commentForCell.updateLikes()
-            // self.commentLikes.text = self.commentForCell.commentLikes.isEmpty ? "0" : "\(self.commentForCell.commentLikes.count)"
-            // self.commentLikes.ay.stopLoading()
         }
     }
 }

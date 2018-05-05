@@ -31,7 +31,6 @@ class HomeFeedWritePostCell: UITableViewCell {
     func initSetup() {
         dummyTextField.borderStyle = .roundedRect
     }
-
 }
 
 extension HomeFeedWritePostCell {

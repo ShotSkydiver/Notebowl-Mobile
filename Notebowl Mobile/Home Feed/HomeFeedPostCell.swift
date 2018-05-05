@@ -15,6 +15,7 @@ import FaveButton
 import Haptica
 import ObjectMapper
 import SocketIO
+import NVActivityIndicatorView
 
 class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     
@@ -27,6 +28,7 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var courseForPost: UILabel!
     @IBOutlet weak var postAttachments: ProfileImageView!
     @IBOutlet weak var likeButton: FaveButton!
+    @IBOutlet weak var likeRefresh: NVActivityIndicatorView!
     @IBOutlet weak var commentButton: FaveButton!
     @IBOutlet weak var likeActivityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var heightConst: NSLayoutConstraint!
@@ -60,6 +62,10 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     func configure(post: Post) {
         TTLog.debug("configure")
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
+        if likeRefresh.isAnimating {
+            likeRefresh.stopAnimating()
+            postLikes.showViewAnimated(true)
+        }
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
         postContent.text = post.text
@@ -73,9 +79,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         }
         else {
             userName.text = post.creator!.fullName
-            
-            // if NBClient.shared.storedTypes[User.classIdentifier]!.first(where: { $0.})
-            
             userAvatar.kf.setImage(with: post.creator.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
@@ -83,23 +86,11 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
                                     .keepCurrentImageWhileLoading
                 ]
             )
-            
-            /*
-            if post.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
-                userAvatar.image = NBClient.shared.currentUserPic
-            }
-            else {
-                userAvatar.kf.setImage(with: post.creator!.profileUrl, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
-                    self.setNeedsLayout()
-                })
-            }
-            */
         }
         
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
             if (post.postAttachments.first!.type.contains("image")) {
                 heightConst.constant = 220.0
-                
                 postAttachments.kf.setImage(with: post.postAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                     self.setNeedsLayout()
                 })
@@ -119,25 +110,18 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        // postLikes.ay.startLoading()
         
+        postLikes.showViewAnimated(false)
+        likeRefresh.startAnimating()
         DispatchQueue.main.async {
             if (!self.likeButton.isSelected) {
                 _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
-                // NBClient.shared.storedTypes[Like.classIdentifier]?.removeAll(self.postForCell.likeFromCurrentUser!)
             }
             else if (self.likeButton.isSelected) {
                 let reqLike = Just.post("https://\(NBClient.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
-                
-                // let finalmap = Mapper<Like>().map(JSONObject: (reqLike.json as AnyObject).value(forKeyPath: "result")!)
-                // NBClient.shared.storedTypes[Like.classIdentifier]?.append(finalmap!)
             }
-            // self.postForCell.updateLikes()
-            // self.postLikes.text = self.postForCell.postLikes.isEmpty ? "0" : "\(self.postForCell.postLikes.count)"
-            // self.postLikes.ay.stopLoading()
         }
     }
-    
 }
 
 extension HomeFeedPostCell {

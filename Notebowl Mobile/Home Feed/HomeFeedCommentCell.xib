@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -94,22 +93,36 @@
                         <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oiW-19-JzQ" customClass="NVActivityIndicatorView" customModule="NVActivityIndicatorView">
+                        <rect key="frame" x="102" y="199" width="22" height="30"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="15"/>
+                            <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                <color key="value" red="0.32549019610000002" green="0.71372549019999998" blue="0.43529411759999997" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="91y-cT-n0p" firstAttribute="leading" secondItem="83o-xB-MPP" secondAttribute="leading" id="1m5-qM-22s"/>
                     <constraint firstItem="nVa-gT-T2T" firstAttribute="top" secondItem="83o-xB-MPP" secondAttribute="bottom" constant="8" id="2Dt-v9-13g"/>
                     <constraint firstItem="83o-xB-MPP" firstAttribute="top" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="8" id="6VJ-6g-knP"/>
+                    <constraint firstItem="oiW-19-JzQ" firstAttribute="bottom" secondItem="kVu-c5-emg" secondAttribute="bottom" id="BsP-KS-W0j"/>
                     <constraint firstItem="Dci-7R-6eS" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="D8H-1G-X4Q"/>
                     <constraint firstItem="Dci-7R-6eS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GJz-CT-bjj"/>
                     <constraint firstItem="91y-cT-n0p" firstAttribute="top" secondItem="G7D-eu-6Ki" secondAttribute="bottom" id="I70-pM-d7S"/>
+                    <constraint firstItem="oiW-19-JzQ" firstAttribute="trailing" secondItem="kVu-c5-emg" secondAttribute="trailing" id="IJr-nU-iU4"/>
                     <constraint firstItem="UC2-dx-Jnt" firstAttribute="top" secondItem="nVa-gT-T2T" secondAttribute="bottom" constant="5" id="Jbn-Iz-z34"/>
                     <constraint firstItem="nVa-gT-T2T" firstAttribute="trailing" secondItem="83o-xB-MPP" secondAttribute="trailing" id="NXD-l2-4Jz"/>
                     <constraint firstItem="83o-xB-MPP" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="52" id="PD5-4l-yuZ"/>
                     <constraint firstItem="kVu-c5-emg" firstAttribute="leading" secondItem="UC2-dx-Jnt" secondAttribute="trailing" id="PgF-jk-Aii"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="leading" secondItem="91y-cT-n0p" secondAttribute="leading" id="QI9-eG-L07"/>
                     <constraint firstItem="UC2-dx-Jnt" firstAttribute="leading" secondItem="nVa-gT-T2T" secondAttribute="leading" id="QvU-54-ONM"/>
+                    <constraint firstItem="oiW-19-JzQ" firstAttribute="top" secondItem="kVu-c5-emg" secondAttribute="top" id="Rpf-cC-Tex"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="trailing" secondItem="83o-xB-MPP" secondAttribute="trailing" id="UbI-ja-YNd"/>
                     <constraint firstItem="nVa-gT-T2T" firstAttribute="top" secondItem="83o-xB-MPP" secondAttribute="bottom" constant="8" id="WKu-kK-gWA"/>
+                    <constraint firstItem="oiW-19-JzQ" firstAttribute="leading" secondItem="kVu-c5-emg" secondAttribute="leading" id="Xhj-eU-GzJ"/>
                     <constraint firstItem="Dci-7R-6eS" firstAttribute="bottom" secondItem="91y-cT-n0p" secondAttribute="bottom" constant="8" id="Yyb-es-vOd"/>
                     <constraint firstAttribute="bottomMargin" secondItem="nVa-gT-T2T" secondAttribute="bottom" constant="35" id="hhB-G1-99Z"/>
                     <constraint firstItem="G7D-eu-6Ki" firstAttribute="leading" secondItem="Dci-7R-6eS" secondAttribute="trailing" constant="8" id="kE1-OA-3Cc"/>
@@ -128,6 +141,7 @@
                 <outlet property="commentLikeButton" destination="UC2-dx-Jnt" id="m60-hr-xHc"/>
                 <outlet property="commentLikes" destination="kVu-c5-emg" id="3Kw-Jz-7ze"/>
                 <outlet property="heightConst" destination="cBG-Pz-tLp" id="uEj-gJ-ZXe"/>
+                <outlet property="likeRefresh" destination="oiW-19-JzQ" id="ZhO-CJ-x45"/>
                 <outlet property="postedDate" destination="91y-cT-n0p" id="Cpg-7R-sRm"/>
                 <outlet property="userAvatar" destination="Dci-7R-6eS" id="voZ-G8-4jn"/>
                 <outlet property="userName" destination="G7D-eu-6Ki" id="fH6-LW-aUn"/>

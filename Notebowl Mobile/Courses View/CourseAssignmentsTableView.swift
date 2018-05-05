@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-
 class CourseAssignmentsTableView: UITableViewController {
     var assignments: [Assignment]!
     var data = [Category: [Assignment]]()

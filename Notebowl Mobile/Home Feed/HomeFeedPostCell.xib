@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -131,6 +130,16 @@
                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7zM-Ct-GuQ" customClass="NVActivityIndicatorView" customModule="NVActivityIndicatorView">
+                        <rect key="frame" x="108" y="219" width="22" height="30"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                <color key="value" red="0.32549019610000002" green="0.71372549019999998" blue="0.43529411759999997" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="15"/>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="veg-XY-ZmF" firstAttribute="trailing" secondItem="Heq-0N-jB9" secondAttribute="trailing" id="1Nj-c9-ciZ"/>
@@ -149,8 +158,10 @@
                     <constraint firstItem="hLX-hS-wuc" firstAttribute="trailing" secondItem="B4F-AI-Uku" secondAttribute="trailingMargin" id="RxE-dT-BQZ"/>
                     <constraint firstItem="dRu-2e-dXW" firstAttribute="top" secondItem="veg-XY-ZmF" secondAttribute="bottom" constant="5" id="Sgu-62-0ss"/>
                     <constraint firstItem="hLX-hS-wuc" firstAttribute="leading" secondItem="b7p-g9-XbK" secondAttribute="leading" id="XJL-1a-jEo"/>
+                    <constraint firstItem="7zM-Ct-GuQ" firstAttribute="trailing" secondItem="gg6-oO-bh0" secondAttribute="trailing" id="YrQ-Ad-WDn"/>
                     <constraint firstItem="Heq-0N-jB9" firstAttribute="trailing" secondItem="hLX-hS-wuc" secondAttribute="trailing" id="ccs-wj-ARz"/>
                     <constraint firstItem="BA2-Es-ZcO" firstAttribute="trailing" secondItem="veg-XY-ZmF" secondAttribute="trailing" id="gdE-NQ-GbV"/>
+                    <constraint firstItem="7zM-Ct-GuQ" firstAttribute="bottom" secondItem="gg6-oO-bh0" secondAttribute="bottom" id="hgq-Rz-MaM"/>
                     <constraint firstItem="veg-XY-ZmF" firstAttribute="top" secondItem="Heq-0N-jB9" secondAttribute="bottom" constant="8" id="jR4-fm-ovu"/>
                     <constraint firstItem="gg6-oO-bh0" firstAttribute="baseline" secondItem="hd1-bj-bV8" secondAttribute="baseline" id="kEq-U1-7SH"/>
                     <constraint firstItem="BA2-Es-ZcO" firstAttribute="leading" secondItem="hd1-bj-bV8" secondAttribute="trailing" constant="77" id="mgM-oy-eoO"/>
@@ -160,6 +171,8 @@
                     <constraint firstItem="hLX-hS-wuc" firstAttribute="leading" secondItem="Pii-Ni-aak" secondAttribute="trailing" constant="12" id="pxa-wl-ZL1"/>
                     <constraint firstItem="Pii-Ni-aak" firstAttribute="bottom" secondItem="b7p-g9-XbK" secondAttribute="bottom" constant="11" id="rdm-RR-yyp"/>
                     <constraint firstItem="Heq-0N-jB9" firstAttribute="top" secondItem="b7p-g9-XbK" secondAttribute="bottom" constant="12" id="rez-Ov-rkY"/>
+                    <constraint firstItem="7zM-Ct-GuQ" firstAttribute="top" secondItem="gg6-oO-bh0" secondAttribute="top" id="s94-bE-mib"/>
+                    <constraint firstItem="7zM-Ct-GuQ" firstAttribute="leading" secondItem="gg6-oO-bh0" secondAttribute="leading" id="uWe-jT-Uee"/>
                     <constraint firstItem="Pii-Ni-aak" firstAttribute="top" secondItem="hLX-hS-wuc" secondAttribute="top" id="wvt-X1-2fR"/>
                     <constraint firstItem="gg6-oO-bh0" firstAttribute="leading" secondItem="dRu-2e-dXW" secondAttribute="trailing" id="yQl-Zk-o1H"/>
                     <constraint firstItem="veg-XY-ZmF" firstAttribute="leading" secondItem="Heq-0N-jB9" secondAttribute="leading" id="zIX-h8-VYo"/>
@@ -172,6 +185,7 @@
                 <outlet property="courseForPost" destination="BA2-Es-ZcO" id="ymM-ur-JE2"/>
                 <outlet property="heightConst" destination="P21-Mt-7si" id="LZ4-Q8-0d7"/>
                 <outlet property="likeButton" destination="dRu-2e-dXW" id="LKh-nr-ifo"/>
+                <outlet property="likeRefresh" destination="7zM-Ct-GuQ" id="3Le-iH-Nek"/>
                 <outlet property="postAttachments" destination="veg-XY-ZmF" id="TjI-jX-uAl"/>
                 <outlet property="postComments" destination="hd1-bj-bV8" id="bdZ-oi-ZoG"/>
                 <outlet property="postContent" destination="Heq-0N-jB9" id="TcE-eB-gOR"/>

@@ -32,6 +32,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     open lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()
         manager.delegate = self
+        manager.isPersistent = false
+        manager.showAddAttachmentCell = false
         return manager
     }()
     
@@ -49,7 +51,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // staticComments = post.postComments
         HomeFeedPostCell.register(in: self.tableView)
         HomeFeedCommentCell.register(in: self.tableView)
         
@@ -82,61 +83,17 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
                     
                     if mapped.itemType!.contains("Comment") || mapped.itemType!.contains("Like") || mapped.itemType!.contains("AttachmentS3") || mapped.itemType!.contains("User") {
-                        
                         self.tableView.beginUpdates()
                         self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                         self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                         self.tableView.endUpdates()
                     }
-                    
-                    /*
-                    if (mapped.itemType?.contains("Comment"))! {
-                        TTLog.testing("handling socket response for object type of comment!")
-                        let mappedComment = mapped as! Response<Comment>
-                        var indexOfComment: Int?
-                        
-                        self.tableView.beginUpdates()
-                        self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                        
-                        
-                        
-                        if mappedComment.actionType == .updated {
-                            if mappedComment.updateUrl!.parent.lastPathComponent == self.post.resourceKey {
-                                indexOfComment = self.post.postComments.index(of: mappedComment.updateUrl!)
-                                self.tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .top)
-                            }
-                        }
-                        else if mappedComment.actionType == .deleted {
-                            if let tempComment = self.staticComments.first(where: { $0.resourceKey == updateUrl.absoluteURL.lastPathComponent }) {
-                                indexOfComment = self.staticComments.index(of: tempComment)
-                                self.tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right)
-                            }
-                        }
-                        
-                        self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                        self.tableView.endUpdates()
-                        self.staticComments = self.post.postComments
-                    }
-                        
-                    else if (mapped.itemType?.contains("Like"))! {
-                        
-                        
-                        
-                        self.tableView.beginUpdates()
-                        self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                        self.tableView.reloadSections(IndexSet(integer: 1), with: .fade)
-                        self.tableView.endUpdates()
-                        self.staticComments = self.post.postComments
-                    }
-                    */
                 }
-                    
                 catch let error {
                     print("Error parsing json: \(error)")
                 }
             }
         }
-        
     }
     
     func setupInputBar() {
@@ -161,10 +118,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     self.present(imagePicker, animated: true, completion: nil)
             },
             .flexibleSpace,
-            makeButton(named: "public-vector")
-                .onSelected { anonButton in
+            makeButton(named: "hide-vector")
+                .configure {
+                    $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                
+                }.onSelected { anonButton in
                     self.anonymousToggle.toggle()
-                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
+                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             },
           
             bar.sendButton.configure {
@@ -178,10 +138,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = UIColor.groupTableViewBackground
-                    // $0.setBackgroundImage(UIImage().filled(withColor: .groupTableViewBackground), for: .disabled)
                 }.onEnabled {
-                    // $0.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
-                    // UIColor(patternImage: grad)
                     $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 90)))
                     $0.layer.borderColor = UIColor.clear.cgColor
                 }.onSelected {
@@ -189,13 +146,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onDeselected {
                     $0.transform = CGAffineTransform.identity
             }
-    
         ]
         bar.inputTextView.placeholder = "Write a comment..."
         bar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        // expand button
         bar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
     }
     
@@ -209,33 +164,17 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        // bar.sendButton.ay.startLoading()
-        // DispatchQueue.main.async {
+
         let jsonPayload: Any? = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
         let post = Just.post("https://\(NBClient.baseUrl)/api/v1.0/comments", params: ["uuid": UIDevice().uuid], json: jsonPayload)
-        
         let finalmap = Mapper<Comment>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!
-        // NBClient.shared.storedTypes[Comment.classIdentifier]?.append(finalmap)
         
         if attachmentManager.attachments.count > 0 {
             let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
             let attachment = Just.post("https://\(NBClient.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
-            
-            // let finalmapAtt = Mapper<Attachment>().map(JSONObject: (attachment.json as AnyObject).value(forKeyPath: "result")!)!
-            // NBClient.shared.storedTypes[Attachment.classIdentifier]?.append(finalmapAtt)
         }
-        
-        // finalmap.getAttachments()
-        // finalmap.updateLikes()
-        // self.post.refresh()
     
         inputBar.inputTextView.text = String()
-        /*
-        tableView.beginUpdates()
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-        // tableView.insertRows(at: [IndexPath(row: self.comments.count-1, section: 1)], with: .fade)
-        tableView.endUpdates()
-        */
         setupInputBar()
     }
     
@@ -251,7 +190,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         let newBar = InputBarAccessoryView()
         newBar.delegate = self
         newBar.inputManagers = [attachmentManager]
-        // newBar.setStackViewItems([typingIdicator], forStack: .top, animated: false)
         
         bar = newBar
         reloadInputViews()
@@ -283,7 +221,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             cell.configure(comment: self.post.postComments[indexPath.row])
             return cell
         }
-        
     }
 }
 

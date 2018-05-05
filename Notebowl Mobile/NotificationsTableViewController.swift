@@ -113,28 +113,16 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
                     // let updateUrl: URL = URL(string: JSON["updateUrl"] as! String)!
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
                     if mapped.itemType!.contains("Notification") {
-                        
-                        //TODO: GET NOTIFICATION OBJECT EVERY SINGLE TIME OR JUST NOT EVEN BOTHER GETTING IT AND UPDATING SEEN STATUS MANUALLY/IGNORING READ STATUS COMPLETELY???
-                        
-                        let mappedNotif = mapped as! Response<Notification>
+                        // let mappedNotif = mapped as! Response<Notification>
                         NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
                         self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
                         
                         self.tableView.beginUpdates()
-                        // self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                         self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
                         self.tableView.endUpdates()
-                        
-                        TTLog.testing("does this run first?")
+
                         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-                        if unreadCount.count == 0 {
-                            self.tabBarController?.tabBar.items![2].badgeValue = nil
-                        }
-                        else {
-                            self.tabBarController?.tabBar.items![2].badgeValue = String(format: "%d", (unreadCount.count))
-                        }
-                        // TODO: FIX UI BUG THAT CAUSES NOTIFICATION BADGE TO ANIMATE UPDATE TWICE
-                        // self.badge.addOrReplaceCurrent(with: String(format: "%d", (unreadCount.count)), animated: true)
+                        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
                     }
                 }
                 catch let error {
@@ -146,7 +134,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         placeholderTableView?.showDefault()
-        
         self.getNotifications()
     }
     
@@ -170,15 +157,12 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         
         let notificationForCell = self.notifications[indexPath.row]
         cell.notification = notificationForCell
-        
         cell.notificationContent.text = notificationForCell.text
         cell.notificationDate.text = notificationForCell.createdAt.relativelyFormatted
-        
-        
-        // let placeholderimg = UIImage(named: "Default Avatar")
-        // cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar(), placeholder: placeholderimg, options: [.transition(.fade(0.3))])
+ 
         cell.userAvatar.kf.setImage(with: notificationForCell.userPictureUrl,
                                     options: [
+                                        .fromMemoryCacheOrRefresh,
                                         .transition(ImageTransition.fade(0.3)),
                                         // .forceTransition,
                                         .keepCurrentImageWhileLoading
