@@ -13,7 +13,7 @@ import QuartzCore
 import Tamamushi
 import ObjectMapper
 
-class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
+class CoursesTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
     var courses: [Course]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
@@ -73,6 +73,23 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
             }
         }
     }
+    func handleUpdate(mapped: Generic, updateUI: Bool) {
+        if mapped.itemType!.contains("CourseUser") {
+            let mappedEnroll = mapped as! Response<Enrollment>
+            if mappedEnroll.actionType != .deleted {
+                if let courseForEnroll = (NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == mappedEnroll.updateUrl!.resourceKey }) as? Course) {
+                    courseForEnroll.refresh()
+                }
+            }
+            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
+            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
+            if updateUI {
+                self.tableView.beginUpdates()
+                self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self.tableView.endUpdates()
+            }
+        }
+    }
     
     func registerSocketHandler() {
         NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
@@ -81,23 +98,8 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate {
                 do {
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    if mapped.itemType!.contains("CourseUser") {
-                        let mappedEnroll = mapped as! Response<Enrollment>
-                        
-                        //TODO: WTF COUNTS AS LASTACCESSDATE AND WHY DOES IT NEVER NOT BECOME NULL
-                        if mappedEnroll.actionType != .deleted {
-                            if let courseForEnroll = (NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == mappedEnroll.updateUrl!.resourceKey }) as? Course) {
-                                courseForEnroll.refresh()
-                            }
-                        }
-                        NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
-                        self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-                        
-                        self.tableView.beginUpdates()
-                        // self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                        self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                        self.tableView.endUpdates()
-                    }
+                    
+                    self.handleUpdate(mapped: mapped, updateUI: true)
                 }
                 catch let error {
                     print("Error parsing json: \(error)")

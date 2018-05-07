@@ -76,13 +76,14 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         
         if post.isAnonymous {
             userName.text = "Anonymous"
+            // let test = "https://\(NBClient.baseUrl)/latest/images/profile-picture/anonymous_0.png"
+            userAvatar.image = UIImage(named: "anonymous")
         }
         else {
             userName.text = post.creator!.fullName
             userAvatar.kf.setImage(with: post.creator.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
-                                    // .forceTransition,
                                     .keepCurrentImageWhileLoading
                 ]
             )
@@ -109,11 +110,14 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
         super.setSelected(selected, animated: animated)
     }
     
-    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        
-        postLikes.showViewAnimated(false)
+    @IBAction func likeButtonAction(_ sender: Any) {
         likeRefresh.startAnimating()
-        DispatchQueue.main.async {
+        postLikes.showViewAnimated(false)
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
+        // DispatchQueue.main.async {
             if (!self.likeButton.isSelected) {
                 _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
             }

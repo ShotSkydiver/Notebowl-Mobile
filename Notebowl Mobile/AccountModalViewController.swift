@@ -13,6 +13,7 @@ import DeckTransition
 import Kingfisher
 import MMUploadImage
 import FaceAware
+import YPImagePicker
 
 protocol ContainerToMaster {
     func startUpload(image:UIImage)
@@ -39,9 +40,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         self.setNeedsStatusBarAppearanceUpdate()
         
         updateInfo()
- 
-        profilePicture.style = .wave
-        
+        profilePicture.style = .sector
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -82,7 +81,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         if dismissWithUpdate {
             /*
             let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-            let tabbarViewController = rootViewController.presentedViewController as! MainTabBarViewController
+            let tabbarViewController = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as! MainTabBarViewController
             let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
             let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
             */
@@ -111,20 +110,14 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
                   asyncProgressHandler:{ p in
                     print(p.percent)
                     DispatchQueue.main.async(execute: {
-                        // self.progress = (self.progress + p.percent <= 1.0) ? self.progress + p.percent : 1.0
-                        // if p.percent < 1.0 {
-                            self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
-                        // }
-                        // else if p.percent == 1.0 {
-                            // self.profilePicture.uploadCompleted()
-                        // }
+                        self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
                     })
-                    
         }){ r in
             print(r.ok)
-            self.profilePicture.uploadCompleted()
+            DispatchQueue.main.async(execute: {
+                self.profilePicture.uploadCompleted()
+            })
         }
-        
     }
 }
 
@@ -137,46 +130,28 @@ class AccountModalTableViewController: UITableViewController {
     }
     
     func setupMenuForAlert() {
-        let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        //PHPhotoLibrary.requestAuthorization({ (auth) in
-        //    TTLog.debug("authstatus: ", auth)
-        //})
-        
-        let takePhoto = UIAlertAction(title: "Take Photo", style: .default) { (action) in
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                imagePicker.sourceType = .camera
-                self.present(imagePicker, animated: true, completion: nil)
-            }
-            else { return }
-        }
-        let choosePhoto = UIAlertAction(title: "Choose Photo", style: .default) { (action) in
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.sourceType = .photoLibrary
-            self.present(imagePicker, animated: true, completion: nil)
-            
-        }
-        let removePhoto = UIAlertAction(title: "Remove Photo", style: .destructive) { (action) in
-            
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-            
-        }
-        menu.addAction(takePhoto)
-        menu.addAction(choosePhoto)
-        // menu.addAction(removePhoto)
-        menu.addAction(cancel)
-        
-        if let popoverController = menu.popoverPresentationController {
+        var config = YPImagePickerConfiguration()
+        config.libraryTargetImageSize = .cappedTo(size: 1024)
+        config.albumName = "Notebowl Photos"
+        config.startOnScreen = .library
+        config.showsCrop = .none
+        // config.wordings.libraryTitle = "Gallery"
+        config.hidesStatusBar = false
+        config.showsFilters = false
+        config.maxNumberOfItems = 1
+        config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
+        config.icons.cropIcon = UIImage(named: "crop-vector")!
+        config.colors.navigationBarTextColor = .darkGray
+        config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+        config.delegate = self
+        let picker = YPImagePicker(configuration: config)
+
+        if let popoverController = picker.popoverPresentationController {
             popoverController.sourceView = self.view
             popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
             popoverController.permittedArrowDirections = []
         }
-        
-        self.present(menu, animated: true, completion: nil)
+        self.present(picker, animated: true, completion: nil)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -199,9 +174,27 @@ class AccountModalTableViewController: UITableViewController {
         else {
             let alert = UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            
             self.present(alert, animated: true, completion: nil)
         }
+    }
+}
+
+extension AccountModalTableViewController: YPImagePickerDelegate {
+    func imagePicker(_ imagePicker: YPImagePicker, didSelect items: [YPMediaItem]) {
+        let item = items.first!
+        switch item {
+        case .photo(let photo):
+            self.containerToMaster?.startUpload(image: photo.image)
+            imagePicker.dismiss(animated: true, completion: {
+                self.containerToMaster?.uploadingImage()
+            })
+        default:
+            imagePicker.dismiss(animated: true, completion: nil)
+        }
+    }
+    func imagePickerDidCancel(_ imagePicker: YPImagePicker) {
+        TTLog.debug("canceled")
+        imagePicker.dismiss(animated: true, completion: nil)
     }
 }
 

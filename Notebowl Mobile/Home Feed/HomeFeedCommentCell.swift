@@ -61,13 +61,13 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         
         if comment.isAnonymous {
             userName.text = "Anonymous"
+            userAvatar.image = UIImage(named: "anonymous")!
         }
         else {
             userName.text = comment.creator!.fullName
             userAvatar.kf.setImage(with: comment.creator!.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
-                                    // .forceTransition,
                                     .keepCurrentImageWhileLoading
                 ]
             )
@@ -76,6 +76,7 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         if (!comment.commentAttachments.isEmpty) {
             if (comment.commentAttachments.first!.type.contains("image")) {
                 heightConst.constant = 180.0
+                commentAttachments.kf.indicatorType = .activity
                 commentAttachments.kf.setImage(with: comment.commentAttachments.first!.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(.fade(0.3))], progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                     self.setNeedsLayout()
                 })
@@ -89,9 +90,12 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         layoutIfNeeded()
     }
     
-    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        commentLikes.showViewAnimated(false)
+    @IBAction func likeButtonAction(_ sender: Any) {
         likeRefresh.startAnimating()
+        commentLikes.showViewAnimated(false)
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
         DispatchQueue.main.async {
             TTLog.testing("starting async like post/delete")
             if (!self.commentLikeButton.isSelected) {

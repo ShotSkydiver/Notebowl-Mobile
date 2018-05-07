@@ -15,7 +15,7 @@ import SocketIO
 import ObjectMapper
 import Tamamushi
 
-class HomeFeedViewController: UIViewController, PlaceholderDelegate {
+class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var posts: [Post]!
     var courses: [Course]!
     var loadingView: NBLoadingView!
@@ -39,7 +39,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
         registerSocketHandler()
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
+        bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
         self.getPosts()
     }
     
@@ -71,7 +71,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     }
     
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {
-        
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
     
@@ -166,9 +165,16 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
             self.loadOtherTabs()
 
             self.bgView.showViewAnimated(false)
+            // self.animateCells()
         }
     }
-    
+    /*
+    func animateCells() {
+        let fromAnimation = AnimationType.from(direction: .bottom, offset: 30.0)
+        UIView.animate(views: self.bulletinTableView.visibleCells,
+                       animations: [fromAnimation])
+    }
+    */
     func getData() {
         self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
         if NBClient.shared.storedTypes[Post.classIdentifier] == nil {
@@ -249,157 +255,161 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate {
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
+    
+    func handleUpdate(mapped: Generic, updateUI: Bool) {
+        if (mapped.itemType?.contains("Post"))! {
+            let mappedPost = mapped as! Response<Post>
+            let indexOfPost = self.posts.index(of: mappedPost.updateUrl!)
+            NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
+            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+            
+            if mappedPost.actionType == .updated {
+                if updateUI {
+                    self.bulletinTableView.beginUpdates()
+                    self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                    self.bulletinTableView.endUpdates()
+                }
+            }
+            else if mappedPost.actionType == .deleted {
+                if let postVC = self.navigationController?.topViewController as? HomeFeedPostViewController {
+                    if mappedPost.updateUrl!.resourceKey == postVC.post.resourceKey {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+                if indexOfPost != nil {
+                    if updateUI {
+                        self.bulletinTableView.beginUpdates()
+                        self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right)
+                        self.bulletinTableView.endUpdates()
+                    }
+                }
+            }
+        }
+            
+        /// TODO :: COMBINE COMMENTS AND LIKES UPDATE HANDLING
+        else if (mapped.itemType?.contains("Comment"))! {
+            let mappedComment = mapped as! Response<Comment>
+            guard let parentPost = self.posts.first(where: { $0.resourceKey == mappedComment.updateUrl!.parent.absoluteURL.lastPathComponent }) else {
+                return
+            }
+            let indexOfPost = self.posts.index(of: parentPost)
+            parentPost.refresh()
+            
+            if indexOfPost != nil {
+                if updateUI {
+                    self.bulletinTableView.beginUpdates()
+                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
+                    self.bulletinTableView.endUpdates()
+                }
+            }
+        }
+        else if (mapped.itemType?.contains("Like"))! {
+            let mappedLike = mapped as! Response<Like>
+            if let parentPost = self.posts.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
+                let indexOfPost = self.posts.index(of: parentPost)
+                parentPost.updateLikes()
+                if indexOfPost != nil {
+                    if updateUI {
+                        self.bulletinTableView.beginUpdates()
+                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
+                        self.bulletinTableView.endUpdates()
+                    }
+                }
+            }
+            else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
+                (parentComment as! Comment).updateLikes()
+            }
+        }
+        else if (mapped.itemType?.contains("AttachmentS3"))! {
+            let mappedAttachment = mapped as! Response<Attachment>
+            
+            if let parentPost = self.posts.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
+                let indexOfPost = self.posts.index(of: parentPost)
+                parentPost.refresh()
+                
+                if indexOfPost != nil {
+                    if updateUI {
+                        self.bulletinTableView.beginUpdates()
+                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
+                        self.bulletinTableView.endUpdates()
+                    }
+                }
+            }
+            else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
+                (parentComment as! Comment).refresh()
+            }
+        }
+        else if (mapped.itemType?.contains("User"))! {
+            let mappedUser = mapped as! Response<User>
+            for post in self.posts {
+                post.refresh()
+            }
+            if mappedUser.updateUrl!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+                // NBClient.shared.getCurrentUser()
+            }
+            if updateUI {
+                self.bulletinTableView.beginUpdates()
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
+                self.bulletinTableView.endUpdates()
+            }
+        }
+        else if (mapped.itemType?.contains("CourseUser"))! {
+            let mappedEnrollment = mapped as! Response<Enrollment>
+            if mappedEnrollment.updateUrl!.parent!.firstTimeLoading {
+                let loadingView2 = NBLoadingView()
+                UIApplication.shared.keyWindow?.addSubview(loadingView2)
+                loadingView2.addUntitled2Animation()
+                loadingView2.showLoadView(true)
+                DispatchQueue.main.async {
+                    self.getData()
+                    loadingView2.showLoadView(false)
+                    if updateUI {
+                        self.bulletinTableView.beginUpdates()
+                        self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                        self.bulletinTableView.endUpdates()
+                    }
+                }
+            }
+            else if !mappedEnrollment.updateUrl!.parent!.firstTimeLoading || mappedEnrollment.updateUrl!.parent!.firstTimeLoading == nil {
+                mappedEnrollment.updateUrl!.parent!.refresh()
+                
+            }
+            if mappedEnrollment.actionType == .deleted {
+                NBClient.shared.storedTypes[Course.classIdentifier]!.removeAll(mappedEnrollment.updateUrl!.parent!)
+                
+                let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner.resourceKey == mappedEnrollment.updateUrl!.parent!.resourceKey }) as! [Post]
+                for post in postsToRemove {
+                    NBClient.shared.storedTypes[Post.classIdentifier]!.removeAll(post)
+                }
+                if NBClient.shared.storedTypes[Post.classIdentifier]!.count < 1 {
+                    var newPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
+                    newPosts = NBClient.shared.initArray(from: newPosts!)
+                    NBClient.shared.storedTypes[Post.classIdentifier]! = newPosts!
+                }
+                NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
+                self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
+                
+                NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
+                self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+                if updateUI {
+                    self.bulletinTableView.beginUpdates()
+                    self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                    self.bulletinTableView.endUpdates()
+                }
+            }
+        }
+    }
 
     func registerSocketHandler() {
         NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
             guard let message = data[0] as? String else { return }
             if let data = message.data(using: .utf8) {
                 do {
-                    
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
                     
-                    if (mapped.itemType?.contains("Post"))! {
-                        let mappedPost = mapped as! Response<Post>
-                        let indexOfPost = self.posts.index(of: mappedPost.updateUrl!)
-                        /*
-                        var sorting = (NBClient.shared.storedTypes[Post.classIdentifier] as! [Post])
-                        NBClient.shared.storedTypes[Post.classIdentifier] = sorting
-                        self.posts = NBClient.shared.storedTypes[Post.classIdentifier] as! [Post]
-                        */
-                        
-                        // TODO: DOES THIS CODE ACTUALLY CORRECTLY UPDATE THE CACHED POSTS???
-                        NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
-                        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-                        
-                        if mappedPost.actionType == .updated {
-                            self.bulletinTableView.beginUpdates()
-                            self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                            self.bulletinTableView.endUpdates()
-                            
-                        }
-                        else if mappedPost.actionType == .deleted {
-                            if let postVC = self.navigationController?.topViewController as? HomeFeedPostViewController {
-                                if mappedPost.updateUrl!.resourceKey == postVC.post.resourceKey {
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                            if indexOfPost != nil {
-                                self.bulletinTableView.beginUpdates()
-                                self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right)
-                                self.bulletinTableView.endUpdates()
-                            }
-                        }
-                    }
-                        
-                    /// TODO :: COMBINE COMMENTS AND LIKES UPDATE HANDLING
-                    else if (mapped.itemType?.contains("Comment"))! {
-                        let mappedComment = mapped as! Response<Comment>
-                        
-                        guard let parentPost = self.posts.first(where: { $0.resourceKey == mappedComment.updateUrl!.parent.absoluteURL.lastPathComponent }) else {
-                            return
-                        }
-                        let indexOfPost = self.posts.index(of: parentPost)
-                        parentPost.refresh()
-                        
-                        if indexOfPost != nil {
-                            self.bulletinTableView.beginUpdates()
-                            self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                            self.bulletinTableView.endUpdates()
-                        }
-                    }
-                    else if (mapped.itemType?.contains("Like"))! {
-                        let mappedLike = mapped as! Response<Like>
-                        var indexOfPost: Int?
-                        
-                        if let parentPost = self.posts.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                            indexOfPost = self.posts.index(of: parentPost)
-                            parentPost.updateLikes()
-                            if indexOfPost != nil {
-                                self.bulletinTableView.beginUpdates()
-                                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                                self.bulletinTableView.endUpdates()
-                            }
-                        }
-                        else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                            (parentComment as! Comment).updateLikes()
-                        }
-                    }
-                    else if (mapped.itemType?.contains("AttachmentS3"))! {
-                        let mappedAttachment = mapped as! Response<Attachment>
-                        
-                        if let parentPost = self.posts.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                            let indexOfPost = self.posts.index(of: parentPost)
-                            parentPost.refresh()
-                            
-                            if indexOfPost != nil {
-                                self.bulletinTableView.beginUpdates()
-                                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                                self.bulletinTableView.endUpdates()
-                            }
-                        }
-                        else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                            (parentComment as! Comment).refresh()
-                        }
-                    }
-                        
-                    else if (mapped.itemType?.contains("User"))! {
-                        let mappedUser = mapped as! Response<User>
-                        for post in self.posts {
-                            post.refresh()
-                        }
-                        if mappedUser.updateUrl!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
-                            // NBClient.shared.getCurrentUser()
-                        }
-                        self.bulletinTableView.beginUpdates()
-                        self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                        self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
-                        self.bulletinTableView.endUpdates()
-                    }
-                        
-                    else if (mapped.itemType?.contains("CourseUser"))! {
-                        let mappedEnrollment = mapped as! Response<Enrollment>
-                        if mappedEnrollment.updateUrl!.parent!.firstTimeLoading {
-                            let loadingView2 = NBLoadingView()
-                            UIApplication.shared.keyWindow?.addSubview(loadingView2)
-                            loadingView2.addUntitled2Animation()
-                            loadingView2.showLoadView(true)
-                            DispatchQueue.main.async {
-                                self.getData()
-                                loadingView2.showLoadView(false)
-                                self.bulletinTableView.beginUpdates()
-                                self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                                self.bulletinTableView.endUpdates()
-                            }
-                            
-                        }
-                        else if !mappedEnrollment.updateUrl!.parent!.firstTimeLoading || mappedEnrollment.updateUrl!.parent!.firstTimeLoading == nil {
-                            mappedEnrollment.updateUrl!.parent!.refresh()
-  
-                        }
-                        if mappedEnrollment.actionType == .deleted {
-                            NBClient.shared.storedTypes[Course.classIdentifier]!.removeAll(mappedEnrollment.updateUrl!.parent!)
-                            
-                            let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner.resourceKey == mappedEnrollment.updateUrl!.parent!.resourceKey }) as! [Post]
-                            for post in postsToRemove {
-                                NBClient.shared.storedTypes[Post.classIdentifier]!.removeAll(post)
-                            }
-                            if NBClient.shared.storedTypes[Post.classIdentifier]!.count < 1 {
-                                var newPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
-                                newPosts = NBClient.shared.initArray(from: newPosts!)
-                                NBClient.shared.storedTypes[Post.classIdentifier]! = newPosts!
-                            }
-                            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
-                            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-                            
-                            NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
-                            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-                            
-                            self.bulletinTableView.beginUpdates()
-                            self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                            self.bulletinTableView.endUpdates()
-                        }
-                    }
+                    self.handleUpdate(mapped: mapped, updateUI: true)
                 }
                 catch let error {
                     print("Error parsing json: \(error)")
@@ -461,7 +471,6 @@ class NotebowlLogoNavigationItem: UINavigationItem {
         super.init(coder: aDecoder)
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.image = nbLogo
-
         logoContainer.addSubview(logoImageView)
         self.titleView = logoContainer
     }

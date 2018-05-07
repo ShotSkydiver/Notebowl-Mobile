@@ -14,7 +14,7 @@ import HGPlaceholders
 import QuartzCore
 import Tamamushi
 
-class NotificationsTableViewController: UITableViewController, PlaceholderDelegate {
+class NotificationsTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
     var notifications: [Notification]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
@@ -51,8 +51,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     }
     
     func getNotifications() {
-        // self.loadingView.showLoadView(true)
-        
         DispatchQueue.main.async {
             if self.notifications == nil {
                 TTLog.error("this shouldn't be nil!")
@@ -61,34 +59,14 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
                 }
                 else {
                     TTLog.error("courses stored cache is nil!")
-                    
                 }
             }
-            
-            
-            // if (self.notifications.isEmpty) { self.loadingView.alpha = 0.0 }
-            /*
-            var unreadCount = 0
-            for notification in self.notifications {
-                if !notification.statusBool {
-                    unreadCount = unreadCount + 1
-                }
-            }
-            if unreadCount > 0 {
-                self.tabBarController?.tabBar.items?[2].badgeValue = String(format: "%d", unreadCount)
-            }
-            */
-            
-            // self.notifications.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
-            
             self.tableView.reloadData()
-            // self.bgView.showViewAnimated(false)
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // _ = Just.post("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/markAsSeen", params: ["uuid": UIDevice().uuid])
         markAsSeen()
     }
     
@@ -98,10 +76,22 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
             notification.status = "seen"
         }
-        
-        TTLog.testing("or does this run first?")
-        //let unreads = (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true })
-        //self.badge.addOrReplaceCurrent(with: String(format: "%d", (unreads.count)), animated: true)
+    }
+    
+    func handleUpdate(mapped: Generic, updateUI: Bool) {
+        if mapped.itemType!.contains("Notification") {
+            // let mappedNotif = mapped as! Response<Notification>
+            NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
+            self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+            if updateUI {
+                self.tableView.beginUpdates()
+                self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self.tableView.endUpdates()
+            }
+            
+            let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+        }
     }
     
     func registerHandler() {
@@ -110,20 +100,9 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             if let data = message.data(using: .utf8) {
                 do {
                     let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    // let updateUrl: URL = URL(string: JSON["updateUrl"] as! String)!
                     let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    if mapped.itemType!.contains("Notification") {
-                        // let mappedNotif = mapped as! Response<Notification>
-                        NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
-                        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
-                        
-                        self.tableView.beginUpdates()
-                        self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                        self.tableView.endUpdates()
-
-                        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-                        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
-                    }
+                    
+                    self.handleUpdate(mapped: mapped, updateUI: true)
                 }
                 catch let error {
                     print("Error parsing json: \(error)")

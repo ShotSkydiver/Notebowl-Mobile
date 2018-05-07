@@ -10,12 +10,10 @@ import Foundation
 import UIKit
 import InputBarAccessoryView
 import FaceAware
-import Photos
-import PhotosUI
 import ButtonProgressBar_iOS
-import RLBAlertsPickers
 import ObjectMapper
 import Kingfisher
+import YPImagePicker
 
 class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
@@ -55,6 +53,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     var attachmentFileId: String!
     var anonymousToggle: Bool = false
     var pinnedToggle: Bool = false
+    var showingPhotoPicker: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,6 +88,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         TTLog.debug("didappear")
         super.viewDidAppear(animated)
         postTextView.becomeFirstResponder()
+        
     }
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
@@ -109,6 +109,27 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         return .default
     }
     
+    func uploadImage(image: UIImage) {
+        Just.post(("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
+                  params: ["uuid": UIDevice().uuid],
+                  files:["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
+                  asyncProgressHandler:{ p in
+                    print(p.percent)
+                    DispatchQueue.main.async(execute: {
+                        self.postButtonBarItem.postButton.setProgress(progress: CGFloat(p.percent), true)
+                    })
+        }){ r in
+            print(r.ok)
+            let res = (r.json as AnyObject).value(forKeyPath: "result")
+            let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
+            self.attachmentFileId = fileid
+            DispatchQueue.main.async(execute: {
+                self.postButtonBarItem.postButton.triggerCompletion()
+                self.postButtonBarItem.postButton.resetProgress()
+            })
+        }
+    }
+    
     func setupInputBar() {
         bar.inputManagers = [attachmentManager]
         // reloadInputViews()
@@ -123,35 +144,42 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         
         bar.invalidateIntrinsicContentSize()
         
-        photoLibraryButton = makeButton(image: "add_library-vector")
+        photoLibraryButton = makeButton(image: "add_photo-vector")
+
         photoLibraryButton.onSelected { libButton in
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.sourceType = .photoLibrary
-            self.present(imagePicker, animated: true, completion: nil)
+            var config = YPImagePickerConfiguration()
+            config.libraryTargetImageSize = .cappedTo(size: 1024)
+            config.albumName = "Notebowl Photos"
+            config.startOnScreen = .library
+            config.showsCrop = .none
+            config.wordings.libraryTitle = "Gallery"
+            config.hidesStatusBar = false
+            config.showsFilters = false
+            config.maxNumberOfItems = 1
+            config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
+            config.icons.cropIcon = UIImage(named: "crop-vector")!
+            config.colors.navigationBarTextColor = .darkGray
+            config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+            config.delegate = self
+            let picker = YPImagePicker(configuration: config)
+            
+            if let popoverController = picker.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            self.present(picker, animated: true, completion: nil)
         }
-        
-        cameraButton = makeButton(image: "add_photo-vector")
-        cameraButton.onSelected { camButton in
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.sourceType = .camera
-            self.present(imagePicker, animated: true, completion: nil)
-        }
-        
         coursePickerButton = makeButton(image: "school-vector")
         coursePickerButton.onSelected { courseButton in
-            let alert = UIAlertController(style: .actionSheet, title: "Select a Course", message: "Your post will be created in the course you select, and only users enrolled in that course will be able to see it.")
+            let alert = UIAlertController(title: "Select a Course", message: "Your post will be created in the course you select, and only users enrolled in that course will be able to see it.", preferredStyle: .actionSheet)
             
             var pickerValues = [String: Course]()
-            
             for course in self.coursesForPicker {
                 pickerValues[course.courseFullName] = course
             }
-            
             let demoValues = pickerValues.keys
             let keysArray = Array(demoValues)
-            
             let pickerViewValues: [[String]] = [keysArray.map { $0.description }]
             let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: 2)
 
@@ -172,23 +200,25 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.present(alert, animated: true, completion: nil)
         }
         
-        anonymousButton = makeButton(image: "hide-vector")
+        anonymousButton = makeButton(image: "visibility_on-vector")
+        /*
         anonymousButton.configure {
             $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-            
         }
+        */
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
-            anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+            // anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+            anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
-        pinnedButton = makeButton(image: "pin-vector")
+        pinnedButton = makeButton(image: "not_pinned-vector")
         pinnedButton.onSelected { pinButton in
             self.pinnedToggle.toggle()
-            pinButton.image = self.pinnedToggle ? UIImage(named: "unpin-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "pin-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
+            pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton.isEnabled = (selectedCourse.enrollmentForUser?.role.contains("Professor"))!
         
-        bar.setStackViewItems([photoLibraryButton,cameraButton,InputBarButtonItem.flexibleSpace,coursePickerButton,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
+        bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
         
         bar.isTranslucent = true
     }
@@ -203,12 +233,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     @objc func postButtonTapped() {
-        postTextView.resignFirstResponder()
+        // postTextView.resignFirstResponder()
+        // self.postButtonBarItem.postButton.resetProgress()
         self.postButtonBarItem.postButton.startIndeterminate()
         // self.postButtonBarItem.postButton.setProgress(progress: 0.0, true)
-        DispatchQueue.main.async(qos: .background, flags: []) {
-            TTLog.debug("start qos async")
-        // DispatchQueue.main.async {
+        DispatchQueue.main.async {
             let postText = self.postTextView.text
             let jsonPayload: Any? = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
             let post = Just.post("https://\(NBClient.baseUrl)/api/v1.0/posts", params: ["uuid": UIDevice().uuid], json: jsonPayload)
@@ -218,17 +247,19 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
                 let attachment = Just.post("https://\(NBClient.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
             }
-     
             DispatchQueue.main.async {
                 TTLog.debug("start nested async")
                 self.postButtonBarItem.postButton.triggerCompletion()
+                self.postTextView.resignFirstResponder()
+                self.dismiss(animated: true, completion: nil)
             }
         }
-
+        /*
         self.dismiss(animated: true, completion: {
             // self.postTextView.resignFirstResponder()
             // homeViewController.getPosts()
         })
+        */
     }
     
     @IBAction func dismissButtonAction(_ sender: Any) {
@@ -237,14 +268,22 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
 }
 
-extension CreateNewPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        dismiss(animated: true, completion: {
-            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                self.attachmentManager.handleInput(of: pickedImage)
-            }
-        })
+extension CreateNewPostViewController: YPImagePickerDelegate {
+    func imagePicker(_ imagePicker: YPImagePicker, didSelect items: [YPMediaItem]) {
+        let item = items.first!
+        switch item {
+        case .photo(let photo):
+            self.attachmentManager.handleInput(of: photo.image)
+            imagePicker.dismiss(animated: true, completion: {
+                self.uploadImage(image: photo.image)
+            })
+        default:
+            imagePicker.dismiss(animated: true, completion: nil)
+        }
+    }
+    func imagePickerDidCancel(_ imagePicker: YPImagePicker) {
+        TTLog.debug("canceled")
+        imagePicker.dismiss(animated: true, completion: nil)
     }
 }
 
@@ -262,10 +301,12 @@ extension CreateNewPostViewController: AttachmentManagerDelegate {
     }
     
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
+        /*
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
+        */
     }
     
     
@@ -278,29 +319,15 @@ extension CreateNewPostViewController: AttachmentManagerDelegate {
     }
     
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        switch attachment {
-        case .image(let image):
-            self.postButtonBarItem.postButton.startIndeterminate(withTimePeriod: 0.7, andTimePadding: 0.2)
-            DispatchQueue.main.async {
-                self.attachmentFileId = (NBClient.shared.uploadToFiles(attachment: image))
-                
-                // self.postButtonBarItem.postButton.setProgress(progress: 1.0, true)
-                self.postButtonBarItem.postButton.triggerCompletion()
-                // self.postButtonBarItem.postButton.stopIndeterminate()
-                // self.postButtonBarItem.postButton.resetProgress()
-            }
-        default:
-            print("nope")
-        }
+        self.photoLibraryButton.isEnabled = manager.attachments.count > 0
     }
     
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        // self.postButtonBarItem.isEnabled = manager.attachments.count > 0
+        self.photoLibraryButton.isEnabled = manager.attachments.count > 0
     }
 }
 
 class PostButtonNavigationItem: UIBarButtonItem {
-    
     let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 78, height: 34))
     public let postButton = ButtonProgressBar(frame: CGRect(x: 0, y: 0, width: 78, height: 34))
     

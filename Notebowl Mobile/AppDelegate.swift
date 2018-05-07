@@ -22,13 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // #if DEBUG
-        
         FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
             "Bug",
             "Question",
             "Looks good!"
             ])
- 
         // #else
         // #endif
  
@@ -74,10 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
-        
-        //let alert = UIAlertController(title: "Token", message: "\(token)", preferredStyle: .alert)
-        //alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        
+
         let reqNotif = Just.get("https://\(NBClient.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
         TTLog.debug("notif register: ", reqNotif)
     }
@@ -99,22 +94,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TTLog.debug("resignactive!")
     }
     
-    
     func applicationDidEnterBackground(_ application: UIApplication) {
         TTLog.debug("in background!")
         NBSocket.shared.manager.disconnect()
-        
         disconnectDate = Date()
     }
     func applicationWillEnterForeground(_ application: UIApplication) {
         TTLog.debug("enter foreground!")
+        // NBSocket.shared.registerHandlers()
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+            TTLog.debug("tabController is not presented!")
+            return
+        }
+        
         NBSocket.shared.manager.connect()
         let formatter = DateFormatter.iso8061
         let dateString = formatter.string(from: self.disconnectDate)
         var reconnectUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/operations/reconnect"))?.appendingQueryParameters(["since": dateString,"uuid": UIDevice().uuid]))!}
         let recReq = Just.get(reconnectUrl)
-        let nestedData = try? JSONSerialization.data(withJSONObject: (recReq.json as AnyObject).value(forKeyPath: "result")!)
-        let result = Mapper<Generic>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+        let JSON : [String:AnyObject] = try! JSONSerialization.jsonObject(with: recReq.content!, options: .allowFragments) as! [String : AnyObject]
+        let results: [String] = JSON["result"] as! [String]
+        for result in results {
+            let mapResult = Mapper<Generic>().map(JSONString: result)
+            if let viewControllers = tabbarVC.viewControllers {
+                for viewController in viewControllers {
+                    let rootNavController = viewController as! UINavigationController
+                    if let switchVC = rootNavController.topViewController as? UpdateVC {
+                        TTLog.debug("found updateVC!")
+                        switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+                    }
+                }
+            }
+        }
+        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
+            homeVC.bulletinTableView.beginUpdates()
+            homeVC.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            homeVC.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            homeVC.bulletinTableView.endUpdates()
+        }
+        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
+            homeVC.tableView.beginUpdates()
+            homeVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            homeVC.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            homeVC.tableView.endUpdates()
+        }
+        if let courseVC = ((tabbarVC.viewControllers![1] as! UINavigationController).topViewController as? CoursesTableViewController) {
+            courseVC.tableView.beginUpdates()
+            // courseVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            courseVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+            courseVC.tableView.endUpdates()
+        }
+        if let notifVC = ((tabbarVC.viewControllers![2] as! UINavigationController).topViewController as? NotificationsTableViewController) {
+            notifVC.tableView.beginUpdates()
+            // notifVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            notifVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+            notifVC.tableView.endUpdates()
+        }
     }
     
     

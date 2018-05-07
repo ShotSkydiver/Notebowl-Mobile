@@ -72,6 +72,7 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                         <connections>
+                            <action selector="likeButtonAction:" destination="N3g-5j-72E" eventType="touchUpInside" id="GyU-Ei-wpj"/>
                             <outlet property="delegate" destination="N3g-5j-72E" id="n7I-Zi-neL"/>
                         </connections>
                     </button>
@@ -137,7 +138,7 @@
                             <userDefinedRuntimeAttribute type="color" keyPath="color">
                                 <color key="value" red="0.32549019610000002" green="0.71372549019999998" blue="0.43529411759999997" alpha="1" colorSpace="calibratedRGB"/>
                             </userDefinedRuntimeAttribute>
-                            <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="15"/>
+                            <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="ballPulseSync"/>
                         </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
