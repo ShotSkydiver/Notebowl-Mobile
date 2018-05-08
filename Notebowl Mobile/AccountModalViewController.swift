@@ -52,11 +52,6 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     
     func updateInfo() {
         doneButton.tintColor = UIImage().createGradientImage(size: 50).gradientColor
-        
-        //profilePicture.layer.cornerRadius = profilePicture.frame.width*0.5
-        //profilePicture.clipsToBounds = true
-        //profilePicture.layer.masksToBounds = true
-
         profilePicture.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
@@ -64,9 +59,6 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
                                     .keepCurrentImageWhileLoading
             ]
         )
-        
-        // profilePicture.image = NBClient.shared.currentUserPic
-        ///profilePicture.focusOnFaces = true
         profilePicture.contentMode = .scaleAspectFill
 
         userName.text = NBClient.shared.getCurrentUser().fullName
@@ -78,21 +70,7 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     }
     
     @IBAction func done(_ sender: Any) {
-        if dismissWithUpdate {
-            /*
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-            let tabbarViewController = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as! MainTabBarViewController
-            let homeNavViewController = tabbarViewController.selectedViewController as! UINavigationController
-            let homeViewController = homeNavViewController.viewControllers[0] as! HomeFeedViewController
-            */
-            self.dismiss(animated: true, completion: {
-                //homeViewController.getPosts()
-            })
-        }
-        else {
-            self.dismiss(animated: true, completion: nil)
-        }
-        
+        self.dismiss(animated: true, completion: nil)
     }
     
     func startUpload(image: UIImage) {
@@ -135,7 +113,6 @@ class AccountModalTableViewController: UITableViewController {
         config.albumName = "Notebowl Photos"
         config.startOnScreen = .library
         config.showsCrop = .none
-        // config.wordings.libraryTitle = "Gallery"
         config.hidesStatusBar = false
         config.showsFilters = false
         config.maxNumberOfItems = 1
@@ -195,21 +172,5 @@ extension AccountModalTableViewController: YPImagePickerDelegate {
     func imagePickerDidCancel(_ imagePicker: YPImagePicker) {
         TTLog.debug("canceled")
         imagePicker.dismiss(animated: true, completion: nil)
-    }
-}
-
-
-extension AccountModalTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        // dismiss(animated: true, completion: {
-            if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                self.containerToMaster?.startUpload(image: pickedImage)
-            }
-        // })
-        picker.dismiss(animated: true, completion: {
-            self.containerToMaster?.uploadingImage()
-        })
-        
     }
 }

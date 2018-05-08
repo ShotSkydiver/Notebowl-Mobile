@@ -16,9 +16,7 @@ class NBClient {
     
     static let shared: NBClient = {
         TTLog.debug("client shared init")
-        let instance = NBClient()
-        instance.getCurrentUser()
-        return instance
+        return NBClient()
     }()
     
     enum Environment: String {
@@ -32,61 +30,53 @@ class NBClient {
     #endif
     
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
-    
     private var currentUser: User!
-    public var currentUserPic: UIImage!
-
     public var storedTypes = [ObjectIdentifier: [Object]!]()
     
     private init() { }
     
-    func getCurrentUser() -> User {
+    func resolveCurrentUser(_ completionHandler: @escaping (() -> Void)) {
         if currentUser == nil {
-            let req = Just.get(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
-            if req.statusCode != 200 {
-                fatalError()
-            }
-            let reqJson = (req.json as AnyObject).value(forKeyPath: "result")!
-            let map = Mapper<User>().map(JSONObject: reqJson)!
+            TTLog.debug("currentuser nil!")
             
-            currentUser = map
+            let userReq = getUrl(User.endpoint)
             
-            if storedTypes[User.classIdentifier] == nil {
-                storedTypes[User.classIdentifier] = [currentUser]
+            if errorStatusCodes.contains(userReq.statusCode!) {
+                TTLog.error("error status code! ", userReq.statusCode!)
+                logoutUser()
+                (UIApplication.shared.keyWindow?.rootViewController as! RootViewController).dismiss(animated: true, completion: nil)
             }
-            else if storedTypes[User.classIdentifier]!.first(where: {$0.resourceKey == currentUser.resourceKey}) == nil {
-                storedTypes[User.classIdentifier]!.append(currentUser)
+            else {
+                let reqJson = (userReq.json as AnyObject).value(forKeyPath: "result")!
+                let map = Mapper<User>().map(JSONObject: reqJson)!
+                self.currentUser = map
+                
+                if self.storedTypes[User.classIdentifier] == nil {
+                    self.storedTypes[User.classIdentifier] = [self.currentUser]
+                }
+                else if self.storedTypes[User.classIdentifier]!.first(where: {$0.resourceKey == self.currentUser.resourceKey}) == nil {
+                    self.storedTypes[User.classIdentifier]!.append(self.currentUser)
+                }
+                // Bugsnag???
+                completionHandler()
             }
+            
         }
         else {
-            if let storedUser = storedTypes[User.classIdentifier]!.first(where: { $0.resourceKey == currentUser.resourceKey }) {
-                currentUser = storedUser as! User
-            }
+            completionHandler()
         }
-        return currentUser
     }
     
-    public func uploadToFiles(attachment: UIImage) -> String {
-        
-        let postUrl = ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload")
-        let attReq = Just.post(
-            postUrl,
-            params: ["uuid": UIDevice().uuid],
-            files:["files[]":.data("attachment.jpg", attachment.compressedData()!, "image/jpeg")])
-        let res = (attReq.json as AnyObject).value(forKeyPath: "result")
-        let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
-        TTLog.debug("OK! ", fileid)
-        return fileid
+    func getCurrentUser() -> User {
+        return currentUser
     }
     
     public func logoutUser() {
         NBSocket.shared.manager.defaultSocket.removeAllHandlers()
         NBSocket.shared.manager.disconnect()
-        let deleteReq = Just.delete(User.routeType.returnRoute(), params: ["uuid": UIDevice().uuid])
-        if deleteReq.ok {
-            currentUser = nil
-            UserDefaults.set(hasUserLoggedIn: false)
-        }
+        let deleteReq = getUrl(User.endpoint, method: .delete)
+        currentUser = nil
+        UserDefaults.set(hasUserLoggedIn: false)
     }
     
     public func buildFilterString(from items: [Object]) -> String {
@@ -98,16 +88,10 @@ class NBClient {
     }
     
     public func initArray<T>(from array: [T]) -> [T]? where T: Object {
-        
         var mutableArray = array
         for item in mutableArray {
             item.refresh()
         }
-        /*
-        if mutableArray is [Course] {
-            mutableArray.sort() { ($0 as! Course).secondsSinceGradeUpdate > ($1 as! Course).secondsSinceGradeUpdate }
-        }
-        */
         if mutableArray is [Comment] {
             mutableArray.sort() { $0.secondsSinceCreation < $1.secondsSinceCreation }
         }
@@ -122,7 +106,33 @@ class NBClient {
 
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
+        
+        
+        // let group = DispatchGroup()
+        
+        // group.enter()
+        //DispatchQueue.global(qos: .default).async {
+            let req = getUrl(someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])  // { r in
+                TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
+                if req.ok {
+                    let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
+                    objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+                    
+                }
+                // group.leave()
+            // }
+        //}
 
+        // group.wait()
+        // group.notify(queue: .main) {
+        
+        // }
+        return objectResult
+        
+        //
+        
+        
+        /*
         let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
         TTLog.debug("getmappable request: ", r.url!)
         
@@ -136,11 +146,11 @@ class NBClient {
             let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
             objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
         }
-        
         if (completionHandler != nil){
             completionHandler!(objectResult)
         }
- 
-        return objectResult
+        */
+
+        
     }
 }

@@ -39,6 +39,7 @@
 		85E291981F5F619300172C46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85E291971F5F619300172C46 /* Assets.xcassets */; };
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
+		85F0AE5D20A0EC53007573C2 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0AE5C20A0EC53007573C2 /* Helpers.swift */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
 		85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */; };
@@ -102,6 +103,7 @@
 		85E291A11F5F619300172C46 /* Notebowl MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Notebowl MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291AC1F5F619300172C46 /* Notebowl MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Notebowl MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
+		85F0AE5C20A0EC53007573C2 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
 		85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedCommentCell.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 			children = (
 				8531ACB21FC4EA9F00EC72FA /* Extensions.swift */,
 				8501CDF51FFBF5D800C853CE /* Just.swift */,
+				85F0AE5C20A0EC53007573C2 /* Helpers.swift */,
 				85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */,
 				85C5EA98208793A0005B8A22 /* NBSocket.swift */,
 				85FF86102006A1BA0080D223 /* MappableModels.swift */,
@@ -339,7 +342,7 @@
 				TargetAttributes = {
 					85E2918C1F5F619300172C46 = {
 						CreatedOnToolsVersion = 9.0;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -459,7 +462,6 @@
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
-				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
 				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -482,7 +484,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,6 +506,7 @@
 				85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */,
 				85348E7820463E3A00ABD877 /* ProgressWebViewController.swift in Sources */,
 				85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */,
+				85F0AE5D20A0EC53007573C2 /* Helpers.swift in Sources */,
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
 				853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */,
@@ -1090,6 +1092,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

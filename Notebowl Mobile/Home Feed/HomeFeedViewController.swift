@@ -22,9 +22,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var bgView: UIView!
     
     @IBOutlet var bulletinTableView: HomeTableView!
-    
     var placeholderTableView: TableView?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -40,12 +39,12 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
+        
         self.getPosts()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        TTLog.info("viewdidappear")
         TTLog.socket("registered handlers: ", NBSocket.shared.manager.defaultSocket.handlers.count)
     }
    
@@ -102,7 +101,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     if unreads.count > 0 {
                         tabBarController?.tabBar.items![2].badgeValue = String(format: "%d", (unreads.count))
                     }
-                    
                     let _ = notifsVC.view
                 }
             }
@@ -112,10 +110,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     func getPosts() {
         self.loadingView.showLoadView(true)
         self.bgView.showViewAnimated(true)
-
+        
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
-                
+        
+        
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
                 if NBClient.shared.storedTypes[Enrollment.classIdentifier] == nil {
                     NBClient.shared.storedTypes[Enrollment.classIdentifier] = enrollments
@@ -158,10 +157,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                         }
                     }
                 }
+                
             }
             self.getData()
             self.bulletinTableView.reloadData()
-   
             self.loadOtherTabs()
 
             self.bgView.showViewAnimated(false)
@@ -257,7 +256,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if (mapped.itemType?.contains("Post"))! {
+        if mapped.itemType! == "Post" {
             let mappedPost = mapped as! Response<Post>
             let indexOfPost = self.posts.index(of: mappedPost.updateUrl!)
             NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
@@ -287,7 +286,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         }
             
         /// TODO :: COMBINE COMMENTS AND LIKES UPDATE HANDLING
-        else if (mapped.itemType?.contains("Comment"))! {
+        else if mapped.itemType! == "Comment" {
             let mappedComment = mapped as! Response<Comment>
             guard let parentPost = self.posts.first(where: { $0.resourceKey == mappedComment.updateUrl!.parent.absoluteURL.lastPathComponent }) else {
                 return
@@ -303,7 +302,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 }
             }
         }
-        else if (mapped.itemType?.contains("Like"))! {
+        else if mapped.itemType! == "Like" {
             let mappedLike = mapped as! Response<Like>
             if let parentPost = self.posts.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
                 let indexOfPost = self.posts.index(of: parentPost)
@@ -320,7 +319,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 (parentComment as! Comment).updateLikes()
             }
         }
-        else if (mapped.itemType?.contains("AttachmentS3"))! {
+        else if mapped.itemType! == "AttachmentS3" {
             let mappedAttachment = mapped as! Response<Attachment>
             
             if let parentPost = self.posts.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
@@ -339,13 +338,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 (parentComment as! Comment).refresh()
             }
         }
-        else if (mapped.itemType?.contains("User"))! {
+        else if mapped.itemType! == "User" {
             let mappedUser = mapped as! Response<User>
             for post in self.posts {
                 post.refresh()
-            }
-            if mappedUser.updateUrl!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
-                // NBClient.shared.getCurrentUser()
             }
             if updateUI {
                 self.bulletinTableView.beginUpdates()
@@ -354,7 +350,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 self.bulletinTableView.endUpdates()
             }
         }
-        else if (mapped.itemType?.contains("CourseUser"))! {
+        else if mapped.itemType! == "CourseUser" {
             let mappedEnrollment = mapped as! Response<Enrollment>
             if mappedEnrollment.updateUrl!.parent!.firstTimeLoading {
                 let loadingView2 = NBLoadingView()

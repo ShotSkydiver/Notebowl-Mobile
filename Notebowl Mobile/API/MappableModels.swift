@@ -140,14 +140,13 @@ class Response<T>: Generic where T: Object {
     
     class var routeType: ItemType { return .user }
     
+    class var endpoint: String { return self.routeType.returnRoute() }
     
     class var classIdentifier: ObjectIdentifier {
         return ObjectIdentifier(self)
     }
     
     class func objectExistsInCache(keyToCompare: String!) -> Bool {
-        // if NBClient.shared.storedTypes[User.classIdentifier]!.first(where: { $0.})
-        
         if NBClient.shared.storedTypes[classIdentifier]!.first(where: { $0.resourceKey == keyToCompare }) != nil {
             return true
         }
@@ -745,7 +744,7 @@ class Response<T>: Generic where T: Object {
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
     
-    public var userPictureUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture"))?.appendingQueryParameters(["uuid": UIDevice().uuid]))!}
+    public var userPictureUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")))!}
     
     override class var routeType: ItemType { return .notification }
         

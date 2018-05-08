@@ -60,7 +60,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func configure(post: Post) {
-        TTLog.debug("configure")
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         if likeRefresh.isAnimating {
             likeRefresh.stopAnimating()
@@ -116,13 +115,13 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
-        // DispatchQueue.main.async {
+        // DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
+        DispatchQueue.main.async {
             if (!self.likeButton.isSelected) {
-                _ = Just.delete(self.postForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+                getUrl(self.postForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
             }
             else if (self.likeButton.isSelected) {
-                let reqLike = Just.post("https://\(NBClient.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
             }
         }
     }

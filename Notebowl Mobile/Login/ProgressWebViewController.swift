@@ -150,12 +150,7 @@ open class ProgressWebViewController: UIViewController {
         addBarButtonItems()
         
         if let userAgent = userAgent {
-            if let originalUserAgent = originalUserAgent {
-                webView?.customUserAgent = [originalUserAgent, userAgent].joined(separator: " ")
-            }
-            else {
-                webView?.customUserAgent = userAgent
-            }
+            webView?.customUserAgent = userAgent
         }
         
      

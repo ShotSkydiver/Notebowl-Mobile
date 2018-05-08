@@ -74,7 +74,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         }
     }
     func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if mapped.itemType!.contains("CourseUser") {
+        if mapped.itemType! == "CourseUser" {
             let mappedEnroll = mapped as! Response<Enrollment>
             if mappedEnroll.actionType != .deleted {
                 if let courseForEnroll = (NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == mappedEnroll.updateUrl!.resourceKey }) as? Course) {

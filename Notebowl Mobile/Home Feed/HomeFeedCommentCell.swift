@@ -99,10 +99,10 @@ class HomeFeedCommentCell: UITableViewCell, FaveButtonDelegate {
         DispatchQueue.main.async {
             TTLog.testing("starting async like post/delete")
             if (!self.commentLikeButton.isSelected) {
-                _ = Just.delete(self.commentForCell.likeFromCurrentUser!.url.absoluteString, params: ["uuid": UIDevice().uuid])
+                getUrl(self.commentForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
             }
             else if (self.commentLikeButton.isSelected) {
-                let reqLike = Just.post("https://\(NBClient.baseUrl)/api/v1.0/likes", params: ["uuid": UIDevice().uuid], data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
             }
         }
     }

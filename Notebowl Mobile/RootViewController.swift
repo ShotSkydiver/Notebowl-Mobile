@@ -41,7 +41,6 @@ class RootViewController: UIViewController {
             }
             progressWebVC.url = URL(string: ("https://\(NBClient.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
-            // Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.navigationItem.title = "Notebowl Login"
             progressWebVC.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
@@ -54,11 +53,11 @@ class RootViewController: UIViewController {
         }
             
         else if segue.identifier! == "presentTabBarView" {
-            _ = NBClient.shared
-            
+            NBClient.shared.resolveCurrentUser {
+                TTLog.debug("we did it???")
+            }
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
-            
             _ = NBSocket.shared
         }
     }
@@ -72,9 +71,7 @@ extension RootViewController: ProgressWebViewControllerDelegate {
         var components = URLComponents(url: controller.url!.absoluteURL, resolvingAgainstBaseURL: false)
         let pathComponents = components!.path
         if (pathComponents == "/gateway/services/mobile/register") {
-           //  _ = NBClient.shared.getCurrentUser()
             UserDefaults.set(hasUserLoggedIn: true)
-
             controller.dismiss(animated: true, completion: nil)
         }
     }

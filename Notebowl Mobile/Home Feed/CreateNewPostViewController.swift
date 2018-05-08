@@ -75,9 +75,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                                 .keepCurrentImageWhileLoading
             ]
         )
-        // userAvatar.focusOnFaces = true
-        // userAvatar.contentMode = .scaleAspectFill
-        
         dismissButton.image = dismissButton.image!.filled(withColor: (UIImage().createGradientImage(size: 35).gradientColor)).withRenderingMode(.alwaysOriginal)
         
         postTextView.delegate = self
@@ -85,24 +82,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        TTLog.debug("didappear")
         super.viewDidAppear(animated)
         postTextView.becomeFirstResponder()
-        
-    }
-    
-    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        TTLog.debug("shouldbeginediting")
-        return true
-    }
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        TTLog.debug("didbeginediting")
-    }
-    func textViewDidEndEditing(_ textView: UITextView) {
-        TTLog.debug("didendediting")
-    }
-    func textViewDidChange(_ textView: UITextView) {
-        TTLog.debug("didchange")
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -120,6 +101,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     })
         }){ r in
             print(r.ok)
+            
             let res = (r.json as AnyObject).value(forKeyPath: "result")
             let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
             self.attachmentFileId = fileid
@@ -132,8 +114,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     func setupInputBar() {
         bar.inputManagers = [attachmentManager]
-        // reloadInputViews()
-        
+
         let inputTextViewWidth = NSLayoutConstraint(item: bar.inputTextView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         bar.addConstraint(inputTextViewWidth)
         bar.setLeftStackViewWidthConstant(to: UIScreen.main.bounds.width, animated: false)
@@ -141,11 +122,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         bar.textViewPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         bar.topStackViewPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         bar.padding = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
-        
         bar.invalidateIntrinsicContentSize()
         
         photoLibraryButton = makeButton(image: "add_photo-vector")
-
         photoLibraryButton.onSelected { libButton in
             var config = YPImagePickerConfiguration()
             config.libraryTargetImageSize = .cappedTo(size: 1024)
@@ -201,15 +180,15 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         
         anonymousButton = makeButton(image: "visibility_on-vector")
-        /*
+        
         anonymousButton.configure {
             $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
-        */
+ 
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
-            // anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-            anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
+            anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+            //anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "not_pinned-vector")
         pinnedButton.onSelected { pinButton in
@@ -233,19 +212,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     @objc func postButtonTapped() {
-        // postTextView.resignFirstResponder()
-        // self.postButtonBarItem.postButton.resetProgress()
         self.postButtonBarItem.postButton.startIndeterminate()
-        // self.postButtonBarItem.postButton.setProgress(progress: 0.0, true)
         DispatchQueue.main.async {
             let postText = self.postTextView.text
             let jsonPayload: Any? = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
-            let post = Just.post("https://\(NBClient.baseUrl)/api/v1.0/posts", params: ["uuid": UIDevice().uuid], json: jsonPayload)
-            let finalmap = Mapper<Post>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!
+            let postReq = getUrl(Post.endpoint, method: .post, json: jsonPayload)
+            let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
             
             if self.attachmentManager.attachments.count > 0 {
                 let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                let attachment = Just.post("https://\(NBClient.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
+                let attReq = getUrl(Attachment.endpoint, method: .post, json: jsonAttPayload)
             }
             DispatchQueue.main.async {
                 TTLog.debug("start nested async")
@@ -254,12 +230,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 self.dismiss(animated: true, completion: nil)
             }
         }
-        /*
-        self.dismiss(animated: true, completion: {
-            // self.postTextView.resignFirstResponder()
-            // homeViewController.getPosts()
-        })
-        */
     }
     
     @IBAction func dismissButtonAction(_ sender: Any) {

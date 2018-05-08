@@ -21,14 +21,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        // #if DEBUG
-        FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
-            "Bug",
-            "Question",
-            "Looks good!"
-            ])
-        // #else
-        // #endif
+        var isAppStore: Bool = false
+            switch (Config.appConfiguration) {
+            case .Debug:
+                isAppStore = false
+            case .TestFlight:
+                isAppStore = false
+            case .AppStore:
+                isAppStore = true
+            }
+        
+        
+        if !isAppStore {
+            TTLog.debug("not appstore!")
+            FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
+                "Bug",
+                "Question",
+                "Looks good!"
+                ])
+        }
  
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
@@ -72,9 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
-
-        let reqNotif = Just.get("https://\(NBClient.baseUrl)/gateway/services/mobile/notifications/enable", params: ["uuid": UIDevice().uuid, "token": token])
-        TTLog.debug("notif register: ", reqNotif)
+        getUrl("notifications/enable", kind: .mobile, params: ["token": token]) {r in TTLog.debug("notif register: ", r) }
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)
@@ -100,8 +109,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         disconnectDate = Date()
     }
     func applicationWillEnterForeground(_ application: UIApplication) {
-        TTLog.debug("enter foreground!")
-        // NBSocket.shared.registerHandlers()
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             TTLog.debug("tabController is not presented!")
             return
@@ -110,9 +117,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NBSocket.shared.manager.connect()
         let formatter = DateFormatter.iso8061
         let dateString = formatter.string(from: self.disconnectDate)
-        var reconnectUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/operations/reconnect"))?.appendingQueryParameters(["since": dateString,"uuid": UIDevice().uuid]))!}
-        let recReq = Just.get(reconnectUrl)
-        let JSON : [String:AnyObject] = try! JSONSerialization.jsonObject(with: recReq.content!, options: .allowFragments) as! [String : AnyObject]
+        let recReq = getUrl("operations/reconnect", kind: .rpc, params: ["since": dateString])
+        guard let reqData = recReq.content else { return }
+        let JSON : [String:AnyObject] = try! JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
         let results: [String] = JSON["result"] as! [String]
         for result in results {
             let mapResult = Mapper<Generic>().map(JSONString: result)

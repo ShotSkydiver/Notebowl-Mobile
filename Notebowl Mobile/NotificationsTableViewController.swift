@@ -71,15 +71,14 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     }
     
     func markAsSeen() {
-       _ = Just.post("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/markAsSeen", params: ["uuid": UIDevice().uuid])
-
+        getUrl("notifications/markAsSeen", kind: .rpc, method: .post)
         for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
             notification.status = "seen"
         }
     }
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if mapped.itemType!.contains("Notification") {
+        if mapped.itemType! == "Notification" {
             // let mappedNotif = mapped as! Response<Notification>
             NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
             self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]

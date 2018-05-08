@@ -64,6 +64,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         tableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         
         viewIsLoaded = true
+        
+        indicatorView = NVActivityIndicatorView(frame: bar.sendButton.frame, type: NVActivityIndicatorType.ballPulseSync, color: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
+        bar.bottomStackView.addSubview(indicatorView)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -77,7 +80,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if mapped.itemType!.contains("Comment") || mapped.itemType!.contains("Like") || mapped.itemType!.contains("AttachmentS3") || mapped.itemType!.contains("User") {
+        if ["Comment","Like","AttachmentS3", "User"].contains(mapped.itemType!) {
             self.tableView.beginUpdates()
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
@@ -110,7 +113,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                   asyncProgressHandler:{ p in
                     print(p.percent)
                     DispatchQueue.main.async(execute: {
-                        
                         // self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
                     })
         }){ r in
@@ -129,7 +131,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         resetInput()
         
         let items = [
-            makeButton(named: "add_photo-vector")
+            makeButton(named: "add_photo-vector").onKeyboardEditingBegins({ (_) in
+                
+                self.tableView.scrollToBottom(animated: true)
+                
+            })
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true
                     var config = YPImagePickerConfiguration()
@@ -160,7 +166,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             makeButton(named: "visibility_on-vector")
                 .onSelected { anonButton in
                     self.anonymousToggle.toggle()
-                    anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
+                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                    // anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
             },
           
             bar.sendButton.configure {
@@ -189,8 +196,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
         bar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
         
-        indicatorView = NVActivityIndicatorView(frame: self.bar.sendButton.frame, type: NVActivityIndicatorType.ballPulseSync, color: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
-        bar.bottomStackView.addSubview(indicatorView)
+        
     }
     
     func makeButton(named: String) -> InputBarButtonItem {
@@ -205,12 +211,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         
         let jsonPayload: Any? = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
-        let post = Just.post("https://\(NBClient.baseUrl)/api/v1.0/comments", params: ["uuid": UIDevice().uuid], json: jsonPayload)
-        let finalmap = Mapper<Comment>().map(JSONObject: (post.json as AnyObject).value(forKeyPath: "result")!)!
+        let postReq = getUrl(Comment.endpoint, method: .post, json: jsonPayload)
+        let finalmap = Mapper<Comment>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
         
-        if attachmentManager.attachments.count > 0 {
+        if self.attachmentManager.attachments.count > 0 {
             let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-            let attachment = Just.post("https://\(NBClient.baseUrl)/api/v1.0/attachments", params: ["uuid": UIDevice().uuid], json: jsonAttPayload)
+            let attReq = getUrl(Attachment.endpoint, method: .post, json: jsonAttPayload)
         }
 
         inputBar.inputTextView.text = String()
@@ -292,13 +298,18 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate {
         setAttachmentManager(active: shouldBecomeVisible)
     }
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
+        TTLog.debug("att did reload")
         //bar.sendButton.isEnabled = attachments.count > 0
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        bar.sendButton.isEnabled = manager.attachments.count > 0
+        if let libraryButton = bar.bottomStackViewItems[0] as? InputBarButtonItem {
+            libraryButton.isEnabled = manager.attachments.count < 1
+        }
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        //bar.sendButton.isEnabled = manager.attachments.count > 0
+        if let libraryButton = bar.bottomStackViewItems[0] as? InputBarButtonItem {
+            libraryButton.isEnabled = manager.attachments.count < 1
+        }
     }
     
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {

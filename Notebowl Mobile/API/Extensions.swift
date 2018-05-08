@@ -166,17 +166,6 @@ public extension UIDevice {
         }
         return identifier
     }
-    
-    public var isX: Bool {
-        // case "iPhone10,3", "iPhone10,6":                return "iPhone X"
-        if modelName.contains("iPhone10,3") || modelName.contains("iPhone10,6") {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
     var uuid: String {
         return identifierForVendor!.uuidString
     }
@@ -226,10 +215,8 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return outputImage!
     }
-    //let grad = UIImage().createGradientImage()
-    // let gradColor = UIColor(patternImage: grad)
+
     public var gradientColor: UIColor {
-        // let grad = createGradientImage(size: 40)
         return UIColor(patternImage: self)
     }
     
@@ -409,7 +396,6 @@ extension UIView {
         
         self.addSubview(loadingView)
         loadingView.addUntitled2Animation()
-        
     }
 
     func showViewAnimated(_ show: Bool) {
@@ -429,12 +415,26 @@ public extension Bool {
 public extension UITableView {
 
     public func scrollToBottom(animated: Bool = true) {
+        //let keyboardFrameBegin = UIKeyboardFrameBeginUserInfoKey
+        //let keyboardFrameEnd = UIKeyboardFrameEndUserInfoKey
+        
+        //if self.reachedBottom {
+            // let delta = self.contentOffset.y - (keyboardFrameEnd.origin.y - keyboardFrameBegin.origin.y)
+            // self.scrollView.contentOffset = CGPoint(x: 0, y: delta)
+        //}
+        
         let bottomOffset = CGPoint(x: 0, y: contentSize.height - bounds.size.height)
         setContentOffset(bottomOffset, animated: animated)
     }
 
     public func scrollToTop(animated: Bool = true) {
         setContentOffset(CGPoint.zero, animated: animated)
+    }
+    
+    var reachedBottom: Bool {
+        get {
+            return self.contentOffset.y >= (self.contentSize.height - self.bounds.size.height)
+        }
     }
 }
 
@@ -469,15 +469,6 @@ extension UIWindow {
         default:
             return viewController
         }
-    }
-}
-
-extension UIApplication {
-    var statusBarView: UIView? {
-        if responds(to: Selector("statusBar")) {
-            return value(forKey: "statusBar") as? UIView
-        }
-        return nil
     }
 }
 
@@ -517,6 +508,43 @@ extension UIColor {
 extension Array where Element: Equatable {
     public mutating func removeAll(_ item: Element) {
         self = self.filter { $0 != item }
+    }
+}
+extension Dictionary {
+    public func has(key: Key) -> Bool {
+        return index(forKey: key) != nil
+    }
+    
+    /// SwifterSwift: Count dictionary entries that where function returns true.
+    ///
+    /// - Parameter where: condition to evaluate each tuple entry against.
+    /// - Returns: Count of entries that matches the where clousure.
+    public func count(where condition: @escaping ((key: Key, value: Value)) throws -> Bool) rethrows -> Int {
+        var count: Int = 0
+        try self.forEach {
+            if try condition($0) {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    /// SwifterSwift: Merge the keys/values of two dictionaries.
+    ///
+    ///        let dict : [String : String] = ["key1" : "value1"]
+    ///        let dict2 : [String : String] = ["key2" : "value2"]
+    ///        let result = dict + dict2
+    ///        result["key1"] -> "value1"
+    ///        result["key2"] -> "value2"
+    ///
+    /// - Parameters:
+    ///   - lhs: dictionary
+    ///   - rhs: dictionary
+    /// - Returns: An dictionary with keys and values from both.
+    public static func + (lhs: [Key: Value], rhs: [Key: Value]) -> [Key: Value] {
+        var result = lhs
+        rhs.forEach { result[$0] = $1 }
+        return result
     }
 }
 extension PlaceholdersProvider {
@@ -577,23 +605,6 @@ extension PlaceholdersProvider {
     }
 }
 
-class ImageTransform: TransformType {
-    public typealias Object = UIImage
-    public typealias JSON = String
-    
-    func transformFromJSON(_ value: Any?) -> UIImage? {
-        let urlToGet = value as! String
-        
-        
-        
-        return UIImage().createGradientImage(size: 40)
-    }
-    
-    func transformToJSON(_ value: UIImage?) -> String? {
-        return nil
-    }
-}
-
 class ObjectTransform<T: Object>: TransformType {
     public typealias Object = T
     public typealias JSON = String
@@ -610,7 +621,6 @@ class ObjectTransform<T: Object>: TransformType {
         let url = URL(string: urlToGet)
 
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            // TTLog.debug("object exists! ", objectExists.url.absoluteString)
             if self.actionType == .deleted {
                 TTLog.debug("action type: delete!")
                 if T.routeType == .notification || T.routeType == .enrollment {
@@ -624,16 +634,12 @@ class ObjectTransform<T: Object>: TransformType {
                 }
             }
             else {
-                
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
                     TTLog.debug("new object is more recent than existing object!")
-                    // TODO: THIS MIGHT SLOW THINGS WAY THE HELL DOWN BECAUSE IT"S GOING TO BE RELOADING AND REMAPPING EVERY TIME IT'S UPDATED
-                    
-                    let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
+                    let r = getUrl(urlToGet)
+                    // let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
                     let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-                    
                     finalmap?.refresh()
-                    
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
                     return finalmap
                 }
@@ -646,7 +652,7 @@ class ObjectTransform<T: Object>: TransformType {
         }
 
         else {
-            let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
+            let r = getUrl(urlToGet)
             TTLog.debug("objtransform req: ", r.url!)
             if r.statusCode != 200 || !r.ok {
                 let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
@@ -656,22 +662,14 @@ class ObjectTransform<T: Object>: TransformType {
                 
             }
             let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            //if T.routeType != .course {
-                finalmap?.refresh()
+            finalmap?.refresh()
             finalmap?.firstTimeLoading = true
-            //}
-            
-            
-            if NBClient.shared.storedTypes[T.classIdentifier] == nil {
+            if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
                 NBClient.shared.storedTypes[T.classIdentifier] = [finalmap!]
             }
-                
-            else if NBClient.shared.storedTypes[T.classIdentifier]!.first(where: {$0.resourceKey == finalmap!.resourceKey}) == nil {
-                
+            else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == finalmap!.resourceKey}) {
                 NBClient.shared.storedTypes[T.classIdentifier]!.append(finalmap!)
             }
-            
-            
             return finalmap
         }
     }
@@ -689,18 +687,37 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }
-
-public let valueForObjectType: Dictionary<ObjectIdentifier, Object.Type> = [
-    User.classIdentifier: User.self,
-    Course.classIdentifier: Course.self,
-    Assignment.classIdentifier: Assignment.self,
-    Post.classIdentifier: Post.self,
-    Comment.classIdentifier: Comment.self,
-    Like.classIdentifier: Like.self,
-    Attachment.classIdentifier: Attachment.self,
-    Notification.classIdentifier: Notification.self
-]
-
 protocol UpdateVC {
     func handleUpdate(mapped: Generic, updateUI: Bool)
+}
+
+
+enum AppConfiguration {
+    case Debug
+    case TestFlight
+    case AppStore
+}
+
+struct Config {
+    // This is private because the use of 'appConfiguration' is preferred.
+    private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+    
+    // This can be used to add debug statements.
+    static var isDebug: Bool {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }
+    
+    static var appConfiguration: AppConfiguration {
+        if isDebug {
+            return .Debug
+        } else if isTestFlight {
+            return .TestFlight
+        } else {
+            return .AppStore
+        }
+    }
 }

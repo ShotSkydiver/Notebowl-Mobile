@@ -15,11 +15,9 @@ target 'Notebowl Mobile' do
     pod 'Haptica'
     pod 'ButtonProgressBar-iOS'
     pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
-    # pod 'RLBAlertsPickers', :git => 'https://github.com/ShotSkydiver/Alerts-Pickers'
     pod 'Tamamushi'
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
     pod 'NVActivityIndicatorView'
-    # pod 'ViewAnimator'
     pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
 end
 
