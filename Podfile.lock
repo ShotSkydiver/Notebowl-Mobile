@@ -1,4 +1,5 @@
 PODS:
+  - Agrume (5.0.0)
   - Bugsnag (5.15.5)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
@@ -19,12 +20,15 @@ PODS:
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
   - SteviaLayout (4.2.0)
+  - SwipeCellKit (2.2.0)
   - Tamamushi (0.1.3)
+  - TTInputVisibilityController (0.1.1)
   - YPImagePicker (2.8.1):
     - PryntTrimmerView (~> 2.0)
     - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
+  - Agrume (from `https://github.com/JanGorman/Agrume.git`)
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -39,7 +43,9 @@ DEPENDENCIES:
   - NVActivityIndicatorView
   - ObjectMapper (~> 3.1)
   - Socket.IO-Client-Swift (~> 13.1.0)
+  - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
   - Tamamushi
+  - TTInputVisibilityController
   - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`)
 
 SPEC REPOS:
@@ -60,27 +66,40 @@ SPEC REPOS:
     - Starscream
     - SteviaLayout
     - Tamamushi
+    - TTInputVisibilityController
 
 EXTERNAL SOURCES:
+  Agrume:
+    :git: https://github.com/JanGorman/Agrume.git
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :git: https://github.com/ShotSkydiver/SlackFeedback
+  SwipeCellKit:
+    :branch: develop
+    :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   YPImagePicker:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 CHECKOUT OPTIONS:
+  Agrume:
+    :commit: 3d7389aa521558b8be8d89152bc819071e9ee896
+    :git: https://github.com/JanGorman/Agrume.git
   FaveButton:
     :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :commit: 0e5032ad6d9b83081a32d2476ee428f1729a6839
     :git: https://github.com/ShotSkydiver/SlackFeedback
+  SwipeCellKit:
+    :commit: 65d0532f1c53b986abee2b9519703bab4e16a790
+    :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   YPImagePicker:
     :commit: 0e26b5883c5df61d7865ba5bb01a3021130dd15f
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
+  Agrume: 2c5e48241ee08856f4bd0c2ea0db3bab12fb9cbb
   Bugsnag: 82788750cec86630828bb7dd250943f8356c53ea
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
@@ -98,9 +117,11 @@ SPEC CHECKSUMS:
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
+  SwipeCellKit: 8ae09401e1137566b187980d824310129233c959
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
+  TTInputVisibilityController: 405f3f70f98b1e3484e7e057d0db0cbe92e39044
   YPImagePicker: 53560dee9d3f162f1d74d88e27bf62fc561baab5
 
-PODFILE CHECKSUM: 42625fdec8ac67b447a987139ccdcd6379322cbf
+PODFILE CHECKSUM: 4f38aeccb1e39df865d2996495ff239ba1fe642c
 
 COCOAPODS: 1.5.0

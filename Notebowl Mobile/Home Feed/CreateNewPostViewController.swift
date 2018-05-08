@@ -55,6 +55,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     var pinnedToggle: Bool = false
     var showingPhotoPicker: Bool = false
     
+    var editingExistingPost: Bool = false
+    var existingPostToEdit: Post!
+    var existingCell: HomeFeedPostCell!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -78,6 +82,20 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         dismissButton.image = dismissButton.image!.filled(withColor: (UIImage().createGradientImage(size: 35).gradientColor)).withRenderingMode(.alwaysOriginal)
         
         postTextView.delegate = self
+        if editingExistingPost {
+            postTextView.text = existingPostToEdit.text!
+            
+            /*
+            if existingCell.postAttachments != nil || existingCell.heightConst.constant != 0 {
+                attachmentManager.handleInput(of: existingCell.postAttachments.image!)
+            }
+            */
+            //if existingPostToEdit.postAttachments.count > 0 {
+                //for attachment in existingPostToEdit.postAttachments {
+                    //attachmentManager.handleInput(of: )
+                //}
+            //}
+        }
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
     }
     
@@ -150,6 +168,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.present(picker, animated: true, completion: nil)
         }
         coursePickerButton = makeButton(image: "school-vector")
+        coursePickerButton.configure {
+            $0.isEnabled = !self.editingExistingPost
+        }
         coursePickerButton.onSelected { courseButton in
             let alert = UIAlertController(title: "Select a Course", message: "Your post will be created in the course you select, and only users enrolled in that course will be able to see it.", preferredStyle: .actionSheet)
             
@@ -180,11 +201,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         
         anonymousButton = makeButton(image: "visibility_on-vector")
-        
         anonymousButton.configure {
+            $0.isEnabled = !self.editingExistingPost
             $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
- 
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
             anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
@@ -215,14 +235,22 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         self.postButtonBarItem.postButton.startIndeterminate()
         DispatchQueue.main.async {
             let postText = self.postTextView.text
-            let jsonPayload: Any? = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
-            let postReq = getUrl(Post.endpoint, method: .post, json: jsonPayload)
-            let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
-            
-            if self.attachmentManager.attachments.count > 0 {
-                let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                let attReq = getUrl(Attachment.endpoint, method: .post, json: jsonAttPayload)
+            var jsonPayload: Any?
+            if self.editingExistingPost {
+                jsonPayload = ["text": postText!]
+                let putReq = getUrl(self.existingPostToEdit.url.absoluteString, method: .put, json: jsonPayload)
+                
             }
+            else {
+                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
+                let postReq = getUrl(Post.endpoint, method: .post, json: jsonPayload)
+                let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
+                if self.attachmentManager.attachments.count > 0 {
+                    let jsonAttPayload: Any? = ["fileId": self.attachmentFileId, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+                    let attReq = getUrl(Attachment.endpoint, method: .post, json: jsonAttPayload)
+                }
+            }
+            
             DispatchQueue.main.async {
                 TTLog.debug("start nested async")
                 self.postButtonBarItem.postButton.triggerCompletion()

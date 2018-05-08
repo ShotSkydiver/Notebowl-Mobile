@@ -23,6 +23,7 @@ public enum ItemType: String {
     case comment = "comments"
     case like = "likes"
     case notification = "notifications"
+    case abuse = "abuses"
 }
 
 
@@ -301,7 +302,8 @@ class Response<T>: Generic where T: Object {
         }
         
         if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent!.resourceKey == self.resourceKey }) as? Enrollment
+            // enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent!.resourceKey == self.resourceKey }) as? Enrollment
+            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
             
             
             /*
@@ -522,12 +524,12 @@ class Response<T>: Generic where T: Object {
         role <- map["role"]
         status <- map["status"]
         
-        if role.contains("Professor") {
+        //if role.contains("Professor") {
             user <- (map["_user"], ObjectTransform<User>())
-        }
-        else if role.contains("Student") {
-            user = NBClient.shared.getCurrentUser()
-        }
+        //}
+        //else if role.contains("Student") {
+            //user = NBClient.shared.getCurrentUser()
+        //}
         
         // user <- (map["_user"], URLTransform())
         // if self.itemType.contains("CourseUser") {
@@ -761,5 +763,22 @@ class Response<T>: Generic where T: Object {
         type <- map["type"]
         parent <- (map["_parent"], URLTransform())
     }
+}
+
+
+@objc(Notification) class Abuse: Object {
+    var reason: String!
+    var parent: URL!
+
+    override class var routeType: ItemType { return .abuse }
     
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        reason <- map["reason"]
+        parent <- (map["_parent"], URLTransform())
+    }
 }

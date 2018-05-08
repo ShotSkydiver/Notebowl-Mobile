@@ -79,6 +79,10 @@ class NBClient {
         UserDefaults.set(hasUserLoggedIn: false)
     }
     
+    func submitReport(reason: String, parent: String) {
+        
+    }
+    
     public func buildFilterString(from items: [Object]) -> String {
         var urlBuilder: String = ""
         for item in items {

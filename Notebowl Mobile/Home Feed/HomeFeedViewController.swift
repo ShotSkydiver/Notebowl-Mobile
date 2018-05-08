@@ -14,6 +14,7 @@ import QuartzCore
 import SocketIO
 import ObjectMapper
 import Tamamushi
+import SwipeCellKit
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var posts: [Post]!
@@ -27,7 +28,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
-        
         HomeFeedWritePostCell.register(in: bulletinTableView)
         HomeFeedPostCell.register(in: bulletinTableView)
         
@@ -41,11 +41,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
         
         self.getPosts()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        TTLog.socket("registered handlers: ", NBSocket.shared.manager.defaultSocket.handlers.count)
     }
    
     func tempLoadingViewSetup() {
@@ -72,7 +67,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
-    
     
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         placeholderTableView?.showDefault()
@@ -238,16 +232,21 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let senderCell = sender as? HomeFeedPostCell {
-            let indexPath = self.bulletinTableView.indexPath(for: senderCell)!
+        // if let senderCell = sender as? HomeFeedPostCell {
+        if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
-            destVC.currentIndex = indexPath
-            destVC.post = self.posts[indexPath.row]
+            destVC.post = self.posts[(self.bulletinTableView.indexPathForSelectedRow?.row)!]
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
             destVC.coursesForPicker = self.courses
             destVC.selectedCourse = self.courses.first!
+            if let senderCell = sender as? HomeFeedPostCell {
+                TTLog.debug("editing existing post!")
+                destVC.editingExistingPost = true
+                destVC.existingPostToEdit = senderCell.postForCell
+                destVC.existingCell = senderCell
+            }
         }
     }
     
@@ -276,10 +275,13 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     }
                 }
                 if indexOfPost != nil {
-                    if updateUI {
-                        self.bulletinTableView.beginUpdates()
-                        self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right)
-                        self.bulletinTableView.endUpdates()
+                    if self.bulletinTableView.cellForRow(at: IndexPath(row: indexOfPost!, section: 1)) != nil {
+                        
+                        if updateUI {
+                            self.bulletinTableView.beginUpdates()
+                            self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right)
+                            self.bulletinTableView.endUpdates()
+                        }
                     }
                 }
             }
@@ -413,6 +415,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
     }
+    
+    
 }
 
 
@@ -436,7 +440,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = HomeFeedWritePostCell.dequeue(from: tableView)!
-
             cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                         options: [
                             .transition(ImageTransition.fade(0.3)),
@@ -450,10 +453,83 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         }
         else {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
+            cell.delegate = self
             let post = self.posts[indexPath.row]
             cell.configure(post: post)
             return cell
         }
+    }
+}
+
+extension HomeFeedViewController: SwipeTableViewCellDelegate {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
+        
+        let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
+            self.performSegue(withIdentifier: "createPostSegue", sender: selectedCell)
+            
+        }
+        edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        edit.textColor = .groupTableViewBackground
+        edit.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.5137254902, blue: 0.7411764706, alpha: 1)
+        edit.fulfill(with: .reset)
+        
+        let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
+            self.posts.remove(at: indexPath.row)
+            action.fulfill(with: .delete)
+            getUrl(selectedCell.postForCell.url.absoluteString, method: .delete)
+        }
+        delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        delete.textColor = .groupTableViewBackground
+        delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
+        
+        let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
+            let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
+            let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
+                let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
+                getUrl(Abuse.endpoint, method: .post, json: payload)
+                alert.dismiss(animated: true, completion: nil)
+            })
+            let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
+                let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
+                getUrl(Abuse.endpoint, method: .post, json: payload)
+                alert.dismiss(animated: true, completion: nil)
+            })
+            alert.addAction(inappropriate)
+            alert.addAction(spam)
+            self.present(alert, animated: true, completion: nil)
+        }
+        report.image = UIImage(named: "report-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        report.textColor = .groupTableViewBackground
+        report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
+        report.hidesWhenSelected = true
+        
+        if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+            return [delete, edit]
+        }
+        else if (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
+            return [delete, report] // and pin
+        }
+        else {
+            return [report]
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
+        var options = SwipeTableOptions()
+        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
+        
+        if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
+            options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
+        }
+        else {
+            options.expansionStyle = SwipeExpansionStyle.fill
+        }
+        options.transitionStyle = SwipeTransitionStyle.border
+        options.buttonSpacing = 11
+        return options
     }
 }
 

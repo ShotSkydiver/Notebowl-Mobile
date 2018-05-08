@@ -14,11 +14,11 @@ import SocketIO
 import YPImagePicker
 import ButtonProgressBar_iOS
 import NVActivityIndicatorView
+import TTInputVisibilityController
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, NVActivityIndicatorViewable {
 
     var post: Post!
-    var currentIndex: IndexPath!
     var staticComments: [Comment]!
     var anonymousToggle: Bool = false
     var viewIsLoaded = false
@@ -26,6 +26,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var indicatorView: NVActivityIndicatorView!
     var showingPhotoPicker: Bool = false
     var idForHandler: UUID!
+    // var inputVisibilityController: TTInputVisibilityController!
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -57,7 +58,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         super.viewDidLoad()
         HomeFeedPostCell.register(in: self.tableView)
         HomeFeedCommentCell.register(in: self.tableView)
-        
+
         setupInputBar()
         registerHandler()
         
@@ -132,9 +133,16 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         
         let items = [
             makeButton(named: "add_photo-vector").onKeyboardEditingBegins({ (_) in
-                
-                self.tableView.scrollToBottom(animated: true)
-                
+                /*
+                self.tableView.addInputVisibilityController()
+                self.tableView.keyboardVisibilityController?.view = self.tableView
+                self.tableView.keyboardVisibilityController?.additionallAnimatioBlock = { [weak self] translation in
+                    let delta = ((self?.tableView.contentSize.height)! - (self?.tableView.bounds.size.height)!) + translation
+                    // self?.tableView.contentOffset = CGPoint(x: 0, y: delta)
+                    self?.tableView.setContentOffset(CGPoint(x: 0, y: delta), animated: true)
+                }
+                // self.tableView.scrollToBottom(animated: true)
+                */
             })
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true

@@ -16,8 +16,9 @@ import Haptica
 import ObjectMapper
 import SocketIO
 import NVActivityIndicatorView
+import SwipeCellKit
 
-class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
+class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate {
     
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -34,7 +35,6 @@ class HomeFeedPostCell: UITableViewCell, FaveButtonDelegate {
     @IBOutlet weak var heightConst: NSLayoutConstraint!
     
     var postForCell: Post!
-    var imageIsSet: Bool = false
     
     override func awakeFromNib() {
         super.awakeFromNib()
