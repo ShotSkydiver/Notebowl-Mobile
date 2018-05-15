@@ -15,6 +15,7 @@ import ObjectMapper
 import SocketIO
 import NVActivityIndicatorView
 import SwipeCellKit
+import AXPhotoViewer
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -61,7 +62,7 @@ class IndexedCollectionView: UICollectionView {
     var indexPath: IndexPath!
 }
 
-class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, AXPhotosViewControllerDelegate {
     
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -73,13 +74,17 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     @IBOutlet weak var collectionView: IndexedCollectionView!
     @IBOutlet weak var likeButton: FaveButton!
     @IBOutlet weak var commentButton: FaveButton!
+    @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var collectionFlowLayout: IndexedCollectionViewFlowLayout!
     @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
     
-    var imageArray = [String] ()
+    var images = [UIImage]()
+    var axPhotos = [AXPhoto]()
     var likeIndicator: NVActivityIndicatorView!
     var postForCell: Post!
     var collectionViewPaginatedScroll: Bool?
+    
+    weak var photosViewController: AXPhotosViewController?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -101,7 +106,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         collectionView.register(UINib(nibName: "IndexedCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: IndexedCollectionViewCell.identifier)
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
-        
+  
         likeIndicator = NVActivityIndicatorView(frame: self.postLikes.frame, type: .ballPulseSync, color: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         addSubview(likeIndicator)
         
@@ -140,7 +145,17 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
                 ]
             )
         }
-        
+        if axPhotos.isEmpty {
+            for attachment in post.postAttachments {
+                let axphoto = AXPhoto(attributedTitle: nil, attributedDescription: nil, url: attachment.getUrlForAvatar()!.absoluteURL)
+                self.axPhotos.append(axphoto)
+                /*
+                 KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: [], progressBlock: nil,  completionHandler: { (image, error, cacheType, URL) in
+                 self.images.append(image!)
+                 })
+                 */
+            }
+        }
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
             if (post.postAttachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
@@ -180,6 +195,10 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         likeIndicator.startAnimating()
         // likeRefresh.startAnimating()
         postLikes.showViewAnimated(false)
+    }
+    
+    @IBAction func moreButtonAction(_ sender: Any) {
+        self.showSwipe(orientation: .right, animated: true, completion: nil)
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
@@ -226,14 +245,13 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
                 self.setNeedsLayout()
             })
             if indexPath.row == 2 {
+                cell.attachmentCount.text = "+\(self.postForCell.postAttachments.count-2)"
                 cell.attachmentOverlay.alpha = 0.7
             }
             else {
                 cell.attachmentOverlay.alpha = 0.0
             }
-            
         }
-
         return cell
     }
     
@@ -241,8 +259,54 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         print("did select image: ", indexPath)
         let currentCell = (collectionView as! IndexedCollectionView).cellForItem(at: indexPath) as! IndexedCollectionViewCell
         // show image detail
-        // let imageToDisplay = currentCell.attachment.image!
+        let imageToDisplay = currentCell.attachment.image!
+        let transitionInfo = AXTransitionInfo(interactiveDismissalEnabled: true, startingView: currentCell.attachment) { [weak self] (photo, index) -> UIImageView? in
+            guard let `self` = self else {
+                return nil
+            }
+            let indexPath = IndexPath(row: index, section: 0)
+            guard let cell = (collectionView as! IndexedCollectionView).cellForItem(at: indexPath) as? IndexedCollectionViewCell else {
+                return nil
+            }
+            return cell.attachment
+        }
+        let dataSource = AXPhotosDataSource(photos: self.axPhotos, initialPhotoIndex: indexPath.row)
+        let pagingConfig = AXPagingConfig(interPhotoSpacing: 10.0)
+        
+        let photosViewController = AXPhotosViewController(dataSource: dataSource, pagingConfig: pagingConfig, transitionInfo: transitionInfo)
+        photosViewController.delegate = self
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+            TTLog.debug("tabController is not presented!")
+            return
+        }
+        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
+            homeVC.showingPhotoPicker = true
+            homeVC.present(photosViewController, animated: true) {
+                homeVC.showingPhotoPicker = false
+            }
+            self.photosViewController = photosViewController
+        }
+        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
+            homeVC.present(photosViewController, animated: true, completion: nil)
+            self.photosViewController = photosViewController
+        }
     }
+    func photosViewController(_ photosViewController: AXPhotosViewController,
+                              willUpdate overlayView: AXOverlayView,
+                              for photo: AXPhotoProtocol,
+                              at index: Int,
+                              totalNumberOfPhotos: Int) {
+        
+
+    }
+    func photosViewController(_ photosViewController: AXPhotosViewController,
+                              didNavigateTo photo: AXPhotoProtocol,
+                              at index: Int) {
+        
+        let indexPath = IndexPath(row: index, section: 0)
+        
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)

@@ -1,25 +1,34 @@
 PODS:
+  - AXPhotoViewer/Core (1.4.3):
+    - AXStateButton (>= 1.1.3)
+    - FLAnimatedImage (>= 1.0.0)
+    - FLAnimatedImage-tvOS (>= 1.0.16)
+  - AXPhotoViewer/Kingfisher (1.4.3):
+    - AXPhotoViewer/Core
+    - Kingfisher (>= 3.10.0)
+  - AXStateButton (1.1.4)
   - Bugsnag (5.15.5)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
   - FaceAware (1.2.0)
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
+  - FLAnimatedImage (1.0.12)
   - Haptica (2.0.1)
   - HGPlaceholders (0.3.0)
   - InputBarAccessoryView (1.5.4)
-  - Kingfisher (4.7.0)
+  - Kingfisher (4.8.0)
   - MMUploadImage (2.0.8)
-  - NVActivityIndicatorView (4.2.0):
-    - NVActivityIndicatorView/Presenter (= 4.2.0)
-  - NVActivityIndicatorView/Presenter (4.2.0)
+  - NVActivityIndicatorView (4.2.1):
+    - NVActivityIndicatorView/Presenter (= 4.2.1)
+  - NVActivityIndicatorView/Presenter (4.2.1)
   - ObjectMapper (3.1.0)
   - PryntTrimmerView (2.0.1)
   - Socket.IO-Client-Swift (13.1.3):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
   - SteviaLayout (4.2.0)
-  - SwipeCellKit (2.2.0)
+  - SwipeCellKit (2.3.0)
   - Tamamushi (0.1.3)
   - TTInputVisibilityController (0.1.1)
   - YPImagePicker (2.8.1):
@@ -27,6 +36,7 @@ PODS:
     - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
+  - AXPhotoViewer/Kingfisher
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -48,10 +58,13 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - AXPhotoViewer
+    - AXStateButton
     - Bugsnag
     - ButtonProgressBar-iOS
     - DeckTransition
     - FaceAware
+    - FLAnimatedImage
     - Haptica
     - HGPlaceholders
     - InputBarAccessoryView
@@ -85,35 +98,38 @@ CHECKOUT OPTIONS:
     :commit: 0e5032ad6d9b83081a32d2476ee428f1729a6839
     :git: https://github.com/ShotSkydiver/SlackFeedback
   SwipeCellKit:
-    :commit: 65d0532f1c53b986abee2b9519703bab4e16a790
+    :commit: d25149cb3ffef8bed500fda55337190463306446
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   YPImagePicker:
-    :commit: 0e26b5883c5df61d7865ba5bb01a3021130dd15f
+    :commit: f6f91b1659f3a2e3a5c178f7164af2488d8237b3
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
+  AXPhotoViewer: fb5c57219615b37b66d785ab602cc53d71e29212
+  AXStateButton: 6c515a433e37551505046429b5be04c12daa8c07
   Bugsnag: 82788750cec86630828bb7dd250943f8356c53ea
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
   FaceAware: 421436f9d16aacdb26ffcf8e5a39a1dd68630395
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Haptica: 8dbc771b1eb764454ce66092c4cfc6b29dcb6cb7
   HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
   InputBarAccessoryView: d59b2fa4b227ce58e8f61398489f80017e265739
-  Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
+  Kingfisher: 976d828df2b24834c6a3f2fc4d82cdbd26552be1
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  NVActivityIndicatorView: 75c9634073e03b31d7e2748cd2417feab1206195
+  NVActivityIndicatorView: 8068ba3ad39cb44cbaab25d89ff2546b3f092681
   ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
   PryntTrimmerView: 4260ae497a2f3e1bbfc0b71247eb74ab92bf0490
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
-  SwipeCellKit: 8ae09401e1137566b187980d824310129233c959
+  SwipeCellKit: cc328d2702def193b03c4ee9001d19fbab6230f4
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
   TTInputVisibilityController: 405f3f70f98b1e3484e7e057d0db0cbe92e39044
   YPImagePicker: 53560dee9d3f162f1d74d88e27bf62fc561baab5
 
-PODFILE CHECKSUM: 0a2117fc9c746fd6bd30f024c7e4180d92a3518c
+PODFILE CHECKSUM: b0d6a61673e6077bd16870ffbbdc3664842b9640
 
 COCOAPODS: 1.5.0

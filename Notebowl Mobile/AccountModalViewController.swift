@@ -120,9 +120,27 @@ class AccountModalTableViewController: UITableViewController {
         config.icons.cropIcon = UIImage(named: "crop-vector")!
         config.colors.navigationBarTextColor = .darkGray
         config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-        config.delegate = self
         let picker = YPImagePicker(configuration: config)
 
+        picker.didFinishPicking(completion: { (items, cancelled) in
+            if cancelled {
+                TTLog.debug("cancelled")
+                picker.dismiss(animated: true, completion: nil)
+            }
+            else if !cancelled {
+                let item = items.first!
+                switch item {
+                case .photo(let photo):
+                    self.containerToMaster?.startUpload(image: photo.image)
+                    picker.dismiss(animated: true, completion: {
+                        self.containerToMaster?.uploadingImage()
+                    })
+                default:
+                    picker.dismiss(animated: true, completion: nil)
+                }
+            }
+        })
+        
         if let popoverController = picker.popoverPresentationController {
             popoverController.sourceView = self.view
             popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
@@ -153,24 +171,5 @@ class AccountModalTableViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
-    }
-}
-
-extension AccountModalTableViewController: YPImagePickerDelegate {
-    func imagePicker(_ imagePicker: YPImagePicker, didSelect items: [YPMediaItem]) {
-        let item = items.first!
-        switch item {
-        case .photo(let photo):
-            self.containerToMaster?.startUpload(image: photo.image)
-            imagePicker.dismiss(animated: true, completion: {
-                self.containerToMaster?.uploadingImage()
-            })
-        default:
-            imagePicker.dismiss(animated: true, completion: nil)
-        }
-    }
-    func imagePickerDidCancel(_ imagePicker: YPImagePicker) {
-        TTLog.debug("canceled")
-        imagePicker.dismiss(animated: true, completion: nil)
     }
 }

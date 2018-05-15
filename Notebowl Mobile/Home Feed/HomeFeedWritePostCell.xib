@@ -31,7 +31,7 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
-                    <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Share an update or ask a question..." adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-Da-NxA">
+                    <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Share an update or ask a question..." minimumFontSize="15" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-Da-NxA" customClass="AutoSizeTextField" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="78" y="27" width="316" height="46"/>
                         <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>

@@ -617,6 +617,7 @@ class ObjectTransform<T: Object>: TransformType {
     }
     
     func transformFromJSON(_ value: Any?) -> T? {
+        if value == nil { return nil }
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
 

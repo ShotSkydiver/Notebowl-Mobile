@@ -12,7 +12,7 @@ import UIKit
 class HomeFeedWritePostCell: UITableViewCell {
 
     @IBOutlet weak var userAvatar: ProfileImageView!
-    @IBOutlet weak var dummyTextField: UITextField!
+    @IBOutlet weak var dummyTextField: AutoSizeTextField!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -45,5 +45,18 @@ extension HomeFeedWritePostCell {
     class func dequeue(from tableView: UITableView) -> HomeFeedWritePostCell? {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseId)
         return cell as? HomeFeedWritePostCell
+    }
+}
+
+class AutoSizeTextField: UITextField {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        for subview in subviews {
+            if let label = subview as? UILabel {
+                label.minimumScaleFactor = 0.3
+                label.adjustsFontSizeToFitWidth = true
+            }
+        }
     }
 }

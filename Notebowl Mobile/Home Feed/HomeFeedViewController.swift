@@ -466,6 +466,10 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
 
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
+    func visibleRect(for tableView: UITableView) -> CGRect? {
+        return tableView.safeAreaLayoutGuide.layoutFrame
+    }
+    
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
         
@@ -501,8 +505,10 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
                 getUrl(Abuse.endpoint, method: .post, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             alert.addAction(inappropriate)
             alert.addAction(spam)
+            alert.addAction(cancel)
             self.present(alert, animated: true, completion: nil)
         }
         report.image = UIImage(named: "report-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
@@ -510,7 +516,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
         report.hidesWhenSelected = true
         
-        if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+        if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
         else if (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
@@ -524,9 +530,10 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
-        
-        if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
-            options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
+        if (selectedCell.postForCell.creator != nil) {
+            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
+                options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
+            }
         }
         else {
             options.expansionStyle = SwipeExpansionStyle.fill

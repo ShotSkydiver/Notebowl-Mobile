@@ -411,7 +411,13 @@ class Response<T>: Generic where T: Object {
                 titles = self.parent.gradeScaleTitles.components(separatedBy: yCharSet)
                 let tempValues = self.parent.gradeScaleValues.components(separatedBy: yCharSet)
                 for item in tempValues {
-                    values[tempValues.index(of: item)!] = Int(item)!
+                    if values.count == tempValues.index(of: item)! {
+                        values.append(Int(item)!)
+                    }
+                    else {
+                        values[tempValues.index(of: item)!] = Int(item)!
+                    }
+                    
                 }
             }
             
@@ -596,7 +602,9 @@ class Response<T>: Generic where T: Object {
         }
     }
     override public func refresh() {
-        self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
+        if self.creator != nil {
+            self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
+        }
         
         self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent == self.url }) as! [Comment]
         self.postComments = NBClient.shared.initArray(from: self.postComments)

@@ -19,17 +19,14 @@ target 'Notebowl Mobile' do
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
     pod 'NVActivityIndicatorView'
     pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
-    # pod 'Agrume', :git => 'https://github.com/JanGorman/Agrume.git'
     pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
     pod 'TTInputVisibilityController'
+    pod 'AXPhotoViewer/Kingfisher'
 end
 
 post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        # add this line
-        target.new_shell_script_build_phase.shell_script = "mkdir -p $PODS_CONFIGURATION_BUILD_DIR/#{target.name}"
-        target.build_configurations.each do |config|
-            config.build_settings['CONFIGURATION_BUILD_DIR'] = '$PODS_CONFIGURATION_BUILD_DIR'
-        end
+    installer.pods_project.build_configurations.each do |config|
+        config.build_settings.delete('CODE_SIGNING_ALLOWED')
+        config.build_settings.delete('CODE_SIGNING_REQUIRED')
     end
 end
