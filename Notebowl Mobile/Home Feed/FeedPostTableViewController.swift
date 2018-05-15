@@ -14,7 +14,7 @@ import SocketIO
 import YPImagePicker
 import ButtonProgressBar_iOS
 import NVActivityIndicatorView
-import TTInputVisibilityController
+import SwipeCellKit
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, NVActivityIndicatorViewable {
 
@@ -27,6 +27,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var showingPhotoPicker: Bool = false
     var idForHandler: UUID!
     // var inputVisibilityController: TTInputVisibilityController!
+    var editingExistingComment = false
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -132,18 +133,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         resetInput()
         
         let items = [
-            makeButton(named: "add_photo-vector").onKeyboardEditingBegins({ (_) in
-                /*
-                self.tableView.addInputVisibilityController()
-                self.tableView.keyboardVisibilityController?.view = self.tableView
-                self.tableView.keyboardVisibilityController?.additionallAnimatioBlock = { [weak self] translation in
-                    let delta = ((self?.tableView.contentSize.height)! - (self?.tableView.bounds.size.height)!) + translation
-                    // self?.tableView.contentOffset = CGPoint(x: 0, y: delta)
-                    self?.tableView.setContentOffset(CGPoint(x: 0, y: delta), animated: true)
-                }
-                // self.tableView.scrollToBottom(animated: true)
-                */
-            })
+            makeButton(named: "add_photo-vector")
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true
                     var config = YPImagePickerConfiguration()
@@ -294,14 +284,95 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         }
         else {
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
-            cell.configure(comment: self.post.postComments[indexPath.row])
+            let comment = self.post.postComments[indexPath.row]
+            cell.configure(comment: comment)
+            cell.delegate = self
+            cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
             return cell
         }
     }
 }
 
-extension HomeFeedPostViewController: AttachmentManagerDelegate {
+extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
+    func visibleRect(for tableView: UITableView) -> CGRect? {
+        return tableView.safeAreaLayoutGuide.layoutFrame
+    }
     
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
+        let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
+            self.editingExistingComment = true
+            // self.performSegue(withIdentifier: "createPostSegue", sender: selectedCell)
+        }
+        edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        edit.textColor = .groupTableViewBackground
+        edit.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.5137254902, blue: 0.7411764706, alpha: 1)
+        edit.fulfill(with: .reset)
+        
+        let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
+            self.post.postComments.remove(at: indexPath.row)
+            action.fulfill(with: .delete)
+            getUrl(selectedCell.commentForCell.url.absoluteString, method: .delete)
+        }
+        delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        delete.textColor = .groupTableViewBackground
+        delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
+        
+        let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
+            let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
+            let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
+                let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
+                getUrl(Abuse.endpoint, method: .post, json: payload)
+                alert.dismiss(animated: true, completion: nil)
+            })
+            let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
+                let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
+                getUrl(Abuse.endpoint, method: .post, json: payload)
+                alert.dismiss(animated: true, completion: nil)
+            })
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(inappropriate)
+            alert.addAction(spam)
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
+        }
+        report.image = UIImage(named: "report-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        report.textColor = .groupTableViewBackground
+        report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
+        report.hidesWhenSelected = true
+        
+        if (selectedCell.commentForCell.creator != nil) && (selectedCell.commentForCell.creator?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+            return [delete, edit]
+        }
+        else if (post.owner.enrollmentForUser?.role == "Professor") {
+            return [delete, report] // and pin
+        }
+        else {
+            return [report]
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
+        var options = SwipeTableOptions()
+        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
+        if (selectedCell.commentForCell.creator != nil) {
+            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (post.owner.enrollmentForUser?.role == "Professor") {
+                options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
+            }
+        }
+        else {
+            options.expansionStyle = SwipeExpansionStyle.fill
+        }
+        options.transitionStyle = SwipeTransitionStyle.border
+        options.buttonSpacing = 11
+        return options
+    }
+    
+    
+}
+
+extension HomeFeedPostViewController: AttachmentManagerDelegate {
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
         setAttachmentManager(active: shouldBecomeVisible)
     }

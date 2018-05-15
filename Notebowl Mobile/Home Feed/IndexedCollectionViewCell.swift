@@ -30,4 +30,14 @@ class IndexedCollectionViewCell: UICollectionViewCell {
     func initSetup() {
         
     }
+    
+    func cellDisplaysOverlay(count: String, forceUpdate: Bool) {
+        
+        if ((attachmentCount.text?.count)! < 2) || (attachmentOverlay.alpha == 0.0) || (forceUpdate) {
+            // hasn't been setup yet
+            attachmentCount.text = count
+            attachmentOverlay.showViewAnimated(true, alpha: 0.7)
+        }
+        
+    }
 }

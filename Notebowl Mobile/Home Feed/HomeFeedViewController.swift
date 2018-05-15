@@ -472,12 +472,9 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
-        
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
-        
         let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
             self.performSegue(withIdentifier: "createPostSegue", sender: selectedCell)
-            
         }
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground

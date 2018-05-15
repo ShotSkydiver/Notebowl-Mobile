@@ -691,7 +691,7 @@ class Response<T>: Generic where T: Object {
     }
     public func updateLikes() {
         self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
-        
+        /*
         if commentLikes.isEmpty || commentLikes == nil {
             self.likedByCurrentUser = false
             self.likeFromCurrentUser = nil
@@ -706,6 +706,23 @@ class Response<T>: Generic where T: Object {
             else {
                 self.likedByCurrentUser = false
                 self.likeFromCurrentUser = nil
+            }
+        }
+        */
+        
+        if commentLikes.isEmpty {
+            self.likedByCurrentUser = false
+            return
+        }
+        if commentLikes.count > 0 {
+            for like in commentLikes! {
+                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+                    self.likedByCurrentUser = true
+                    self.likeFromCurrentUser = like
+                }
+                else {
+                    self.likedByCurrentUser = false
+                }
             }
         }
     }

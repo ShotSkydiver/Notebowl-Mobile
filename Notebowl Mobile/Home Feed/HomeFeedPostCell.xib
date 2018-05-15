@@ -172,6 +172,7 @@
             <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
             <viewLayoutGuide key="safeArea" id="I3B-8s-kz5"/>
             <connections>
+                <outlet property="actionsStackView" destination="p45-IB-JJI" id="n4M-ov-vft"/>
                 <outlet property="collectionFlowLayout" destination="xbK-cd-XZy" id="Jw1-ro-lHz"/>
                 <outlet property="collectionView" destination="xSj-Sd-gPz" id="Ktx-FA-Tbk"/>
                 <outlet property="collectionViewHeight" destination="k3H-j8-b88" id="TlJ-5O-poU"/>

@@ -152,12 +152,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             config.wordings.libraryTitle = "Gallery"
             config.hidesStatusBar = false
             config.showsFilters = false
-            config.maxNumberOfItems = 1
+            config.maxNumberOfItems = 10
             config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
             config.icons.cropIcon = UIImage(named: "crop-vector")!
             config.colors.navigationBarTextColor = .darkGray
             config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-            // config.delegate = self
             let picker = YPImagePicker(configuration: config)
             
             picker.didFinishPicking(completion: { (items, cancelled) in
@@ -166,6 +165,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     picker.dismiss(animated: true, completion: nil)
                 }
                 else if !cancelled {
+                    /*
+                    for item in items {
+                        if case .photo(let photo) = item {
+                            self.attachmentManager.handleInput(of: photo.image)
+                            
+                        }
+                    }
+                    */
                     let item = items.first!
                     switch item {
                     case .photo(let photo):

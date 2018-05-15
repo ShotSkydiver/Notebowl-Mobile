@@ -398,9 +398,9 @@ extension UIView {
         loadingView.addUntitled2Animation()
     }
 
-    func showViewAnimated(_ show: Bool) {
+    func showViewAnimated(_ show: Bool, alpha: CGFloat = 1.0) {
         UIView.animate(withDuration: 0.3) {
-            self.alpha = show ? 1.0 : 0.0
+            self.alpha = show ? alpha : 0.0
         }
     }
 }

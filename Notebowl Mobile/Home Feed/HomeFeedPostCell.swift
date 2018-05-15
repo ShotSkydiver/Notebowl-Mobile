@@ -57,7 +57,6 @@ class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
         return CGPoint(x: proposedContentOffset.x + offsetCorrection, y: 0)
     }
 }
-
 class IndexedCollectionView: UICollectionView {
     var indexPath: IndexPath!
 }
@@ -77,6 +76,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var collectionFlowLayout: IndexedCollectionViewFlowLayout!
     @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var actionsStackView: UIStackView!
     
     var images = [UIImage]()
     var axPhotos = [AXPhoto]()
@@ -108,7 +108,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         collectionViewHeight.constant = 0.0
   
         likeIndicator = NVActivityIndicatorView(frame: self.postLikes.frame, type: .ballPulseSync, color: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        addSubview(likeIndicator)
+        actionsStackView.addSubview(likeIndicator)
         
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
@@ -119,7 +119,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     func configure(post: Post) {
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         
-        if likeIndicator.isAnimating {
+        if likeIndicator.isAnimating && postLikes.alpha == 0.0 {
             likeIndicator.stopAnimating()
             postLikes.showViewAnimated(true)
         }
@@ -149,17 +149,11 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
             for attachment in post.postAttachments {
                 let axphoto = AXPhoto(attributedTitle: nil, attributedDescription: nil, url: attachment.getUrlForAvatar()!.absoluteURL)
                 self.axPhotos.append(axphoto)
-                /*
-                 KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: [], progressBlock: nil,  completionHandler: { (image, error, cacheType, URL) in
-                 self.images.append(image!)
-                 })
-                 */
             }
         }
         if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
             if (post.postAttachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
-                // self.setNeedsLayout()
             }
         }
         else {
@@ -239,17 +233,17 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         let attachmentForCell = self.postForCell.postAttachments[indexPath.row]
         
         if attachmentForCell.type.contains("image") {
-            
-            // collectionViewHeight.constant = 100.0
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
             if indexPath.row == 2 {
-                cell.attachmentCount.text = "+\(self.postForCell.postAttachments.count-2)"
-                cell.attachmentOverlay.alpha = 0.7
+                // cell.attachmentCount.text = "+\(self.postForCell.postAttachments.count-2)"
+                // cell.attachmentOverlay.alpha = 0.7
+                cell.cellDisplaysOverlay(count: "+\(self.postForCell.postAttachments.count-2)", forceUpdate: false)
             }
             else {
-                cell.attachmentOverlay.alpha = 0.0
+                // cell.attachmentOverlay.alpha = 0.0
+                cell.attachmentOverlay.showViewAnimated(false)
             }
         }
         return cell
@@ -322,7 +316,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         else {
             return CGSize(width: 90, height: 90)
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
