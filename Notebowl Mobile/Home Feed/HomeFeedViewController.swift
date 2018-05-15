@@ -19,6 +19,7 @@ import SwipeCellKit
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var posts: [Post]!
     var courses: [Course]!
+    var attachments: [Attachment]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
     
@@ -193,9 +194,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
         
-        let filterString = (NBClient.shared.buildFilterString(from: self.posts) + (NBClient.shared.buildFilterString(from: comments)))
+        let filterString = NBClient.shared.buildFilterString(from: self.posts)
+        let combinedFilter = filterString + NBClient.shared.buildFilterString(from: comments)
         
-        let likes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(filterString)\"]")!
+        let likes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
         if NBClient.shared.storedTypes[Like.classIdentifier] == nil {
             NBClient.shared.storedTypes[Like.classIdentifier] = likes
         }
@@ -207,7 +209,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
         
-        let attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(filterString)\"]")!
+        let attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
+        self.attachments = attachments
         if NBClient.shared.storedTypes[Attachment.classIdentifier] == nil {
             NBClient.shared.storedTypes[Attachment.classIdentifier] = attachments
         }
@@ -415,8 +418,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
     }
-    
-    
 }
 
 
@@ -448,18 +449,21 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
                 ]
             )
             cell.userAvatar.contentMode = .scaleAspectFill
-            
             return cell
         }
         else {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
-            cell.delegate = self
             let post = self.posts[indexPath.row]
             cell.configure(post: post)
+            cell.delegate = self
+            cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
+            // cell.collectionView.indexPath = indexPath
             return cell
         }
     }
+
 }
+
 
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {

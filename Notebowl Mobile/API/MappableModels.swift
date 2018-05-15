@@ -577,7 +577,6 @@ class Response<T>: Generic where T: Object {
         owner <- (map["_owner"], ObjectTransform<Course>())
     }
     
-    
     func updateLikes() {
         self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
         if postLikes.isEmpty {

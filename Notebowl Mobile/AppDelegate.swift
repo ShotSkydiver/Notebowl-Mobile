@@ -16,7 +16,6 @@ import ObjectMapper
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    
     var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -30,8 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .AppStore:
                 isAppStore = true
             }
-        
-        
         if !isAppStore {
             TTLog.debug("not appstore!")
             FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
@@ -43,12 +40,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
-        defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        // defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        
         return true
     }
 

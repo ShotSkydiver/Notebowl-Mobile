@@ -19,7 +19,7 @@ target 'Notebowl Mobile' do
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
     pod 'NVActivityIndicatorView'
     pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
-    pod 'Agrume', :git => 'https://github.com/JanGorman/Agrume.git'
+    # pod 'Agrume', :git => 'https://github.com/JanGorman/Agrume.git'
     pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
     pod 'TTInputVisibilityController'
 end

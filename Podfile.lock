@@ -1,5 +1,4 @@
 PODS:
-  - Agrume (5.0.0)
   - Bugsnag (5.15.5)
   - ButtonProgressBar-iOS (1.0.1)
   - DeckTransition (2.0.0)
@@ -28,7 +27,6 @@ PODS:
     - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
-  - Agrume (from `https://github.com/JanGorman/Agrume.git`)
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -69,8 +67,6 @@ SPEC REPOS:
     - TTInputVisibilityController
 
 EXTERNAL SOURCES:
-  Agrume:
-    :git: https://github.com/JanGorman/Agrume.git
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
@@ -82,9 +78,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 CHECKOUT OPTIONS:
-  Agrume:
-    :commit: 3d7389aa521558b8be8d89152bc819071e9ee896
-    :git: https://github.com/JanGorman/Agrume.git
   FaveButton:
     :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
@@ -99,7 +92,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
-  Agrume: 2c5e48241ee08856f4bd0c2ea0db3bab12fb9cbb
   Bugsnag: 82788750cec86630828bb7dd250943f8356c53ea
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
@@ -122,6 +114,6 @@ SPEC CHECKSUMS:
   TTInputVisibilityController: 405f3f70f98b1e3484e7e057d0db0cbe92e39044
   YPImagePicker: 53560dee9d3f162f1d74d88e27bf62fc561baab5
 
-PODFILE CHECKSUM: 4f38aeccb1e39df865d2996495ff239ba1fe642c
+PODFILE CHECKSUM: 0a2117fc9c746fd6bd30f024c7e4180d92a3518c
 
 COCOAPODS: 1.5.0
