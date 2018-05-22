@@ -624,6 +624,8 @@ class Response<T>: Generic where T: Object {
     var parent: URL!
     var owner: User?
     
+    
+    
     override class var routeType: ItemType { return .attachment }
     
     required public init?(map: Map) {

@@ -230,7 +230,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         if selectedRowIndexPath != nil {
             TTLog.debug("reloading")
-            self.bulletinTableView.reloadData()
+            self.bulletinTableView.reloadData(withoutScroll: true)
         }
     }
     
@@ -238,7 +238,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         // if let senderCell = sender as? HomeFeedPostCell {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
-            destVC.post = self.posts[(self.bulletinTableView.indexPathForSelectedRow?.row)!]
+            if let sourceCell = sender as? HomeFeedPostCell {
+                
+                destVC.post = sourceCell.postForCell
+            }
+            // destVC.post = self.posts[(self.bulletinTableView.indexPathForSelectedRow?.row)!]
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
@@ -430,12 +434,14 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         return section == 0 ? 1 : (self.posts != nil ? self.posts.count : 0)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
+        tableView.deselectRow(at: indexPath, animated: false)
+        if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedWritePostCell {
             self.performSegue(withIdentifier: "createPostSegue", sender: nil)
         }
-        else if indexPath.section == 1 {
-            self.performSegue(withIdentifier: "postDetailSegue", sender: tableView.cellForRow(at: indexPath) as! HomeFeedPostCell)
+        else if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedPostCell {
+            self.performSegue(withIdentifier: "postDetailSegue", sender: cell)
         }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -454,14 +460,13 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         else {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
             let post = self.posts[indexPath.row]
+            cell.parentController = self
             cell.configure(post: post)
             cell.delegate = self
             cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
-            // cell.collectionView.indexPath = indexPath
             return cell
         }
     }
-
 }
 
 

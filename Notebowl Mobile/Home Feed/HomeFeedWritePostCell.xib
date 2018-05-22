@@ -19,6 +19,27 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="99.666666666666671"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MFb-o8-IQD" customClass="DesignableView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                        <rect key="frame" x="20" y="27" width="46" height="46"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
+                                <real key="value" value="3"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
+                                <real key="value" value="0.80000000000000004"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="size" keyPath="shadowOffset">
+                                <size key="value" width="1" height="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                <color key="value" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="pfI-Tx-KWH" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="20" y="27" width="46" height="46"/>
                         <constraints>
@@ -27,7 +48,20 @@
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadious">
-                                <real key="value" value="3"/>
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="masksToBounds" value="YES"/>
+                            <userDefinedRuntimeAttribute type="color" keyPath="colorShadow">
+                                <color key="value" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="size" keyPath="offsetShadow">
+                                <size key="value" width="1" height="1"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="opacityShadow">
+                                <real key="value" value="0.87"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="radiusShadow">
+                                <real key="value" value="4"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -45,8 +79,12 @@
                     <constraint firstItem="XXb-Da-NxA" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="3dP-4y-k9E"/>
                     <constraint firstItem="pfI-Tx-KWH" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="EAO-Qg-0z0"/>
                     <constraint firstItem="XXb-Da-NxA" firstAttribute="top" secondItem="pfI-Tx-KWH" secondAttribute="top" id="FGa-55-CIa"/>
+                    <constraint firstItem="MFb-o8-IQD" firstAttribute="bottom" secondItem="pfI-Tx-KWH" secondAttribute="bottom" id="H7N-gH-gx3"/>
+                    <constraint firstItem="MFb-o8-IQD" firstAttribute="top" secondItem="pfI-Tx-KWH" secondAttribute="top" id="Hv7-is-BWQ"/>
                     <constraint firstItem="pfI-Tx-KWH" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="QTq-B0-c1r"/>
                     <constraint firstItem="XXb-Da-NxA" firstAttribute="bottom" secondItem="pfI-Tx-KWH" secondAttribute="bottom" id="T1S-54-kGP"/>
+                    <constraint firstItem="MFb-o8-IQD" firstAttribute="leading" secondItem="pfI-Tx-KWH" secondAttribute="leading" id="WbK-kz-ogv"/>
+                    <constraint firstItem="MFb-o8-IQD" firstAttribute="trailing" secondItem="pfI-Tx-KWH" secondAttribute="trailing" id="e1E-Iw-HKH"/>
                     <constraint firstItem="XXb-Da-NxA" firstAttribute="leading" secondItem="pfI-Tx-KWH" secondAttribute="trailing" constant="12" id="nNb-Z6-oDQ"/>
                     <constraint firstItem="pfI-Tx-KWH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="16" id="vZ0-8t-Cai"/>
                 </constraints>

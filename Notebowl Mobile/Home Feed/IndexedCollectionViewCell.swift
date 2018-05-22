@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class IndexedCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "indexCollectionCell"
@@ -17,7 +18,7 @@ class IndexedCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+
         attachmentOverlay.layer.cornerRadius = 4.0
         attachmentOverlay.layer.masksToBounds = false
     }

@@ -20,8 +20,9 @@ target 'Notebowl Mobile' do
     pod 'NVActivityIndicatorView'
     pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
     pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
-    pod 'TTInputVisibilityController'
     pod 'AXPhotoViewer/Kingfisher'
+    pod 'netfox'
+    pod 'Lightbox'
 end
 
 post_install do |installer|

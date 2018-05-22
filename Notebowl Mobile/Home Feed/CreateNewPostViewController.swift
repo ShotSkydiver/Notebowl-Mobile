@@ -14,6 +14,7 @@ import ButtonProgressBar_iOS
 import ObjectMapper
 import Kingfisher
 import YPImagePicker
+import MMUploadImage
 
 class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
@@ -31,8 +32,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()
         manager.delegate = self
-        manager.isPersistent = false
-        manager.showAddAttachmentCell = false
+        manager.dataSource = self
+        manager.isPersistent = true
+        manager.showAddAttachmentCell = true
+        manager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
         return manager
     }()
     
@@ -113,13 +116,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                   params: ["uuid": UIDevice().uuid],
                   files:["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
                   asyncProgressHandler:{ p in
-                    print(p.percent)
                     DispatchQueue.main.async(execute: {
                         self.postButtonBarItem.postButton.setProgress(progress: CGFloat(p.percent), true)
                     })
         }){ r in
-            print(r.ok)
-            
             let res = (r.json as AnyObject).value(forKeyPath: "result")
             let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
             self.attachmentFileId = fileid
@@ -131,8 +131,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     func setupInputBar() {
+        resetBar()
+        /*
+        attachmentManager = AttachmentManager()
+        attachmentManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
+        attachmentManager.delegate = self
+        attachmentManager.dataSource = self
         bar.inputManagers = [attachmentManager]
-
+        */
+        // bar.inputManagers = [attachmentManager]
+        /*
         let inputTextViewWidth = NSLayoutConstraint(item: bar.inputTextView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         bar.addConstraint(inputTextViewWidth)
         bar.setLeftStackViewWidthConstant(to: UIScreen.main.bounds.width, animated: false)
@@ -141,7 +149,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         bar.topStackViewPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         bar.padding = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         bar.invalidateIntrinsicContentSize()
-        
+        */
         photoLibraryButton = makeButton(image: "add_photo-vector")
         photoLibraryButton.onSelected { libButton in
             var config = YPImagePickerConfiguration()
@@ -165,14 +173,18 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     picker.dismiss(animated: true, completion: nil)
                 }
                 else if !cancelled {
-                    /*
+                    // picker.dismiss(animated: true, completion: nil)
+                    picker.dismiss(animated: true, completion: {
                     for item in items {
                         if case .photo(let photo) = item {
                             self.attachmentManager.handleInput(of: photo.image)
                             
+                            
                         }
                     }
-                    */
+                    })
+                        
+                    /*
                     let item = items.first!
                     switch item {
                     case .photo(let photo):
@@ -183,6 +195,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     default:
                         picker.dismiss(animated: true, completion: nil)
                     }
+                    */
                 }
             })
             
@@ -234,7 +247,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
             anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-            //anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "not_pinned-vector")
         pinnedButton.onSelected { pinButton in
@@ -242,10 +254,50 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton.isEnabled = (selectedCourse.enrollmentForUser?.role.contains("Professor"))!
-        
         bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
-        
         bar.isTranslucent = true
+        /*
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 20, height: 20)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
+        let collectionView = AttachmentsView(frame: .zero, collectionViewLayout: layout)
+        collectionView.intrinsicContentHeight = 20
+        collectionView.dataSource = self
+        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
+        bar.bottomStackView.addArrangedSubview(collectionView)
+        collectionView.reloadData()
+        */
+        
+    }
+    
+    func resetBar() {
+        // self.attachmentFileId = ""
+        // self.anonymousToggle = false
+        // bar.inputTextView.resignFirstResponder()
+        // bar.inputManagers.removeAll()
+        // let newBar = InputBarAccessoryView()
+        //newBar.delegate = self
+        
+        
+        attachmentManager = AttachmentManager()
+        attachmentManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
+        attachmentManager.delegate = self
+        attachmentManager.dataSource = self
+        bar.inputManagers = [attachmentManager]
+        
+        // bar = newBar
+        
+        let inputTextViewWidth = NSLayoutConstraint(item: bar.inputTextView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+        bar.addConstraint(inputTextViewWidth)
+        bar.setLeftStackViewWidthConstant(to: UIScreen.main.bounds.width, animated: false)
+        bar.setRightStackViewWidthConstant(to: 0, animated: false)
+        bar.textViewPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        bar.topStackViewPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        bar.padding = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        bar.invalidateIntrinsicContentSize()
+        
+        // reloadInputViews()
     }
     
     func makeButton(image: String) -> InputBarButtonItem {
@@ -291,63 +343,65 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         self.dismiss(animated: true, completion: nil)
     }
 }
-/*
-extension CreateNewPostViewController: YPImagePickerDelegate {
-    func imagePicker(_ imagePicker: YPImagePicker, didSelect items: [YPMediaItem]) {
-        let item = items.first!
-        switch item {
-        case .photo(let photo):
-            self.attachmentManager.handleInput(of: photo.image)
-            imagePicker.dismiss(animated: true, completion: {
-                self.uploadImage(image: photo.image)
-            })
-        default:
-            imagePicker.dismiss(animated: true, completion: nil)
+
+extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
+    func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
+        let cell = manager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: IndexPath(row: index, section: 0)) as! UploadImageAttachmentCell
+        TTLog.debug("cellfor attachment")
+        
+        cell.attachment = attachment
+        cell.indexPath = IndexPath(row: index, section: 0)
+        cell.manager = manager
+        
+        // cell.imageView.style = .roundWith(lineWdith: 4.0, lineColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
+        if case .image(let image) = attachment {
+            cell.imageView.image = image
+            if cell.attachmentFileID == nil {
+                cell.startUpload()
+            }
         }
+
+        return cell
     }
-    func imagePickerDidCancel(_ imagePicker: YPImagePicker) {
-        TTLog.debug("canceled")
-        imagePicker.dismiss(animated: true, completion: nil)
-    }
-}
-*/
-extension CreateNewPostViewController: AttachmentManagerDelegate {
+    
     
     func setAttachmentManager(active: Bool) {
+        TTLog.debug("setAttachmentManager")
         let topStackView = bar.topStackView
+        
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
+            TTLog.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
+            
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
+            TTLog.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             topStackView.layoutIfNeeded()
         }
+        
+        TTLog.debug("setAttachmentManager indexes ", attachmentManager.attachmentView.indexPathsForVisibleItems)
     }
-    
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
-        /*
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
-        */
+ 
     }
-    
-    
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
+        TTLog.debug("manager shouldbecomevisible")
         setAttachmentManager(active: shouldBecomeVisible)
     }
-
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
+        TTLog.debug("manager didreloadto")
         // self.postButtonBarItem.isEnabled = manager.attachments.count > 0
     }
-    
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        self.photoLibraryButton.isEnabled = manager.attachments.count > 0
+        TTLog.debug("manager didinsert")
+        //let cell = manager.attachmentView.cellForItem(at: IndexPath(row: index, section: 0)) as! UploadImageAttachmentCell
+        //cell.imageView.style = .centerExpand
+        //cell.startUpload()
+        // self.photoLibraryButton.isEnabled = manager.attachments.count > 0
     }
-    
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        self.photoLibraryButton.isEnabled = manager.attachments.count > 0
+        // self.photoLibraryButton.isEnabled = manager.attachments.count > 0
     }
 }
 
@@ -369,6 +423,67 @@ class PostButtonNavigationItem: UIBarButtonItem {
         logoContainer.addSubview(postButton)
         
         self.customView = logoContainer
+    }
+}
+
+class UploadImageAttachmentCell: AttachmentCell {
+    
+    // MARK: - Properties
+    // static var reuseIdentifier: String { return "UploadImageAttachmentCell" }
+    class var reuseIdentifier: String {
+        return "UploadImageAttachmentCell"
+    }
+    
+    public var attachmentFileID: String!
+    
+    let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    // MARK: - Initialization
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        // attachmentFileID = nil
+    }
+    
+    // MARK: - Setup
+    
+    private func setup() {
+        containerView.addSubview(imageView)
+        imageView.fillSuperview()
+    }
+    
+    func startUpload() {
+        imageView.style = .centerExpand
+        let selectedImage = self.imageView.image!
+        Just.post(("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
+                  params: ["uuid": UIDevice().uuid],
+                  files:["files[]":.data("attachment.jpg", selectedImage.compressedData()!, "image/jpeg")],
+                  asyncProgressHandler:{ p in
+                    DispatchQueue.main.async(execute: {
+                        self.imageView.uploadImage(image: selectedImage, progress: p.percent)
+                    })
+        }){ r in
+            let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
+            self.attachmentFileID = fileID
+            DispatchQueue.main.async(execute: {
+                self.imageView.uploadCompleted()
+            })
+        }
     }
 }
 

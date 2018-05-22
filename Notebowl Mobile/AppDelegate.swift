@@ -12,6 +12,7 @@ import Bugsnag
 import FeedbackSlack
 import Tamamushi
 import ObjectMapper
+import netfox
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,12 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var isAppStore: Bool = false
             switch (Config.appConfiguration) {
             case .Debug:
+                TTLog.debug("is debug!")
                 isAppStore = false
+                NFX.sharedInstance().start()
             case .TestFlight:
                 isAppStore = false
             case .AppStore:
                 isAppStore = true
             }
+        
         if !isAppStore {
             TTLog.debug("not appstore!")
             FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
@@ -115,19 +119,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let dateString = formatter.string(from: self.disconnectDate)
         let recReq = getUrl("operations/reconnect", kind: .rpc, params: ["since": dateString])
         guard let reqData = recReq.content else { return }
-        let JSON : [String:AnyObject] = try! JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
-        let results: [String] = JSON["result"] as! [String]
-        for result in results {
-            let mapResult = Mapper<Generic>().map(JSONString: result)
-            if let viewControllers = tabbarVC.viewControllers {
-                for viewController in viewControllers {
-                    let rootNavController = viewController as! UINavigationController
-                    if let switchVC = rootNavController.topViewController as? UpdateVC {
-                        TTLog.debug("found updateVC!")
-                        switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+        do {
+            let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
+            let results: [String] = JSON["result"] as! [String]
+            for result in results {
+                let mapResult = Mapper<Generic>().map(JSONString: result)
+                if let viewControllers = tabbarVC.viewControllers {
+                    for viewController in viewControllers {
+                        let rootNavController = viewController as! UINavigationController
+                        if let switchVC = rootNavController.topViewController as? UpdateVC {
+                            TTLog.debug("found updateVC!")
+                            switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+                        }
                     }
                 }
             }
+            reloadTableViews()
+        }
+        catch let error {
+            print("Error parsing json: \(error)")
+        }
+    }
+    
+    func reloadTableViews() {
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+            TTLog.debug("tabController is not presented!")
+            return
         }
         if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
             homeVC.bulletinTableView.beginUpdates()
@@ -143,18 +160,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         if let courseVC = ((tabbarVC.viewControllers![1] as! UINavigationController).topViewController as? CoursesTableViewController) {
             courseVC.tableView.beginUpdates()
-            // courseVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             courseVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
             courseVC.tableView.endUpdates()
         }
         if let notifVC = ((tabbarVC.viewControllers![2] as! UINavigationController).topViewController as? NotificationsTableViewController) {
             notifVC.tableView.beginUpdates()
-            // notifVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             notifVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
             notifVC.tableView.endUpdates()
         }
     }
-    
     
     func applicationWillTerminate(_ application: UIApplication) {
         TTLog.debug("will terminate!")

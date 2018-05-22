@@ -13,30 +13,6 @@ import HGPlaceholders
 import Bugsnag
 import Kingfisher
 
-enum CodingError : Error {
-    case RuntimeError(String)
-}
-
-public extension Decodable {
-    init(json: String, keyPath: String? = "result") throws {
-        guard let data = json.data(using: .utf8) else { throw CodingError.RuntimeError("cannot create data from string") }
-        try self.init(data: data, keyPath: keyPath)
-    }
-    
-    init(data: Data, keyPath: String? = "result") throws {
-        if let keyPath = keyPath {
-            let topLevel = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
-            guard let nestedJson = (topLevel as AnyObject).value(forKeyPath: keyPath) else { throw CodingError.RuntimeError("Cannot decode data to object")  }
-            let nestedData = try JSONSerialization.data(withJSONObject: nestedJson)
-            
-            self = try JSONDecoder().decode(Self.self, from: nestedData)
-            return
-        }
-        self = try JSONDecoder().decode(Self.self, from: data)
-    }
-}
-
-
 public extension String {
     func encodeURIComponent() -> String? {
         let characterSet = NSMutableCharacterSet.alphanumeric()
@@ -240,33 +216,232 @@ public extension UIImage {
     }
 }
 
-public extension UIImageView {
+
+@IBDesignable
+class DesignableView: UIView {
+}
+extension DesignableView {
     
-    public func download(
-        from url: URL,
-        contentMode: UIViewContentMode = .scaleAspectFit,
-        placeholder: UIImage? = nil,
-        completionHandler: ((UIImage?) -> Void)? = nil) {
-        
-        image = placeholder
-        self.contentMode = contentMode
-        URLSession.shared.dataTask(with: url) { (data, response, _) in
-            guard
-                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
-                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
-                let data = data,
-                let image = UIImage(data: data)
-                else {
-                    completionHandler?(nil)
-                    return
+    @IBInspectable
+    var cornerRadius: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            //            layer.masksToBounds = true
+            layer.cornerRadius = abs(CGFloat(Int(newValue * 100)) / 100)
+        }
+    }
+    
+    @IBInspectable
+    var borderWidth: CGFloat {
+        get {
+            return layer.borderWidth
+        }
+        set {
+            layer.borderWidth = newValue
+        }
+    }
+    
+    @IBInspectable
+    var borderColor: UIColor? {
+        get {
+            if let color = layer.borderColor {
+                return UIColor(cgColor: color)
             }
-            DispatchQueue.main.async {
-                self.image = image
-                completionHandler?(image)
+            return nil
+        }
+        set {
+            if let color = newValue {
+                layer.borderColor = color.cgColor
+            } else {
+                layer.borderColor = nil
             }
-            }.resume()
+        }
+    }
+    @IBInspectable
+    var shadowRadius: CGFloat {
+        get {
+            return layer.shadowRadius
+        }
+        set {
+            layer.shadowRadius = newValue
+        }
+    }
+    
+    @IBInspectable
+    var shadowOpacity: Float {
+        get {
+            return layer.shadowOpacity
+        }
+        set {
+            layer.shadowOpacity = newValue
+        }
+    }
+    
+    @IBInspectable
+    var shadowOffset: CGSize {
+        get {
+            return layer.shadowOffset
+        }
+        set {
+            layer.shadowOffset = newValue
+        }
+    }
+    
+    @IBInspectable
+    var shadowColor: UIColor? {
+        get {
+            if let color = layer.shadowColor {
+                return UIColor(cgColor: color)
+            }
+            return nil
+        }
+        set {
+            if let color = newValue {
+                layer.shadowColor = color.cgColor
+            } else {
+                layer.shadowColor = nil
+            }
+        }
     }
 }
+
+private var bottomLineColorAssociatedKey : UIColor = .black
+private var topLineColorAssociatedKey : UIColor = .black
+private var rightLineColorAssociatedKey : UIColor = .black
+private var leftLineColorAssociatedKey : UIColor = .black
+extension DesignableView {
+    @IBInspectable var bottomLineColor: UIColor {
+        get {
+            if let color = objc_getAssociatedObject(self, &bottomLineColorAssociatedKey) as? UIColor {
+                return color
+            } else {
+                return .black
+            }
+        } set {
+            objc_setAssociatedObject(self, &bottomLineColorAssociatedKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @IBInspectable var bottomLineWidth: CGFloat {
+        get {
+            return self.bottomLineWidth
+        }
+        set {
+            self.addBottomBorderWithColor(color: self.bottomLineColor, width: newValue)
+        }
+    }
+    @IBInspectable var topLineColor: UIColor {
+        get {
+            if let color = objc_getAssociatedObject(self, &topLineColorAssociatedKey) as? UIColor {
+                return color
+            } else {
+                return .black
+            }
+        } set {
+            objc_setAssociatedObject(self, &topLineColorAssociatedKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @IBInspectable var topLineWidth: CGFloat {
+        get {
+            return self.topLineWidth
+        }
+        set {
+            self.addTopBorderWithColor(color: self.topLineColor, width: newValue)
+        }
+    }
+    @IBInspectable var rightLineColor: UIColor {
+        get {
+            if let color = objc_getAssociatedObject(self, &rightLineColorAssociatedKey) as? UIColor {
+                return color
+            } else {
+                return .black
+            }
+        } set {
+            objc_setAssociatedObject(self, &rightLineColorAssociatedKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @IBInspectable var rightLineWidth: CGFloat {
+        get {
+            return self.rightLineWidth
+        }
+        set {
+            self.addRightBorderWithColor(color: self.rightLineColor, width: newValue)
+        }
+    }
+    @IBInspectable var leftLineColor: UIColor {
+        get {
+            if let color = objc_getAssociatedObject(self, &leftLineColorAssociatedKey) as? UIColor {
+                return color
+            } else {
+                return .black
+            }
+        } set {
+            objc_setAssociatedObject(self, &leftLineColorAssociatedKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @IBInspectable var leftLineWidth: CGFloat {
+        get {
+            return self.leftLineWidth
+        }
+        set {
+            self.addLeftBorderWithColor(color: self.leftLineColor, width: newValue)
+        }
+    }
+    func addTopBorderWithColor(color: UIColor, width: CGFloat) {
+        DispatchQueue.main.async {
+            let border = CALayer()
+            border.name = "topBorderLayer"
+            self.removePreviouslyAddedLayer(name: border.name ?? "")
+            border.backgroundColor = color.cgColor
+            border.frame = CGRect(x: 0, y : 0,width: self.frame.size.width, height: width)
+            self.layer.addSublayer(border)
+        }
+    }
+    
+    func addRightBorderWithColor(color: UIColor, width: CGFloat) {
+        DispatchQueue.main.async {
+            let border = CALayer()
+            border.name = "rightBorderLayer"
+            self.removePreviouslyAddedLayer(name: border.name ?? "")
+            border.backgroundColor = color.cgColor
+            border.frame = CGRect(x: self.frame.size.width - width, y: 0, width : width, height :self.frame.size.height)
+            self.layer.addSublayer(border)
+        }
+    }
+    
+    func addBottomBorderWithColor(color: UIColor, width: CGFloat) {
+        DispatchQueue.main.async {
+            let border = CALayer()
+            border.name = "bottomBorderLayer"
+            self.removePreviouslyAddedLayer(name: border.name ?? "")
+            border.backgroundColor = color.cgColor
+            border.frame = CGRect(x: 0, y: self.frame.size.height - width,width : self.frame.size.width,height: width)
+            self.layer.addSublayer(border)
+        }
+    }
+    
+    func addLeftBorderWithColor(color: UIColor, width: CGFloat) {
+        DispatchQueue.main.async {
+            let border = CALayer()
+            border.name = "leftBorderLayer"
+            self.removePreviouslyAddedLayer(name: border.name ?? "")
+            border.backgroundColor = color.cgColor
+            border.frame = CGRect(x:0, y:0,width : width, height : self.frame.size.height)
+            self.layer.addSublayer(border)
+        }
+    }
+    func removePreviouslyAddedLayer(name : String) {
+        if self.layer.sublayers?.count ?? 0 > 0 {
+            self.layer.sublayers?.forEach {
+                if $0.name == name {
+                    $0.removeFromSuperlayer()
+                }
+            }
+        }
+    }
+}
+
 
 @IBDesignable class ProfileImageView: UIImageView {
     
@@ -377,8 +552,8 @@ public extension UIImageView {
         self.layer.masksToBounds = masksToBounds
         self.layer.addSublayer(shapeLayer)
     }
-    
 }
+
 
 extension Double {
     func rounded(toPlaces places:Int) -> Double {
@@ -415,14 +590,6 @@ public extension Bool {
 public extension UITableView {
 
     public func scrollToBottom(animated: Bool = true) {
-        //let keyboardFrameBegin = UIKeyboardFrameBeginUserInfoKey
-        //let keyboardFrameEnd = UIKeyboardFrameEndUserInfoKey
-        
-        //if self.reachedBottom {
-            // let delta = self.contentOffset.y - (keyboardFrameEnd.origin.y - keyboardFrameBegin.origin.y)
-            // self.scrollView.contentOffset = CGPoint(x: 0, y: delta)
-        //}
-        
         let bottomOffset = CGPoint(x: 0, y: contentSize.height - bounds.size.height)
         setContentOffset(bottomOffset, animated: animated)
     }
@@ -434,6 +601,16 @@ public extension UITableView {
     var reachedBottom: Bool {
         get {
             return self.contentOffset.y >= (self.contentSize.height - self.bounds.size.height)
+        }
+    }
+    public func reloadData(withoutScroll scroll: Bool = false) {
+        if scroll {
+            reloadData()
+        } else {
+            let offset = contentOffset
+            reloadData()
+            layoutIfNeeded()
+            contentOffset = offset
         }
     }
 }
@@ -450,25 +627,53 @@ public extension UIViewController {
     }
 }
 
-extension UIWindow {
-    public var visibleViewController: UIViewController? {
-        return UIWindow.visibleViewController(from: rootViewController)
+public extension UIApplication {
+    public var topestViewController: UIViewController? {
+        return self.keyWindow?.topestViewController
     }
-    
-    public static func visibleViewController(from viewController: UIViewController?) -> UIViewController? {
-        switch viewController {
-        case let navigationController as UINavigationController:
-            return UIWindow.visibleViewController(from: navigationController.visibleViewController ?? navigationController.topViewController)
-            
-        case let tabBarController as UITabBarController:
-            return UIWindow.visibleViewController(from: tabBarController.selectedViewController)
-            
-        case let presentingViewController where viewController?.presentedViewController != nil:
-            return UIWindow.visibleViewController(from: presentingViewController?.presentedViewController)
-            
-        default:
-            return viewController
+}
+public extension UIWindow {
+    public var topestViewController: UIViewController? {
+        let root = self.rootViewController
+        if let navi = root as? UINavigationController {
+            return navi.topestViewController
         }
+        if let tab = root as? UITabBarController {
+            return tab.topestViewController
+        }
+        return root?.findTopestViewController()
+    }
+}
+public extension UINavigationController {
+    public var topestViewController: UIViewController? {
+        let top = self.topViewController
+        if let presented = top?.presentedViewController {
+            if let topPresented = presented as? UINavigationController {
+                return topPresented.topestViewController
+            }
+            return presented
+        }
+        return top
+    }
+}
+public extension UITabBarController {
+    public var topestViewController: UIViewController? {
+        let selected = self.selectedViewController
+        if let navi = selected as? UINavigationController {
+            return navi.topestViewController
+        }
+        return selected
+    }
+}
+public extension UIViewController {
+    public func findTopestViewController() -> UIViewController? {
+        if let presented = self.presentedViewController {
+            if let topPresented = presented as? UINavigationController {
+                return topPresented.topestViewController
+            }
+            return presented
+        }
+        return self
     }
 }
 

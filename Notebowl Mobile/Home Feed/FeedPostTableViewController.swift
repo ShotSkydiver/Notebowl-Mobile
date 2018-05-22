@@ -26,7 +26,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var indicatorView: NVActivityIndicatorView!
     var showingPhotoPicker: Bool = false
     var idForHandler: UUID!
-    // var inputVisibilityController: TTInputVisibilityController!
     var editingExistingComment = false
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
@@ -286,6 +285,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
             let comment = self.post.postComments[indexPath.row]
             cell.configure(comment: comment)
+            cell.selectionStyle = .none
             cell.delegate = self
             cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
             return cell
