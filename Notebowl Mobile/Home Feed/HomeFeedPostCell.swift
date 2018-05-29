@@ -15,7 +15,6 @@ import ObjectMapper
 import SocketIO
 import NVActivityIndicatorView
 import SwipeCellKit
-import AXPhotoViewer
 import Lightbox
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
@@ -111,7 +110,9 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         collectionView.register(UINib(nibName: "IndexedCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: IndexedCollectionViewCell.identifier)
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
-  
+        
+        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal), for: .normal)
+        
         likeIndicator = NVActivityIndicatorView(frame: self.postLikes.frame, type: .ballPulseSync, color: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         actionsStackView.addSubview(likeIndicator)
         
@@ -124,7 +125,33 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
         
-        
+        LightboxConfig.loadImage = {
+            imageView, URL, completion in
+            imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
+                if (error != nil) {
+                    completion?(nil)
+                }
+                else {
+                    TTLog.debug("lightbox loaded!")
+                    completion?(image)
+                }
+            })
+        }
+        LightboxConfig.CloseButton.image = UIImage(named: "dismiss-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        LightboxConfig.CloseButton.text = ""
+        LightboxConfig.DeleteButton.enabled = true
+        LightboxConfig.DeleteButton.image = UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        LightboxConfig.DeleteButton.text = ""
+        LightboxConfig.PageIndicator.separatorColor = .groupTableViewBackground
+        LightboxConfig.PageIndicator.textAttributes = [
+            .font: UIFont.systemFont(ofSize: 15),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: {
+                var style = NSMutableParagraphStyle()
+                style.alignment = .center
+                return style
+            }()
+        ]
 
         selectedBackgroundView?.backgroundColor = UIColor.cyan
     }
@@ -180,9 +207,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         }
 
         self.postForCell = post
- 
-        // setNeedsLayout()
-        // layoutIfNeeded()
     }
     
     final override func layoutSubviews() {
@@ -191,12 +215,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         if collectionViewPaginatedScroll == true {
             collectionView.isPagingEnabled = false
         }
-        /*
-        guard collectionView.frame != contentView.bounds else {
-            return
-        }
-        collectionView.frame = contentView.bounds
-        */
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -205,7 +223,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     
     @IBAction func likeButtonAction(_ sender: Any) {
         likeIndicator.startAnimating()
-        // likeRefresh.startAnimating()
         postLikes.showViewAnimated(false)
     }
     
@@ -214,13 +231,12 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     }
     
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        // DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
         DispatchQueue.main.async {
             if (!self.likeButton.isSelected) {
-                getUrl(self.postForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
+                NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
             }
             else if (self.likeButton.isSelected) {
-                getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
             }
         }
     }
@@ -263,42 +279,13 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let currentCell = (collectionView as! IndexedCollectionView).cellForItem(at: indexPath) as! IndexedCollectionViewCell
-        
+
         var newphotos = [LightboxImage]()
         for attachment in self.postForCell.postAttachments {
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
             newphotos.append(lightboxPhoto)
         }
-        
-        LightboxConfig.loadImage = {
-            imageView, URL, completion in
-            imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-                if (error != nil) {
-                    completion?(nil)
-                }
-                else {
-                    TTLog.debug("lightbox loaded!")
-                    completion?(image)
-                }
-            })
-        }
-        LightboxConfig.CloseButton.image = UIImage(named: "dismiss-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.CloseButton.text = ""
-        LightboxConfig.DeleteButton.enabled = true
-        LightboxConfig.DeleteButton.image = UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.DeleteButton.text = ""
-        LightboxConfig.PageIndicator.separatorColor = .groupTableViewBackground
-        LightboxConfig.PageIndicator.textAttributes = [
-            .font: UIFont.systemFont(ofSize: 15),
-            .foregroundColor: UIColor.white,
-            .paragraphStyle: {
-                var style = NSMutableParagraphStyle()
-                style.alignment = .center
-                return style
-            }()
-        ]
-        
+
         let lightbox = LightboxController(images: newphotos, startIndex: indexPath.row)
         lightbox.pageDelegate = self
         lightbox.dismissalDelegate = self
@@ -310,10 +297,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         }
         if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
             homeVC.showingPhotoPicker = true
-            
-            homeVC.present(lightbox, animated: true) {
-                homeVC.showingPhotoPicker = false
-            }
+            homeVC.present(lightbox, animated: true, completion: nil)
             self.lightboxController = lightbox
         }
         else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
@@ -323,13 +307,10 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // let cellHeight = self.bulletinTableView.rowHeight - (20)
-        
-        // this controls the size of the image in the collectionview
         if indexPath.row > 2 {
             return CGSize(width: 0, height: 90)
         }
@@ -346,24 +327,24 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     }
 }
 
-extension HomeFeedPostCell: UITextViewDelegate {
-    
-}
 
 extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
     func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
         TTLog.debug("lightbox page: ", page)
     }
-    
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
         TTLog.debug("lightbox dismiss")
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+            return
+        }
+        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
+            homeVC.showingPhotoPicker = false
+        }
     }
     
     func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
         TTLog.debug("lightbox didtouch")
     }
-    
-    
 }
 
 extension HomeFeedPostCell {

@@ -71,7 +71,8 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     }
     
     func markAsSeen() {
-        getUrl("notifications/markAsSeen", kind: .rpc, method: .post)
+        NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
+        // getUrl("notifications/markAsSeen", kind: .rpc, method: .post)
         for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
             notification.status = "seen"
         }

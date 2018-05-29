@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 TTLog.debug("is debug!")
                 isAppStore = false
                 NFX.sharedInstance().start()
+                NFX.sharedInstance().setGesture(.custom)
             case .TestFlight:
                 isAppStore = false
             case .AppStore:
@@ -83,7 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
-        getUrl("notifications/enable", kind: .mobile, params: ["token": token]) {r in TTLog.debug("notif register: ", r) }
+        NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token])
+        // getUrl("notifications/enable", kind: .mobile, params: ["token": token]) {r in TTLog.debug("notif register: ", r) }
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)
@@ -117,7 +119,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NBSocket.shared.manager.connect()
         let formatter = DateFormatter.iso8061
         let dateString = formatter.string(from: self.disconnectDate)
-        let recReq = getUrl("operations/reconnect", kind: .rpc, params: ["since": dateString])
+        let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
+        // let recReq = getUrl("operations/reconnect", kind: .rpc, params: ["since": dateString])
         guard let reqData = recReq.content else { return }
         do {
             let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]

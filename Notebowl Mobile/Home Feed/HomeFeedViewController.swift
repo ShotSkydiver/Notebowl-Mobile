@@ -471,9 +471,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
 
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
-    func visibleRect(for tableView: UITableView) -> CGRect? {
-        return tableView.safeAreaLayoutGuide.layoutFrame
-    }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
@@ -489,7 +486,8 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            getUrl(selectedCell.postForCell.url.absoluteString, method: .delete)
+            NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
+            //getUrl(selectedCell.postForCell.url.absoluteString, method: .delete)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -499,12 +497,13 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                getUrl(Abuse.endpoint, method: .post, json: payload)
+                // getUrl(Abuse.endpoint, method: .post, json: payload)
+                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                getUrl(Abuse.endpoint, method: .post, json: payload)
+                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)

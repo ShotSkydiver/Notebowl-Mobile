@@ -603,6 +603,8 @@ class Response<T>: Generic where T: Object {
     }
     override public func refresh() {
         if self.creator != nil {
+            let storedUsers = NBClient.shared.storedTypes[User.classIdentifier]
+            TTLog.debug("storedUsers: ", storedUsers?.count)
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
         }
         

@@ -14,7 +14,7 @@ import Haptica
 import ObjectMapper
 import NVActivityIndicatorView
 import SwipeCellKit
-import AXPhotoViewer
+import Lightbox
 
 class CommentCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -60,14 +60,13 @@ class CommentCollectionView: UICollectionView {
     var indexPath: IndexPath!
 }
 
-class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, AXPhotosViewControllerDelegate {
+class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var commentContent: UILabel!
-    @IBOutlet weak var commentAttachments: ProfileImageView!
+    @IBOutlet weak var commentTextViewContent: UITextView!
     @IBOutlet weak var commentLikes: UILabel!
-    @IBOutlet weak var likeRefresh: NVActivityIndicatorView!
     @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var collectionView: CommentCollectionView!
@@ -75,13 +74,13 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     @IBOutlet weak var collectionFlowLayout: CommentCollectionViewFlowLayout!
     @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
     @IBOutlet weak var likeActionStackView: UIStackView!
-    
-    var axPhotos = [AXPhoto]()
+
+    var lightboxPhotos = [LightboxImage]()
     var commentForCell: Comment!
     var commentLikeIndicator: NVActivityIndicatorView!
     var collectionViewPaginatedScroll: Bool?
     
-    weak var photosViewController: AXPhotosViewController?
+    weak var lightboxController: LightboxController?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -113,6 +112,36 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
+        
+        /*
+        LightboxConfig.loadImage = {
+            imageView, URL, completion in
+            imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
+                if (error != nil) {
+                    completion?(nil)
+                }
+                else {
+                    TTLog.debug("lightbox loaded!")
+                    completion?(image)
+                }
+            })
+        }
+        LightboxConfig.CloseButton.image = UIImage(named: "dismiss-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        LightboxConfig.CloseButton.text = ""
+        LightboxConfig.DeleteButton.enabled = true
+        LightboxConfig.DeleteButton.image = UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        LightboxConfig.DeleteButton.text = ""
+        LightboxConfig.PageIndicator.separatorColor = .groupTableViewBackground
+        LightboxConfig.PageIndicator.textAttributes = [
+            .font: UIFont.systemFont(ofSize: 15),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: {
+                var style = NSMutableParagraphStyle()
+                style.alignment = .center
+                return style
+            }()
+        ]
+        */
     }
     
     func configure(comment: Comment) {
@@ -141,13 +170,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
                 ]
             )
         }
-        
-        if axPhotos.isEmpty {
-            for attachment in comment.commentAttachments {
-                let axphoto = AXPhoto(attributedTitle: nil, attributedDescription: nil, url: attachment.getUrlForAvatar()!.absoluteURL)
-                self.axPhotos.append(axphoto)
-            }
-        }
+
         if (!comment.commentAttachments.isEmpty) && (comment.commentAttachments.first!.type != nil) {
             if (comment.commentAttachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
@@ -189,10 +212,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
         DispatchQueue.main.async {
             if (!self.commentLikeButton.isSelected) {
-                getUrl(self.commentForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
+                NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
+                // getUrl(self.commentForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
             }
             else if (self.commentLikeButton.isSelected) {
-                getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                // getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
             }
         }
     }
@@ -226,55 +251,46 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
                 self.setNeedsLayout()
             })
             if indexPath.row == 2 {
-                // cell.attachmentCount.text = "+\(self.postForCell.postAttachments.count-2)"
-                // cell.attachmentOverlay.alpha = 0.7
                 cell.cellDisplaysOverlay(count: "+\(self.commentForCell.commentAttachments.count-2)", forceUpdate: false)
             }
             else {
                 cell.attachmentOverlay.showViewAnimated(false)
-                // cell.attachmentOverlay.alpha = 0.0
             }
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("did select image: ", indexPath)
-        let currentCell = (collectionView as! CommentCollectionView).cellForItem(at: indexPath) as! IndexedCollectionViewCell
+        //let currentCell = (collectionView as! CommentCollectionView).cellForItem(at: indexPath) as! IndexedCollectionViewCell
         
-        let imageToDisplay = currentCell.attachment.image!
-        let transitionInfo = AXTransitionInfo(interactiveDismissalEnabled: true, startingView: currentCell.attachment) { [weak self] (photo, index) -> UIImageView? in
-            guard let `self` = self else {
-                return nil
-            }
-            let indexPath = IndexPath(row: index, section: 0)
-            guard let cell = (collectionView as! CommentCollectionView).cellForItem(at: indexPath) as? IndexedCollectionViewCell else {
-                return nil
-            }
-            return cell.attachment
+        var newphotos = [LightboxImage]()
+        for attachment in self.commentForCell.commentAttachments {
+            let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
+            newphotos.append(lightboxPhoto)
         }
-        let dataSource = AXPhotosDataSource(photos: self.axPhotos, initialPhotoIndex: indexPath.row)
-        let pagingConfig = AXPagingConfig(interPhotoSpacing: 10.0)
-        let photosViewController = AXPhotosViewController(dataSource: dataSource, pagingConfig: pagingConfig, transitionInfo: transitionInfo)
-        photosViewController.delegate = self
+        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.row)
+        lightbox.pageDelegate = self
+        lightbox.dismissalDelegate = self
+        lightbox.imageTouchDelegate = self
+        lightbox.dynamicBackground = true
+        
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            TTLog.debug("tabController is not presented!")
             return
         }
-        guard let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) else {
-            TTLog.debug("homefeedpostVC is not presented!")
-            return
+        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
+            homeVC.showingPhotoPicker = true
+            homeVC.present(lightbox, animated: true, completion: nil)
+            self.lightboxController = lightbox
         }
-        homeVC.showingPhotoPicker = true
-        homeVC.present(photosViewController, animated: true) {
-            homeVC.showingPhotoPicker = false
+        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
+            homeVC.present(lightbox, animated: true, completion: nil)
+            self.lightboxController = lightbox
         }
-        self.photosViewController = photosViewController
     }
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        return UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -297,7 +313,27 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     }
 }
 
-
+extension HomeFeedCommentCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
+    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
+        TTLog.debug("lightbox page: ", page)
+    }
+    
+    func lightboxControllerWillDismiss(_ controller: LightboxController) {
+        TTLog.debug("lightbox dismiss")
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+            return
+        }
+        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
+            homeVC.showingPhotoPicker = false
+        }
+    }
+    
+    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
+        TTLog.debug("lightbox didtouch")
+    }
+    
+    
+}
 
 extension HomeFeedCommentCell {
     

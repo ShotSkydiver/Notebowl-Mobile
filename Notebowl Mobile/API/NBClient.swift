@@ -15,7 +15,6 @@ import SocketIO
 class NBClient {
     
     static let shared: NBClient = {
-        TTLog.debug("client shared init")
         return NBClient()
     }()
     
@@ -39,9 +38,10 @@ class NBClient {
         if currentUser == nil {
             TTLog.debug("currentuser nil!")
             
-            let userReq = getUrl(User.endpoint)
+            // let userReq = getUrl(User.endpoint)
+            let userReq = NBNetworking.shared.request(url: User.endpoint)
             
-            if errorStatusCodes.contains(userReq.statusCode!) {
+            if errorStatusCodes.contains(userReq.statusCode!.rawValue) {
                 TTLog.error("error status code! ", userReq.statusCode!)
                 logoutUser()
                 (UIApplication.shared.keyWindow?.rootViewController as! RootViewController).dismiss(animated: true, completion: nil)
@@ -57,10 +57,8 @@ class NBClient {
                 else if self.storedTypes[User.classIdentifier]!.first(where: {$0.resourceKey == self.currentUser.resourceKey}) == nil {
                     self.storedTypes[User.classIdentifier]!.append(self.currentUser)
                 }
-                // Bugsnag???
                 completionHandler()
             }
-            
         }
         else {
             completionHandler()
@@ -74,13 +72,9 @@ class NBClient {
     public func logoutUser() {
         NBSocket.shared.manager.defaultSocket.removeAllHandlers()
         NBSocket.shared.manager.disconnect()
-        let deleteReq = getUrl(User.endpoint, method: .delete)
+        let deleteReq = NBNetworking.shared.request(.delete, url: User.endpoint)
         currentUser = nil
         UserDefaults.set(hasUserLoggedIn: false)
-    }
-    
-    func submitReport(reason: String, parent: String) {
-        
     }
     
     public func buildFilterString(from items: [Object]) -> String {
@@ -116,13 +110,13 @@ class NBClient {
         
         // group.enter()
         //DispatchQueue.global(qos: .default).async {
-            let req = getUrl(someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])  // { r in
-                TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
-                if req.ok {
-                    let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
-                    objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
-                    
-                }
+        let req = NBNetworking.shared.request(url: someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
+            // let req = getUrl(someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])  // { r in
+        TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
+        if req.statusCode!.isSuccess {
+            let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
+            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+        }
                 // group.leave()
             // }
         //}

@@ -80,22 +80,22 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     }
     
     public func uploadingImage() {
-        let postUrl = ("https://\(NBClient.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture")
-        
-        Just.post(postUrl,
-                  params: ["uuid": UIDevice().uuid],
-                  files:["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
-                  asyncProgressHandler:{ p in
-                    print(p.percent)
-                    DispatchQueue.main.async(execute: {
-                        self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
-                    })
-        }){ r in
-            print(r.ok)
+        let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
+                                                 params: ["uuid": UIDevice().uuid],
+                                                 files: ["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
+                                                 loadImmediately: false,
+                                                 asyncProgressHandler: { p in
+                                                    DispatchQueue.main.async(execute: {
+                                                        TTLog.debug("prgoress: ", p.percentageUpload)
+                                                        self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
+                                                    })
+        }, asyncCompletionHandler: { r in
             DispatchQueue.main.async(execute: {
                 self.profilePicture.uploadCompleted()
             })
-        }
+        })
+        
+        upload.task?.resume()
     }
 }
 
@@ -109,16 +109,17 @@ class AccountModalTableViewController: UITableViewController {
     
     func setupMenuForAlert() {
         var config = YPImagePickerConfiguration()
-        config.libraryTargetImageSize = .cappedTo(size: 1024)
+        config.library.targetImageSize = .cappedTo(size: 1024)
         config.albumName = "Notebowl Photos"
         config.startOnScreen = .library
         config.showsCrop = .none
         config.hidesStatusBar = false
         config.showsFilters = false
-        config.maxNumberOfItems = 1
+        config.library.maxNumberOfItems = 1
         config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
         config.icons.cropIcon = UIImage(named: "crop-vector")!
-        config.colors.navigationBarTextColor = .darkGray
+        // config.colors.navigationBarTextColor = .darkGray
+        config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         let picker = YPImagePicker(configuration: config)
 
