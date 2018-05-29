@@ -348,15 +348,18 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
         else if mapped.itemType! == "User" {
+            
             let mappedUser = mapped as! Response<User>
-            for post in self.posts {
-                post.refresh()
-            }
-            if updateUI {
-                self.bulletinTableView.beginUpdates()
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
-                self.bulletinTableView.endUpdates()
+            if mappedUser.actionType != .elapsed {
+                for post in self.posts {
+                    post.refresh()
+                }
+                if updateUI {
+                    self.bulletinTableView.beginUpdates()
+                    self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                    self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
+                    self.bulletinTableView.endUpdates()
+                }
             }
         }
         else if mapped.itemType! == "CourseUser" {

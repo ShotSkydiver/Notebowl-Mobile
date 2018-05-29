@@ -27,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 TTLog.debug("is debug!")
                 isAppStore = false
                 NFX.sharedInstance().start()
-                NFX.sharedInstance().setGesture(.custom)
             case .TestFlight:
                 isAppStore = false
             case .AppStore:

@@ -138,17 +138,10 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         cell.notification = notificationForCell
         cell.notificationContent.text = notificationForCell.text
         cell.notificationDate.text = notificationForCell.createdAt.relativelyFormatted
- 
-        cell.userAvatar.kf.setImage(with: notificationForCell.userPictureUrl,
-                                    options: [
-                                        .fromMemoryCacheOrRefresh,
-                                        .transition(ImageTransition.fade(0.3)),
-                                        // .forceTransition,
-                                        .keepCurrentImageWhileLoading
-            ]
-        )
-
-        cell.showCell(true)
+        cell.userAvatar.kf.indicatorType = .activity
+        cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
+            cell.setNeedsLayout()
+        })
         return cell
     }
     

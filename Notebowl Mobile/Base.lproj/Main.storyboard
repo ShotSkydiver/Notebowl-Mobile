@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14112" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -590,7 +590,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="1.3.60" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="1.3.64" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
                                                     <rect key="frame" x="335.66666666666669" y="14" width="41.333333333333336" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
@@ -634,11 +634,11 @@
             </objects>
             <point key="canvasLocation" x="1727" y="3277"/>
         </scene>
-        <!--Recents-->
+        <!--Notifications-->
         <scene sceneID="vUx-WI-Ovy">
             <objects>
                 <navigationController id="hUS-W2-ld6" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Recents" image="bell-vector" id="ykP-pp-fDG"/>
+                    <tabBarItem key="tabBarItem" title="Notifications" image="bell-vector" id="ykP-pp-fDG"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C0V-xe-Ww4">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -660,7 +660,7 @@
         <scene sceneID="ite-OS-Tnq">
             <objects>
                 <navigationController title="Profile Nav Controller" extendedLayoutIncludesOpaqueBars="YES" id="h5w-W2-6Qi" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Latest" image="today_apps-vector" id="Lho-Gi-jfY"/>
+                    <tabBarItem key="tabBarItem" title="Bulletin" image="today_apps-vector" id="Lho-Gi-jfY"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

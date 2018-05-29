@@ -30,6 +30,8 @@ public enum ItemType: String {
 public enum Action {
     case updated
     case deleted
+    case elapsed
+    case unknown
 }
 public enum NotificationType: String {
     case created = "created"
@@ -67,7 +69,12 @@ class Generic: StaticMappable {
     
     public var actionType: Action {
         if action.contains("updated") { return .updated }
-        else { return .deleted }
+        else if action.contains("elapsed") { return .elapsed }
+        else if action.contains("deleted") { return .deleted }
+        else {
+            TTLog.error("actionType not found!")
+            return .unknown
+        }
     }
     
     class func objectForMapping(map: Map) -> BaseMappable? {
@@ -774,8 +781,6 @@ class Response<T>: Generic where T: Object {
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
     
-    public var userPictureUrl: URL { return  (URL(string: ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")))!}
-    
     override class var routeType: ItemType { return .notification }
         
     required public init?(map: Map) {
@@ -790,6 +795,14 @@ class Response<T>: Generic where T: Object {
         text <- map["text"]
         type <- map["type"]
         parent <- (map["_parent"], URLTransform())
+    }
+    
+    func getUrlForAvatar() -> URL? {
+        let params = ["uuid": UIDevice().uuid]
+        let sttt = ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
+        var imageUrl = URL(string: sttt)
+        imageUrl?.appendQueryParameters(params)
+        return imageUrl
     }
 }
 
