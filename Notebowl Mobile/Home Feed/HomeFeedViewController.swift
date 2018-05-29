@@ -43,7 +43,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         self.getPosts()
     }
-   
+    
     func tempLoadingViewSetup() {
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
@@ -86,7 +86,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 }
                 else if rootNavController.topViewController is NotificationsTableViewController {
                     let notifsVC = rootNavController.topViewController as! NotificationsTableViewController
-
+                    
                     notifsVC.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
                     if NBClient.shared.storedTypes[Notification.classIdentifier] == nil {
                         NBClient.shared.storedTypes[Notification.classIdentifier] = notifsVC.notifications
@@ -108,8 +108,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
-        
-        
+                
+                
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
                 if NBClient.shared.storedTypes[Enrollment.classIdentifier] == nil {
                     NBClient.shared.storedTypes[Enrollment.classIdentifier] = enrollments
@@ -122,7 +122,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     }
                 }
                 var resourceKeys: String = ""
-
+                
                 for enrollment in enrollments {
                     if enrollment.statusIsAccepted {
                         resourceKeys = (resourceKeys + enrollment.parent!.url.absoluteURL.lastPathComponent + ",")
@@ -157,18 +157,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             self.getData()
             self.bulletinTableView.reloadData()
             self.loadOtherTabs()
-
+            
             self.bgView.showViewAnimated(false)
-            // self.animateCells()
         }
     }
-    /*
-    func animateCells() {
-        let fromAnimation = AnimationType.from(direction: .bottom, offset: 30.0)
-        UIView.animate(views: self.bulletinTableView.visibleCells,
-                       animations: [fromAnimation])
-    }
-    */
+    
     func getData() {
         self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
         if NBClient.shared.storedTypes[Post.classIdentifier] == nil {
@@ -235,14 +228,12 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // if let senderCell = sender as? HomeFeedPostCell {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
             if let sourceCell = sender as? HomeFeedPostCell {
                 
                 destVC.post = sourceCell.postForCell
             }
-            // destVC.post = self.posts[(self.bulletinTableView.indexPathForSelectedRow?.row)!]
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
@@ -294,7 +285,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
             
-        /// TODO :: COMBINE COMMENTS AND LIKES UPDATE HANDLING
         else if mapped.itemType! == "Comment" {
             let mappedComment = mapped as! Response<Comment>
             guard let parentPost = self.posts.first(where: { $0.resourceKey == mappedComment.updateUrl!.parent.absoluteURL.lastPathComponent }) else {
@@ -408,7 +398,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             }
         }
     }
-
+    
     func registerSocketHandler() {
         NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
             guard let message = data[0] as? String else { return }
@@ -451,10 +441,10 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             let cell = HomeFeedWritePostCell.dequeue(from: tableView)!
             cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
-                        options: [
-                            .transition(ImageTransition.fade(0.3)),
-                            // .forceTransition,
-                            .keepCurrentImageWhileLoading
+                                        options: [
+                                            .transition(ImageTransition.fade(0.3)),
+                                            // .forceTransition,
+                                            .keepCurrentImageWhileLoading
                 ]
             )
             cell.userAvatar.contentMode = .scaleAspectFill
@@ -490,7 +480,6 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
             NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
-            //getUrl(selectedCell.postForCell.url.absoluteString, method: .delete)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -500,7 +489,6 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                // getUrl(Abuse.endpoint, method: .post, json: payload)
                 NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })

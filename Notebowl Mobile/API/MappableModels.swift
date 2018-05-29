@@ -190,7 +190,6 @@ class Response<T>: Generic where T: Object {
     var lastName: String!
     var email: String?
     var profileUrl: URL!
-    // var profileUrl: UIImage!
     var university: University?
     
     var fullName: String { return (firstName + " " + lastName) }
@@ -207,7 +206,6 @@ class Response<T>: Generic where T: Object {
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
-        // profileUrl <- (map["profileUrl"], ImageTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
     }
 }
@@ -233,7 +231,6 @@ class Response<T>: Generic where T: Object {
         termStart <- (map["termStart"], ISO8601FixedDateTransform())
         termEnd <- (map["termEnd"], ISO8601FixedDateTransform())
         termAvailable <- (map["termAvailable"], ISO8601FixedDateTransform())
-        // university <- (map["_university"], ObjectTransform<University>())
     }
 }
 
@@ -309,26 +306,8 @@ class Response<T>: Generic where T: Object {
         }
         
         if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            // enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).parent!.resourceKey == self.resourceKey }) as? Enrollment
             enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
-            
-            
-            /*
-            if enrollmentForUser.lastAccessDate != nil {
-                self.lastUpdated = ("last accessed " + enrollmentForUser.lastAccessDate!.relativelyFormatted)
-                self.secondsSinceGradeUpdate = enrollmentForUser.lastAccessDate!.timeIntervalSinceReferenceDate
-            }
-            else {
-                self.lastUpdated = "never accessed"
-                self.secondsSinceGradeUpdate = self.secondsSinceUpdate
-            }
         }
-        else {
-            self.lastUpdated = "never accessed"
-            self.secondsSinceGradeUpdate = self.secondsSinceUpdate
-        }
-        */
-    }
     }
 }
 
@@ -515,8 +494,6 @@ class Response<T>: Generic where T: Object {
     var role: String!
     var status: String!
     var user: User!
-    // var user: URL!
-    // var parent: Course?
     var parent: Course?
     var lastAccessDate: Date?
     
@@ -533,26 +510,14 @@ class Response<T>: Generic where T: Object {
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        /// TO ASK: WILL USER PROPERTY ALWAYS BE THE CURRENT USER  - - - - EXCEPT IN INSTANCES WHERE WE ARE PROFESSOR
         role <- map["role"]
         status <- map["status"]
-        
-        //if role.contains("Professor") {
-            user <- (map["_user"], ObjectTransform<User>())
-        //}
-        //else if role.contains("Student") {
-            //user = NBClient.shared.getCurrentUser()
-        //}
-        
-        // user <- (map["_user"], URLTransform())
-        // if self.itemType.contains("CourseUser") {
-            parent <- (map["_parent"], ObjectTransform<Course>())
-        // }
-        // parent <- (map["_parent"], URLTransform())
+ 
+        user <- (map["_user"], ObjectTransform<User>())
+        parent <- (map["_parent"], ObjectTransform<Course>())
         lastAccessDate <- (map["lastAccessDate"], ISO8601FixedDateTransform())
     }
     override public func refresh() {
-        // self.user = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
     }
 }
 
@@ -584,9 +549,7 @@ class Response<T>: Generic where T: Object {
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
         text <- map["text"]
-        // if !isAnonymous {
-            creator <- (map["_creator"], ObjectTransform<User>())
-        // }
+        creator <- (map["_creator"], ObjectTransform<User>())
         owner <- (map["_owner"], ObjectTransform<Course>())
     }
     
@@ -652,7 +615,6 @@ class Response<T>: Generic where T: Object {
         attachmentType <- map["attachmentType"]
         type <- map["type"]
         parent <- (map["_parent"],  URLTransform())
-        // owner <- (map["_owner"], ObjectTransform<User>())
     }
     
     func getUrlForAvatar() -> URL? {
@@ -692,9 +654,7 @@ class Response<T>: Generic where T: Object {
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
         parent <- (map["_parent"], URLTransform())
-        // if !isAnonymous {
-            creator <- (map["_creator"], ObjectTransform<User>())
-        // }
+        creator <- (map["_creator"], ObjectTransform<User>())
     }
     
     public func getAttachments() {
@@ -702,25 +662,6 @@ class Response<T>: Generic where T: Object {
     }
     public func updateLikes() {
         self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
-        /*
-        if commentLikes.isEmpty || commentLikes == nil {
-            self.likedByCurrentUser = false
-            self.likeFromCurrentUser = nil
-            return
-        }
-        for like in commentLikes {
-            if like.currentUserLiked {
-                self.likedByCurrentUser = true
-                self.likeFromCurrentUser = like
-                break
-            }
-            else {
-                self.likedByCurrentUser = false
-                self.likeFromCurrentUser = nil
-            }
-        }
-        */
-        
         if commentLikes.isEmpty {
             self.likedByCurrentUser = false
             return

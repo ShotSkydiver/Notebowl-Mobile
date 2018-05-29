@@ -37,8 +37,6 @@ class NBClient {
     func resolveCurrentUser(_ completionHandler: @escaping (() -> Void)) {
         if currentUser == nil {
             TTLog.debug("currentuser nil!")
-            
-            // let userReq = getUrl(User.endpoint)
             let userReq = NBNetworking.shared.request(url: User.endpoint)
             
             if errorStatusCodes.contains(userReq.statusCode!.rawValue) {
@@ -105,50 +103,13 @@ class NBClient {
     public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
         
-        
-        // let group = DispatchGroup()
-        
-        // group.enter()
-        //DispatchQueue.global(qos: .default).async {
         let req = NBNetworking.shared.request(url: someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
-            // let req = getUrl(someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])  // { r in
         TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
         if req.statusCode!.isSuccess {
             let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
             objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
         }
-                // group.leave()
-            // }
-        //}
-
-        // group.wait()
-        // group.notify(queue: .main) {
-        
-        // }
+ 
         return objectResult
-        
-        //
-        
-        
-        /*
-        let r = Just.get(someObject.routeType.returnRoute(), params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!, "uuid": UIDevice().uuid])
-        TTLog.debug("getmappable request: ", r.url!)
-        
-        if r.statusCode != 200 || !r.ok {
-            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
-                                        reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
-                userInfo:nil)
-            Bugsnag.notify(exception)
-        }
-        if r.ok {
-            let nestedData = try? JSONSerialization.data(withJSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
-        }
-        if (completionHandler != nil){
-            completionHandler!(objectResult)
-        }
-        */
-
-        
     }
 }

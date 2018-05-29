@@ -65,7 +65,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
-    // @IBOutlet weak var postContent: UILabel!
     @IBOutlet weak var postContentTextView: UITextView!
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var postComments: UILabel!

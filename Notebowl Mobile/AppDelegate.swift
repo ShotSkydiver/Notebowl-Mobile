@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if !isAppStore {
             TTLog.debug("not appstore!")
-            FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
+            _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
                 "Bug",
                 "Question",
                 "Looks good!"
@@ -44,8 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
-        // defaults.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
@@ -83,8 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
-        NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token])
-        // getUrl("notifications/enable", kind: .mobile, params: ["token": token]) {r in TTLog.debug("notif register: ", r) }
+        _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token])
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)
@@ -119,7 +116,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let formatter = DateFormatter.iso8061
         let dateString = formatter.string(from: self.disconnectDate)
         let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
-        // let recReq = getUrl("operations/reconnect", kind: .rpc, params: ["since": dateString])
         guard let reqData = recReq.content else { return }
         do {
             let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
@@ -181,18 +177,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
         TTLog.debug("willpresent ", userInfo)
-        
         completionHandler([.alert])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        // let aps = userInfo["aps"] as! [String: AnyObject]
+        _ = response.notification.request.content.userInfo
         
         if response.actionIdentifier == "viewActionIdentifier" {
             TTLog.debug("view action")
         }
-
         completionHandler()
     }
 }

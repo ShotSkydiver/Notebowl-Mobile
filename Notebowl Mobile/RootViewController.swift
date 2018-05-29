@@ -58,9 +58,7 @@ class RootViewController: UIViewController {
             }
             let delegate = UIApplication.shared.delegate as! AppDelegate
             delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
-            _ = NBSocket.shared
-            //NBNetworking.setup(UIDevice().uuid)
-            
+            _ = NBSocket.shared            
         }
     }
 }

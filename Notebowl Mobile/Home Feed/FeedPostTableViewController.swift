@@ -106,28 +106,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             }
         }
     }
-    /*
-    func uploadImage(image: UIImage) {
-        Just.post(("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
-                  params: ["uuid": UIDevice().uuid],
-                  files:["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
-                  asyncProgressHandler:{ p in
-                    print(p.percent)
-                    DispatchQueue.main.async(execute: {
-                        // self.profilePicture.uploadImage(image: self.selectedImage, progress: p.percent)
-                    })
-        }){ r in
-            print(r.ok)
-            let res = (r.json as AnyObject).value(forKeyPath: "result")
-            let fileid = (res as AnyObject).value(forKeyPath: "fileId") as! String
-            self.attachmentFileId = fileid
-            DispatchQueue.main.async(execute: {
-                self.indicatorView.stopAnimating()
-                self.bar.sendButton.showViewAnimated(true)
-            })
-        }
-    }
-    */
+
     func setupInputBar() {
         resetInput()
         
@@ -146,7 +125,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     config.library.maxNumberOfItems = 1
                     config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
                     config.icons.cropIcon = UIImage(named: "crop-vector")!
-                    // config.colors.navigationBarTextColor = .darkGray
                     config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                     config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                     
@@ -168,7 +146,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                                     self.bar.sendButton.showViewAnimated(false)
                                     self.indicatorView.startAnimating()
                                     
-                                    // self.uploadImage(image: photo.image)
                                 })
                             default:
                                 picker.dismiss(animated: true, completion: nil)
@@ -189,7 +166,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 .onSelected { anonButton in
                     self.anonymousToggle.toggle()
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-                    // anonButton.image = self.anonymousToggle ? UIImage(named: "visibility_off-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "visibility_on-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
             },
           
             bar.sendButton.configure {
@@ -217,8 +193,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
         bar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
-        
-        
+
     }
     
     func makeButton(named: String) -> InputBarButtonItem {
@@ -234,7 +209,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         
         let jsonPayload: Any? = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
         let postReq = NBNetworking.shared.request(.post, url: Comment.endpoint, json: jsonPayload)
-        // let postReq = getUrl(Comment.endpoint, method: .post, json: jsonPayload)
         let finalmap = Mapper<Comment>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
         
         if self.attachmentManager.attachments.count > 0 {
@@ -303,7 +277,6 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
         let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
             self.editingExistingComment = true
-            // self.performSegue(withIdentifier: "createPostSegue", sender: selectedCell)
         }
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground
@@ -314,7 +287,6 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
             self.post.postComments.remove(at: indexPath.row)
             action.fulfill(with: .delete)
             NBNetworking.shared.request(.delete, url: selectedCell.commentForCell.url.absoluteString)
-            // getUrl(selectedCell.commentForCell.url.absoluteString, method: .delete)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -325,13 +297,11 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
                 NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                // getUrl(Abuse.endpoint, method: .post, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
                 NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                // getUrl(Abuse.endpoint, method: .post, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -381,7 +351,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate {
     }
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
         TTLog.debug("att did reload")
-        //bar.sendButton.isEnabled = attachments.count > 0
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         if let libraryButton = bar.bottomStackViewItems[0] as? InputBarButtonItem {
@@ -395,12 +364,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate {
     }
     
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
-        /*
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
-        */
+ 
     }
     
     func setAttachmentManager(active: Bool) {

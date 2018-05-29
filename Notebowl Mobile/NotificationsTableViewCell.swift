@@ -30,7 +30,6 @@ class NotificationsTableViewCell: UITableViewCell {
     
     func updateReadStatus() {
         DispatchQueue.main.async {
-            // nil or seen!
             if self.notification!.unreadBool {
                 self.backgroundColor = #colorLiteral(red: 0.9294117647, green: 0.9529411765, blue: 0.9803921569, alpha: 1)
             }
@@ -39,6 +38,4 @@ class NotificationsTableViewCell: UITableViewCell {
             }
         }
     }
-    
-    
 }

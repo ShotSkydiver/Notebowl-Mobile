@@ -72,7 +72,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     
     func markAsSeen() {
         NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
-        // getUrl("notifications/markAsSeen", kind: .rpc, method: .post)
         for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
             notification.status = "seen"
         }
@@ -80,7 +79,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
         if mapped.itemType! == "Notification" {
-            // let mappedNotif = mapped as! Response<Notification>
             NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
             self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
             if updateUI {

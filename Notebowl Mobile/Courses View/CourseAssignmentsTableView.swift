@@ -55,7 +55,6 @@ class CourseAssignmentsTableView: UITableViewController {
                 NBClient.shared.storedTypes[Assignment.classIdentifier] = self.assignments
             }
             
-            // self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
             self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]!
             
             for assignment in self.assignments {

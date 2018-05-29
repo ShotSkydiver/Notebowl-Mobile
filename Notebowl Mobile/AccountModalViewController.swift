@@ -118,7 +118,6 @@ class AccountModalTableViewController: UITableViewController {
         config.library.maxNumberOfItems = 1
         config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
         config.icons.cropIcon = UIImage(named: "crop-vector")!
-        // config.colors.navigationBarTextColor = .darkGray
         config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         let picker = YPImagePicker(configuration: config)

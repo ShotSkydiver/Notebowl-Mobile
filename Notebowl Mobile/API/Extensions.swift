@@ -228,7 +228,6 @@ extension DesignableView {
             return layer.cornerRadius
         }
         set {
-            //            layer.masksToBounds = true
             layer.cornerRadius = abs(CGFloat(Int(newValue * 100)) / 100)
         }
     }
@@ -950,7 +949,6 @@ class ObjectTransform<T: Object>: TransformType {
                     TTLog.debug("new object is more recent than existing object!")
                     
                     let r = NBNetworking.shared.request(url: urlToGet)
-                    // let r = Just.get(urlToGet, params: ["uuid": UIDevice().uuid])
                     let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
                     finalmap?.refresh()
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
@@ -1012,10 +1010,8 @@ enum AppConfiguration {
 }
 
 struct Config {
-    // This is private because the use of 'appConfiguration' is preferred.
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
     
-    // This can be used to add debug statements.
     static var isDebug: Bool {
         #if DEBUG
         return true
@@ -1023,7 +1019,6 @@ struct Config {
         return false
         #endif
     }
-    
     static var appConfiguration: AppConfiguration {
         if isDebug {
             return .Debug

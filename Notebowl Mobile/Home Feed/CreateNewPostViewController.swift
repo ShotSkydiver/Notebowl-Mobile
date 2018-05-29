@@ -85,16 +85,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         postTextView.delegate = self
         if editingExistingPost {
             postTextView.text = existingPostToEdit.text!
-            /*
-            if existingCell.postAttachments != nil || existingCell.heightConst.constant != 0 {
-                attachmentManager.handleInput(of: existingCell.postAttachments.image!)
-            }
-            */
-            //if existingPostToEdit.postAttachments.count > 0 {
-                //for attachment in existingPostToEdit.postAttachments {
-                    //attachmentManager.handleInput(of: )
-                //}
-            //}
+   
         }
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
     }
@@ -123,7 +114,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             config.library.maxNumberOfItems = 10
             config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
             config.icons.cropIcon = UIImage(named: "crop-vector")!
-            // config.colors.navigationBarTextColor = .darkGray
             config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             let picker = YPImagePicker(configuration: config)
@@ -233,18 +223,15 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             var jsonPayload: Any?
             if self.editingExistingPost {
                 jsonPayload = ["text": postText!]
-                // let putReq = getUrl(self.existingPostToEdit.url.absoluteString, method: .put, json: jsonPayload)
                 let putReq = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
             }
             else {
                 jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
-                //let postReq = getUrl(Post.endpoint, method: .post, json: jsonPayload)
                 let postReq = NBNetworking.shared.request(.post, url: Post.endpoint, json: jsonPayload)
                 let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     for file in self.attachmentIDs {
                         let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                        // let attReq = getUrl(Attachment.endpoint, method: .post, json: jsonAttPayload)
                         let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
                     }
                 }
@@ -336,10 +323,9 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didinsert")
-        // self.photoLibraryButton.isEnabled = manager.attachments.count > 0
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        // self.photoLibraryButton.isEnabled = manager.attachments.count > 0
+        
     }
 }
 
@@ -353,7 +339,6 @@ class PostButtonNavigationItem: UIBarButtonItem {
         postButton.setTitle("Post", for: .normal)
         postButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .caption1)
         postButton.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
-        // postButton.setBackgroundColor(color: UIImage().createGradientImage(size: 110).gradientColor)
         postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
         postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
         
@@ -393,7 +378,6 @@ class UploadImageAttachmentCell: AttachmentCell {
     private func setup() {
         containerView.addSubview(imageView)
         imageView.fillSuperview()
-        // imageView.style = .wave
         imageView.style = .roundWith(lineWdith: 4.0, lineColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
     }
 }

@@ -112,43 +112,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
-        
-        /*
-        LightboxConfig.loadImage = {
-            imageView, URL, completion in
-            imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-                if (error != nil) {
-                    completion?(nil)
-                }
-                else {
-                    TTLog.debug("lightbox loaded!")
-                    completion?(image)
-                }
-            })
-        }
-        LightboxConfig.CloseButton.image = UIImage(named: "dismiss-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.CloseButton.text = ""
-        LightboxConfig.DeleteButton.enabled = true
-        LightboxConfig.DeleteButton.image = UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.DeleteButton.text = ""
-        LightboxConfig.PageIndicator.separatorColor = .groupTableViewBackground
-        LightboxConfig.PageIndicator.textAttributes = [
-            .font: UIFont.systemFont(ofSize: 15),
-            .foregroundColor: UIColor.white,
-            .paragraphStyle: {
-                var style = NSMutableParagraphStyle()
-                style.alignment = .center
-                return style
-            }()
-        ]
-        */
     }
     
     func configure(comment: Comment) {
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
         
         if commentLikeIndicator.isAnimating {
-            // likeRefresh.stopAnimating()
             commentLikeIndicator.stopAnimating()
             commentLikes.showViewAnimated(true)
         }
@@ -181,8 +150,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         }
         
         self.commentForCell = comment
-        // setNeedsLayout()
-        // layoutIfNeeded()
     }
     
     final override func layoutSubviews() {
@@ -191,16 +158,9 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         if collectionViewPaginatedScroll == true {
             collectionView.isPagingEnabled = false
         }
-        /*
-         guard collectionView.frame != contentView.bounds else {
-         return
-         }
-         collectionView.frame = contentView.bounds
-         */
     }
     
     @IBAction func likeButtonAction(_ sender: Any) {
-        // likeRefresh.startAnimating()
         commentLikeIndicator.startAnimating()
         commentLikes.showViewAnimated(false)
     }
@@ -213,11 +173,9 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         DispatchQueue.main.async {
             if (!self.commentLikeButton.isSelected) {
                 NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
-                // getUrl(self.commentForCell.likeFromCurrentUser!.url.absoluteString, method: .delete)
             }
             else if (self.commentLikeButton.isSelected) {
                 NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
-                // getUrl(Like.endpoint, method: .post, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
             }
         }
     }
@@ -261,7 +219,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //let currentCell = (collectionView as! CommentCollectionView).cellForItem(at: indexPath) as! IndexedCollectionViewCell
         
         var newphotos = [LightboxImage]()
         for attachment in self.commentForCell.commentAttachments {
@@ -294,9 +251,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // let cellHeight = self.bulletinTableView.rowHeight - (20)
-        
-        // this controls the size of the image in the collectionview
         if indexPath.row > 2 {
             return CGSize(width: 0, height: 90)
         }

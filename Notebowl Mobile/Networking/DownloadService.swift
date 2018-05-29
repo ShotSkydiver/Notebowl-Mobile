@@ -70,7 +70,6 @@ struct NBSessionDefaults {
 
 
 class NBNetworking: NSObject, URLSessionDelegate {
-    // var uploadTasks = [UploadReq]()
     var nbSession: URLSession!
     var sessionDefaults: NBSessionDefaults!
     var requestConfigs: [RequestTaskID: RequestConfiguration]=[:]
@@ -102,7 +101,6 @@ class NBNetworking: NSObject, URLSessionDelegate {
     
     
     func upload(url: URLComponentsMutable, file: File) {
-        //sessionDefaults.startRequestImmediately = false
         
     }
     
@@ -289,9 +287,6 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
         }
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        
-        // NFX.sharedInstance().show()
-        
         if let config = requestConfigs[task.taskIdentifier], let handler = config.completionHandler {
             let result = NBResult(data: config.data, response: task.response, error: error, task: task)
             result.JSONReadingOptions = self.sessionDefaults.JSONReadingOptions
@@ -301,17 +296,6 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
         
         requestConfigs.removeValue(forKey: task.taskIdentifier)
     }
-    
-    /*
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        TTLog.debug("networking: didreceive response: ", response)
-        guard let config = requestConfigs[dataTask.taskIdentifier] else {
-            completionHandler(.cancel)
-            return
-        }
-        completionHandler(.allow)
-    }
-    */
 }
 extension URLSessionConfiguration {
     static var withHeaders: URLSessionConfiguration {
