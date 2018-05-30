@@ -53,12 +53,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         DispatchQueue.main.async {
             if self.notifications == nil {
                 TTLog.error("this shouldn't be nil!")
-                if NBClient.shared.storedTypes[Notification.classIdentifier]! != nil {
-                    self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
-                }
-                else {
-                    TTLog.error("courses stored cache is nil!")
-                }
             }
             self.tableView.reloadData()
         }

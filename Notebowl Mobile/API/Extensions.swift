@@ -932,7 +932,11 @@ class ObjectTransform<T: Object>: TransformType {
         let url = URL(string: urlToGet)
 
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            if self.actionType == .deleted {
+            if self.actionType == .elapsed {
+                TTLog.debug("action: elapsed!")
+                return objectExists as? T
+            }
+            else if self.actionType == .deleted {
                 TTLog.debug("action type: delete!")
                 return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
             }
@@ -947,6 +951,7 @@ class ObjectTransform<T: Object>: TransformType {
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
                     return finalmap
                 }
+                
                 objectExists.refresh()
                 return objectExists as? T
             }

@@ -16,6 +16,7 @@ import SocketIO
 import NVActivityIndicatorView
 import SwipeCellKit
 import Lightbox
+import FaceAware
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -187,6 +188,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
                                     .keepCurrentImageWhileLoading
                 ]
             )
+            userAvatar.focusOnFaces = true
         }
         
         if lightboxPhotos.isEmpty {

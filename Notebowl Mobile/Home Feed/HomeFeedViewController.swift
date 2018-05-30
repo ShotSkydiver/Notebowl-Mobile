@@ -27,6 +27,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var placeholderTableView: TableView?
     
     override func viewDidLoad() {
+        TTLog.testing("homeVC didload")
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
         HomeFeedWritePostCell.register(in: bulletinTableView)
@@ -39,7 +40,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
-        
         self.getPosts()
     }
     
@@ -71,34 +71,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         placeholderTableView?.showDefault()
         self.getPosts()
-    }
-    
-    func loadOtherTabs() {
-        if let viewControllers = tabBarController?.viewControllers {
-            for viewController in viewControllers {
-                let rootNavController = viewController as! UINavigationController
-                
-                if rootNavController.topViewController is CoursesTableViewController {
-                    let coursesVC = rootNavController.topViewController as! CoursesTableViewController
-                    coursesVC.courses = self.courses
-                    let _ = coursesVC.view
-                }
-                else if rootNavController.topViewController is NotificationsTableViewController {
-                    let notifsVC = rootNavController.topViewController as! NotificationsTableViewController
-                    
-                    notifsVC.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-                    if NBClient.shared.storedTypes[Notification.classIdentifier] == nil {
-                        NBClient.shared.storedTypes[Notification.classIdentifier] = notifsVC.notifications
-                    }
-                    tabBarController?.tabBar.items![2].badgeColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-                    let unreads = notifsVC.notifications.filter({ $0.unseenBool == true })
-                    if unreads.count > 0 {
-                        tabBarController?.tabBar.items![2].badgeValue = String(format: "%d", (unreads.count))
-                    }
-                    let _ = notifsVC.view
-                }
-            }
-        }
+        // homeVC.bgView.showViewAnimated(false) TAKE CARE OF THIS 
     }
     
     func getPosts() {
@@ -116,14 +89,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     }
                 }
                 self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
-
                 let categories: [Category]! = NBClient.shared.initArray(from: NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.courses))\"]")!)
             }
             self.getData()
             self.bulletinTableView.reloadData()
-            self.loadOtherTabs()
-            
-            self.bgView.showViewAnimated(false)
         }
     }
     
@@ -140,6 +109,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        TTLog.testing("homeVC willappear")
         let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
         
@@ -147,6 +117,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             TTLog.debug("reloading")
             self.bulletinTableView.reloadData(withoutScroll: true)
         }
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        TTLog.testing("homeVC didappear")
+        super.viewDidAppear(animated)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -263,6 +237,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             
             let mappedUser = mapped as! Response<User>
             if mappedUser.actionType != .elapsed {
+                TTLog.debug("not elapsed!")
                 for post in self.posts {
                     post.refresh()
                 }

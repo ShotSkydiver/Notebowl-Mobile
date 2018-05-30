@@ -3,7 +3,7 @@ PODS:
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
   - DeckTransition (2.0.0)
-  - FaceAware (1.2.0)
+  - FaceAware (1.4.0)
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
   - Haptica (2.0.2)
@@ -22,13 +22,13 @@ PODS:
   - NVActivityIndicatorView (4.2.1):
     - NVActivityIndicatorView/Presenter (= 4.2.1)
   - NVActivityIndicatorView/Presenter (4.2.1)
-  - ObjectMapper (3.1.0)
+  - ObjectMapper (3.2.0)
   - PryntTrimmerView (2.0.1)
   - Socket.IO-Client-Swift (13.1.3):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
   - SteviaLayout (4.2.0)
-  - SwipeCellKit (2.3.2)
+  - SwipeCellKit (2.4.1)
   - Tamamushi (0.1.3)
   - YPImagePicker (3.0.0):
     - PryntTrimmerView (~> 2.0)
@@ -38,7 +38,7 @@ DEPENDENCIES:
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
-  - FaceAware
+  - FaceAware (from `https://github.com/BeauNouvelle/FaceAware.git`)
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
   - Haptica
@@ -62,7 +62,6 @@ SPEC REPOS:
     - ButtonProgressBar-iOS
     - Cache
     - DeckTransition
-    - FaceAware
     - Haptica
     - HGPlaceholders
     - HTTPStatusCodes
@@ -82,6 +81,8 @@ SPEC REPOS:
     - Tamamushi
 
 EXTERNAL SOURCES:
+  FaceAware:
+    :git: https://github.com/BeauNouvelle/FaceAware.git
   FaveButton:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
@@ -93,6 +94,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 CHECKOUT OPTIONS:
+  FaceAware:
+    :commit: 5d959663c235bc734cb2fef551fba43f04036c5c
+    :git: https://github.com/BeauNouvelle/FaceAware.git
   FaveButton:
     :commit: f5ecf282b05ffdc3eeac60e0bf8e7e48b160d5ac
     :git: https://github.com/ShotSkydiver/fave-button
@@ -100,7 +104,7 @@ CHECKOUT OPTIONS:
     :commit: 0e5032ad6d9b83081a32d2476ee428f1729a6839
     :git: https://github.com/ShotSkydiver/SlackFeedback
   SwipeCellKit:
-    :commit: 695daa90c6f26ad481166a522d8a36d929542bb8
+    :commit: c7f3baac2b0c458de0fa0773e4c19cde632ff7bc
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   YPImagePicker:
     :commit: 60b7f554b127cff0953c9bdb228635b91c6a5aa7
@@ -111,7 +115,7 @@ SPEC CHECKSUMS:
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
-  FaceAware: 421436f9d16aacdb26ffcf8e5a39a1dd68630395
+  FaceAware: d4fd20f9569eb1239d8a587d33ff19c9ffa39a49
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
   Haptica: fdf2cb787b131795b9f51f4e79db84f4389c5bdd
@@ -125,15 +129,15 @@ SPEC CHECKSUMS:
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
   netfox: 5230196df3ca093a9418e079eb6e8f3776f15d14
   NVActivityIndicatorView: 8068ba3ad39cb44cbaab25d89ff2546b3f092681
-  ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
+  ObjectMapper: 5cccd2de6f253eda859df8116a5a554d9769e859
   PryntTrimmerView: 4260ae497a2f3e1bbfc0b71247eb74ab92bf0490
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
-  SwipeCellKit: 52b160ea820245eb972b2eca270cb3a6f68e33af
+  SwipeCellKit: 189dab685734056ce3c803842759b73b8d6aa65f
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
   YPImagePicker: d0732053af4b8ab373b6b1e8a8c86bb846467394
 
-PODFILE CHECKSUM: 37cef344d23cfc02639b759e26f5621afd93bd2e
+PODFILE CHECKSUM: 900c9664c7242c1a3582cc4b246cbe54d11f0d53
 
 COCOAPODS: 1.5.2

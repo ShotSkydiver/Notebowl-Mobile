@@ -11,7 +11,7 @@ target 'Notebowl Mobile' do
     pod 'InputBarAccessoryView'
     pod 'DeckTransition', '~> 2.0'
     pod 'MMUploadImage'
-    pod 'FaceAware'
+    pod 'FaceAware', :git => 'https://github.com/BeauNouvelle/FaceAware.git'
     pod 'Haptica'
     pod 'ButtonProgressBar-iOS'
     pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'

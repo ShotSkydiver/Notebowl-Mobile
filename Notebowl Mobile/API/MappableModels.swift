@@ -555,26 +555,25 @@ class Response<T>: Generic where T: Object {
     
     func updateLikes() {
         self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
-        if postLikes.isEmpty {
-            self.likedByCurrentUser = false
-            return
+        if postLikes.isEmpty || postLikes == nil {
+            likedByCurrentUser = false
+            likeFromCurrentUser = nil
         }
-        if postLikes.count > 0 {
-            for like in postLikes! {
-                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-                    self.likedByCurrentUser = true
-                    self.likeFromCurrentUser = like
-                }
-                else {
-                    self.likedByCurrentUser = false
-                }
+        else if postLikes.count > 0 {
+            let like = postLikes.first(where: { $0.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            
+            if like != nil {
+                likedByCurrentUser = true
+                likeFromCurrentUser = like
+            }
+            else if like == nil {
+                likedByCurrentUser = false
+                likeFromCurrentUser = nil
             }
         }
     }
     override public func refresh() {
         if self.creator != nil {
-            let storedUsers = NBClient.shared.storedTypes[User.classIdentifier]
-            TTLog.debug("storedUsers: ", storedUsers?.count)
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
         }
         
@@ -662,19 +661,20 @@ class Response<T>: Generic where T: Object {
     }
     public func updateLikes() {
         self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
-        if commentLikes.isEmpty {
-            self.likedByCurrentUser = false
-            return
+        if commentLikes.isEmpty || commentLikes == nil {
+            likedByCurrentUser = false
+            likeFromCurrentUser = nil
         }
-        if commentLikes.count > 0 {
-            for like in commentLikes! {
-                if (like.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-                    self.likedByCurrentUser = true
-                    self.likeFromCurrentUser = like
-                }
-                else {
-                    self.likedByCurrentUser = false
-                }
+        else if commentLikes.count > 0 {
+            let like = commentLikes.first(where: { $0.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            
+            if like != nil {
+                likedByCurrentUser = true
+                likeFromCurrentUser = like
+            }
+            else if like == nil {
+                likedByCurrentUser = false
+                likeFromCurrentUser = nil
             }
         }
     }
