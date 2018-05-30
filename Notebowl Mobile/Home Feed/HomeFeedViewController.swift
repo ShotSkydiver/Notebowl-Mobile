@@ -108,19 +108,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
-                
-                
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
-                if NBClient.shared.storedTypes[Enrollment.classIdentifier] == nil {
-                    NBClient.shared.storedTypes[Enrollment.classIdentifier] = enrollments
-                }
-                else {
-                    for enrollment in enrollments {
-                        if NBClient.shared.storedTypes[Enrollment.classIdentifier]!.first(where: {$0.resourceKey == enrollment.resourceKey}) == nil {
-                            NBClient.shared.storedTypes[Enrollment.classIdentifier]!.append(enrollment)
-                        }
-                    }
-                }
                 var resourceKeys: String = ""
                 
                 for enrollment in enrollments {
@@ -129,30 +117,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     }
                 }
                 self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
-                
-                if NBClient.shared.storedTypes[Course.classIdentifier] == nil {
-                    NBClient.shared.storedTypes[Course.classIdentifier] = self.courses
-                }
-                else {
-                    for course in self.courses {
-                        if NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == course.resourceKey}) == nil {
-                            NBClient.shared.storedTypes[Course.classIdentifier]!.append(course)
-                        }
-                    }
-                }
+
                 let categories: [Category]! = NBClient.shared.initArray(from: NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.courses))\"]")!)
-                
-                if NBClient.shared.storedTypes[Category.classIdentifier] == nil {
-                    NBClient.shared.storedTypes[Category.classIdentifier] = categories
-                }
-                else {
-                    for category in categories {
-                        if NBClient.shared.storedTypes[Category.classIdentifier]!.first(where: {$0.resourceKey == category.resourceKey}) == nil {
-                            NBClient.shared.storedTypes[Category.classIdentifier]!.append(category)
-                        }
-                    }
-                }
-                
             }
             self.getData()
             self.bulletinTableView.reloadData()
@@ -164,56 +130,13 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     
     func getData() {
         self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
-        if NBClient.shared.storedTypes[Post.classIdentifier] == nil {
-            NBClient.shared.storedTypes[Post.classIdentifier] = self.posts
-        }
-        else {
-            for post in self.posts {
-                if NBClient.shared.storedTypes[Post.classIdentifier]!.first(where: {$0.resourceKey == post.resourceKey}) == nil {
-                    NBClient.shared.storedTypes[Post.classIdentifier]!.append(post)
-                }
-            }
-        }
-        
         let comments: [Comment]! = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.posts))\"]")!
-        if NBClient.shared.storedTypes[Comment.classIdentifier] == nil {
-            NBClient.shared.storedTypes[Comment.classIdentifier] = comments
-        }
-        else {
-            for comment in comments {
-                if NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: {$0.resourceKey == comment.resourceKey}) == nil {
-                    NBClient.shared.storedTypes[Comment.classIdentifier]!.append(comment)
-                }
-            }
-        }
-        
         let filterString = NBClient.shared.buildFilterString(from: self.posts)
         let combinedFilter = filterString + NBClient.shared.buildFilterString(from: comments)
         
         let likes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
-        if NBClient.shared.storedTypes[Like.classIdentifier] == nil {
-            NBClient.shared.storedTypes[Like.classIdentifier] = likes
-        }
-        else {
-            for like in likes {
-                if NBClient.shared.storedTypes[Like.classIdentifier]!.first(where: {$0.resourceKey == like.resourceKey}) == nil {
-                    NBClient.shared.storedTypes[Like.classIdentifier]!.append(like)
-                }
-            }
-        }
-        
-        let attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
-        self.attachments = attachments
-        if NBClient.shared.storedTypes[Attachment.classIdentifier] == nil {
-            NBClient.shared.storedTypes[Attachment.classIdentifier] = attachments
-        }
-        else {
-            for attachment in attachments {
-                if NBClient.shared.storedTypes[Attachment.classIdentifier]!.first(where: {$0.resourceKey == attachment.resourceKey}) == nil {
-                    NBClient.shared.storedTypes[Attachment.classIdentifier]!.append(attachment)
-                }
-            }
-        }
+        self.attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
+
         self.posts = NBClient.shared.initArray(from: self.posts)
     }
     

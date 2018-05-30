@@ -34,28 +34,8 @@ class CourseAssignmentsTableView: UITableViewController {
         loadingView.showLoadView(true)
         DispatchQueue.main.async {
             
-            if NBClient.shared.storedTypes[Assignment.classIdentifier] != nil {
-                TTLog.debug("loading assignments from cache")
-                self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]!.filter({ ($0 as! Assignment).parent.resourceKey == self.selectedCourse.resourceKey }) as! [Assignment]
-                
-                if self.assignments.isEmpty || self.assignments == nil {
-                    TTLog.debug("cache empty, loading from api")
-                    self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
-                    
-                    for assignment in self.assignments {
-                        if NBClient.shared.storedTypes[Assignment.classIdentifier]!.first(where: {$0.resourceKey == assignment.resourceKey}) == nil {
-                            NBClient.shared.storedTypes[Assignment.classIdentifier]!.append(assignment)
-                        }
-                    }
-                }
-            }
-            else if NBClient.shared.storedTypes[Assignment.classIdentifier] == nil {
-                TTLog.debug("cache empty, loading from api")
-                self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")
-                NBClient.shared.storedTypes[Assignment.classIdentifier] = self.assignments
-            }
-            
-            self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]!
+            self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")!
+            self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")!
             
             for assignment in self.assignments {
                 assignment.getGradeString()

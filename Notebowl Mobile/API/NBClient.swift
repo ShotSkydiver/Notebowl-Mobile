@@ -100,16 +100,56 @@ class NBClient {
         return mutableArray
     }
 
-    public func getMappable<T>(_ someObject: T.Type, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
+    public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
         var objectResult: [T]?
+        let requestURL: String = url != nil ? url! : someObject.endpoint
+        let req = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
         
-        let req = NBNetworking.shared.request(url: someObject.endpoint, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
         TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
-        if req.statusCode!.isSuccess {
+        if req.statusCode!.rawValue != 200 || !(req.statusCode?.isSuccess)! {
+            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
+                                        reason:"Error \(req.statusCode!): \(req.reason), url: \(req.url!.absoluteString)",
+                userInfo:nil)
+            Bugsnag.notify(exception)
+            
+        }
+        
+        else {
             let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
             objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+            
+            var newObjectArray = [T]()
+            for object in objectResult! {
+                
+                if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey.lastPathComponent }) {
+                    
+                    if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
+                        TTLog.debug("new object is more recent than existing object!")
+                        NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
+                        
+                        newObjectArray.append(object)
+                    }
+                    else {
+                        TTLog.debug("return existing object!")
+                        newObjectArray.append((objectExists as! T))
+                    }
+                }
+
+                else {
+                    object.firstTimeLoading = true
+                    if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
+                        NBClient.shared.storedTypes[T.classIdentifier] = [object]
+                        
+                    }
+                    else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == object.resourceKey}) {
+                        NBClient.shared.storedTypes[T.classIdentifier]!.append(object)
+                    }
+                    newObjectArray.append(object)
+                }
+            }
+            return newObjectArray
         }
- 
+        
         return objectResult
     }
 }

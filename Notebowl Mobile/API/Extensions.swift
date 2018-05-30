@@ -934,15 +934,7 @@ class ObjectTransform<T: Object>: TransformType {
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
             if self.actionType == .deleted {
                 TTLog.debug("action type: delete!")
-                if T.routeType == .notification || T.routeType == .enrollment {
-                    TTLog.debug("notification about deleted!")
-                    return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
-                    
-                }
-                else {
-                    TTLog.debug("delete object!")
-                    return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
-                }
+                return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
             }
             else {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
@@ -951,6 +943,7 @@ class ObjectTransform<T: Object>: TransformType {
                     let r = NBNetworking.shared.request(url: urlToGet)
                     let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
                     finalmap?.refresh()
+                    
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
                     return finalmap
                 }
@@ -963,25 +956,8 @@ class ObjectTransform<T: Object>: TransformType {
         }
 
         else {
-            let r = NBNetworking.shared.request(url: urlToGet)
-            TTLog.debug("objtransform req: ", r.url!)
-            if r.statusCode!.rawValue != 200 || !(r.statusCode?.isSuccess)! {
-                let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
-                                            reason:"Error \(r.statusCode!): \(r.reason), url: \(r.url!.absoluteString)",
-                                            userInfo:nil)
-                Bugsnag.notify(exception)
-                
-            }
-            let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-            finalmap?.refresh()
-            finalmap?.firstTimeLoading = true
-            if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
-                NBClient.shared.storedTypes[T.classIdentifier] = [finalmap!]
-            }
-            else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == finalmap!.resourceKey}) {
-                NBClient.shared.storedTypes[T.classIdentifier]!.append(finalmap!)
-            }
-            return finalmap
+            let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
+            return mapReq?.first
         }
     }
     

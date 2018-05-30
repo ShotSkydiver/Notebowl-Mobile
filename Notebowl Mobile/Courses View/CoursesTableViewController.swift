@@ -59,12 +59,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         DispatchQueue.main.async {
             if self.courses == nil {
                 TTLog.error("this shouldn't be nil!")
-                if NBClient.shared.storedTypes[Course.classIdentifier]! != nil {
-                    self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-                }
-                else {
-                    TTLog.error("courses stored cache is nil!")
-                }
             }
             self.tableView.reloadData()
             
