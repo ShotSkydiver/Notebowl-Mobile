@@ -60,8 +60,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         HomeFeedCommentCell.register(in: self.tableView)
 
         setupInputBar()
-        registerHandler()
-        
+    
         tableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         
         viewIsLoaded = true
@@ -72,12 +71,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if !showingPhotoPicker {
-            NBSocket.shared.manager.defaultSocket.off(id: idForHandler)
-        }
-        else {
-            TTLog.debug("showing photo picker! don't deregister!")
-        }
     }
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
@@ -86,24 +79,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
             self.tableView.endUpdates()
-        }
-    }
-    
-    func registerHandler() {
-        idForHandler = NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            TTLog.info("feedpost socket: on response: ", data)
-            guard let message = data[0] as? String else { return }
-            if let data = message.data(using: .utf8) {
-                do {
-                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    
-                    self.handleUpdate(mapped: mapped, updateUI: true)
-                }
-                catch let error {
-                    print("Error parsing json: \(error)")
-                }
-            }
         }
     }
 

@@ -30,7 +30,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
-        registerHandler()
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         
@@ -89,23 +88,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
-        }
-    }
-    
-    func registerHandler() {
-        NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            guard let message = data[0] as? String else { return }
-            if let data = message.data(using: .utf8) {
-                do {
-                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    
-                    self.handleUpdate(mapped: mapped, updateUI: true)
-                }
-                catch let error {
-                    print("Error parsing json: \(error)")
-                }
-            }
         }
     }
     

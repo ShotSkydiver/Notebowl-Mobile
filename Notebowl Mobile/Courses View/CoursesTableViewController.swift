@@ -30,7 +30,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
-        registerSocketHandler()
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         self.getTableData(animated: false)
@@ -81,23 +80,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
                 self.tableView.beginUpdates()
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
                 self.tableView.endUpdates()
-            }
-        }
-    }
-    
-    func registerSocketHandler() {
-        NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            guard let message = data[0] as? String else { return }
-            if let data = message.data(using: .utf8) {
-                do {
-                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    
-                    self.handleUpdate(mapped: mapped, updateUI: true)
-                }
-                catch let error {
-                    print("Error parsing json: \(error)")
-                }
             }
         }
     }

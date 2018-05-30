@@ -36,7 +36,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         placeholderTableView = bulletinTableView
         placeholderTableView?.placeholderDelegate = self
         
-        registerSocketHandler()
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
@@ -317,23 +316,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     self.bulletinTableView.beginUpdates()
                     self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                     self.bulletinTableView.endUpdates()
-                }
-            }
-        }
-    }
-    
-    func registerSocketHandler() {
-        NBSocket.shared.manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
-            guard let message = data[0] as? String else { return }
-            if let data = message.data(using: .utf8) {
-                do {
-                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    
-                    self.handleUpdate(mapped: mapped, updateUI: true)
-                }
-                catch let error {
-                    print("Error parsing json: \(error)")
                 }
             }
         }

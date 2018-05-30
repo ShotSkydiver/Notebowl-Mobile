@@ -125,49 +125,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let viewControllers = tabbarVC.viewControllers {
                     for viewController in viewControllers {
                         let rootNavController = viewController as! UINavigationController
-                        if let switchVC = rootNavController.topViewController as? UpdateVC {
-                            TTLog.debug("found updateVC!")
-                            switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+                        for vc in rootNavController.viewControllers {
+                            if let switchVC = vc as? UpdateVC {
+                                if results.last! == result {
+                                    TTLog.debug("last result!")
+                                    switchVC.handleUpdate(mapped: mapResult!, updateUI: true)
+                                }
+                                else {
+                                    TTLog.debug("not last result!")
+                                    switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+                                }
+                            }
                         }
                     }
                 }
             }
-            reloadTableViews()
         }
         catch let error {
             print("Error parsing json: \(error)")
         }
     }
-    
-    func reloadTableViews() {
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            TTLog.debug("tabController is not presented!")
-            return
-        }
-        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
-            homeVC.bulletinTableView.beginUpdates()
-            homeVC.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            homeVC.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            homeVC.bulletinTableView.endUpdates()
-        }
-        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
-            homeVC.tableView.beginUpdates()
-            homeVC.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            homeVC.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            homeVC.tableView.endUpdates()
-        }
-        if let courseVC = ((tabbarVC.viewControllers![1] as! UINavigationController).topViewController as? CoursesTableViewController) {
-            courseVC.tableView.beginUpdates()
-            courseVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-            courseVC.tableView.endUpdates()
-        }
-        if let notifVC = ((tabbarVC.viewControllers![2] as! UINavigationController).topViewController as? NotificationsTableViewController) {
-            notifVC.tableView.beginUpdates()
-            notifVC.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-            notifVC.tableView.endUpdates()
-        }
-    }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         TTLog.debug("will terminate!")
     }
