@@ -149,17 +149,23 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     func handleUpdate(mapped: Generic, updateUI: Bool) {
+        var insertIndexPaths = [IndexPath]()
+        var deleteIndexPaths = [IndexPath]()
+        var reloadIndexPaths = [IndexPath]()
+        
         if mapped.itemType! == "Post" {
             let mappedPost = mapped as! Response<Post>
-            let indexOfPost = self.posts.index(of: mappedPost.updateUrl!)
+            let indexOfPost = self.posts.index(where: { $0.resourceKey == mappedPost.updateUrl!.resourceKey })
+            
             NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             
             if mappedPost.actionType == .updated {
-                if updateUI {
-                    self.bulletinTableView.beginUpdates()
-                    self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                    self.bulletinTableView.endUpdates()
+                if indexOfPost == nil {
+                    insertIndexPaths.append(IndexPath(row: 0, section: 1))
+                }
+                else {
+                    reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
                 }
             }
             else if mappedPost.actionType == .deleted {
@@ -169,86 +175,41 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                     }
                 }
                 if indexOfPost != nil {
-                    if self.bulletinTableView.cellForRow(at: IndexPath(row: indexOfPost!, section: 1)) != nil {
-                        
-                        if updateUI {
-                            self.bulletinTableView.beginUpdates()
-                            self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right)
-                            self.bulletinTableView.endUpdates()
+                    deleteIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+                }
+            }
+        }
+        
+        else if ["Comment","Like","AttachmentS3"].contains(mapped.itemType!) {
+            if let object = mapped.genericObject {
+                if let parentPost = self.posts.first(where: { $0.resourceKey == object.parentURL!.absoluteURL.lastPathComponent  }) {
+                    let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
+                    parentPost.refresh()
+                    if indexOfPost != nil {
+                        reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+                    }
+                }
+                else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == object.parentURL!.absoluteURL.lastPathComponent  }) {
+                    parentComment.refresh()
+                }
+            }
+        }
+        else if mapped.itemType! == "User" {
+            let mappedUser = mapped as! Response<User>
+            if mappedUser.actionType != .elapsed {
+                if mappedUser.updateUrl!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+                    reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+                    let postsForUser = self.posts.filter({ $0.creator.resourceKey == mappedUser.updateUrl!.resourceKey })
+                    for post in postsForUser {
+                        if let index = self.posts.index(of: post) {
+                            reloadIndexPaths.append(IndexPath(row: index, section: 1))
                         }
                     }
                 }
             }
         }
             
-        else if mapped.itemType! == "Comment" {
-            let mappedComment = mapped as! Response<Comment>
-            guard let parentPost = self.posts.first(where: { $0.resourceKey == mappedComment.updateUrl!.parent.absoluteURL.lastPathComponent }) else {
-                return
-            }
-            let indexOfPost = self.posts.index(of: parentPost)
-            parentPost.refresh()
-            
-            if indexOfPost != nil {
-                if updateUI {
-                    self.bulletinTableView.beginUpdates()
-                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                    self.bulletinTableView.endUpdates()
-                }
-            }
-        }
-        else if mapped.itemType! == "Like" {
-            let mappedLike = mapped as! Response<Like>
-            if let parentPost = self.posts.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                let indexOfPost = self.posts.index(of: parentPost)
-                parentPost.updateLikes()
-                if indexOfPost != nil {
-                    if updateUI {
-                        self.bulletinTableView.beginUpdates()
-                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                        self.bulletinTableView.endUpdates()
-                    }
-                }
-            }
-            else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedLike.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                (parentComment as! Comment).updateLikes()
-            }
-        }
-        else if mapped.itemType! == "AttachmentS3" {
-            let mappedAttachment = mapped as! Response<Attachment>
-            
-            if let parentPost = self.posts.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                let indexOfPost = self.posts.index(of: parentPost)
-                parentPost.refresh()
-                
-                if indexOfPost != nil {
-                    if updateUI {
-                        self.bulletinTableView.beginUpdates()
-                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
-                        self.bulletinTableView.endUpdates()
-                    }
-                }
-            }
-            else if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == mappedAttachment.updateUrl!.parent.absoluteURL.lastPathComponent }) {
-                (parentComment as! Comment).refresh()
-            }
-        }
-        else if mapped.itemType! == "User" {
-            
-            let mappedUser = mapped as! Response<User>
-            if mappedUser.actionType != .elapsed {
-                TTLog.debug("not elapsed!")
-                for post in self.posts {
-                    post.refresh()
-                }
-                if updateUI {
-                    self.bulletinTableView.beginUpdates()
-                    self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                    self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .fade)
-                    self.bulletinTableView.endUpdates()
-                }
-            }
-        }
+         
         else if mapped.itemType! == "CourseUser" {
             let mappedEnrollment = mapped as! Response<Enrollment>
             if mappedEnrollment.updateUrl!.parent!.firstTimeLoading {
@@ -259,6 +220,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 DispatchQueue.main.async {
                     self.getData()
                     loadingView2.showLoadView(false)
+                    
+                    
                     if updateUI {
                         self.bulletinTableView.beginUpdates()
                         self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
@@ -287,11 +250,24 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
                 
                 NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
                 self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+                
+                
                 if updateUI {
                     self.bulletinTableView.beginUpdates()
                     self.bulletinTableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                     self.bulletinTableView.endUpdates()
                 }
+            }
+        }
+        
+        
+        if updateUI {
+            self.bulletinTableView.performBatchUpdates({
+                self.bulletinTableView.reloadRows(at: reloadIndexPaths, with: .fade)
+                self.bulletinTableView.insertRows(at: insertIndexPaths, with: .left)
+                self.bulletinTableView.deleteRows(at: deleteIndexPaths, with: .right)
+            }) { success in
+                TTLog.warning("COMPLETED????")
             }
         }
     }

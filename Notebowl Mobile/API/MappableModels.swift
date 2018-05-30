@@ -66,6 +66,7 @@ class Generic: StaticMappable {
     
     var action: String!
     var itemType: String?
+    public var genericObject: Object?
     
     public var actionType: Action {
         if action.contains("updated") { return .updated }
@@ -121,10 +122,9 @@ class Generic: StaticMappable {
 }
 
 class Response<T>: Generic where T: Object {
-    
     var updateUrl: T?
     var updatedAt: Date!
-    
+
     public override init() {}
     
     public required init?(map: Map) { }
@@ -134,12 +134,14 @@ class Response<T>: Generic where T: Object {
         
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         updateUrl <- (map["updateUrl"], ObjectTransform<T>(action: self.actionType, update: updatedAt))
-        
+        genericObject = updateUrl
     }
 }
 
-@objc(Object) public class Object: NSObject, Mappable {
 
+
+@objc(Object) public class Object: NSObject, Mappable {
+    var parentURL: URL?
     var createdAt: Date!
     var updatedAt: Date!
     var itemType: String!
@@ -179,10 +181,11 @@ class Response<T>: Generic where T: Object {
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]
+        
     }
-    
-    
 }
+
+
 
 @objc(User) public class User: Object {
 
@@ -190,9 +193,12 @@ class Response<T>: Generic where T: Object {
     var lastName: String!
     var email: String?
     var profileUrl: URL!
+    var gradMonth: Int?
+    var gradYear: Int?
     var university: University?
     
     var fullName: String { return (firstName + " " + lastName) }
+    var fullGradDate: String { return (DateComponentsFormatter.monthYear.string(from: (DateComponents(year: gradYear, month: gradMonth))))! }
     
     override class var routeType: ItemType { return .user }
     
@@ -206,6 +212,8 @@ class Response<T>: Generic where T: Object {
         firstName <- map["firstName"]
         lastName <- map["lastName"]
         email <- map["email"]
+        gradMonth <- map["gradMonth"]
+        gradYear <- map["gradYear"]
         profileUrl <- (map["profileUrl"], URLTransform())
     }
 }
@@ -529,6 +537,8 @@ class Response<T>: Generic where T: Object {
     var text: String?
     var creator: User!
     var owner: Course!
+    var parent: URL!
+    var related: URL!
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -537,6 +547,8 @@ class Response<T>: Generic where T: Object {
     public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .post }
+    
+    //var parentURL: URL? { return self.parent }
     
     required public init?(map: Map) {
         super.init(map: map)
@@ -551,6 +563,9 @@ class Response<T>: Generic where T: Object {
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
         owner <- (map["_owner"], ObjectTransform<Course>())
+        parentURL <- (map["_parent"], URLTransform())
+        self.parent = self.parentURL
+        related <- (map["_related"], URLTransform())
     }
     
     func updateLikes() {
@@ -591,6 +606,8 @@ class Response<T>: Generic where T: Object {
     var thumbnailUrl: String?
     var attachmentName: String!
     var attachmentType: String!
+    var fileName: String!
+    var size: Int!
     var type: String!
     var parent: URL!
     var owner: User?
@@ -613,7 +630,10 @@ class Response<T>: Generic where T: Object {
         attachmentName <- map["attachmentName"]
         attachmentType <- map["attachmentType"]
         type <- map["type"]
-        parent <- (map["_parent"],  URLTransform())
+        fileName <- map["fileName"]
+        size <- map["size"]
+        parentURL <- (map["_parent"], URLTransform())
+        self.parent = self.parentURL
     }
     
     func getUrlForAvatar() -> URL? {
@@ -652,7 +672,8 @@ class Response<T>: Generic where T: Object {
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
-        parent <- (map["_parent"], URLTransform())
+        parentURL <- (map["_parent"], URLTransform())
+        self.parent = self.parentURL
         creator <- (map["_creator"], ObjectTransform<User>())
     }
     
@@ -702,7 +723,8 @@ class Response<T>: Generic where T: Object {
         super.mapping(map: map)
         
         owner <- (map["_owner"], ObjectTransform<User>())
-        parent <- (map["_parent"], URLTransform())
+        parentURL <- (map["_parent"], URLTransform())
+        self.parent = self.parentURL
     }
     
     override public func refresh() {
@@ -735,7 +757,8 @@ class Response<T>: Generic where T: Object {
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]
-        parent <- (map["_parent"], URLTransform())
+        parentURL <- (map["_parent"], URLTransform())
+        self.parent = self.parentURL
     }
     
     func getUrlForAvatar() -> URL? {

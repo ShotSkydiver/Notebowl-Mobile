@@ -137,6 +137,7 @@ class NBClient {
 
                 else {
                     object.firstTimeLoading = true
+                    
                     if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
                         NBClient.shared.storedTypes[T.classIdentifier] = [object]
                         

@@ -186,9 +186,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
                                     .keepCurrentImageWhileLoading
-                ]
-            )
-            userAvatar.focusOnFaces = true
+                                ])
         }
         
         if lightboxPhotos.isEmpty {

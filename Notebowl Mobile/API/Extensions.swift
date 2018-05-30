@@ -47,6 +47,14 @@ public extension DateFormatter {
         return formatter
     }
 }
+public extension DateComponentsFormatter {
+    static var monthYear: DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.month, .year]
+        formatter.zeroFormattingBehavior = .dropAll
+        return formatter
+    }
+}
 
 public extension Date {
     var relativelyFormatted: String {
@@ -952,7 +960,6 @@ class ObjectTransform<T: Object>: TransformType {
                     return finalmap
                 }
                 
-                objectExists.refresh()
                 return objectExists as? T
             }
         }
@@ -962,7 +969,11 @@ class ObjectTransform<T: Object>: TransformType {
 
         else {
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-            return mapReq?.first
+            guard let returnObject = mapReq?.first else {
+                return nil
+            }
+            returnObject.refresh()
+            return returnObject
         }
     }
     
