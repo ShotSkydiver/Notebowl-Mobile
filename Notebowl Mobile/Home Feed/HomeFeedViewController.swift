@@ -83,6 +83,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
+                
                 let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
                 var resourceKeys: String = ""
                 

@@ -371,7 +371,7 @@ class Response<T>: Generic where T: NBModel {
     }
     
     public func getUserGrade() -> String {
-        guard let userGrade = NBClient.shared.getMappable(Grade.self, filters: "[\"_parent:IN:\(self.url.absoluteString)\"]")?.first else { return "-" }
+        guard let userGrade = NBClient.shared.requireByReference(Grade.self, property: "parent", value: self)?.first else { return "-" }
         
         guard let gradePoints = userGrade.grade else { return "-" }
 

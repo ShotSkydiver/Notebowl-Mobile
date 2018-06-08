@@ -102,6 +102,12 @@ class NBClient {
         return mutableArray
     }
 
+    public func requireByReference<T>(_ object: T.Type, property: String, value: NBModel) -> [T]? where T: NBModel {
+        let filterString = "_\(property)"
+        let req = NBClient.shared.getMappable(object, filters: "[\"\(filterString):IN:\(value.url.absoluteString)\"]")
+        return req
+    }
+
     public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: NBModel {
         var objectResult: [T]?
         let requestURL: String = url != nil ? url! : someObject.endpoint
@@ -150,8 +156,11 @@ class NBClient {
                     newObjectArray.append(object)
                 }
             }
-            NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
-            newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
+            if !(objectResult?.isEmpty)! || (objectResult?.count)! > 0 {
+                NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
+                newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
+            }
+            
 
             return newObjectArray
         }

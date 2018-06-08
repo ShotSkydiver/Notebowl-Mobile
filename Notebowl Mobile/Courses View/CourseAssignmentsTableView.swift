@@ -33,9 +33,8 @@ class CourseAssignmentsTableView: UITableViewController {
     func getTableData() {
         loadingView.showLoadView(true)
         DispatchQueue.main.async {
-            
-            self.assignments = NBClient.shared.getMappable(Assignment.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")!
-            self.categories = NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(self.selectedCourse.url.absoluteString)\"]")!
+            self.assignments = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!
+            self.categories = NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!
             
             for assignment in self.assignments {
                 assignment.getGradeString()
