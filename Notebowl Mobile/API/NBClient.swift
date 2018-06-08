@@ -147,6 +147,8 @@ class NBClient {
                     }
                     newObjectArray.append(object)
                 }
+                
+                
             }
             return newObjectArray
         }

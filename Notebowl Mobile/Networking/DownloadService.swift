@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import netfox
 import HTTPStatusCodes
 
 typealias RequestTaskID = Int

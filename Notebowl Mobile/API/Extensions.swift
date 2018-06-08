@@ -972,7 +972,7 @@ class ObjectTransform<T: Object>: TransformType {
             guard let returnObject = mapReq?.first else {
                 return nil
             }
-            returnObject.refresh()
+            if returnObject.itemType != "Course" {returnObject.refresh() }
             return returnObject
         }
     }
@@ -990,9 +990,26 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
 }
-protocol UpdateVC {
-    func handleUpdate(mapped: Generic, updateUI: Bool)
+
+struct Paths {
+    var insertIndexPaths: [IndexPath]
+    var deleteIndexPaths: [IndexPath]
+    var reloadIndexPaths: [IndexPath]
+    init() {
+        insertIndexPaths = [IndexPath]()
+        deleteIndexPaths = [IndexPath]()
+        reloadIndexPaths = [IndexPath]() }
 }
+
+protocol UpdateVC {
+    
+    func handleUpdated(newObject: Object)
+    func handleDeleted(deletedObject: Object)
+    func handleElapsed(elapsedObject: Object)
+    
+    func reloadTableViews()
+}
+
 
 
 enum AppConfiguration {

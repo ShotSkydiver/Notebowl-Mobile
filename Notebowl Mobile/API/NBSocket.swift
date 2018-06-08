@@ -12,7 +12,6 @@ import SocketIO
 import ObjectMapper
 
 class NBSocket {
-    
     static let shared: NBSocket = {
         TTLog.debug("socket shared init")
         let instance = NBSocket()
@@ -52,7 +51,20 @@ class NBSocket {
                             let rootNavController = viewController as! UINavigationController
                             for vc in rootNavController.viewControllers {
                                 if let switchVC = vc as? UpdateVC {
-                                    switchVC.handleUpdate(mapped: mapped, updateUI: true)
+                                    
+                                    switch mapped.actionType {
+                                    case .updated:
+                                        switchVC.handleUpdated(newObject: mapped.genericObject!)
+                                    case .deleted:
+                                        switchVC.handleDeleted(deletedObject: mapped.genericObject!)
+                                    case .elapsed:
+                                        switchVC.handleElapsed(elapsedObject: mapped.genericObject!)
+                                    case .unknown:
+                                        TTLog.error("unknown actiontype!")
+                                        return
+                                    }
+                                    
+                                    switchVC.reloadTableViews()
                                 }
                             }
                         }

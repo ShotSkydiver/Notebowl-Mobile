@@ -12,7 +12,6 @@ import Bugsnag
 import FeedbackSlack
 import Tamamushi
 import ObjectMapper
-import netfox
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,7 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .Debug:
                 TTLog.debug("is debug!")
                 isAppStore = false
-                NFX.sharedInstance().start()
             case .TestFlight:
                 isAppStore = false
             case .AppStore:
@@ -127,13 +125,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         let rootNavController = viewController as! UINavigationController
                         for vc in rootNavController.viewControllers {
                             if let switchVC = vc as? UpdateVC {
+                                switch mapResult!.actionType {
+                                case .updated:
+                                    switchVC.handleUpdated(newObject: mapResult!.genericObject!)
+                                case .deleted:
+                                    switchVC.handleDeleted(deletedObject: mapResult!.genericObject!)
+                                case .elapsed:
+                                    switchVC.handleElapsed(elapsedObject: mapResult!.genericObject!)
+                                case .unknown:
+                                    TTLog.error("unknown actiontype!")
+                                    return
+                                }
                                 if results.last! == result {
                                     TTLog.debug("last result!")
-                                    switchVC.handleUpdate(mapped: mapResult!, updateUI: true)
-                                }
-                                else {
-                                    TTLog.debug("not last result!")
-                                    switchVC.handleUpdate(mapped: mapResult!, updateUI: false)
+                                    switchVC.reloadTableViews()
                                 }
                             }
                         }

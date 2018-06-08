@@ -613,7 +613,6 @@ class Response<T>: Generic where T: Object {
     var owner: User?
     
     
-    
     override class var routeType: ItemType { return .attachment }
     
     required public init?(map: Map) {
@@ -701,6 +700,7 @@ class Response<T>: Generic where T: Object {
     }
     
     override public func refresh() {
+        updatedOnce = true
         self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator?.resourceKey }) as? User
         updateLikes()
         getAttachments()

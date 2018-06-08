@@ -17,7 +17,8 @@ import NVActivityIndicatorView
 import SwipeCellKit
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, NVActivityIndicatorViewable {
-
+    var indexes: Paths = Paths()
+    
     var post: Post!
     var staticComments: [Comment]!
     var anonymousToggle: Bool = false
@@ -27,6 +28,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var showingPhotoPicker: Bool = false
     var idForHandler: UUID!
     var editingExistingComment = false
+    
+    var isPerformingUpdates = false
+    var reloadSection = false
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -71,15 +75,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-    }
-    
-    func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if ["Comment","Like","AttachmentS3", "User"].contains(mapped.itemType!) {
-            self.tableView.beginUpdates()
-            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            self.tableView.endUpdates()
-        }
     }
 
     func setupInputBar() {
@@ -203,10 +198,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         self.attachmentFileId = ""
         self.anonymousToggle = false
         bar.inputTextView.resignFirstResponder()
-        bar.inputManagers.removeAll()
+        bar.inputPlugins.removeAll()
         let newBar = InputBarAccessoryView()
         newBar.delegate = self
-        newBar.inputManagers = [attachmentManager]
+        newBar.inputPlugins = [attachmentManager]
         
         bar = newBar
         reloadInputViews()
@@ -244,6 +239,96 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         }
     }
 }
+
+extension HomeFeedPostViewController {
+    
+    func handleUpdated(newObject: Object) {
+        if newObject.itemType == "Post" {
+            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+        }
+        else if newObject.itemType == "Comment" {
+            let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == newObject.resourceKey })
+            let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
+            
+            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            existingComment == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1))
+            
+        }
+        else if ["Like","AttachmentS3"].contains(newObject.itemType) {
+            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == newObject.parentURL!.absoluteURL.lastPathComponent }) {
+                let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
+                parentComment.refresh()
+                if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
+            }
+
+        }
+        else if newObject.itemType == "User" {
+            if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+                indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+                let commentsForUser = self.post.postComments.filter({ $0.creator!.resourceKey == newObject.resourceKey })
+                for comment in commentsForUser {
+                    if let index = self.post.postComments.index(of: comment) {
+                        indexes.reloadIndexPaths.append(IndexPath(row: index, section: 1))
+                    }
+                }
+            }
+        }
+    }
+    
+    func handleDeleted(deletedObject: Object) {
+        if deletedObject.itemType == "Post" {
+            TTLog.warning("deletedobject Post")
+        }
+        else if deletedObject.itemType == "Comment" {
+            TTLog.warning("deletedobject comment")
+            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            if indexOfComment != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
+            
+            else {
+                self.reloadSection = true
+            }
+        }
+        else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
+            TTLog.warning("deletedobject like attachment")
+            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parentURL!.absoluteURL.lastPathComponent }) {
+                let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
+                parentComment.refresh()
+                if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
+            }
+        }
+        
+    }
+    
+    func handleElapsed(elapsedObject: Object) {
+        
+    }
+    
+    func reloadTableViews() {
+        TTLog.warning("already performing updates?? ", self.isPerformingUpdates)
+        self.tableView.beginUpdates()
+        self.isPerformingUpdates = true
+ 
+        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+        if self.reloadSection {
+            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            self.reloadSection = false
+        }
+        if !self.indexes.deleteIndexPaths.isEmpty {
+            TTLog.warning("delete not isempty")
+            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+        }
+        self.tableView.endUpdates()
+        self.isPerformingUpdates = false
+        TTLog.warning("COMPLETED????")
+        self.indexes = Paths()
+ 
+    }
+}
+
 
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     

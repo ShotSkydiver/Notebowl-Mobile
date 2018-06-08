@@ -195,7 +195,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     func resetBar() {
-        bar.inputManagers = [self.attachmentManager]
+        bar.inputPlugins = [self.attachmentManager]
         
         let inputTextViewWidth = NSLayoutConstraint(item: bar.inputTextView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         bar.addConstraint(inputTextViewWidth)
@@ -354,7 +354,7 @@ class UploadImageAttachmentCell: AttachmentCell {
     public var attachmentFileID: String!
     public var uploadStarted: Bool = false
     
-    let imageView: UIImageView = {
+    open let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         return imageView
@@ -372,12 +372,10 @@ class UploadImageAttachmentCell: AttachmentCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
-        // attachmentFileID = nil
     }
 
     private func setup() {
         containerView.addSubview(imageView)
-        imageView.fillSuperview()
         imageView.style = .roundWith(lineWdith: 4.0, lineColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
     }
 }

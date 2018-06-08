@@ -14,6 +14,8 @@ import Tamamushi
 import ObjectMapper
 
 class CoursesTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
+    var indexes: Paths = Paths()
+    
     var courses: [Course]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
@@ -66,24 +68,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
             }
         }
     }
-    func handleUpdate(mapped: Generic, updateUI: Bool) {
-        if mapped.itemType! == "CourseUser" {
-            let mappedEnroll = mapped as! Response<Enrollment>
-            if mappedEnroll.actionType != .deleted {
-                if let courseForEnroll = (NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: {$0.resourceKey == mappedEnroll.updateUrl!.resourceKey }) as? Course) {
-                    courseForEnroll.refresh()
-                }
-            }
-            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
-            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-            if updateUI {
-                self.tableView.beginUpdates()
-                self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                self.tableView.endUpdates()
-            }
-        }
-    }
-    
+
     func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
         placeholderTableView?.showDefault()
 
@@ -116,6 +101,45 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
             
             destVC.selectedCourse = self.courses[indexPath!.row]
         }
+    }
+}
+
+extension CoursesTableViewController {
+    func handleUpdated(newObject: Object) {
+        if ["CourseUser","Course"].contains(newObject.itemType) {
+            newObject.refresh()
+            
+            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
+            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
+            indexes.reloadIndexPaths = self.tableView.indexPathsForVisibleRows!
+        }
+    }
+    
+    func handleDeleted(deletedObject: Object) {
+        if ["CourseUser","Course"].contains(deletedObject.itemType) {
+            if let assignmentVC = self.navigationController?.topViewController as? CourseAssignmentsTableView {
+                if deletedObject.resourceKey == assignmentVC.selectedCourse.resourceKey {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+            let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            if indexOfCourse != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
+        }
+        
+    }
+    
+    func handleElapsed(elapsedObject: Object) {
+        
+    }
+    
+    func reloadTableViews() {
+        self.tableView.beginUpdates()
+        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+        self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+        self.tableView.endUpdates()
+        self.indexes = Paths()
+        
     }
 }
 
