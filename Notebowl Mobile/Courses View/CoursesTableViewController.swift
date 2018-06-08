@@ -105,7 +105,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
 }
 
 extension CoursesTableViewController {
-    func handleUpdated(newObject: Object) {
+    func handleUpdated(newObject: NBModel) {
         if ["CourseUser","Course"].contains(newObject.itemType) {
             newObject.refresh()
             
@@ -115,7 +115,7 @@ extension CoursesTableViewController {
         }
     }
     
-    func handleDeleted(deletedObject: Object) {
+    func handleDeleted(deletedObject: NBModel) {
         if ["CourseUser","Course"].contains(deletedObject.itemType) {
             if let assignmentVC = self.navigationController?.topViewController as? CourseAssignmentsTableView {
                 if deletedObject.resourceKey == assignmentVC.selectedCourse.resourceKey {
@@ -128,7 +128,7 @@ extension CoursesTableViewController {
         
     }
     
-    func handleElapsed(elapsedObject: Object) {
+    func handleElapsed(elapsedObject: NBModel) {
         
     }
     

@@ -155,7 +155,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
 
 extension HomeFeedViewController {
 
-    func handleUpdated(newObject: Object) {
+    func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
             NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
@@ -197,7 +197,7 @@ extension HomeFeedViewController {
         }
     }
     
-    func handleDeleted(deletedObject: Object) {
+    func handleDeleted(deletedObject: NBModel) {
         
         if deletedObject.itemType == "Post" {
             if let postVC = self.navigationController?.topViewController as? HomeFeedPostViewController {
@@ -249,7 +249,7 @@ extension HomeFeedViewController {
         }
     }
     
-    func handleElapsed(elapsedObject: Object) {
+    func handleElapsed(elapsedObject: NBModel) {
         if elapsedObject.itemType == "User" {
             TTLog.debug("user elapsed")
         }

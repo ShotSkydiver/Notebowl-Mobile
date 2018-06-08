@@ -923,7 +923,7 @@ extension PlaceholdersProvider {
     }
 }
 
-class ObjectTransform<T: Object>: TransformType {
+class ObjectTransform<T: NBModel>: TransformType {
     public typealias Object = T
     public typealias JSON = String
     private let actionType: Action
@@ -1003,9 +1003,9 @@ struct Paths {
 
 protocol UpdateVC {
     
-    func handleUpdated(newObject: Object)
-    func handleDeleted(deletedObject: Object)
-    func handleElapsed(elapsedObject: Object)
+    func handleUpdated(newObject: NBModel)
+    func handleDeleted(deletedObject: NBModel)
+    func handleElapsed(elapsedObject: NBModel)
     
     func reloadTableViews()
 }

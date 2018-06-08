@@ -242,7 +242,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
 extension HomeFeedPostViewController {
     
-    func handleUpdated(newObject: Object) {
+    func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
             indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
         }
@@ -276,7 +276,7 @@ extension HomeFeedPostViewController {
         }
     }
     
-    func handleDeleted(deletedObject: Object) {
+    func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType == "Post" {
             TTLog.warning("deletedobject Post")
         }
@@ -302,7 +302,7 @@ extension HomeFeedPostViewController {
         
     }
     
-    func handleElapsed(elapsedObject: Object) {
+    func handleElapsed(elapsedObject: NBModel) {
         
     }
     

@@ -30,7 +30,7 @@ class NBClient {
     
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     private var currentUser: User!
-    public var storedTypes = [ObjectIdentifier: [Object]!]()
+    public var storedTypes = [ObjectIdentifier: [NBModel]!]()
     
     private init() { }
     
@@ -75,7 +75,7 @@ class NBClient {
         UserDefaults.set(hasUserLoggedIn: false)
     }
     
-    public func buildFilterString(from items: [Object]) -> String {
+    public func buildFilterString(from items: [NBModel]) -> String {
         var urlBuilder: String = ""
         for item in items {
             urlBuilder = (urlBuilder + item.url.absoluteString + ",")
@@ -83,7 +83,7 @@ class NBClient {
         return urlBuilder
     }
     
-    public func initArray<T>(from array: [T]) -> [T]? where T: Object {
+    public func initArray<T>(from array: [T]) -> [T]? where T: NBModel {
         var mutableArray = array
         for item in mutableArray {
             item.refresh()
@@ -100,7 +100,7 @@ class NBClient {
         return mutableArray
     }
 
-    public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: Object {
+    public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: NBModel {
         var objectResult: [T]?
         let requestURL: String = url != nil ? url! : someObject.endpoint
         let req = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])

@@ -66,7 +66,7 @@ class Generic: StaticMappable {
     
     var action: String!
     var itemType: String?
-    public var genericObject: Object?
+    public var genericObject: NBModel?
     
     public var actionType: Action {
         if action.contains("updated") { return .updated }
@@ -121,7 +121,7 @@ class Generic: StaticMappable {
     }
 }
 
-class Response<T>: Generic where T: Object {
+class Response<T>: Generic where T: NBModel {
     var updateUrl: T?
     var updatedAt: Date!
 
@@ -140,7 +140,7 @@ class Response<T>: Generic where T: Object {
 
 
 
-@objc(Object) public class Object: NSObject, Mappable {
+@objc(Object) public class NBModel: NSObject, Mappable {
     var parentURL: URL?
     var createdAt: Date!
     var updatedAt: Date!
@@ -187,7 +187,7 @@ class Response<T>: Generic where T: Object {
 
 
 
-@objc(User) public class User: Object {
+@objc(User) public class User: NBModel {
 
     var firstName: String!
     var lastName: String!
@@ -218,7 +218,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Term) class Term: Object {
+@objc(Term) class Term: NBModel {
     
     var title: String?
     var termStart: Date!
@@ -242,7 +242,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Course) class Course: Object {
+@objc(Course) class Course: NBModel {
     
     var name: String!
     var number: String!
@@ -319,7 +319,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Assignment) public class Assignment: Object {
+@objc(Assignment) public class Assignment: NBModel {
     
     var title: String!
     var points: Int?
@@ -434,7 +434,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Category) class Category: Object {
+@objc(Category) class Category: NBModel {
     var title: String!
     var weight: Int!
     var isExtraCredit: Bool!
@@ -457,7 +457,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Grade) class Grade: Object {
+@objc(Grade) class Grade: NBModel {
     var grade: Double?
     
     override class var routeType: ItemType { return .grade }
@@ -472,7 +472,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(University) class University: Object {
+@objc(University) class University: NBModel {
     
     var profileLogo: String?
     var defaultLogo: String?
@@ -497,7 +497,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Enrollment) class Enrollment: Object {
+@objc(Enrollment) class Enrollment: NBModel {
     
     var role: String!
     var status: String!
@@ -529,7 +529,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Post) public class Post: Object {
+@objc(Post) public class Post: NBModel {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -599,7 +599,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Attachment) public class Attachment: Object {
+@objc(Attachment) public class Attachment: NBModel {
     var fileExt: String!
     var downloadUrl: URL!
     var locationUrl: URL!
@@ -644,7 +644,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Comment) public class Comment: Object {
+@objc(Comment) public class Comment: NBModel {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -707,7 +707,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Like) public class Like: Object {
+@objc(Like) public class Like: NBModel {
     var owner: User!
     var parent: URL!
     
@@ -732,7 +732,7 @@ class Response<T>: Generic where T: Object {
     }
 }
 
-@objc(Notification) class Notification: Object {
+@objc(Notification) class Notification: NBModel {
 
     var status: String?
     var text: String?
@@ -771,7 +771,7 @@ class Response<T>: Generic where T: Object {
 }
 
 
-@objc(Notification) class Abuse: Object {
+@objc(Notification) class Abuse: NBModel {
     var reason: String!
     var parent: URL!
 
