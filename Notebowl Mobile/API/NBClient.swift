@@ -83,16 +83,18 @@ class NBClient {
         return urlBuilder
     }
     
-    public func initArray<T>(from array: [T]) -> [T]? where T: NBModel {
+    public func initArray<T>(from array: [T], refresh: Bool? = true) -> [T]? where T: NBModel {
         var mutableArray = array
-        for item in mutableArray {
-            item.refresh()
+        if refresh! {
+            for item in mutableArray {
+                item.refresh()
+            }
         }
         if mutableArray is [Comment] {
             mutableArray.sort() { $0.secondsSinceCreation < $1.secondsSinceCreation }
         }
-        else if mutableArray is [Post] {
-            mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
+        else if mutableArray is [Course] {
+            mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
         }
         else {
             mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
@@ -147,9 +149,10 @@ class NBClient {
                     }
                     newObjectArray.append(object)
                 }
-                
-                
             }
+            NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
+            newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
+
             return newObjectArray
         }
         

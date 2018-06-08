@@ -109,7 +109,6 @@ extension CoursesTableViewController {
         if ["CourseUser","Course"].contains(newObject.itemType) {
             newObject.refresh()
             
-            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
             indexes.reloadIndexPaths = self.tableView.indexPathsForVisibleRows!
         }

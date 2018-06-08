@@ -157,7 +157,6 @@ extension HomeFeedViewController {
 
     func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
-            NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { ($0 as! Post).secondsSinceCreation > ($1 as! Post).secondsSinceCreation })
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             let indexOfPost = self.posts.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingPost = self.bulletinTableView.numberOfRows(inSection: 1) < self.posts.count ? false : true
@@ -239,10 +238,7 @@ extension HomeFeedViewController {
                 newPosts = NBClient.shared.initArray(from: newPosts!)
                 NBClient.shared.storedTypes[Post.classIdentifier]! = newPosts!
             }
-            NBClient.shared.storedTypes[Course.classIdentifier]!.sort(by: { ($0 as! Course).secondsSinceUpdate > ($1 as! Course).secondsSinceUpdate })
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-            
-            NBClient.shared.storedTypes[Post.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             
             self.bulletinTableView.reloadData()

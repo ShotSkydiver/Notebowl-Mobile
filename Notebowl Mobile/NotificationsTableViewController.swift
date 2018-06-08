@@ -114,7 +114,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
 extension NotificationsTableViewController {
     
     func handleUpdated(newObject: NBModel) {
-        NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
         self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
@@ -127,7 +126,6 @@ extension NotificationsTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        NBClient.shared.storedTypes[Notification.classIdentifier]!.sort(by: { $0.secondsSinceCreation > $1.secondsSinceCreation } )
         self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
