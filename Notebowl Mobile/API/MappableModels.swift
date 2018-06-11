@@ -163,6 +163,7 @@ class Response<T>: Generic where T: NBModel {
     }
     
     public var firstTimeLoading: Bool!
+    public var shouldMapParent: Bool!
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
@@ -174,14 +175,14 @@ class Response<T>: Generic where T: NBModel {
     override init() {}
  
     public func mapping(map: Map) {
-        
+        if shouldMapParent == nil { shouldMapParent = true }
         createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]
 
-        if itemType != "Notification" {
+        if shouldMapParent {
             if let parentString = (map.JSON["_parent"] as? String) {
                 let parentMap = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(parentString))", "updateUrl":"\(parentString)"])
                 parent = parentMap?.genericObject
@@ -733,6 +734,7 @@ class Response<T>: Generic where T: NBModel {
     }
     
     override func mapping(map: Map) {
+        shouldMapParent = false
         super.mapping(map: map)
         
         name <- map["name"]

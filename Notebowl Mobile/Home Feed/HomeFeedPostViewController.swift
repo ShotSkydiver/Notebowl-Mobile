@@ -278,6 +278,10 @@ extension HomeFeedPostViewController {
     
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType == "Post" {
+            if deletedObject.resourceKey == self.post.resourceKey {
+                self.navigationController?.popViewController(animated: true)
+            }
+
             TTLog.warning("deletedobject Post")
         }
         else if deletedObject.itemType == "Comment" {

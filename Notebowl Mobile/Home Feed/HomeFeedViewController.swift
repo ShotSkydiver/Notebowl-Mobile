@@ -200,11 +200,6 @@ extension HomeFeedViewController {
     func handleDeleted(deletedObject: NBModel) {
         
         if deletedObject.itemType == "Post" {
-            if let postVC = self.navigationController?.topViewController as? HomeFeedPostViewController {
-                if deletedObject.resourceKey == postVC.post.resourceKey {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
             let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfPost != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
             
@@ -219,7 +214,6 @@ extension HomeFeedViewController {
             }
 
         }
-            
             
         else if deletedObject.itemType == "User" {
             TTLog.error("????????????")

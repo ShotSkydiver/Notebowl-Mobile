@@ -16,7 +16,7 @@
 		85250A14202A2DC50003A416 /* NBLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A12202A2DC50003A416 /* NBLoadingView.swift */; };
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		85252DEA20B4225000A67102 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85252DE920B4225000A67102 /* DownloadService.swift */; };
-		852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */; };
+		852702C12061E18E00CA04B3 /* HomeFeedPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852702C02061E18E00CA04B3 /* HomeFeedPostViewController.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
 		853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */; };
 		853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */; };
@@ -78,7 +78,7 @@
 		85250A12202A2DC50003A416 /* NBLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBLoadingView.swift; sourceTree = "<group>"; };
 		85250A13202A2DC50003A416 /* QCMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QCMethod.swift; sourceTree = "<group>"; };
 		85252DE920B4225000A67102 /* DownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
-		852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedPostTableViewController.swift; sourceTree = "<group>"; };
+		852702C02061E18E00CA04B3 /* HomeFeedPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFeedPostViewController.swift; sourceTree = "<group>"; };
 		8529E5622047D0B700D1E41D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedPostCell.swift; sourceTree = "<group>"; };
@@ -232,7 +232,7 @@
 				853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */,
 				8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */,
 				8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */,
-				852702C02061E18E00CA04B3 /* FeedPostTableViewController.swift */,
+				852702C02061E18E00CA04B3 /* HomeFeedPostViewController.swift */,
 				85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */,
 				85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */,
 			);
@@ -569,7 +569,7 @@
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
 				85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
-				852702C12061E18E00CA04B3 /* FeedPostTableViewController.swift in Sources */,
+				852702C12061E18E00CA04B3 /* HomeFeedPostViewController.swift in Sources */,
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */,
