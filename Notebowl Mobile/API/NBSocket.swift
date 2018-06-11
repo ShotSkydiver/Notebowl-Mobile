@@ -52,7 +52,7 @@ class NBSocket {
                             for vc in rootNavController.viewControllers {
                                 if let switchVC = vc as? UpdateVC {
                                     
-                                    switch mapped.actionType {
+                                    switch mapped.action! {
                                     case .updated:
                                         switchVC.handleUpdated(newObject: mapped.genericObject!)
                                     case .deleted:

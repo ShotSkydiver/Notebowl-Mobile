@@ -84,7 +84,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
                 
-                let enrollments = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_parent:TYPE:Course\",\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "100")!
+                let enrollments = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
                 var resourceKeys: String = ""
                 
                 for enrollment in enrollments {
@@ -165,7 +165,7 @@ extension HomeFeedViewController {
             existingPost == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parentURL!.absoluteURL.lastPathComponent }) {
+            if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
                 if indexOfPost != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
@@ -212,7 +212,7 @@ extension HomeFeedViewController {
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parentURL!.absoluteURL.lastPathComponent }) {
+            if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
                 if indexOfPost != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
@@ -229,7 +229,7 @@ extension HomeFeedViewController {
             guard let deletedEnrollment = deletedObject as? Enrollment else { return }
             
             NBClient.shared.storedTypes[Course.classIdentifier]!.removeAll(deletedEnrollment.parent!)
-            let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner.resourceKey == deletedEnrollment.parent!.resourceKey }) as! [Post]
+            let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner!.resourceKey == deletedEnrollment.parent!.resourceKey }) as! [Post]
             for post in postsToRemove {
                 NBClient.shared.storedTypes[Post.classIdentifier]!.removeAll(post)
                 
@@ -358,7 +358,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
-        else if (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
+        else if ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == "Professor") {
             return [delete, report] // and pin
         }
         else {
@@ -370,7 +370,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
         if (selectedCell.postForCell.creator != nil) {
-            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner.enrollmentForUser?.role == "Professor") {
+            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == "Professor") {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }

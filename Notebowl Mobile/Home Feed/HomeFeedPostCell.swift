@@ -171,7 +171,11 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
         postContentTextView.text = post.text
-        courseForPost.text = post.owner!.courseFullName
+        
+        if post.owner is Course {
+            courseForPost.text = (post.owner as! Course).courseFullName
+        }
+ 
         postedDate.text = post.createdAt.relativelyFormatted
         
         backgroundColor = post.pinned ? #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 0.1000000015) : UIColor(hexString: "#fdfdfd")

@@ -256,7 +256,7 @@ extension HomeFeedPostViewController {
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
             indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
-            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == newObject.parentURL!.absoluteURL.lastPathComponent }) {
+            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == newObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
                 if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
@@ -293,7 +293,7 @@ extension HomeFeedPostViewController {
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
             TTLog.warning("deletedobject like attachment")
             indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
-            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parentURL!.absoluteURL.lastPathComponent }) {
+            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
                 if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
@@ -378,7 +378,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         if (selectedCell.commentForCell.creator != nil) && (selectedCell.commentForCell.creator?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
-        else if (post.owner.enrollmentForUser?.role == "Professor") {
+        else if ((post.owner as! Course).enrollmentForUser?.role == "Professor") {
             return [delete, report] // and pin
         }
         else {
@@ -390,7 +390,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
         if (selectedCell.commentForCell.creator != nil) {
-            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (post.owner.enrollmentForUser?.role == "Professor") {
+            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((post.owner as! Course).enrollmentForUser?.role == "Professor") {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }

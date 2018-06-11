@@ -24,14 +24,20 @@ public enum ItemType: String {
     case like = "likes"
     case notification = "notifications"
     case abuse = "abuses"
+    
+    static func fromURL(_ urlString: String) -> ItemType {
+        let urlComponents = URL(string: urlString)!.deletingLastPathComponent()
+        let endpoint = urlComponents.lastPathComponent
+        if endpoint == "users" { return ItemType(rawValue: "credentials")!}
+        return ItemType(rawValue: endpoint)!
+    }
 }
 
-
-public enum Action {
-    case updated
-    case deleted
-    case elapsed
-    case unknown
+public enum ActionType: String {
+    case updated = "updated"
+    case deleted = "deleted"
+    case elapsed = "elapsed"
+    case unknown = ""
 }
 public enum NotificationType: String {
     case created = "created"
@@ -44,6 +50,7 @@ extension ItemType {
         
         return ("https://\(NBClient.baseUrl)/api/v1.0/" + route)
     }
+    
 }
 
 public enum GradeType: String {
@@ -63,24 +70,15 @@ public struct DefaultValues {
 
 
 class Generic: StaticMappable {
-    
-    var action: String!
+    var action: ActionType? = .unknown
     var itemType: String?
+    var updatedAt: Date?
+    
     public var genericObject: NBModel?
-    
-    public var actionType: Action {
-        if action.contains("updated") { return .updated }
-        else if action.contains("elapsed") { return .elapsed }
-        else if action.contains("deleted") { return .deleted }
-        else {
-            TTLog.error("actionType not found!")
-            return .unknown
-        }
-    }
-    
+
     class func objectForMapping(map: Map) -> BaseMappable? {
-        if let itemType: String = map["itemType"].value() {
-            switch itemType {
+        if let type: String = map["itemType"].value() {
+            switch type.capitalized {
             case "User":
                 return Response<User>()
             case "Course":
@@ -116,37 +114,38 @@ class Generic: StaticMappable {
     }
     
     func mapping(map: Map) {
-        action <- map["action"]
+        action <- (map["action"], TransformOf<ActionType, String>(fromJSON: { ActionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         itemType <- map["itemType"]
+        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
     }
 }
 
+
 class Response<T>: Generic where T: NBModel {
-    var updateUrl: T?
-    var updatedAt: Date!
+    var responseObject: T?
 
     public override init() {}
-    
     public required init?(map: Map) { }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
-        
-        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
-        updateUrl <- (map["updateUrl"], ObjectTransform<T>(action: self.actionType, update: updatedAt))
-        genericObject = updateUrl
+
+        responseObject <- (map["updateUrl"], ObjectTransform<T>(action: action!, update: updatedAt))
+        genericObject = responseObject
     }
 }
 
 
 
+
 @objc(Object) public class NBModel: NSObject, Mappable {
-    var parentURL: URL?
     var createdAt: Date!
     var updatedAt: Date!
     var itemType: String!
     var url: URL!
     var resourceKey: String!
+    var parent: NBModel?
+    var owner: NBModel?
     
     class var routeType: ItemType { return .user }
     
@@ -181,10 +180,19 @@ class Response<T>: Generic where T: NBModel {
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]
-        
+
+        if itemType != "Notification" {
+            if let parentString = (map.JSON["_parent"] as? String) {
+                let parentMap = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(parentString))", "updateUrl":"\(parentString)"])
+                parent = parentMap?.genericObject
+            }
+        }
+        if let ownerString = (map.JSON["_owner"] as? String) {
+            let ownerMap = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(ownerString))", "updateUrl":"\(ownerString)"])
+            owner = ownerMap?.genericObject
+        }
     }
 }
-
 
 
 @objc(User) public class User: NBModel {
@@ -331,7 +339,6 @@ class Response<T>: Generic where T: NBModel {
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
     var category: URL!
-    var parent: Course!
     
     public var gradeString: String!
     public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isInToday) }
@@ -356,7 +363,7 @@ class Response<T>: Generic where T: NBModel {
         gradeType <- (map["gradeType"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         gradesPublished <- map["gradesPublished"]
         allowLateSubmission <- map["lateSubmissionPermitted"]
-        parent <- (map["_parent"], ObjectTransform<Course>())
+
         category <- (map["_category"], URLTransform())
     }
     
@@ -366,7 +373,7 @@ class Response<T>: Generic where T: NBModel {
     
     func getRoundedGradePercent(grade: Double) -> Double {
         let rawPercent = grade / Double(self.points!) * 100
-        let percentRounded = rawPercent.rounded(toPlaces: self.parent.gradePrecision)
+        let percentRounded = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
         return percentRounded
     }
     
@@ -379,10 +386,10 @@ class Response<T>: Generic where T: NBModel {
             return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
         }
             
-        else if self.gradeType == .percent && self.parent.gradeGPAEnabled {
+        else if self.gradeType == .percent && (self.parent as! Course).gradeGPAEnabled {
             var rawPercent = gradePoints / Double(self.points!) * 100
             rawPercent = rawPercent / 100 * 4
-            let gpaValue = rawPercent.rounded(toPlaces: self.parent.gradePrecision)
+            let gpaValue = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
             return String(format: "%.2f", gpaValue)
         }
             
@@ -398,12 +405,12 @@ class Response<T>: Generic where T: NBModel {
             var titles = DefaultValues().DEFAULT_LETTER_GRADE_TITLES
             var values = DefaultValues().DEFAULT_LETTER_GRADE_VALUES
             
-            if (self.parent.customGradeScale) {
+            if ((self.parent as! Course).customGradeScale) {
                 let yUni: Unicode.Scalar = ";"
                 var yCharSet = CharacterSet.init()
                 yCharSet.insert(yUni)
-                titles = self.parent.gradeScaleTitles.components(separatedBy: yCharSet)
-                let tempValues = self.parent.gradeScaleValues.components(separatedBy: yCharSet)
+                titles = (self.parent as! Course).gradeScaleTitles.components(separatedBy: yCharSet)
+                let tempValues = (self.parent as! Course).gradeScaleValues.components(separatedBy: yCharSet)
                 for item in tempValues {
                     if values.count == tempValues.index(of: item)! {
                         values.append(Int(item)!)
@@ -439,7 +446,6 @@ class Response<T>: Generic where T: NBModel {
     var weight: Int!
     var isExtraCredit: Bool!
     var dropLowest: Int!
-    var parent: Course?
 
     override class var routeType: ItemType { return .category }
     
@@ -502,8 +508,7 @@ class Response<T>: Generic where T: NBModel {
     var role: String!
     var status: String!
     var user: User!
-    var parent: Course?
-    var lastAccessDate: Date?
+    var lastAccessAt: Date?
     
     public var statusIsAccepted: Bool {
         if status.contains("Accepted") { return true }
@@ -520,10 +525,9 @@ class Response<T>: Generic where T: NBModel {
         super.mapping(map: map)
         role <- map["role"]
         status <- map["status"]
- 
         user <- (map["_user"], ObjectTransform<User>())
-        parent <- (map["_parent"], ObjectTransform<Course>())
-        lastAccessDate <- (map["lastAccessDate"], ISO8601FixedDateTransform())
+
+        lastAccessAt <- (map["lastAccessAt"], ISO8601FixedDateTransform())
     }
     override public func refresh() {
     }
@@ -536,9 +540,6 @@ class Response<T>: Generic where T: NBModel {
     var pinned: Bool!
     var text: String?
     var creator: User!
-    var owner: Course!
-    var parent: URL!
-    var related: URL!
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -547,8 +548,6 @@ class Response<T>: Generic where T: NBModel {
     public var likeFromCurrentUser: Like?
     
     override class var routeType: ItemType { return .post }
-    
-    //var parentURL: URL? { return self.parent }
     
     required public init?(map: Map) {
         super.init(map: map)
@@ -562,20 +561,16 @@ class Response<T>: Generic where T: NBModel {
         pinned <- map["pinned"]
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
-        owner <- (map["_owner"], ObjectTransform<Course>())
-        parentURL <- (map["_parent"], URLTransform())
-        self.parent = self.parentURL
-        related <- (map["_related"], URLTransform())
     }
     
     func updateLikes() {
-        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
+        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.url == self.url }) as! [Like]
         if postLikes.isEmpty || postLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
         }
         else if postLikes.count > 0 {
-            let like = postLikes.first(where: { $0.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            let like = postLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
             
             if like != nil {
                 likedByCurrentUser = true
@@ -592,9 +587,9 @@ class Response<T>: Generic where T: NBModel {
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
         }
         
-        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent == self.url }) as! [Comment]
+        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.url == self.url }) as! [Comment]
         self.postComments = NBClient.shared.initArray(from: self.postComments)
-        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
+        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.url == self.url }) as! [Attachment]
         updateLikes()
     }
 }
@@ -609,9 +604,6 @@ class Response<T>: Generic where T: NBModel {
     var fileName: String!
     var size: Int!
     var type: String!
-    var parent: URL!
-    var owner: User?
-    
     
     override class var routeType: ItemType { return .attachment }
     
@@ -631,8 +623,7 @@ class Response<T>: Generic where T: NBModel {
         type <- map["type"]
         fileName <- map["fileName"]
         size <- map["size"]
-        parentURL <- (map["_parent"], URLTransform())
-        self.parent = self.parentURL
+
     }
     
     func getUrlForAvatar() -> URL? {
@@ -650,7 +641,6 @@ class Response<T>: Generic where T: NBModel {
     var isAnonymous: Bool!
     var text: String!
     var creator: User?
-    var parent: URL!
     
     public var commentAttachments: [Attachment]!
     public var commentLikes: [Like]!
@@ -671,22 +661,20 @@ class Response<T>: Generic where T: NBModel {
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
-        parentURL <- (map["_parent"], URLTransform())
-        self.parent = self.parentURL
         creator <- (map["_creator"], ObjectTransform<User>())
     }
     
     public func getAttachments() {
-        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent == self.url }) as! [Attachment]
+        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.url == self.url }) as! [Attachment]
     }
     public func updateLikes() {
-        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent == self.url }) as! [Like]
+        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.url == self.url }) as! [Like]
         if commentLikes.isEmpty || commentLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
         }
         else if commentLikes.count > 0 {
-            let like = commentLikes.first(where: { $0.owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            let like = commentLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
             
             if like != nil {
                 likedByCurrentUser = true
@@ -708,10 +696,8 @@ class Response<T>: Generic where T: NBModel {
 }
 
 @objc(Like) public class Like: NBModel {
-    var owner: User!
-    var parent: URL!
     
-    public var currentUserLiked: Bool { return owner.resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false}
+    public var currentUserLiked: Bool { return owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false}
     
     override class var routeType: ItemType { return .like }
     
@@ -721,14 +707,11 @@ class Response<T>: Generic where T: NBModel {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
-        owner <- (map["_owner"], ObjectTransform<User>())
-        parentURL <- (map["_parent"], URLTransform())
-        self.parent = self.parentURL
+
     }
     
     override public func refresh() {
-        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner.resourceKey }) as! User
+        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner!.resourceKey })// as! User
     }
 }
 
@@ -737,7 +720,6 @@ class Response<T>: Generic where T: NBModel {
     var status: String?
     var text: String?
     var type: String!
-    var parent: URL!
     var name: String!
     
     public var unseenBool: Bool { return status == nil ? true : false }
@@ -757,8 +739,6 @@ class Response<T>: Generic where T: NBModel {
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]
-        parentURL <- (map["_parent"], URLTransform())
-        self.parent = self.parentURL
     }
     
     func getUrlForAvatar() -> URL? {
@@ -771,9 +751,8 @@ class Response<T>: Generic where T: NBModel {
 }
 
 
-@objc(Notification) class Abuse: NBModel {
+@objc(Abuse) class Abuse: NBModel {
     var reason: String!
-    var parent: URL!
 
     override class var routeType: ItemType { return .abuse }
     
@@ -784,6 +763,5 @@ class Response<T>: Generic where T: NBModel {
     override func mapping(map: Map) {
         super.mapping(map: map)
         reason <- map["reason"]
-        parent <- (map["_parent"], URLTransform())
     }
 }

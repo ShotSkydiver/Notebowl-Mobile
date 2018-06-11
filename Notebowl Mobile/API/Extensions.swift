@@ -926,10 +926,11 @@ extension PlaceholdersProvider {
 class ObjectTransform<T: NBModel>: TransformType {
     public typealias Object = T
     public typealias JSON = String
-    private let actionType: Action
+    
+    private let actionType: ActionType?
     private let updateDate: Date?
     
-    public init(action: Action = .updated, update: Date? = nil) {
+    public init(action: ActionType = .unknown, update: Date? = nil) {
         self.actionType = action
         self.updateDate = update
     }
@@ -938,7 +939,7 @@ class ObjectTransform<T: NBModel>: TransformType {
         if value == nil { return nil }
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
-
+        
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
             if self.actionType == .elapsed {
                 TTLog.debug("action: elapsed!")

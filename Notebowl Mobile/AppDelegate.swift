@@ -125,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         let rootNavController = viewController as! UINavigationController
                         for vc in rootNavController.viewControllers {
                             if let switchVC = vc as? UpdateVC {
-                                switch mapResult!.actionType {
+                                switch mapResult!.action! {
                                 case .updated:
                                     switchVC.handleUpdated(newObject: mapResult!.genericObject!)
                                 case .deleted:
