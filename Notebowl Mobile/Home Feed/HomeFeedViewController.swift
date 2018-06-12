@@ -21,6 +21,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     
     var posts: [Post]!
     var courses: [Course]!
+    var groups: [Group]!
+
     var attachments: [Attachment]!
     var loadingView: NBLoadingView!
     var bgView: UIView!
@@ -82,16 +84,10 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         
         DispatchQueue.main.async {
             if (self.courses == nil) || (self.courses.isEmpty) {
-                
                 let enrollments = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
-                
-                var resourceKeys = [String]()
-                for enrollment in enrollments {
-                    if enrollment.statusIsAccepted && enrollment.parent is Course {
-                        resourceKeys.append(enrollment.parent!.url.absoluteURL.lastPathComponent)
-                    }
-                }
-                self.courses = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Course.self, keys: resourceKeys)!)
+
+                self.courses = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Course.self, keys: enrollments.map({ $0.parent!.resourceKey! }))!)
+                self.groups = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Group.self, keys: enrollments.map({ $0.parent!.resourceKey! }))!)
             }
             self.getData()
             self.bulletinTableView.reloadData()
@@ -99,10 +95,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     func getData() {
-        self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
+
+        var stringFilter = NBClient.shared.buildFilterArray(from: Array(Set((self.courses as [NBModel]!) + (self.groups as [NBModel]!)))).joined(separator: ",")
+        self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(stringFilter)\"]", sortBy: "createdAt:desc", limit: "10")
         let comments: [Comment]! = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: self.posts)
         let combined = Array(Set((self.posts as [NBModel]!) + (comments as [NBModel]!)))
-
         _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combined)
         self.attachments = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combined)
         self.posts = NBClient.shared.initArray(from: self.posts)
@@ -348,7 +345,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
-        else if ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == "Professor") {
+        else if ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == .professor) {
             return [delete, report] // and pin
         }
         else {
@@ -360,7 +357,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
         if (selectedCell.postForCell.creator != nil) {
-            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == "Professor") {
+            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == .professor) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }

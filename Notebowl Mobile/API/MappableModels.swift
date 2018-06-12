@@ -18,6 +18,7 @@ public enum ItemType: String {
     case grade = "grades"
     case university = "universities"
     case enrollment = "enrollments"
+    case group = "groups"
     case post = "posts"
     case attachment = "attachments"
     case comment = "comments"
@@ -39,18 +40,18 @@ public enum ActionType: String {
     case elapsed = "elapsed"
     case unknown = ""
 }
+
 public enum NotificationType: String {
     case created = "created"
     case updated = "updated"
     case deleted = "deleted"
 }
+
 extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
-        
         return ("https://\(NBClient.baseUrl)/api/v1.0/" + route)
     }
-    
 }
 
 public enum GradeType: String {
@@ -58,6 +59,13 @@ public enum GradeType: String {
     case completion = "(In)complete"
     case percent = "Percentage"
     case letter = "Letter Grade"
+}
+
+public enum UserRole: String {
+    case admin = "Admin"
+    case professor = "Professor"
+    case student = "Student"
+    case member = "Member"
 }
 
 public struct DefaultValues {
@@ -89,7 +97,9 @@ class Generic: StaticMappable {
                 return Response<Grade>()
             case "Enrollment":
                 return Response<Enrollment>()
-            case "CourseUser":
+            case "Group":
+                return Response<Group>()
+            case "CourseUser","GroupUser":
                 return Response<Enrollment>()
             case "Post":
                 return Response<Post>()
@@ -506,7 +516,7 @@ class Response<T>: Generic where T: NBModel {
 
 @objc(Enrollment) class Enrollment: NBModel {
     
-    var role: String!
+    var role: UserRole!
     var status: String!
     var user: User!
     var lastAccessAt: Date?
@@ -524,7 +534,7 @@ class Response<T>: Generic where T: NBModel {
     
     override func mapping(map: Map) {
         super.mapping(map: map)
-        role <- map["role"]
+        role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
         user <- (map["_user"], ObjectTransform<User>())
 
@@ -533,6 +543,53 @@ class Response<T>: Generic where T: NBModel {
     override public func refresh() {
     }
 }
+
+
+@objc(Group) class Group: NBModel {
+
+    var availableDate: Date!
+    var category: String?
+    var desc: String?
+    var location: String?
+    var locked: Bool!
+    var meeting: String?
+    var name: String!
+    var orgContact: String?
+    var permalink: String!
+    var status: String!
+    var type: String!
+    var website: String?
+    var starred: Bool?
+    // var university: NBModel?
+
+    override class var routeType: ItemType { return .group }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        availableDate <- (map["lastAccessAt"], ISO8601FixedDateTransform())
+
+        category <- map["category"]
+        desc <- map["description"]
+        location <- map["location"]
+        locked <- map["locked"]
+        meeting <- map["meeting"]
+        name <- map["name"]
+        orgContact <- map["orgContact"]
+        permalink <- map["permalink"]
+        status <- map["status"]
+        type <- map["type"]
+        website <- map["website"]
+        starred <- map["starred"]
+        //university <- (map["_university"], ObjectTransform<NBModel>())
+    }
+
+    override public func refresh() { }
+}
+
 
 @objc(Post) public class Post: NBModel {
     

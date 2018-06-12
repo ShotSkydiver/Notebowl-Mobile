@@ -381,7 +381,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         if (selectedCell.commentForCell.creator != nil) && (selectedCell.commentForCell.creator?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
-        else if ((post.owner as! Course).enrollmentForUser?.role == "Professor") {
+        else if ((post.owner as! Course).enrollmentForUser?.role == .professor) {
             return [delete, report] // and pin
         }
         else {
@@ -393,7 +393,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
         if (selectedCell.commentForCell.creator != nil) {
-            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((post.owner as! Course).enrollmentForUser?.role == "Professor") {
+            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((post.owner as! Course).enrollmentForUser?.role == .professor) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }

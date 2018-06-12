@@ -175,6 +175,9 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         if post.owner is Course {
             courseForPost.text = (post.owner as! Course).courseFullName
         }
+        else if post.owner is Group {
+            courseForPost.text = (post.owner as! Group).name
+        }
  
         postedDate.text = post.createdAt.relativelyFormatted
         
