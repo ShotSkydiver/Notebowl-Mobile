@@ -104,14 +104,13 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         photoLibraryButton = makeButton(image: "add_photo-vector")
         photoLibraryButton.onSelected { libButton in
             var config = YPImagePickerConfiguration()
-            config.library.targetImageSize = .cappedTo(size: 1024)
+            config.targetImageSize = .cappedTo(size: 1024)
             config.albumName = "Notebowl Photos"
             config.startOnScreen = .library
             config.showsCrop = .none
             config.wordings.libraryTitle = "Gallery"
             config.hidesStatusBar = false
             config.showsFilters = false
-            config.library.maxNumberOfItems = 10
             config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
             config.icons.cropIcon = UIImage(named: "crop-vector")!
             config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
@@ -226,7 +225,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 let putReq = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
             }
             else {
-                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
+                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "_related": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role.contains("Professor"))! ? self.pinnedToggle :  false)]
                 let postReq = NBNetworking.shared.request(.post, url: Post.endpoint, json: jsonPayload)
                 let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {

@@ -85,14 +85,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true
                     var config = YPImagePickerConfiguration()
-                    config.library.targetImageSize = .cappedTo(size: 1024)
+                    config.targetImageSize = .cappedTo(size: 1024)
                     config.albumName = "Notebowl Photos"
                     config.startOnScreen = .library
                     config.showsCrop = .none
                     config.wordings.libraryTitle = "Gallery"
                     config.hidesStatusBar = false
                     config.showsFilters = false
-                    config.library.maxNumberOfItems = 1
                     config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
                     config.icons.cropIcon = UIImage(named: "crop-vector")!
                     config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)

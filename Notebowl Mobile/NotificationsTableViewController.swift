@@ -56,6 +56,7 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             if self.notifications == nil {
                 TTLog.error("this shouldn't be nil!")
             }
+            self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
             self.tableView.reloadData()
         }
     }

@@ -19,7 +19,6 @@ import SwipeCellKit
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
     
-    
     var posts: [Post]!
     var courses: [Course]!
     var attachments: [Attachment]!
@@ -85,15 +84,14 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             if (self.courses == nil) || (self.courses.isEmpty) {
                 
                 let enrollments = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
-                var resourceKeys: String = ""
                 
+                var resourceKeys = [String]()
                 for enrollment in enrollments {
-                    if enrollment.statusIsAccepted {
-                        resourceKeys = (resourceKeys + enrollment.parent!.url.absoluteURL.lastPathComponent + ",")
+                    if enrollment.statusIsAccepted && enrollment.parent is Course {
+                        resourceKeys.append(enrollment.parent!.url.absoluteURL.lastPathComponent)
                     }
                 }
-                self.courses = NBClient.shared.initArray(from: NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(resourceKeys)\"]", limit: "100")!)
-                let categories: [Category]! = NBClient.shared.initArray(from: NBClient.shared.getMappable(Category.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.courses))\"]")!)
+                self.courses = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Course.self, keys: resourceKeys)!)
             }
             self.getData()
             self.bulletinTableView.reloadData()
@@ -102,13 +100,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     
     func getData() {
         self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
-        let comments: [Comment]! = NBClient.shared.getMappable(Comment.self, filters: "[\"_parent:IN:\(NBClient.shared.buildFilterString(from: self.posts))\"]")!
-        let filterString = NBClient.shared.buildFilterString(from: self.posts)
-        let combinedFilter = filterString + NBClient.shared.buildFilterString(from: comments)
-        
-        let likes = NBClient.shared.getMappable(Like.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
-        self.attachments = NBClient.shared.getMappable(Attachment.self, filters: "[\"_parent:IN:\(combinedFilter)\"]")!
+        let comments: [Comment]! = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: self.posts)
+        let combined = Array(Set((self.posts as [NBModel]!) + (comments as [NBModel]!)))
 
+        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combined)
+        self.attachments = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combined)
         self.posts = NBClient.shared.initArray(from: self.posts)
     }
     

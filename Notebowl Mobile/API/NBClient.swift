@@ -75,12 +75,12 @@ class NBClient {
         UserDefaults.set(hasUserLoggedIn: false)
     }
     
-    public func buildFilterString(from items: [NBModel]) -> String {
-        var urlBuilder: String = ""
+    public func buildFilterArray(from items: [NBModel]) -> [String] {
+        var filterArray = [String]()
         for item in items {
-            urlBuilder = (urlBuilder + item.url.absoluteString + ",")
+            filterArray.append(item.url.absoluteString)
         }
-        return urlBuilder
+        return filterArray
     }
     
     public func initArray<T>(from array: [T], refresh: Bool? = true) -> [T]? where T: NBModel {
@@ -100,6 +100,25 @@ class NBClient {
             mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
         }
         return mutableArray
+    }
+
+    public func requireByResourceKeys<T>(_ object: T.Type, keys: [String]) -> [T]? where T: NBModel {
+        var filterString: String = ""
+        for key in keys {
+            filterString = (filterString + key + ",")
+        }
+        
+        let req = NBClient.shared.getMappable(object, filters: "[\"resourceKey:IN:\(filterString)\"]")
+        return req
+    }
+    public func requireByReferences<T>(_ object: T.Type, property: String, values: [NBModel]) -> [T]? where T: NBModel {
+        var filterString: String = ""
+        for value in values {
+            filterString = (filterString + value.url.absoluteString + ",")
+        }
+        
+        let req = NBClient.shared.getMappable(object, filters: "[\"\(property):IN:\(filterString)\"]")
+        return req
     }
 
     public func requireByReference<T>(_ object: T.Type, property: String, value: NBModel) -> [T]? where T: NBModel {

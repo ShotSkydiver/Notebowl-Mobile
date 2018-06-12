@@ -1110,7 +1110,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4aa55157-fe18-4c49-b1a0-efaeadc6ff6c";
+				PROVISIONING_PROFILE = "2152eb93-b7dd-4210-8105-f041cf1c0c19";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1142,7 +1142,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "dfc38d22-1d34-4658-a2f6-f56773e03f9e";
+				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_OBJC_BRIDGING_HEADER = "";

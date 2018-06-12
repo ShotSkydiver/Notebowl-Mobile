@@ -51,14 +51,15 @@ class NBSocket {
                             let rootNavController = viewController as! UINavigationController
                             for vc in rootNavController.viewControllers {
                                 if let switchVC = vc as? UpdateVC {
+                                    guard let object = mapped.genericObject else { return }
                                     
                                     switch mapped.action! {
                                     case .updated:
-                                        switchVC.handleUpdated(newObject: mapped.genericObject!)
+                                        switchVC.handleUpdated(newObject: object)
                                     case .deleted:
-                                        switchVC.handleDeleted(deletedObject: mapped.genericObject!)
+                                        switchVC.handleDeleted(deletedObject: object)
                                     case .elapsed:
-                                        switchVC.handleElapsed(elapsedObject: mapped.genericObject!)
+                                        switchVC.handleElapsed(elapsedObject: object)
                                     case .unknown:
                                         TTLog.error("unknown actiontype!")
                                         return

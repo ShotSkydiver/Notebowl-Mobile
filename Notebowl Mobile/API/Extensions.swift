@@ -964,7 +964,7 @@ class ObjectTransform<T: NBModel>: TransformType {
                 return objectExists as? T
             }
         }
-        else if self.actionType == .deleted {
+        else if self.actionType == .deleted || self.actionType == .elapsed {
             return nil
         }
 

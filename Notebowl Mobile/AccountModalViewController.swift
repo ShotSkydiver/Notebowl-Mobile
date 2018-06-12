@@ -109,7 +109,7 @@ class AccountModalTableViewController: UITableViewController {
     
     func setupMenuForAlert() {
         var config = YPImagePickerConfiguration()
-        config.library.targetImageSize = .cappedTo(size: 1024)
+        config.targetImageSize = .cappedTo(size: 1024)
         config.albumName = "Notebowl Photos"
         config.startOnScreen = .library
         config.showsCrop = .none
