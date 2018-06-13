@@ -13,13 +13,22 @@ import ObjectMapper
 import SocketIO
 
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
-    
     var hasAppeared: Bool = false
+    
+    var loadingView: NBLoadingView!
+    var bgView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
         self.delegate = self
+        addLoadingView()
+    }
+    
+    func addLoadingView() {
+        self.loadingView = NBLoadingView()
+        self.bgView = UIView(loadingView: self.loadingView)
+        self.view.addSubview(bgView)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -50,24 +59,31 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     func loadAllTabs() {
         hasAppeared = true
-        let rootViews: [RootNavigationBarVC] = (self.viewControllers as! [RootNavigationBarVC])
- 
+        self.loadingView.showLoadView(true)
+        self.bgView.showViewAnimated(true)
+        
+        DispatchQueue.main.async {
+            self.getData()
+            let rootViews: [RootNavigationBarVC] = (self.viewControllers as! [RootNavigationBarVC])
             if let homeVC = rootViews[0].topViewController as? HomeFeedViewController {
-                if let coursesVC = rootViews[1].topViewController as? CoursesTableViewController {
-                    coursesVC.courses = homeVC.courses
-                    let _ = coursesVC.view
-                }
-                if let notifsVC = rootViews[2].topViewController as? NotificationsTableViewController {
-                    notifsVC.notifications = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-                    let unreads = notifsVC.notifications.filter({ $0.unseenBool == true })
-                    if unreads.count > 0 {
-                        self.tabBar.items![2].badgeValue = String(format: "%d", (unreads.count))
-                    }
-                    let _ = notifsVC.view
-                }
-            
-                homeVC.bgView.showViewAnimated(false)
+                let _ = (rootViews[1].topViewController as! CoursesTableViewController).view
+                let _ = (rootViews[2].topViewController as! NotificationsTableViewController).view
+                homeVC.reloadTable()
+                self.bgView.showViewAnimated(false)
             }
+        }
+    }
+    
+    func getData() {
+        _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]")!
+        _ = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
+        let postsFilter = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter( { $0.parent is Course || $0.parent is Group } ).compactMap({ $0.parent!.url.absoluteString }).joined(separator: ",")
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+        let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        NBClient.shared.reinitCache()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

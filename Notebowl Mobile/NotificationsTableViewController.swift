@@ -16,26 +16,21 @@ import Tamamushi
 
 class NotificationsTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
-    
     var notifications: [Notification]!
-    var loadingView: NBLoadingView!
-    var bgView: UIView!
     var placeholderTableView: TableView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadingView = NBLoadingView()
-        self.bgView = UIView(loadingView: self.loadingView)
-        self.view.addSubview(bgView)
-        self.bgView.alpha = 0.0
-        
+
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
+        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+        
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        
-        self.getNotifications()
     }
     
     func setupNavBar() {
@@ -48,17 +43,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         navigationController?.navigationBar.layer.masksToBounds = false
         
         self.view.layer.masksToBounds = false
-        
-    }
-    
-    func getNotifications() {
-        DispatchQueue.main.async {
-            if self.notifications == nil {
-                TTLog.error("this shouldn't be nil!")
-            }
-            self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
-            self.tableView.reloadData()
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -75,7 +59,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
 
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         placeholderTableView?.showDefault()
-        self.getNotifications()
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -119,7 +102,6 @@ extension NotificationsTableViewController {
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
             indexOfNotification == nil ? indexes.insertIndexPaths.append(IndexPath(row: 0, section: 0)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfNotification!, section: 0))
-            
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         }
@@ -131,7 +113,6 @@ extension NotificationsTableViewController {
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfNotification != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfNotification!, section: 0)) }
-            
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         }

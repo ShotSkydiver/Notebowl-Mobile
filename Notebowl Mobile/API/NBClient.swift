@@ -30,7 +30,7 @@ class NBClient {
     
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     private var currentUser: User!
-    public var storedTypes = [ObjectIdentifier: [NBModel]!]()
+    public var storedTypes = [ObjectIdentifier: [NBModel]]()
     
     private init() { }
     
@@ -83,6 +83,13 @@ class NBClient {
         return filterArray
     }
     
+    public func reinitCache(refresh: Bool? = true) {
+        for objectType in NBClient.shared.storedTypes {
+            var newArray = objectType.value
+            newArray = initArray(from: newArray, refresh: refresh)!
+        }
+    }
+    
     public func initArray<T>(from array: [T], refresh: Bool? = true) -> [T]? where T: NBModel {
         var mutableArray = array
         if refresh! {
@@ -107,7 +114,6 @@ class NBClient {
         for key in keys {
             filterString = (filterString + key + ",")
         }
-        
         let req = NBClient.shared.getMappable(object, filters: "[\"resourceKey:IN:\(filterString)\"]")
         return req
     }
@@ -116,7 +122,6 @@ class NBClient {
         for value in values {
             filterString = (filterString + value.url.absoluteString + ",")
         }
-        
         let req = NBClient.shared.getMappable(object, filters: "[\"\(property):IN:\(filterString)\"]")
         return req
     }
@@ -127,33 +132,29 @@ class NBClient {
         return req
     }
 
-    public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Swift.Void)? = nil) -> [T]? where T: NBModel {
+    public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Void)? = nil) -> [T]? where T: NBModel {
         var objectResult: [T]?
         let requestURL: String = url != nil ? url! : someObject.endpoint
-        let req = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
         
-        TTLog.debug("getmappable request: ", "\(req.statusCode!) - \(req.url!)")
-        if req.statusCode!.rawValue != 200 || !(req.statusCode?.isSuccess)! {
-            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"),
-                                        reason:"Error \(req.statusCode!): \(req.reason), url: \(req.url!.absoluteString)",
-                userInfo:nil)
-            Bugsnag.notify(exception)
-            
+        let result = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
+        TTLog.debug("getmappable request: ", "\(result.statusCode!) - \(result.url!)")
+        if !result.statusCode!.isSuccess || result.statusCode!.isServerError || result.statusCode!.isClientError {
+            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(result.statusCode!): \(result.statusCode!.localizedReasonPhrase), url: \(result.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+            Bugsnag.notify(exception) { report in
+                report.addMetadata(["resourceKey":"\(NBClient.shared.getCurrentUser().resourceKey)"], toTabWithName: "user")
+            }
         }
-        
-        else {
-            let nestedData = try? JSONSerialization.data(withJSONObject: (req.json as AnyObject).value(forKeyPath: "result")!)
-            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
             
+        else {
+            let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
+            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
             var newObjectArray = [T]()
             for object in objectResult! {
                 
                 if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey.lastPathComponent }) {
-                    
                     if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
                         TTLog.debug("new object is more recent than existing object!")
                         NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
-                        
                         newObjectArray.append(object)
                     }
                     else {
@@ -161,13 +162,11 @@ class NBClient {
                         newObjectArray.append((objectExists as! T))
                     }
                 }
-
                 else {
                     object.firstTimeLoading = true
                     
                     if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
                         NBClient.shared.storedTypes[T.classIdentifier] = [object]
-                        
                     }
                     else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == object.resourceKey}) {
                         NBClient.shared.storedTypes[T.classIdentifier]!.append(object)
@@ -179,10 +178,9 @@ class NBClient {
                 NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
                 newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
             }
-            
-
             return newObjectArray
         }
+        
         
         return objectResult
     }

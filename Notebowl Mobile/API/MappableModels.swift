@@ -296,7 +296,6 @@ class Response<T>: Generic where T: NBModel {
     public var categories: [Category]!
     
     public var enrollmentForUser: Enrollment?
-    public var enrollmentExists: Bool!
         
     override class var routeType: ItemType { return .course }
     
@@ -560,9 +559,10 @@ class Response<T>: Generic where T: NBModel {
     var type: String!
     var website: String?
     var starred: Bool?
-    // var university: NBModel?
 
     override class var routeType: ItemType { return .group }
+    
+    public var enrollmentForUser: Enrollment?
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -584,10 +584,17 @@ class Response<T>: Generic where T: NBModel {
         type <- map["type"]
         website <- map["website"]
         starred <- map["starred"]
-        //university <- (map["_university"], ObjectTransform<NBModel>())
     }
 
-    override public func refresh() { }
+    override public func refresh() {
+        if firstTimeLoading != nil {
+            if firstTimeLoading { firstTimeLoading = false }
+        }
+        
+        if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
+            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
+        }
+    }
 }
 
 
@@ -609,6 +616,8 @@ class Response<T>: Generic where T: NBModel {
     
     required public init?(map: Map) {
         super.init(map: map)
+        
+        
     }
     
     override public func mapping(map: Map) {

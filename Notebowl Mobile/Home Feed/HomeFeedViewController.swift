@@ -18,15 +18,7 @@ import SwipeCellKit
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
-    
     var posts: [Post]!
-    var courses: [Course]!
-    var groups: [Group]!
-
-    var attachments: [Attachment]!
-    var loadingView: NBLoadingView!
-    var bgView: UIView!
-    
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: TableView?
     
@@ -36,23 +28,14 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         self.setNeedsStatusBarAppearanceUpdate()
         HomeFeedWritePostCell.register(in: bulletinTableView)
         HomeFeedPostCell.register(in: bulletinTableView)
-        
-        self.tempLoadingViewSetup()
         placeholderTableView = bulletinTableView
         placeholderTableView?.placeholderDelegate = self
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
-        self.getPosts()
     }
-    
-    func tempLoadingViewSetup() {
-        self.loadingView = NBLoadingView()
-        self.bgView = UIView(loadingView: self.loadingView)
-        self.view.addSubview(bgView)
-    }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -64,7 +47,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         navigationController?.navigationBar.layer.shadowRadius = 7.5
         navigationController?.navigationBar.layer.shadowOpacity = 0.7
         navigationController?.navigationBar.layer.masksToBounds = false
-        
         self.view.layer.masksToBounds = false
     }
     
@@ -74,35 +56,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         placeholderTableView?.showDefault()
-        self.getPosts()
-        // homeVC.bgView.showViewAnimated(false) TAKE CARE OF THIS 
     }
     
-    func getPosts() {
-        self.loadingView.showLoadView(true)
-        self.bgView.showViewAnimated(true)
-        
-        DispatchQueue.main.async {
-            if (self.courses == nil) || (self.courses.isEmpty) {
-                let enrollments = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
-
-                self.courses = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Course.self, keys: enrollments.map({ $0.parent!.resourceKey! }))!)
-                self.groups = NBClient.shared.initArray(from: NBClient.shared.requireByResourceKeys(Group.self, keys: enrollments.map({ $0.parent!.resourceKey! }))!)
-            }
-            self.getData()
-            self.bulletinTableView.reloadData()
-        }
-    }
-    
-    func getData() {
-
-        var stringFilter = NBClient.shared.buildFilterArray(from: Array(Set((self.courses as [NBModel]!) + (self.groups as [NBModel]!)))).joined(separator: ",")
-        self.posts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(stringFilter)\"]", sortBy: "createdAt:desc", limit: "10")
-        let comments: [Comment]! = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: self.posts)
-        let combined = Array(Set((self.posts as [NBModel]!) + (comments as [NBModel]!)))
-        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combined)
-        self.attachments = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combined)
-        self.posts = NBClient.shared.initArray(from: self.posts)
+    func reloadTable() {
+        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+        self.bulletinTableView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,14 +82,13 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
             if let sourceCell = sender as? HomeFeedPostCell {
-                
                 destVC.post = sourceCell.postForCell
             }
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            destVC.coursesForPicker = self.courses
-            destVC.selectedCourse = self.courses.first!
+            destVC.coursesForPicker = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+            destVC.selectedCourse = destVC.coursesForPicker.first!
             if let senderCell = sender as? HomeFeedPostCell {
                 TTLog.debug("editing existing post!")
                 destVC.editingExistingPost = true
@@ -178,24 +135,19 @@ extension HomeFeedViewController {
         else if newObject.itemType == "CourseUser" {
  
             if (newObject as! Enrollment).parent!.firstTimeLoading {
-                self.getPosts()
-                self.bgView.showViewAnimated(false)
-                
+                // self.getPosts()
+                // self.bgView.showViewAnimated(false)
             }
             else if !(newObject as! Enrollment).parent!.firstTimeLoading || (newObject as! Enrollment).parent!.firstTimeLoading == nil {
                 (newObject as! Enrollment).parent!.refresh()
-                
             }
-            
         }
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        
         if deletedObject.itemType == "Post" {
             let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfPost != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
-            
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
         }
         
@@ -205,7 +157,6 @@ extension HomeFeedViewController {
                 parentPost.refresh()
                 if indexOfPost != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
             }
-
         }
             
         else if deletedObject.itemType == "User" {
@@ -219,17 +170,13 @@ extension HomeFeedViewController {
             let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner!.resourceKey == deletedEnrollment.parent!.resourceKey }) as! [Post]
             for post in postsToRemove {
                 NBClient.shared.storedTypes[Post.classIdentifier]!.removeAll(post)
-                
             }
             if NBClient.shared.storedTypes[Post.classIdentifier]!.count < 1 {
                 var newPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
                 newPosts = NBClient.shared.initArray(from: newPosts!)
                 NBClient.shared.storedTypes[Post.classIdentifier]! = newPosts!
             }
-            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-            
-            self.bulletinTableView.reloadData()
+            reloadTable()
         }
     }
     

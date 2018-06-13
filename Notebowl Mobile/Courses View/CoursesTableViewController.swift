@@ -15,26 +15,19 @@ import ObjectMapper
 
 class CoursesTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
-    
     var courses: [Course]!
-    var loadingView: NBLoadingView!
-    var bgView: UIView!
     var placeholderTableView: TableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.loadingView = NBLoadingView()
-        self.bgView = UIView(loadingView: self.loadingView)
-        self.view.addSubview(bgView)
-        self.bgView.alpha = 0.0
+        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
         
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        self.getTableData(animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -51,28 +44,9 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         
         self.view.layer.masksToBounds = false
     }
-    
-    func getTableData(animated: Bool? = false) {
-        if animated! {
-            self.loadingView.showLoadView(true)
-            self.bgView.showViewAnimated(true)
-        }
-        DispatchQueue.main.async {
-            if self.courses == nil {
-                TTLog.error("this shouldn't be nil!")
-            }
-            self.tableView.reloadData()
-            
-            if animated! {
-                self.bgView.showViewAnimated(false)
-            }
-        }
-    }
 
     func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
         placeholderTableView?.showDefault()
-
-        self.getTableData(animated: true)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -98,7 +72,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         if let senderCell = sender as? CoursesTableViewCell {
             let indexPath = tableView.indexPath(for: senderCell)
             let destVC = segue.destination as! CourseAssignmentsTableView
-            
             destVC.selectedCourse = self.courses[indexPath!.row]
         }
     }
@@ -108,7 +81,6 @@ extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
         if ["CourseUser","Course"].contains(newObject.itemType) {
             newObject.refresh()
-            
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
             indexes.reloadIndexPaths = self.tableView.indexPathsForVisibleRows!
         }
@@ -124,12 +96,9 @@ extension CoursesTableViewController {
             let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfCourse != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
         }
-        
     }
     
-    func handleElapsed(elapsedObject: NBModel) {
-        
-    }
+    func handleElapsed(elapsedObject: NBModel) { }
     
     func reloadTableViews() {
         self.tableView.beginUpdates()
@@ -138,7 +107,6 @@ extension CoursesTableViewController {
         self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
         self.tableView.endUpdates()
         self.indexes = Paths()
-        
     }
 }
 
