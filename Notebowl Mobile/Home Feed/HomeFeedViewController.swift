@@ -133,14 +133,14 @@ extension HomeFeedViewController {
             }
         }
         else if newObject.itemType == "CourseUser" {
- 
-            if (newObject as! Enrollment).parent!.firstTimeLoading {
+            if !(newObject as! Enrollment).parent!.firstTimeLoading || (newObject as! Enrollment).parent!.firstTimeLoading == nil {
+                (newObject as! Enrollment).parent!.refresh()
+            }
+            else if (newObject as! Enrollment).parent!.firstTimeLoading {
                 // self.getPosts()
                 // self.bgView.showViewAnimated(false)
             }
-            else if !(newObject as! Enrollment).parent!.firstTimeLoading || (newObject as! Enrollment).parent!.firstTimeLoading == nil {
-                (newObject as! Enrollment).parent!.refresh()
-            }
+            
         }
     }
     

@@ -9,7 +9,9 @@
 import Foundation
 import UIKit
 
-class CourseAssignmentsTableView: UITableViewController {
+class CourseAssignmentsTableView: UITableViewController, UpdateVC {
+    var indexes: Paths = Paths()
+    
     var assignments: [Assignment]!
     var data = [Category: [Assignment]]()
     var selectedCourse: Course!
@@ -21,7 +23,6 @@ class CourseAssignmentsTableView: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = selectedCourse.courseCode
-        self.categories = self.selectedCourse.categories
         
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
@@ -32,6 +33,7 @@ class CourseAssignmentsTableView: UITableViewController {
     
     func getTableData() {
         loadingView.showLoadView(true)
+        bgView.showViewAnimated(true)
         DispatchQueue.main.async {
             self.assignments = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!
             self.categories = NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!
@@ -39,18 +41,22 @@ class CourseAssignmentsTableView: UITableViewController {
             for assignment in self.assignments {
                 assignment.getGradeString()
             }
-    
-            for category in self.categories! {
-                let filtered = self.assignments.filter({ $0.category.absoluteString == category.url.absoluteString })
-                if (filtered.count > 0) {
-                    self.data[category] = filtered
-                }
-                else {
-                    self.categories.remove(at: self.categories.index(of: category)!)
-                }
-            }
+            self.updateData()
+            
             self.tableView.reloadData()
             self.bgView.showViewAnimated(false)
+        }
+    }
+    
+    func updateData() {
+        for category in self.categories! {
+            let filtered = self.assignments.filter({ $0.category.resourceKey == category.resourceKey })
+            if (filtered.count > 0) {
+                self.data[category] = filtered
+            }
+            else {
+                self.data[category] = filtered
+            }
         }
     }
     
@@ -58,6 +64,10 @@ class CourseAssignmentsTableView: UITableViewController {
         return self.data.count
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        if self.data[self.categories[section]]?.count == 0 {
+            return nil
+        }
         guard let title = self.categories[section].title else {
             return ""
         }
@@ -91,5 +101,100 @@ class CourseAssignmentsTableView: UITableViewController {
         cell.showCell(true)
         
         return cell
+    }
+}
+
+extension CourseAssignmentsTableView {
+    
+    func handleUpdated(newObject: NBModel) {
+        if newObject.itemType == "AssignmentGroup" {
+            
+        }
+        else if newObject.itemType.contains("Assignment") {
+            self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
+            self.updateData()
+            
+            let indexOfAssignment = self.data[(newObject as! Assignment).category]!.index(where: { $0.resourceKey == newObject.resourceKey })
+            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
+            
+            let existingAssignment = self.tableView.numberOfRows(inSection: indexOfCategory!) < (self.data[self.categories[indexOfCategory!]]?.count)! ? false : true
+            
+            existingAssignment == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!))
+        }
+
+        else if newObject.itemType == "Category" {
+            self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]
+            self.updateData()
+            
+            let indexOfCategory = self.categories.index(where: { $0.resourceKey == newObject.resourceKey })
+ 
+            let existingCategory = self.tableView.numberOfSections < self.data.count ? false : true
+            
+            if !existingCategory {
+                indexes.insertSections = IndexSet(integer: indexOfCategory!)
+            }
+            else {
+                indexes.reloadSections = IndexSet(integer: indexOfCategory!)
+            }
+            
+        }
+        
+        else if newObject.itemType == "Grade" {
+            let assignment = self.assignments.first(where: { $0.resourceKey == newObject.parent?.resourceKey })
+            assignment!.getGradeString()
+            self.updateData()
+            
+            let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0.resourceKey == assignment!.resourceKey })
+            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
+            
+            indexes.reloadIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!))
+        }
+        
+        else if newObject.itemType == "Course" {
+            self.getTableData()
+        }
+    }
+    
+    func handleDeleted(deletedObject: NBModel) {
+        if deletedObject.itemType.contains("Assignment") {
+            let indexOfAssignment = self.data[(deletedObject as! Assignment).category]!.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
+            if indexOfAssignment != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!)) }
+            self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
+            self.updateData()
+            
+        }
+
+        else if deletedObject.itemType == "Category" {
+            let indexOfCategory = self.categories.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            indexes.deleteSections = IndexSet(integer: indexOfCategory!)
+            
+            self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]
+            self.updateData()
+        }
+        
+        else if deletedObject.itemType.contains("Course") {
+            if deletedObject.resourceKey == self.selectedCourse.resourceKey {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
+    func handleElapsed(elapsedObject: NBModel) {
+        
+    }
+    
+    func reloadTableViews() {
+        self.tableView.beginUpdates()
+        self.tableView.reloadSections(self.indexes.reloadSections, with: .fade)
+        self.tableView.insertSections(self.indexes.insertSections, with: .left)
+        self.tableView.deleteSections(self.indexes.deleteSections, with: .right)
+        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+        self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+        self.tableView.endUpdates()
+        TTLog.warning("COMPLETED????")
+        self.indexes = Paths()
+        
     }
 }

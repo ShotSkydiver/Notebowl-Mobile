@@ -14,6 +14,7 @@ public enum ItemType: String {
     case term = "terms"
     case course = "courses"
     case assignment = "assignments"
+    case assignmentGroup = "assignmentGroups"
     case category = "categories"
     case grade = "grades"
     case university = "universities"
@@ -86,13 +87,23 @@ class Generic: StaticMappable {
 
     class func objectForMapping(map: Map) -> BaseMappable? {
         if let type: String = map["itemType"].value() {
-            switch type.capitalized {
+            switch type.capitalised {
             case "User":
                 return Response<User>()
             case "Course":
                 return Response<Course>()
             case "Assignment":
                 return Response<Assignment>()
+            
+            case "AssignmentSubTypeIndividual":
+                return Response<Assignment>()
+            case "AssignmentSubTypeGroup":
+                return Response<Assignment>()
+            case "AssignmentSubTypeDiscussionBoard":
+                return Response<Assignment>()
+            
+            case "AssignmentGroup":
+                return Response<AssignmentGroup>()
             case "Grade":
                 return Response<Grade>()
             case "Enrollment":
@@ -348,7 +359,7 @@ class Response<T>: Generic where T: NBModel {
     var gradeType: GradeType!
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
-    var category: URL!
+    var category: Category!
     
     public var gradeString: String!
     public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isInToday) }
@@ -374,7 +385,7 @@ class Response<T>: Generic where T: NBModel {
         gradesPublished <- map["gradesPublished"]
         allowLateSubmission <- map["lateSubmissionPermitted"]
 
-        category <- (map["_category"], URLTransform())
+        category <- (map["_category"], ObjectTransform<Category>())
     }
     
     public func getGradeString() {
@@ -448,6 +459,24 @@ class Response<T>: Generic where T: NBModel {
         
         return "\(Int(gradePoints))"
 
+    }
+}
+
+@objc(AssignmentGroup) class AssignmentGroup: NBModel {
+    var name: String!
+    var locked: Bool!
+    
+    override class var routeType: ItemType { return .assignmentGroup }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        name <- map["name"]
+        locked <- map["locked"]
     }
 }
 

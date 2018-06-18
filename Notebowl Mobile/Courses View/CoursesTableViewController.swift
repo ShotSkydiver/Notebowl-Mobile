@@ -62,7 +62,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         let courseForCell = self.courses[indexPath.row]
         cell.courseTitle.text = courseForCell.name
         cell.courseNumber.text = courseForCell.courseCode
-        cell.lastUpdated.text = courseForCell.lastUpdated
+        cell.lastUpdated.text = "Updated \(courseForCell.updatedAt.relativelyFormatted)"
         cell.showCell(true)
         
         return cell
@@ -79,20 +79,24 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
 
 extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
-        if ["CourseUser","Course"].contains(newObject.itemType) {
-            newObject.refresh()
+        if newObject.itemType == "Course" {
+            var indexOfCourse = self.courses.index(where: { $0.resourceKey == newObject.resourceKey })
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
-            indexes.reloadIndexPaths = self.tableView.indexPathsForVisibleRows!
+            let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
+            
+            if !existingCourse { indexes.insertIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
+            else {
+                self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
+            
+                indexOfCourse = 0
+                indexes.reloadIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0))
+            }
         }
     }
     
     func handleDeleted(deletedObject: NBModel) {
         if ["CourseUser","Course"].contains(deletedObject.itemType) {
-            if let assignmentVC = self.navigationController?.topViewController as? CourseAssignmentsTableView {
-                if deletedObject.resourceKey == assignmentVC.selectedCourse.resourceKey {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
+  
             let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfCourse != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
         }

@@ -19,6 +19,14 @@ public extension String {
         characterSet.addCharacters(in: "-_.!~*'()")
         return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
     }
+    
+    var capitalised: String {
+        var firstCharacter = self.first!
+        firstCharacter = String(firstCharacter).uppercased().first!
+        let first = String(firstCharacter)
+        let rest = String(self.dropFirst())
+        return first + rest
+    }
 }
 
 public extension URL {
@@ -952,13 +960,9 @@ class ObjectTransform<T: NBModel>: TransformType {
             else {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
                     TTLog.debug("new object is more recent than existing object!")
+                    let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
                     
-                    let r = NBNetworking.shared.request(url: urlToGet)
-                    let finalmap = Mapper<T>().map(JSONObject: (r.json as AnyObject).value(forKeyPath: "result")!)
-                    finalmap?.refresh()
-                    
-                    NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = finalmap!
-                    return finalmap
+                    return mapReq?.first
                 }
                 
                 return objectExists as? T
@@ -993,10 +997,16 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
 }
 
 struct Paths {
+    var insertSections: IndexSet
+    var deleteSections: IndexSet
+    var reloadSections: IndexSet
     var insertIndexPaths: [IndexPath]
     var deleteIndexPaths: [IndexPath]
     var reloadIndexPaths: [IndexPath]
     init() {
+        insertSections = IndexSet()
+        deleteSections = IndexSet()
+        reloadSections = IndexSet()
         insertIndexPaths = [IndexPath]()
         deleteIndexPaths = [IndexPath]()
         reloadIndexPaths = [IndexPath]() }
