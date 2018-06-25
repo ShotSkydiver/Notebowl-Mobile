@@ -7,6 +7,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -381,7 +382,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DF6-VU-Tez">
                                 <rect key="frame" x="-1" y="275" width="415" height="462"/>
                                 <connections>
-                                    <segue destination="Uj0-lf-bbg" kind="embed" identifier="modalEmbedSegue" id="76K-cC-xfv"/>
+                                    <segue destination="mkt-Re-iL2" kind="embed" identifier="modalEmbedSegue" id="QPY-qb-gt9"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H4c-aE-x18">
@@ -513,33 +514,59 @@
         <scene sceneID="wL2-0R-fO4">
             <objects>
                 <tableViewController id="Uj0-lf-bbg" customClass="AccountModalTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="oVn-mr-N6M">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="oVn-mr-N6M">
                         <rect key="frame" x="0.0" y="0.0" width="415" height="462"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection headerTitle="User Settings" id="DsI-8S-Omq">
+                            <tableViewSection headerTitle="Notifications" id="EDd-Yy-yoc">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="passwordCell" textLabel="TUS-xo-D1C" style="IBUITableViewCellStyleDefault" id="AVg-Y6-it4">
-                                        <rect key="frame" x="0.0" y="55.333333333333343" width="415" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="pushSettingsCell" textLabel="GlF-3w-wd4" rowHeight="50" style="IBUITableViewCellStyleDefault" id="ecg-oP-24D">
+                                        <rect key="frame" x="0.0" y="55.333333333333343" width="415" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AVg-Y6-it4" id="GFI-H3-C9s">
-                                            <rect key="frame" x="0.0" y="0.0" width="377" height="43.666666666666664"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ecg-oP-24D" id="kdR-Wu-1H4">
+                                            <rect key="frame" x="0.0" y="0.0" width="377" height="49.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Password &amp; Security" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TUS-xo-D1C">
-                                                    <rect key="frame" x="20" y="0.0" width="357" height="43.666666666666664"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Push Notifications" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GlF-3w-wd4">
+                                                    <rect key="frame" x="20" y="0.0" width="357" height="49.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
-                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Backdrop Color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <segue destination="pN3-tj-DWP" kind="custom" identifier="mobileSettingsSegue" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="MMY-4X-bXs"/>
+                                        </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="emailSettingsCell" textLabel="eqs-bh-wQF" rowHeight="50" style="IBUITableViewCellStyleDefault" id="5R4-Q4-S7L">
+                                        <rect key="frame" x="0.0" y="105.33333333333334" width="415" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5R4-Q4-S7L" id="zTK-rQ-Pdm">
+                                            <rect key="frame" x="0.0" y="0.0" width="377" height="49.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eqs-bh-wQF">
+                                                    <rect key="frame" x="20" y="0.0" width="357" height="49.666666666666664"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Backdrop Color"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="p7u-nd-ClW" kind="custom" identifier="emailSettingsSegue" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="xd6-y8-CXQ"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="User Settings" id="DsI-8S-Omq">
+                                <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="changeProfileCell" textLabel="Pug-A1-Ha8" rowHeight="44" style="IBUITableViewCellStyleDefault" id="PlD-zd-mPW">
-                                        <rect key="frame" x="0.0" y="99.333333333333343" width="415" height="44"/>
+                                        <rect key="frame" x="0.0" y="211.33333333333334" width="415" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PlD-zd-mPW" id="eh1-3s-i75">
                                             <rect key="frame" x="0.0" y="0.0" width="377" height="43.666666666666664"/>
@@ -557,27 +584,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="App Settings" id="Mut-Rc-OAd">
+                            <tableViewSection id="Mut-Rc-OAd">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="appearanceCell" textLabel="1kb-53-HDJ" style="IBUITableViewCellStyleDefault" id="KZP-aj-LVw">
-                                        <rect key="frame" x="0.0" y="199.33333333333334" width="415" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KZP-aj-LVw" id="3H7-7k-hiP">
-                                            <rect key="frame" x="0.0" y="0.0" width="377" height="43.666666666666664"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Permissions &amp; Access" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1kb-53-HDJ">
-                                                    <rect key="frame" x="20" y="0.0" width="357" height="43.666666666666664"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="appInfoCell" textLabel="UpL-Na-1ij" detailTextLabel="z3r-oh-yEg" style="IBUITableViewCellStyleValue1" id="isL-J7-5rC">
-                                        <rect key="frame" x="0.0" y="243.33333333333337" width="415" height="44"/>
+                                        <rect key="frame" x="0.0" y="291.33333333333337" width="415" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="isL-J7-5rC" id="Toy-HR-SG9">
                                             <rect key="frame" x="0.0" y="0.0" width="377" height="43.666666666666664"/>
@@ -590,8 +600,8 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="1.3.64" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
-                                                    <rect key="frame" x="335.66666666666669" y="14" width="41.333333333333336" height="18"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Version 1.3.64" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
+                                                    <rect key="frame" x="280.66666666666669" y="14" width="96.333333333333329" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                     <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
@@ -605,7 +615,7 @@
                             <tableViewSection id="paC-om-na1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logoutCell" textLabel="QZb-Tt-mg4" style="IBUITableViewCellStyleDefault" id="Jeg-RQ-wTP">
-                                        <rect key="frame" x="0.0" y="323.33333333333337" width="415" height="44"/>
+                                        <rect key="frame" x="0.0" y="371.33333333333337" width="415" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jeg-RQ-wTP" id="dXG-GM-uy7">
                                             <rect key="frame" x="0.0" y="0.0" width="415" height="43.666666666666664"/>
@@ -629,10 +639,65 @@
                             <outlet property="delegate" destination="Uj0-lf-bbg" id="P0E-sw-ub9"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="gaZ-9U-vKt"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="54c-7F-6UD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1727" y="3277"/>
+            <point key="canvasLocation" x="2557" y="3307"/>
+        </scene>
+        <!--Push Notification Settings-->
+        <scene sceneID="Exc-eT-nMg">
+            <objects>
+                <tableViewController storyboardIdentifier="mobileSettingsView" title="Push Notification Settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="pN3-tj-DWP" customClass="SettingsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="70" sectionHeaderHeight="14" estimatedSectionHeaderHeight="-1" sectionFooterHeight="14" estimatedSectionFooterHeight="-1" id="Vbt-bm-uAQ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <connections>
+                            <outlet property="dataSource" destination="pN3-tj-DWP" id="kEj-np-tIo"/>
+                            <outlet property="delegate" destination="pN3-tj-DWP" id="ptV-Rc-sk6"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8vR-qf-6J6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3413" y="3069"/>
+        </scene>
+        <!--Email Notification Settings-->
+        <scene sceneID="BtY-G8-SFK">
+            <objects>
+                <tableViewController storyboardIdentifier="emailSettingsView" title="Email Notification Settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="p7u-nd-ClW" customClass="SettingsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="70" sectionHeaderHeight="14" estimatedSectionHeaderHeight="-1" sectionFooterHeight="14" estimatedSectionFooterHeight="-1" id="jJb-zX-igW">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <connections>
+                            <outlet property="dataSource" destination="p7u-nd-ClW" id="VNc-fU-nR7"/>
+                            <outlet property="delegate" destination="p7u-nd-ClW" id="rf8-8z-2hO"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4yI-SX-Tqz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3525" y="3744"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="AXa-jz-U2e">
+            <objects>
+                <navigationController id="mkt-Re-iL2" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="arf-8s-59b">
+                        <rect key="frame" x="0.0" y="0.0" width="415" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Uj0-lf-bbg" kind="relationship" relationship="rootViewController" id="gHD-bH-wMm"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qch-FE-JQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1831" y="3246"/>
         </scene>
         <!--Notifications-->
         <scene sceneID="vUx-WI-Ovy">
@@ -720,7 +785,7 @@
                     <connections>
                         <outlet property="bulletinTableView" destination="yJQ-xz-W72" id="uP8-mC-bmr"/>
                         <segue destination="kph-Ic-KZb" kind="show" identifier="postDetailSegue" id="HDG-8d-5j3"/>
-                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueDeck" customClass="DeckSegue" customModule="DeckTransition" id="Ssj-YJ-Jbk"/>
+                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Ssj-YJ-Jbk"/>
                         <segue destination="HMo-CO-fYR" kind="presentation" identifier="createPostSegue" id="Ffz-FF-4VI"/>
                     </connections>
                 </viewController>
@@ -838,6 +903,9 @@
         <image name="happy-vector" width="30" height="30"/>
         <image name="today_apps-vector" width="30" height="30"/>
         <image name="uni-image-gray" width="1000" height="667"/>
+        <namedColor name="Backdrop Color">
+            <color red="0.16862745098039217" green="0.16862745098039217" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
     <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

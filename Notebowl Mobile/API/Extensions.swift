@@ -666,6 +666,22 @@ extension DesignableView {
     }
 }
 
+@IBDesignable
+class KerningLabel: UILabel {
+    
+    @IBInspectable var kerning: CGFloat = 0.0 {
+        didSet {
+            if attributedText?.length == nil { return }
+            
+            let attrStr = NSMutableAttributedString(attributedString: attributedText!)
+            let range = NSMakeRange(0, attributedText!.length)
+            attrStr.addAttributes([NSAttributedStringKey.kern: kerning], range: range)
+            attributedText = attrStr
+        }
+    }
+}
+
+
 extension Double {
     func rounded(toPlaces places:Int) -> Double {
         let divisor = pow(10.0, Double(places))
@@ -688,6 +704,19 @@ extension UIView {
         UIView.animate(withDuration: 0.3) {
             self.alpha = show ? alpha : 0.0
         }
+    }
+}
+
+extension UIView {
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder!.next
+            if let viewController = parentResponder as? UIViewController {
+                return viewController
+            }
+        }
+        return nil
     }
 }
 
@@ -1010,6 +1039,11 @@ struct Paths {
         insertIndexPaths = [IndexPath]()
         deleteIndexPaths = [IndexPath]()
         reloadIndexPaths = [IndexPath]() }
+    
+    var shouldReload: Bool {
+        if insertSections.isEmpty && deleteSections.isEmpty && reloadSections.isEmpty && insertIndexPaths.isEmpty && deleteIndexPaths.isEmpty && reloadIndexPaths.isEmpty { return false }
+        else { return true }
+    }
 }
 
 protocol UpdateVC {

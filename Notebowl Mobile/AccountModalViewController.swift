@@ -45,7 +45,10 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "modalEmbedSegue" {
-            containerViewController = segue.destination as? AccountModalTableViewController
+            guard let navVC = segue.destination as? UINavigationController else {
+                return
+            }
+            containerViewController = navVC.topViewController as? AccountModalTableViewController
             containerViewController!.containerToMaster = self
         }
     }
@@ -105,6 +108,8 @@ class AccountModalTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
     }
     
     func setupMenuForAlert() {
@@ -149,12 +154,20 @@ class AccountModalTableViewController: UITableViewController {
         self.present(picker, animated: true, completion: nil)
     }
     
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else {
             return
         }
+        tableView.deselectRow(at: indexPath, animated: true)
         if cell.reuseIdentifier == "changeProfileCell" {
             setupMenuForAlert()
+        }
+        else if cell.reuseIdentifier == "emailSettingsCell" {
+            TTLog.debug("email settings!")
+        }
+        else if cell.reuseIdentifier == "pushSettingsCell" {
+            TTLog.debug("push settings!")
         }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.logoutUser()
@@ -166,10 +179,6 @@ class AccountModalTableViewController: UITableViewController {
             UIApplication.shared.open(urlObj! as URL, options: [ : ], completionHandler: { Success in
                 })
         }
-        else {
-            let alert = UIAlertController(title: "Under Construction", message: "This view hasn't been implemented yet!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
+   
     }
 }

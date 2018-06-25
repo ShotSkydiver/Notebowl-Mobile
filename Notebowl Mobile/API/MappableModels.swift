@@ -26,6 +26,7 @@ public enum ItemType: String {
     case like = "likes"
     case notification = "notifications"
     case abuse = "abuses"
+    case setting = "settings"
     
     static func fromURL(_ urlString: String) -> ItemType {
         let urlComponents = URL(string: urlString)!.deletingLastPathComponent()
@@ -124,6 +125,8 @@ class Generic: StaticMappable {
                 return Response<Like>()
             case "Notification":
                 return Response<Notification>()
+            case "Setting":
+                return Response<Setting>()
             default:
                 return Generic()
             }
@@ -862,3 +865,101 @@ class Response<T>: Generic where T: NBModel {
         reason <- map["reason"]
     }
 }
+
+@objc(Setting) class Setting: NBModel {
+    var key: String!
+    var value: Bool!
+    
+    override class var routeType: ItemType { return .setting }
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        key <- map["key"]
+        value <- map["value"]
+    }
+}
+
+class SettingsDefault: Mappable {
+    var name: String!
+    var help: String?
+    var rootId: String!
+    var group: String!
+    var type: String!
+    
+    var key: String!
+    var defaultValue: Bool!
+    
+    var userSetting: Setting?
+
+    public required init?(map: Map) { }
+    
+    public func mapping(map: Map) {
+        name <- map["name"]
+        help <- map["help"]
+        rootId <- map["rootId"]
+        group <- map["group"]
+        type <- map["type"]
+    }
+    
+    public func findSetting() { userSetting = NBClient.shared.storedTypes[Setting.classIdentifier]?.first(where: { ($0 as! Setting).key == self.key }) as? Setting }
+}
+
+class MobileSettingsDefault: SettingsDefault {
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        key <- map["mobile"]
+        defaultValue <- map["mobileDefault"]
+        findSetting()
+    }
+
+}
+
+class EmailSettingsDefault: SettingsDefault {
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        key <- map["email"]
+        defaultValue <- map["emailDefault"]
+        findSetting()
+    }
+ 
+}
+
+struct SettingsGroup {
+    var sectionName: String!
+    var sectionMobileSettings: [MobileSettingsDefault]!
+    var sectionEmailSettings: [EmailSettingsDefault]!
+}
+
+class SettingDefaults: Mappable {
+    var settingsMobile: [String: [MobileSettingsDefault]]!
+    var settingsEmail: [String: [EmailSettingsDefault]]!
+    var settingsArray =  [SettingsGroup]()
+    
+    public required init?(map: Map) { }
+    
+    
+    public func mapping(map: Map) {
+        settingsMobile <- map["notifications"]
+        settingsEmail <- map["notifications"]
+        
+        for (key,value) in settingsMobile {
+            self.settingsArray.append(SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key]))
+        }
+    }
+}
+
+

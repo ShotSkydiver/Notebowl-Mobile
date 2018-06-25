@@ -157,6 +157,7 @@ extension CourseAssignmentsTableView {
     
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType.contains("Assignment") {
+
             let indexOfAssignment = self.data[(deletedObject as! Assignment).category]!.index(where: { $0.resourceKey == deletedObject.resourceKey })
             let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
             if indexOfAssignment != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!)) }
@@ -185,16 +186,17 @@ extension CourseAssignmentsTableView {
     }
     
     func reloadTableViews() {
-        self.tableView.beginUpdates()
-        self.tableView.reloadSections(self.indexes.reloadSections, with: .fade)
-        self.tableView.insertSections(self.indexes.insertSections, with: .left)
-        self.tableView.deleteSections(self.indexes.deleteSections, with: .right)
-        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-        self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-        self.tableView.endUpdates()
-        TTLog.warning("COMPLETED????")
-        self.indexes = Paths()
-        
+        if self.indexes.shouldReload {
+            self.tableView.beginUpdates()
+            self.tableView.reloadSections(self.indexes.reloadSections, with: .fade)
+            self.tableView.insertSections(self.indexes.insertSections, with: .left)
+            self.tableView.deleteSections(self.indexes.deleteSections, with: .right)
+            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+            self.tableView.endUpdates()
+            TTLog.warning("COMPLETED????")
+            self.indexes = Paths()
+        }
     }
 }

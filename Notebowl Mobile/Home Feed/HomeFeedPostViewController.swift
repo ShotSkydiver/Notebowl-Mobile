@@ -310,25 +310,19 @@ extension HomeFeedPostViewController {
     }
     
     func reloadTableViews() {
-        TTLog.warning("already performing updates?? ", self.isPerformingUpdates)
-        self.tableView.beginUpdates()
-        self.isPerformingUpdates = true
- 
-        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-        if self.reloadSection {
-            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            self.reloadSection = false
-        }
-        if !self.indexes.deleteIndexPaths.isEmpty {
-            TTLog.warning("delete not isempty")
+        if self.indexes.shouldReload {
+            self.tableView.beginUpdates()
+            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+            if self.reloadSection {
+                self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                self.reloadSection = false
+            }
             self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+            self.tableView.endUpdates()
+            TTLog.warning("COMPLETED????")
+            self.indexes = Paths()
         }
-        self.tableView.endUpdates()
-        self.isPerformingUpdates = false
-        TTLog.warning("COMPLETED????")
-        self.indexes = Paths()
- 
     }
 }
 

@@ -75,6 +75,9 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     func getData() {
+        
+        
+        _ = NBClient.shared.getMappable(Setting.self)!
         _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]")!
         _ = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
         let postsFilter = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter( { $0.parent is Course || $0.parent is Group } ).compactMap({ $0.parent!.url.absoluteString }).joined(separator: ",")

@@ -105,12 +105,14 @@ extension CoursesTableViewController {
     func handleElapsed(elapsedObject: NBModel) { }
     
     func reloadTableViews() {
-        self.tableView.beginUpdates()
-        self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-        self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-        self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-        self.tableView.endUpdates()
-        self.indexes = Paths()
+        if self.indexes.shouldReload {
+            self.tableView.beginUpdates()
+            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+            self.tableView.endUpdates()
+            self.indexes = Paths()
+        }
     }
 }
 

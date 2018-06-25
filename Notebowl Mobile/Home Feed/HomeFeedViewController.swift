@@ -15,6 +15,7 @@ import SocketIO
 import ObjectMapper
 import Tamamushi
 import SwipeCellKit
+import DeckTransition
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
@@ -187,15 +188,20 @@ extension HomeFeedViewController {
     }
     
     func reloadTableViews() {
-        self.bulletinTableView.beginUpdates()
-
-        self.bulletinTableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-        self.bulletinTableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-        self.bulletinTableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-        self.bulletinTableView.endUpdates()
-        TTLog.warning("COMPLETED????")
-        self.indexes = Paths()
+        if self.indexes.shouldReload {
+            self.bulletinTableView.beginUpdates()
+            self.bulletinTableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+            self.bulletinTableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+            self.bulletinTableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
+            self.bulletinTableView.endUpdates()
+            TTLog.warning("COMPLETED????")
+            self.indexes = Paths()
+        }
+        else {
+            TTLog.warning("indexes empty! not reloading tableview!")
+        }
     }
+        
 }
 
 
@@ -338,3 +344,16 @@ class HomeTableView: TableView {
     }
 }
 
+
+final class DeckNoSwipeSegue: UIStoryboardSegue {
+    
+    var transition: UIViewControllerTransitioningDelegate?
+    
+    public override func perform() {
+        transition = DeckTransitioningDelegate(isSwipeToDismissEnabled: false)
+        destination.transitioningDelegate = transition
+        destination.modalPresentationStyle = .custom
+        source.present(destination, animated: true, completion: nil)
+    }
+    
+}
