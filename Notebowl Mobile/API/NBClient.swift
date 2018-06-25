@@ -37,25 +37,14 @@ class NBClient {
     func resolveCurrentUser(_ completionHandler: @escaping (() -> Void)) {
         if currentUser == nil {
             TTLog.debug("currentuser nil!")
-            let userReq = NBNetworking.shared.request(url: User.endpoint)
-            
-            if errorStatusCodes.contains(userReq.statusCode!.rawValue) {
-                TTLog.error("error status code! ", userReq.statusCode!)
+            let userReq = NBClient.shared.getMappable(User.self)
+
+            if (userReq?.isEmpty)! || userReq == nil {
                 logoutUser()
                 (UIApplication.shared.keyWindow?.rootViewController as! RootViewController).dismiss(animated: true, completion: nil)
             }
             else {
-                let reqJson = (userReq.json as AnyObject).value(forKeyPath: "result")!
-                let map = Mapper<User>().map(JSONObject: reqJson)!
-                self.currentUser = map
-                
-                if self.storedTypes[User.classIdentifier] == nil {
-                    self.storedTypes[User.classIdentifier] = [self.currentUser]
-                }
-                else if self.storedTypes[User.classIdentifier]!.first(where: {$0.resourceKey == self.currentUser.resourceKey}) == nil {
-                    self.storedTypes[User.classIdentifier]!.append(self.currentUser)
-                }
-                completionHandler()
+                self.currentUser = userReq!.first!
             }
         }
         else {

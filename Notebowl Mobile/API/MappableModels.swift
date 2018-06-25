@@ -20,6 +20,7 @@ public enum ItemType: String {
     case university = "universities"
     case enrollment = "enrollments"
     case group = "groups"
+    case event = "events"
     case post = "posts"
     case attachment = "attachments"
     case comment = "comments"
@@ -95,14 +96,12 @@ class Generic: StaticMappable {
                 return Response<Course>()
             case "Assignment":
                 return Response<Assignment>()
-            
             case "AssignmentSubTypeIndividual":
                 return Response<Assignment>()
             case "AssignmentSubTypeGroup":
                 return Response<Assignment>()
             case "AssignmentSubTypeDiscussionBoard":
                 return Response<Assignment>()
-            
             case "AssignmentGroup":
                 return Response<AssignmentGroup>()
             case "Grade":
@@ -111,6 +110,8 @@ class Generic: StaticMappable {
                 return Response<Enrollment>()
             case "Group":
                 return Response<Group>()
+            case "Event":
+                return Response<Event>()
             case "CourseUser","GroupUser":
                 return Response<Enrollment>()
             case "Post":
@@ -627,6 +628,40 @@ class Response<T>: Generic where T: NBModel {
             enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
         }
     }
+}
+
+@objc(Event) class Event: NBModel {
+    
+    var title: String!
+    var desc: String?
+    var location: String?
+    var color: String!
+    var priority: String?
+    var type: String!
+    var allDay: Bool?
+    var startDate: Date!
+    var endDate: Date!
+    
+    override class var routeType: ItemType { return .event }
+    
+    public var enrollmentForUser: Enrollment?
+    
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+    
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        
+        title <- map["title"]
+        desc <- map["description"]
+        location <- map["location"]
+        type <- map["type"]
+        allDay <- map["allDay"]
+        startDate <- (map["startDate"], ISO8601FixedDateTransform())
+        endDate <- (map["endDate"], ISO8601FixedDateTransform())
+    }
+    
 }
 
 
