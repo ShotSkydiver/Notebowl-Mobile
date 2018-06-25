@@ -202,7 +202,9 @@ class Response<T>: Generic where T: NBModel {
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
         createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
+        if createdAt == nil { createdAt = Date.distantPast }
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
+        if updatedAt == nil { updatedAt = Date.distantPast }
         itemType <- map["itemType"]
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]

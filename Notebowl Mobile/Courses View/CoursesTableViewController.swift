@@ -21,7 +21,7 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+        self.courses = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
         
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
@@ -81,7 +81,7 @@ extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Course" {
             var indexOfCourse = self.courses.index(where: { $0.resourceKey == newObject.resourceKey })
-            self.courses = NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course]
+            self.courses = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             
             if !existingCourse { indexes.insertIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }

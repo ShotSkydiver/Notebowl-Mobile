@@ -88,7 +88,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            destVC.coursesForPicker = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+            destVC.coursesForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
             destVC.selectedCourse = destVC.coursesForPicker.first!
             if let senderCell = sender as? HomeFeedPostCell {
                 TTLog.debug("editing existing post!")

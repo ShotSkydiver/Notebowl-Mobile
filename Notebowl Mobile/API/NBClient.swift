@@ -86,12 +86,14 @@ class NBClient {
                 item.refresh()
             }
         }
+        
         if mutableArray is [Comment] {
             mutableArray.sort() { $0.secondsSinceCreation < $1.secondsSinceCreation }
         }
         else if mutableArray is [Course] {
             mutableArray.sort() { $0.secondsSinceUpdate > $1.secondsSinceUpdate }
         }
+
         else {
             mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
         }
@@ -150,6 +152,7 @@ class NBClient {
                         TTLog.debug("return existing object!")
                         newObjectArray.append((objectExists as! T))
                     }
+                    
                 }
                 else {
                     object.firstTimeLoading = true
