@@ -116,8 +116,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <action selector="likeButtonAction:" destination="N3g-5j-72E" eventType="touchUpInside" id="GyU-Ei-wpj"/>
-                                                    <outlet property="delegate" destination="N3g-5j-72E" id="n7I-Zi-neL"/>
+                                                    <action selector="likeButtonTapped:" destination="N3g-5j-72E" eventType="touchUpInside" id="Fdb-iq-INT"/>
                                                 </connections>
                                             </button>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gg6-oO-bh0">

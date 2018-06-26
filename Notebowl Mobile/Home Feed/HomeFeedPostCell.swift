@@ -62,7 +62,7 @@ class IndexedCollectionView: UICollectionView {
     var indexPath: IndexPath!
 }
 
-class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
@@ -85,6 +85,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     var lightboxPhotos = [LightboxImage]()
     var likeIndicator: NVActivityIndicatorView!
     var postForCell: Post!
+    var tempCount: Int?
     var collectionViewPaginatedScroll: Bool?
     var isValidTouch: Bool = true
     weak var parentController: HomeFeedViewController?
@@ -113,9 +114,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
         collectionViewHeight.constant = 0.0
         
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal), for: .normal)
-        
-        likeIndicator = NVActivityIndicatorView(frame: self.postLikes.frame, type: .ballPulseSync, color: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        actionsStackView.addSubview(likeIndicator)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nameDateTapped(_:)))
         tapGesture.numberOfTapsRequired = 1
@@ -164,10 +162,6 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
  
     func configure(post: Post) {
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
-        if likeIndicator.isAnimating || postLikes.alpha == 0.0 {
-            likeIndicator.stopAnimating()
-            postLikes.showViewAnimated(true)
-        }
         
         postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
@@ -229,26 +223,54 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+
     
-    @IBAction func likeButtonAction(_ sender: Any) {
-        likeIndicator.startAnimating()
-        postLikes.showViewAnimated(false)
+    @IBAction func likeButtonTapped(_ sender: FaveButton) {
+        TTLog.debug("isselected: ", sender.isSelected)
+        if !sender.isSelected {
+            UIView.transition(with: self.postLikes,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.postLikes.text = "\((self.postForCell.postLikes.count - 1))"
+            }) { (_) in
+                DispatchQueue.global(qos: .default).async {
+                    let tempLike = self.postForCell.likeFromCurrentUser!
+                    self.postForCell.postLikes.removeAll(self.postForCell.likeFromCurrentUser!)
+                    self.postForCell.likeFromCurrentUser = nil
+                    self.postForCell.likedByCurrentUser = false
+                    
+                    
+                    let delete = NBNetworking.shared.request(.delete, url: tempLike.url.absoluteString)
+                    TTLog.warning("delete url request: ", delete.description)
+                    
+                }
+            }
+        }
+        else if sender.isSelected {
+            UIView.transition(with: self.postLikes,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.postLikes.text = "\((self.postForCell.postLikes.count + 1))"
+            }) { (_) in
+                DispatchQueue.global(qos: .default).async {
+                    let fakeLike = Mapper<Like>().map(JSON: ["_parent":self.postForCell.url.absoluteString, "_owner":NBClient.shared.getCurrentUser().url.absoluteString])
+                    self.postForCell.likeFromCurrentUser = fakeLike
+                    self.postForCell.likedByCurrentUser = true
+                    self.postForCell.postLikes.append(fakeLike!)
+                    let payload: Any? = ["_parent": "\(self.postForCell.url.absoluteString)"]
+                    let post = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
+                    TTLog.warning("post url request: ", post.description)
+                }
+            }
+        }
     }
     
     @IBAction func moreButtonAction(_ sender: Any) {
         self.showSwipe(orientation: .right, animated: true, completion: nil)
     }
     
-    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        DispatchQueue.main.async {
-            if (!self.likeButton.isSelected) {
-                _ = NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
-            }
-            else if (self.likeButton.isSelected) {
-                _ = NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
-            }
-        }
-    }
     
     final func setCollectionView(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate, indexPath: IndexPath) {
         collectionView.indexPath = indexPath
@@ -368,4 +390,3 @@ extension HomeFeedPostCell {
         return cell as? HomeFeedPostCell
     }
 }
-

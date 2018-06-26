@@ -60,7 +60,7 @@ class CommentCollectionView: UICollectionView {
     var indexPath: IndexPath!
 }
 
-class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -77,7 +77,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
 
     var lightboxPhotos = [LightboxImage]()
     var commentForCell: Comment!
-    var commentLikeIndicator: NVActivityIndicatorView!
     var collectionViewPaginatedScroll: Bool?
     
     weak var lightboxController: LightboxController?
@@ -107,20 +106,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         
-        commentLikeIndicator = NVActivityIndicatorView(frame: self.commentLikes.frame, type: .ballPulseSync, color: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
-        likeActionStackView.addSubview(commentLikeIndicator)
-        
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
     }
     
     func configure(comment: Comment) {
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
-        
-        if commentLikeIndicator.isAnimating {
-            commentLikeIndicator.stopAnimating()
-            commentLikes.showViewAnimated(true)
-        }
         
         commentLikes.text = comment.commentLikes.isEmpty ? "0" : "\(comment.commentLikes.count)"
         commentContent.text = comment.text
@@ -160,26 +151,54 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
         }
     }
     
-    @IBAction func likeButtonAction(_ sender: Any) {
-        commentLikeIndicator.startAnimating()
-        commentLikes.showViewAnimated(false)
+    @IBAction func commentLikeButtonTapped(_ sender: FaveButton) {
+        TTLog.debug("isselected: ", sender.isSelected)
+        if !sender.isSelected {
+            UIView.transition(with: self.commentLikes,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.commentLikes.text = "\((self.commentForCell.commentLikes.count - 1))"
+            }) { (_) in
+                DispatchQueue.global(qos: .default).async {
+                    let tempLike = self.commentForCell.likeFromCurrentUser!
+                    self.commentForCell.commentLikes.removeAll(self.commentForCell.likeFromCurrentUser!)
+                    self.commentForCell.likeFromCurrentUser = nil
+                    self.commentForCell.likedByCurrentUser = false
+                    
+                    
+                    let delete = NBNetworking.shared.request(.delete, url: tempLike.url.absoluteString)
+                    TTLog.warning("delete url request: ", delete.description)
+                    
+                }
+            }
+        }
+        else if sender.isSelected {
+            UIView.transition(with: self.commentLikes,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.commentLikes.text = "\((self.commentForCell.commentLikes.count + 1))"
+            }) { (_) in
+                DispatchQueue.global(qos: .default).async {
+                    let fakeLike = Mapper<Like>().map(JSON: ["_parent":self.commentForCell.url.absoluteString, "_owner":NBClient.shared.getCurrentUser().url.absoluteString])
+                    self.commentForCell.likeFromCurrentUser = fakeLike
+                    self.commentForCell.likedByCurrentUser = true
+                    self.commentForCell.commentLikes.append(fakeLike!)
+                    let payload: Any? = ["_parent": "\(self.commentForCell.url.absoluteString)"]
+                    let post = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
+                    TTLog.warning("post url request: ", post.description)
+                }
+            }
+        }
     }
+    
     
     @IBAction func moreButtonAction(_ sender: Any) {
         self.showSwipe(orientation: .right, animated: true, completion: nil)
     }
     
-    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
-        DispatchQueue.main.async {
-            if (!self.commentLikeButton.isSelected) {
-                _ = NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
-            }
-            else if (self.commentLikeButton.isSelected) {
-                _ = NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
-            }
-        }
-    }
-    
+
     final func setCollectionView(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate, indexPath: IndexPath) {
         collectionView.indexPath = indexPath
         

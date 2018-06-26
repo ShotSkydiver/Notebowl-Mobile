@@ -205,7 +205,6 @@ class NBLoadingView: UIView, CAAnimationDelegate {
     }
     
     func showLoadView(_ show: Bool, completionHandler: (() -> Swift.Void)? = nil) {
-        
         UIView.animate(withDuration: 0.3, delay: 0.0, animations: {
             self.alpha = show ? 1.0 : 0.0
         }) { (_) in

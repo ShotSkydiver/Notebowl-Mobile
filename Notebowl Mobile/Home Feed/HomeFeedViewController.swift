@@ -129,7 +129,7 @@ extension HomeFeedViewController {
             if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
+                if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
             }
         }
         else if newObject.itemType == "User" {
@@ -166,14 +166,10 @@ extension HomeFeedViewController {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.url.absoluteURL.lastPathComponent }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
+                if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
             }
         }
-            
-        else if deletedObject.itemType == "User" {
-            TTLog.error("????????????")
-        }
-        
+
         else if deletedObject.itemType == "CourseUser" {
             guard let deletedEnrollment = deletedObject as? Enrollment else { return }
             
@@ -200,7 +196,7 @@ extension HomeFeedViewController {
     func reloadTableViews() {
         if self.indexes.shouldReload {
             self.bulletinTableView.beginUpdates()
-            self.bulletinTableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
+            self.bulletinTableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .none)
             self.bulletinTableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
             self.bulletinTableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
             self.bulletinTableView.endUpdates()

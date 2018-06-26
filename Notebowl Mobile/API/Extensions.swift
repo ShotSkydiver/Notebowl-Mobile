@@ -1002,6 +1002,7 @@ class ObjectTransform<T: NBModel>: TransformType {
         }
 
         else {
+            
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
             guard let returnObject = mapReq?.first else {
                 return nil
