@@ -20,8 +20,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var postTextView: PlaceholderTextView!
     @IBOutlet weak var userAvatar: ProfileImageView!
+    
     @IBOutlet weak var dismissButton: UIBarButtonItem!
     @IBOutlet weak var fakeNavBar: UINavigationBar!
+    @IBOutlet weak var fakeNavTitle: UINavigationItem!
     @IBOutlet weak var postButtonBarItem: PostButtonNavigationItem!
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
@@ -50,8 +52,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
 
     var viewIsLoaded = false
-    var coursesForPicker: [Course]!
-    var selectedCourse: Course!
+    var objectsForPicker: [NBModel]!
+    var selectedObject: NBModel!
+    var selectedIndex: Int = 0
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var pinnedToggle: Bool = false
@@ -105,6 +108,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         photoLibraryButton.onSelected { libButton in
             var config = YPImagePickerConfiguration()
             config.targetImageSize = .cappedTo(size: 1024)
+            config.library.maxNumberOfItems = 10
+            config.library.skipSelectionsGallery = true
             config.albumName = "Notebowl Photos"
             config.startOnScreen = .library
             config.showsCrop = .none
@@ -145,22 +150,39 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             $0.isEnabled = !self.editingExistingPost
         }
         coursePickerButton.onSelected { courseButton in
-            let alert = UIAlertController(title: "Select a Course", message: "Your post will be created in the course you select, and only users enrolled in that course will be able to see it.", preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course/group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
             
-            var pickerValues = [String: Course]()
-            for course in self.coursesForPicker {
-                pickerValues[course.courseFullName] = course
+            var pickerValues = [String: NBModel]()
+            for object in self.objectsForPicker {
+                print("object: ", object.url)
+                if object is Course {
+                    pickerValues[(object as! Course).courseFullName] = object
+                    
+                }
+                else if object is Group {
+                    pickerValues[("Group: " + (object as! Group).name)] = object
+                }
             }
+
             let demoValues = pickerValues.keys
             let keysArray = Array(demoValues)
             let pickerViewValues: [[String]] = [keysArray.map { $0.description }]
-            let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: 2)
-
+            
+            let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: self.selectedIndex)
+            
             alert.addPickerView(values: pickerViewValues, initialSelection: demoSelectedValue) { vc, picker, index, values in
                 let selectedItem = values[index.column][index.row]
                 print("picker item selected: ", selectedItem)
-                self.selectedCourse = pickerValues[selectedItem]
-                self.pinnedButton.isEnabled = (self.selectedCourse.enrollmentForUser?.role == .professor)
+                self.selectedObject = pickerValues[selectedItem]
+                self.selectedIndex = index.row
+                if self.selectedObject is Course {
+                    self.pinnedButton.isEnabled = (self.selectedObject as! Course).enrollmentForUser?.role == .professor
+                    self.fakeNavTitle.title = (self.selectedObject as! Course).courseFullName
+                }
+                else if self.selectedObject is Group {
+                    self.pinnedButton.isEnabled = (self.selectedObject as! Group).enrollmentForUser?.role == .admin
+                    self.fakeNavTitle.title = (self.selectedObject as! Group).name
+                }
             }
             alert.addAction(title: "Done", style: .cancel)
             
@@ -187,7 +209,15 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.pinnedToggle.toggle()
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
-        pinnedButton.isEnabled = (selectedCourse.enrollmentForUser?.role == .professor)
+        if self.selectedObject is Course {
+            self.pinnedButton.isEnabled = (self.selectedObject as! Course).enrollmentForUser?.role == .professor
+            self.fakeNavTitle.title = (self.selectedObject as! Course).courseFullName
+        }
+        else if self.selectedObject is Group {
+            self.pinnedButton.isEnabled = (self.selectedObject as! Group).enrollmentForUser?.role == .admin
+            self.fakeNavTitle.title = (self.selectedObject as! Group).name
+        }
+        
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
         bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
         bar.isTranslucent = true
@@ -222,14 +252,18 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             var jsonPayload: Any?
             if self.editingExistingPost {
                 jsonPayload = ["text": postText!]
-                let putReq = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
+                _ = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
             }
             else {
-                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedCourse.url.absoluteString)", "_parent": "\(self.selectedCourse.url.absoluteString)", "_related": "\(self.selectedCourse.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.selectedCourse.enrollmentForUser?.role == .professor) ? self.pinnedToggle :  false)]
+                
+                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedObject.url.absoluteString)", "_parent": "\(self.selectedObject.url.absoluteString)", "_related": "\(self.selectedObject.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.pinnedButton.isEnabled) ? self.pinnedToggle :  false)]
                 let postReq = NBNetworking.shared.request(.post, url: Post.endpoint, json: jsonPayload)
                 let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
+                    TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
+                        TTLog.debug("attachment: ", file)
+                        TTLog.debug("uploading attachment: ", file)
                         let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
                         let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
                     }
@@ -281,9 +315,9 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
                     cell.attachmentFileID = fileID
+                    TTLog.debug("fileid: ", cell.attachmentFileID)
+                    self.attachmentIDs.append(cell.attachmentFileID)
                     DispatchQueue.main.async(execute: {
-                        TTLog.debug("fileid: ", cell.attachmentFileID)
-                        self.attachmentIDs.append(cell.attachmentFileID)
                         cell.imageView.uploadCompleted()
                     })
                 })
@@ -375,7 +409,21 @@ class UploadImageAttachmentCell: AttachmentCell {
 
     private func setup() {
         containerView.addSubview(imageView)
-        imageView.style = .roundWith(lineWdith: 4.0, lineColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1))
+        imageView.fillSuperview()
+        imageView.style = .sector
     }
 }
 
+private extension UIView {
+    
+    func fillSuperview() {
+        guard let superview = self.superview else {
+            return
+        }
+        translatesAutoresizingMaskIntoConstraints = false
+        leftAnchor.constraint(equalTo: superview.leftAnchor).isActive = true
+        rightAnchor.constraint(equalTo: superview.rightAnchor).isActive = true
+        topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
+        bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
+}
+}

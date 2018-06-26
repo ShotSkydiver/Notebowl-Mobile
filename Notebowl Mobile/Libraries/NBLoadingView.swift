@@ -204,7 +204,6 @@ class NBLoadingView: UIView, CAAnimationDelegate {
         return oval3Path
     }
     
-    
     func showLoadView(_ show: Bool, completionHandler: (() -> Swift.Void)? = nil) {
         
         UIView.animate(withDuration: 0.3, delay: 0.0, animations: {

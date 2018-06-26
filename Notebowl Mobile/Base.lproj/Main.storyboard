@@ -443,6 +443,10 @@
                                     <constraint firstAttribute="height" constant="44" id="65W-dT-KbR"/>
                                 </constraints>
                                 <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                    <color key="textColor" name="Backdrop Color"/>
+                                </textAttributes>
                                 <items>
                                     <navigationItem largeTitleDisplayMode="never" id="hcz-xE-HcV">
                                         <barButtonItem key="leftBarButtonItem" image="close-vector" id="XaM-lz-BPi">
@@ -456,7 +460,7 @@
                                 </items>
                             </navigationBar>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="bJt-gw-CTl" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                <rect key="frame" x="20" y="104" width="46" height="46"/>
+                                <rect key="frame" x="20" y="84" width="46" height="46"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="Gjd-SR-jZi"/>
                                     <constraint firstAttribute="width" constant="46" id="eAi-6P-UvX"/>
@@ -467,8 +471,8 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="91D-dL-ydz" customClass="PlaceholderTextView" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                <rect key="frame" x="81" y="104" width="314" height="271"/>
+                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="91D-dL-ydz" customClass="PlaceholderTextView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                                <rect key="frame" x="76" y="84" width="319" height="291"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -486,8 +490,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="91D-dL-ydz" firstAttribute="top" secondItem="bLz-kn-epM" secondAttribute="bottom" constant="40" id="LQu-ZN-kEn"/>
-                            <constraint firstItem="91D-dL-ydz" firstAttribute="leading" secondItem="bJt-gw-CTl" secondAttribute="trailing" constant="15" id="WsD-wz-AXl"/>
+                            <constraint firstItem="91D-dL-ydz" firstAttribute="top" secondItem="bLz-kn-epM" secondAttribute="bottom" constant="20" id="LQu-ZN-kEn"/>
+                            <constraint firstItem="91D-dL-ydz" firstAttribute="leading" secondItem="bJt-gw-CTl" secondAttribute="trailing" constant="10" id="WsD-wz-AXl"/>
                             <constraint firstItem="DSM-8Y-8h4" firstAttribute="bottom" secondItem="91D-dL-ydz" secondAttribute="bottom" constant="361" id="duH-vB-BQs"/>
                             <constraint firstItem="91D-dL-ydz" firstAttribute="top" secondItem="bJt-gw-CTl" secondAttribute="top" id="ea4-1f-5hC"/>
                             <constraint firstItem="bJt-gw-CTl" firstAttribute="leading" secondItem="1sn-Lb-ABr" secondAttribute="leadingMargin" id="hhx-Zd-8Rg"/>
@@ -501,6 +505,7 @@
                     <connections>
                         <outlet property="dismissButton" destination="XaM-lz-BPi" id="XcM-IR-Spc"/>
                         <outlet property="fakeNavBar" destination="bLz-kn-epM" id="GyY-v7-r8k"/>
+                        <outlet property="fakeNavTitle" destination="hcz-xE-HcV" id="l4L-lK-x4u"/>
                         <outlet property="postButtonBarItem" destination="Z22-f6-zfW" id="NPc-An-bsc"/>
                         <outlet property="postTextView" destination="91D-dL-ydz" id="hEn-nq-DZY"/>
                         <outlet property="userAvatar" destination="bJt-gw-CTl" id="wcs-ti-wKM"/>
@@ -575,8 +580,8 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Profile Picture" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Pug-A1-Ha8">
                                                     <rect key="frame" x="20" y="0.0" width="357" height="43.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
-                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Backdrop Color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -594,10 +599,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="About" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UpL-Na-1ij">
-                                                    <rect key="frame" x="19.999999999999996" y="12.999999999999998" width="43.666666666666664" height="19.333333333333332"/>
+                                                    <rect key="frame" x="20.000000000000004" y="11.999999999999998" width="46.333333333333336" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
-                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Backdrop Color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Version 1.3.64" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
@@ -755,9 +760,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="2" sectionFooterHeight="15" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72" customClass="HomeTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="2" sectionFooterHeight="15" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-xz-W72" customClass="HomeTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                                <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
@@ -797,7 +802,7 @@
         <scene sceneID="LWz-jU-F1G">
             <objects>
                 <tableViewController title="Post Detail" hidesBottomBarWhenPushed="YES" id="kph-Ic-KZb" customClass="HomeFeedPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="10" contentViewInsetsToSafeArea="NO" id="gWs-Cs-Laa">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="10" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" id="gWs-Cs-Laa">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>

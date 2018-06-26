@@ -26,7 +26,6 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     override func viewDidLoad() {
         TTLog.testing("homeVC didload")
         super.viewDidLoad()
-        self.setNeedsStatusBarAppearanceUpdate()
         HomeFeedWritePostCell.register(in: bulletinTableView)
         HomeFeedPostCell.register(in: bulletinTableView)
         placeholderTableView = bulletinTableView
@@ -66,6 +65,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     
     override func viewWillAppear(_ animated: Bool) {
         TTLog.testing("homeVC willappear")
+        self.setNeedsStatusBarAppearanceUpdate()
+        self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
         let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
         
@@ -88,8 +89,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            destVC.coursesForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
-            destVC.selectedCourse = destVC.coursesForPicker.first!
+            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            var combined = Array(Set(courseForPicker as [NBModel]) + ((NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]) as [NBModel]))
+            combined.sort() { $0.itemType < $1.itemType }
+            destVC.objectsForPicker = combined
+            destVC.selectedObject = destVC.objectsForPicker.first!
             if let senderCell = sender as? HomeFeedPostCell {
                 TTLog.debug("editing existing post!")
                 destVC.editingExistingPost = true
@@ -113,7 +117,13 @@ extension HomeFeedViewController {
             let indexOfPost = self.posts.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingPost = self.bulletinTableView.numberOfRows(inSection: 1) < self.posts.count ? false : true
             
-            existingPost == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+            if existingPost == false {
+                indexes.insertIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+            }
+            else {
+                self.posts.first(where: { $0.resourceKey == newObject.resourceKey })!.refresh()
+                indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+            }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.url.absoluteURL.lastPathComponent }) {
@@ -215,7 +225,7 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
-        if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedWritePostCell {
+        if (tableView.cellForRow(at: indexPath) as? HomeFeedWritePostCell) != nil {
             self.performSegue(withIdentifier: "createPostSegue", sender: nil)
         }
         else if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedPostCell {
@@ -266,7 +276,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
+            _ = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -276,12 +286,12 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)

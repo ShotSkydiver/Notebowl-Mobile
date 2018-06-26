@@ -172,10 +172,10 @@ class HomeFeedCommentCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionV
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
         DispatchQueue.main.async {
             if (!self.commentLikeButton.isSelected) {
-                NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
+                _ = NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
             }
             else if (self.commentLikeButton.isSelected) {
-                NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
+                _ = NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.commentForCell.url.absoluteString)"])
             }
         }
     }

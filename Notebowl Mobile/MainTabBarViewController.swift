@@ -20,7 +20,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setNeedsStatusBarAppearanceUpdate()
         self.delegate = self
         addLoadingView()
     }
@@ -70,6 +69,9 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 let _ = (rootViews[2].topViewController as! NotificationsTableViewController).view
                 homeVC.reloadTable()
                 self.bgView.showViewAnimated(false)
+                self.bgView.isHidden = true
+                self.loadingView.isHidden = true
+                self.setNeedsStatusBarAppearanceUpdate()
             }
         }
     }

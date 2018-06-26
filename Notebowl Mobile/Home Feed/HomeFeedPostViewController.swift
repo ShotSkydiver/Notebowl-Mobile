@@ -42,7 +42,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         let manager = AttachmentManager()
         manager.delegate = self
         manager.isPersistent = false
-        manager.showAddAttachmentCell = false
+        manager.showAddAttachmentCell = true
         return manager
     }()
     
@@ -86,6 +86,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     self.showingPhotoPicker = true
                     var config = YPImagePickerConfiguration()
                     config.targetImageSize = .cappedTo(size: 1024)
+                    config.library.maxNumberOfItems = 10
+                    config.library.skipSelectionsGallery = true
                     config.albumName = "Notebowl Photos"
                     config.startOnScreen = .library
                     config.showsCrop = .none
@@ -105,6 +107,16 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                             picker.dismiss(animated: true, completion: nil)
                         }
                         else if !cancelled {
+                            self.showingPhotoPicker = false
+                            picker.dismiss(animated: true, completion: {
+                                for item in items {
+                                    if case .photo(let photo) = item {
+                                        self.attachmentManager.handleInput(of: photo.image)
+                                    }
+                                }
+                            })
+                            
+                            /*
                             let item = items.first!
                             switch item {
                             case .photo(let photo):
@@ -119,6 +131,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                             default:
                                 picker.dismiss(animated: true, completion: nil)
                             }
+                            */
                         }
                     })
                     
@@ -132,6 +145,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             },
             .flexibleSpace,
             makeButton(named: "visibility_on-vector")
+                .configure {
+                    $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                }
                 .onSelected { anonButton in
                     self.anonymousToggle.toggle()
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
@@ -141,10 +157,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 $0.layer.cornerRadius = 8
                 $0.layer.borderWidth = 1.5
                 $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
-                $0.title = "Post"
+                $0.title = "Reply"
                 $0.setTitleColor(.groupTableViewBackground, for: .normal)
                 $0.setTitleColor(.groupTableViewBackground, for: .highlighted)
-                $0.setSize(CGSize(width: 52, height: 30), animated: viewIsLoaded)
+                $0.setSize(CGSize(width: 52, height: 36), animated: viewIsLoaded)
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = UIColor.groupTableViewBackground
@@ -343,7 +359,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.post.postComments.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            NBNetworking.shared.request(.delete, url: selectedCell.commentForCell.url.absoluteString)
+            _ = NBNetworking.shared.request(.delete, url: selectedCell.commentForCell.url.absoluteString)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -353,12 +369,12 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
-                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
-                NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -410,14 +426,10 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate {
         TTLog.debug("att did reload")
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        if let libraryButton = bar.bottomStackViewItems[0] as? InputBarButtonItem {
-            libraryButton.isEnabled = manager.attachments.count < 1
-        }
+ 
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        if let libraryButton = bar.bottomStackViewItems[0] as? InputBarButtonItem {
-            libraryButton.isEnabled = manager.attachments.count < 1
-        }
+  
     }
     
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {

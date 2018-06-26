@@ -55,13 +55,13 @@
                                 <color key="value" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="size" keyPath="offsetShadow">
-                                <size key="value" width="1" height="1"/>
+                                <size key="value" width="0.0" height="0.0"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="number" keyPath="opacityShadow">
                                 <real key="value" value="0.87"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="number" keyPath="radiusShadow">
-                                <real key="value" value="4"/>
+                                <real key="value" value="1"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -89,7 +89,7 @@
                     <constraint firstItem="pfI-Tx-KWH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="16" id="vZ0-8t-Cai"/>
                 </constraints>
             </tableViewCellContentView>
-            <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="dummyTextField" destination="XXb-Da-NxA" id="A0k-vo-G2J"/>

@@ -59,7 +59,7 @@ class NBClient {
     public func logoutUser() {
         NBSocket.shared.manager.defaultSocket.removeAllHandlers()
         NBSocket.shared.manager.disconnect()
-        let deleteReq = NBNetworking.shared.request(.delete, url: User.endpoint)
+        _ = NBNetworking.shared.request(.delete, url: User.endpoint)
         currentUser = nil
         UserDefaults.set(hasUserLoggedIn: false)
     }

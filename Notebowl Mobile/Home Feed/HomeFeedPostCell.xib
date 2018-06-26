@@ -5,6 +5,7 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -14,7 +15,7 @@
         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="postCell" rowHeight="260" id="N3g-5j-72E" customClass="HomeFeedPostCell" customModule="Notebowl_Mobile" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="260"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="N3g-5j-72E" id="B4F-AI-Uku">
+            <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="N3g-5j-72E" id="B4F-AI-Uku">
                 <rect key="frame" x="0.0" y="0.0" width="414" height="259.66666666666669"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
@@ -33,23 +34,23 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="ASh-K4-C7H">
-                                <rect key="frame" x="64" y="5" width="314" height="228.66666666666666"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="ASh-K4-C7H">
+                                <rect key="frame" x="64" y="8" width="314" height="222.66666666666666"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ekF-Jy-sqZ" userLabel="Name/Date &amp; Button">
-                                        <rect key="frame" x="0.0" y="0.0" width="314" height="38.666666666666664"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="314" height="34.666666666666664"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="NVY-i2-RQV" userLabel="Name &amp; Date">
-                                                <rect key="frame" x="0.0" y="0.0" width="284" height="38.666666666666664"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NVY-i2-RQV" userLabel="Name &amp; Date">
+                                                <rect key="frame" x="0.0" y="0.0" width="284" height="34.666666666666664"/>
                                                 <subviews>
-                                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLX-hS-wuc">
+                                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLX-hS-wuc">
                                                         <rect key="frame" x="0.0" y="0.0" width="284" height="20.333333333333332"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                         <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="42 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7p-g9-XbK">
-                                                        <rect key="frame" x="0.0" y="24.333333333333336" width="284" height="14.333333333333336"/>
+                                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="42 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7p-g9-XbK">
+                                                        <rect key="frame" x="0.0" y="20.333333333333336" width="284" height="14.333333333333336"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -57,7 +58,7 @@
                                                 </subviews>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R1t-fO-Upb">
-                                                <rect key="frame" x="284" y="0.0" width="30" height="38.666666666666664"/>
+                                                <rect key="frame" x="284" y="0.0" width="30" height="34.666666666666664"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="tintColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                                                 <state key="normal" image="more-image"/>
@@ -67,8 +68,8 @@
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <textView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pao-Q4-Y1P">
-                                        <rect key="frame" x="0.0" y="42.666666666666657" width="314" height="48"/>
+                                    <textView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pao-Q4-Y1P">
+                                        <rect key="frame" x="0.0" y="36.666666666666664" width="314" height="51.999999999999993"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                         <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -79,8 +80,8 @@
                                         </connections>
                                     </textView>
                                     <collectionView clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="251" directionalLockEnabled="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="xSj-Sd-gPz" customClass="IndexedCollectionView" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="94.666666666666686" width="314" height="100"/>
-                                        <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
+                                        <rect key="frame" x="0.0" y="90.666666666666686" width="314" height="100"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" priority="999" constant="100" id="k3H-j8-b88"/>
@@ -97,7 +98,7 @@
                                         </connections>
                                     </collectionView>
                                     <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="p45-IB-JJI">
-                                        <rect key="frame" x="0.0" y="198.66666666666666" width="314" height="30"/>
+                                        <rect key="frame" x="0.0" y="192.66666666666666" width="314" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dRu-2e-dXW" customClass="FaveButton" customModule="FaveButton">
                                                 <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
@@ -150,7 +151,7 @@
                                                 <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" contentMode="left" verticalHuggingPriority="251" text="Course Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BA2-Es-ZcO">
+                                            <label opaque="NO" contentMode="left" verticalHuggingPriority="251" text="Course Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BA2-Es-ZcO">
                                                 <rect key="frame" x="99.666666666666643" y="0.0" width="214.33333333333337" height="30"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                                 <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -163,11 +164,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="ASh-K4-C7H" secondAttribute="bottom" constant="5" id="5wU-Hz-jf3"/>
+                            <constraint firstAttribute="bottom" secondItem="ASh-K4-C7H" secondAttribute="bottom" constant="8" id="5wU-Hz-jf3"/>
                             <constraint firstAttribute="trailing" secondItem="ASh-K4-C7H" secondAttribute="trailing" constant="12" id="8Kk-dQ-yFL"/>
                             <constraint firstItem="Pii-Ni-aak" firstAttribute="top" secondItem="ITG-vG-2zW" secondAttribute="top" constant="8" id="G3A-Ta-Yac"/>
                             <constraint firstItem="ASh-K4-C7H" firstAttribute="leading" secondItem="ITG-vG-2zW" secondAttribute="leading" constant="64" id="kdR-xY-pcA"/>
-                            <constraint firstItem="ASh-K4-C7H" firstAttribute="top" secondItem="ITG-vG-2zW" secondAttribute="top" constant="5" id="yh3-vb-xX6"/>
+                            <constraint firstItem="ASh-K4-C7H" firstAttribute="top" secondItem="ITG-vG-2zW" secondAttribute="top" constant="8" id="yh3-vb-xX6"/>
                             <constraint firstItem="Pii-Ni-aak" firstAttribute="leading" secondItem="ITG-vG-2zW" secondAttribute="leading" constant="12" id="zQn-cQ-7rM"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
@@ -189,10 +190,13 @@
                             <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
                                 <real key="value" value="0.90000000000000002"/>
                             </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="2"/>
+                            </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
-                <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <gestureRecognizers/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="ITG-vG-2zW" secondAttribute="trailing" constant="12" id="HjQ-om-Xj3"/>
@@ -201,9 +205,11 @@
                     <constraint firstItem="ITG-vG-2zW" firstAttribute="top" secondItem="B4F-AI-Uku" secondAttribute="top" constant="9" id="olR-YF-QV1"/>
                 </constraints>
             </tableViewCellContentView>
-            <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+            <color key="tintColor" name="Notebowl Blue Color"/>
             <gestureRecognizers/>
             <viewLayoutGuide key="safeArea" id="I3B-8s-kz5"/>
+            <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
             <connections>
                 <outlet property="actionsStackView" destination="p45-IB-JJI" id="n4M-ov-vft"/>
                 <outlet property="collectionFlowLayout" destination="xbK-cd-XZy" id="Jw1-ro-lHz"/>
@@ -211,6 +217,7 @@
                 <outlet property="collectionViewHeight" destination="k3H-j8-b88" id="TlJ-5O-poU"/>
                 <outlet property="commentButton" destination="gmx-wM-sLr" id="cF5-8M-K7M"/>
                 <outlet property="courseForPost" destination="BA2-Es-ZcO" id="ymM-ur-JE2"/>
+                <outlet property="designableView" destination="ITG-vG-2zW" id="RIp-50-5Cl"/>
                 <outlet property="likeButton" destination="dRu-2e-dXW" id="LKh-nr-ifo"/>
                 <outlet property="moreButton" destination="R1t-fO-Upb" id="YjU-Hj-Zdc"/>
                 <outlet property="nameDateStackView" destination="NVY-i2-RQV" id="Uek-KW-UfK"/>
@@ -229,5 +236,8 @@
         <image name="comments-vector" width="30" height="30"/>
         <image name="more-image" width="30" height="30"/>
         <image name="thumbs_up-vector" width="30" height="30"/>
+        <namedColor name="Notebowl Blue Color">
+            <color red="0.23100000619888306" green="0.65100002288818359" blue="0.88599997758865356" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>

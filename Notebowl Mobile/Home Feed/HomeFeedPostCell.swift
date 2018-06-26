@@ -64,6 +64,7 @@ class IndexedCollectionView: UICollectionView {
 
 class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var postContentTextView: UITextView!
@@ -147,7 +148,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
             .font: UIFont.systemFont(ofSize: 15),
             .foregroundColor: UIColor.white,
             .paragraphStyle: {
-                var style = NSMutableParagraphStyle()
+                let style = NSMutableParagraphStyle()
                 style.alignment = .center
                 return style
             }()
@@ -163,7 +164,7 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
  
     func configure(post: Post) {
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
-        if likeIndicator.isAnimating && postLikes.alpha == 0.0 {
+        if likeIndicator.isAnimating || postLikes.alpha == 0.0 {
             likeIndicator.stopAnimating()
             postLikes.showViewAnimated(true)
         }
@@ -181,7 +182,9 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
  
         postedDate.text = post.createdAt.relativelyFormatted
         
-        backgroundColor = post.pinned ? #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 0.1000000015) : UIColor(hexString: "#fdfdfd")
+        designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
+        designableView.borderColor = (post.pinned ? UIColor(hexString: "#e1e1e1") : UIColor(hexString: "#e7e7e7"))
+        designableView.borderWidth = (post.pinned ? 1.0 : 0.5)
         
         if post.isAnonymous {
             userName.text = "Anonymous"
@@ -239,10 +242,10 @@ class HomeFeedPostCell: SwipeTableViewCell, FaveButtonDelegate, UICollectionView
     func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
         DispatchQueue.main.async {
             if (!self.likeButton.isSelected) {
-                NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
+                _ = NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
             }
             else if (self.likeButton.isSelected) {
-                NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
+                _ = NBNetworking.shared.request(.post, url: Like.endpoint, data: ["_parent": "\(self.postForCell.url.absoluteString)"])
             }
         }
     }
