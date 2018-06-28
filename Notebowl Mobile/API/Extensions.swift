@@ -920,6 +920,14 @@ extension PlaceholdersProvider {
         emptyStyle.action = "Check again!"
         return emptyStyle
     }
+    static var emptyAssignments: PlaceholderData {
+        var emptyStyle = PlaceholderData()
+        emptyStyle.image = PlaceholderData.error.image
+        emptyStyle.title = "This course has no assignments!"
+        emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here."
+        emptyStyle.action = "Check again!"
+        return emptyStyle
+    }
     static var emptyNotifications: PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "thinking-face-vector")
@@ -951,6 +959,11 @@ extension PlaceholdersProvider {
     static var coursesPlaceholders: PlaceholdersProvider {
         let coursePlaceholder = Placeholder(data: emptyCourses, style: commonStyle, key: .noResultsKey)
         let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: coursePlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
+        return provider
+    }
+    static var assignmentsPlaceholders: PlaceholdersProvider {
+        let assignmentPlaceholder = Placeholder(data: emptyAssignments, style: commonStyle, key: .noResultsKey)
+        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: assignmentPlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
         return provider
     }
     static var notifsPlaceholders: PlaceholdersProvider {

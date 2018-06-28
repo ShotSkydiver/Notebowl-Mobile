@@ -126,7 +126,7 @@ extension HomeFeedViewController {
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.url.absoluteURL.lastPathComponent }) {
+            if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
                 if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
@@ -163,7 +163,7 @@ extension HomeFeedViewController {
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.url.absoluteURL.lastPathComponent }) {
+            if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
                 if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
@@ -267,6 +267,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground
         edit.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.5137254902, blue: 0.7411764706, alpha: 1)
+        edit.hidesWhenSelected = true
         edit.fulfill(with: .reset)
         
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in

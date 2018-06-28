@@ -700,7 +700,7 @@ class Response<T>: Generic where T: NBModel {
     }
     
     func updateLikes() {
-        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.url == self.url }) as! [Like]
+        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
         if postLikes.isEmpty || postLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
@@ -723,9 +723,9 @@ class Response<T>: Generic where T: NBModel {
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
         }
         
-        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.url == self.url }) as! [Comment]
+        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.resourceKey == self.resourceKey }) as! [Comment]
         self.postComments = NBClient.shared.initArray(from: self.postComments)
-        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.url == self.url }) as! [Attachment]
+        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
         updateLikes()
     }
 }
@@ -801,10 +801,10 @@ class Response<T>: Generic where T: NBModel {
     }
     
     public func getAttachments() {
-        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.url == self.url }) as! [Attachment]
+        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
     }
     public func updateLikes() {
-        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.url == self.url }) as! [Like]
+        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
         if commentLikes.isEmpty || commentLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil

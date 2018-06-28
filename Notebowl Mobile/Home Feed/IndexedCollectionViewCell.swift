@@ -34,7 +34,7 @@ class IndexedCollectionViewCell: UICollectionViewCell {
     
     func cellDisplaysOverlay(count: String, forceUpdate: Bool) {
         
-        if ((attachmentCount.text?.count)! < 2) || (attachmentOverlay.alpha == 0.0) || (forceUpdate) {
+        if ((attachmentCount.text?.count)! < 2) || (attachmentOverlay.alpha == 0.0) || (forceUpdate) || (attachmentCount.text != count) {
             attachmentCount.text = count
             attachmentOverlay.showViewAnimated(true, alpha: 0.7)
         }

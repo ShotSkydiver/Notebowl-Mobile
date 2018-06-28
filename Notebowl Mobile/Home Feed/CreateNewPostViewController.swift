@@ -88,8 +88,21 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         postTextView.delegate = self
         if editingExistingPost {
             postTextView.text = existingPostToEdit.text!
-   
+            postButtonBarItem.postButton.setTitle("Edit", for: .normal)
+            for attachment in existingPostToEdit.postAttachments {
+                if attachment.type.contains("image") {
+                    KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                        if let retrievedImage = image {
+                            self.attachmentManager.handleInput(of: retrievedImage)
+                        }
+                    })
+                    
+                }
+                
+            }
+            
         }
+        
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
     }
     
@@ -252,7 +265,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             var jsonPayload: Any?
             if self.editingExistingPost {
                 jsonPayload = ["text": postText!]
-                _ = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
+                let putReq = NBNetworking.shared.request(.put, url: self.existingPostToEdit.url.absoluteString, json: jsonPayload)
+                
+                if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
+                    TTLog.debug("attachment count: ", self.attachmentIDs.count)
+                    for file in self.attachmentIDs {
+                        TTLog.debug("uploading attachment: ", file)
+                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(self.existingPostToEdit.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+                        let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                    }
+                }
             }
             else {
                 
@@ -262,7 +284,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
-                        TTLog.debug("attachment: ", file)
                         TTLog.debug("uploading attachment: ", file)
                         let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
                         let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
@@ -290,18 +311,39 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
+    
+        
         
         if case .image(let image) = attachment {
+            
+            if self.editingExistingPost {
+
+                if indexPath.row < self.existingPostToEdit.postAttachments.count {
+                    guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
+                        fatalError()
+                    }
+                    TTLog.debug("this is an existing attachment!")
+                    cell.attachment = attachment
+                    cell.indexPath = indexPath
+                    cell.manager = manager
+                    cell.imageView.image = image
+
+                    return cell
+                }
+            }
+            
+            
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
             TTLog.debug("cellfor attachment")
             cell.attachment = attachment
             cell.indexPath = indexPath
-            cell.manager = self.attachmentManager
+            cell.manager = manager
             cell.imageView.image = image
 
             if !cell.uploadStarted {
+
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
                         params: ["uuid": UIDevice().uuid],
@@ -321,11 +363,13 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                         cell.imageView.uploadCompleted()
                     })
                 })
-                
                 upload.task?.resume()
             }
+            
+            
             return cell
         }
+        
         else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
@@ -358,6 +402,12 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
         TTLog.debug("manager didinsert")
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
+        TTLog.debug("manager didremove")
+        if self.editingExistingPost {
+            let deletedAttachment = self.existingPostToEdit.postAttachments.remove(at: index)
+            let delete = NBNetworking.shared.request(.delete, url: deletedAttachment.url.absoluteString)
+            TTLog.warning("delete url request: ", delete.description)
+        }
         
     }
 }
@@ -386,6 +436,7 @@ class UploadImageAttachmentCell: AttachmentCell {
     }
     public var attachmentFileID: String!
     public var uploadStarted: Bool = false
+    public var isExistingAttachment: Bool = false
     
     open let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -425,5 +476,5 @@ private extension UIView {
         rightAnchor.constraint(equalTo: superview.rightAnchor).isActive = true
         topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
         bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
-}
+    }
 }

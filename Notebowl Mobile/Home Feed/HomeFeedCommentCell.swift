@@ -62,10 +62,10 @@ class CommentCollectionView: UICollectionView {
 
 class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
-    @IBOutlet weak var commentContent: UILabel!
-    @IBOutlet weak var commentTextViewContent: UITextView!
+    @IBOutlet weak var commentContent: UITextView!
     @IBOutlet weak var commentLikes: UILabel!
     @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
@@ -106,6 +106,8 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         
+        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal), for: .normal)
+        
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
     }
@@ -131,6 +133,13 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             )
         }
 
+        if lightboxPhotos.isEmpty {
+            for attachment in comment.commentAttachments {
+                let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
+                self.lightboxPhotos.append(lightboxPhoto)
+            }
+        }
+        
         if (!comment.commentAttachments.isEmpty) && (comment.commentAttachments.first!.type != nil) {
             if (comment.commentAttachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
@@ -227,7 +236,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.row == 2 {
+            if indexPath.row == 2 && indexPath.row < self.commentForCell.commentAttachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.commentForCell.commentAttachments.count-2)", forceUpdate: false)
             }
             else {
@@ -266,7 +275,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

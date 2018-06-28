@@ -299,7 +299,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.row == 2 {
+            if indexPath.row == 2 && indexPath.row < self.postForCell.postAttachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.postForCell.postAttachments.count-2)", forceUpdate: false)
             }
             else {

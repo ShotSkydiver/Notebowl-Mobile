@@ -8,9 +8,11 @@
 
 import Foundation
 import UIKit
+import HGPlaceholders
 
-class CourseAssignmentsTableView: UITableViewController, UpdateVC {
+class CourseAssignmentsTableView: UITableViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
+    var placeholderTableView: TableView?
     
     var assignments: [Assignment]!
     var data = [Category: [Assignment]]()
@@ -28,8 +30,16 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
         
+        placeholderTableView = tableView as? TableView
+        placeholderTableView?.placeholderDelegate = self
+        
         self.getTableData()
     }
+    
+    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
+        self.getTableData()
+    }
+
     
     func getTableData() {
         loadingView.showLoadView(true)
@@ -198,5 +208,11 @@ extension CourseAssignmentsTableView {
             TTLog.warning("COMPLETED????")
             self.indexes = Paths()
         }
+    }
+}
+
+class AssignmentTableView: TableView {
+    override func customSetup() {
+        placeholdersProvider = .assignmentsPlaceholders
     }
 }
