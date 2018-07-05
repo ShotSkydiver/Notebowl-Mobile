@@ -32,6 +32,9 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
     }
+    @IBAction func profileButtonTapped(_ sender: Any) {
+        self.performSegue(withIdentifier: "segueNotifDeck", sender: nil)
+    }
     
     func setupNavBar() {
         navigationController?.navigationBar.shadowImage = UIImage.init()
@@ -44,10 +47,13 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         
         self.view.layer.masksToBounds = false
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //markAsSeen()
+        markAsSeen()
     }
     
     func markAsSeen() {
@@ -83,10 +89,17 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         cell.notification = notificationForCell
         cell.notificationContent.text = notificationForCell.text
         cell.notificationDate.text = notificationForCell.createdAt.relativelyFormatted
-        cell.userAvatar.kf.indicatorType = .activity
-        cell.userAvatar.kf.setImage(with: notificationForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-            cell.setNeedsLayout()
-        })
+        
+        let imgUrl = notificationForCell.userProfilePicURL
+        
+        cell.userAvatar.kf.setImage(with: imgUrl.appendingQueryParameters(["uuid": UIDevice().uuid]),
+                                    options: [
+                                        .transition(ImageTransition.fade(0.3)),
+                                        .keepCurrentImageWhileLoading
+            ]
+        )
+        cell.userAvatar.contentMode = .scaleAspectFill
+        
         return cell
     }
     

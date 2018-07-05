@@ -681,6 +681,16 @@ class KerningLabel: UILabel {
     }
 }
 
+extension UITextView {
+    public func wrapToContent() {
+        contentInset = UIEdgeInsets.zero
+        scrollIndicatorInsets = UIEdgeInsets.zero
+        contentOffset = CGPoint.zero
+        textContainerInset = UIEdgeInsets.zero
+        textContainer.lineFragmentPadding = 0
+        sizeToFit()
+    }
+}
 
 extension Double {
     func rounded(toPlaces places:Int) -> Double {
@@ -900,6 +910,21 @@ extension Dictionary {
         var result = lhs
         rhs.forEach { result[$0] = $1 }
         return result
+    }
+    
+    /// SwifterSwift: Append the keys and values from the second dictionary into the first one.
+    ///
+    ///        var dict : [String : String] = ["key1" : "value1"]
+    ///        let dict2 : [String : String] = ["key2" : "value2"]
+    ///        dict += dict2
+    ///        dict["key1"] -> "value1"
+    ///        dict["key2"] -> "value2"
+    ///
+    /// - Parameters:
+    ///   - lhs: dictionary
+    ///   - rhs: dictionary
+    public static func += (lhs: inout [Key: Value], rhs: [Key: Value]) {
+        rhs.forEach { lhs[$0] = $1}
     }
 }
 extension PlaceholdersProvider {

@@ -14,58 +14,20 @@ import Kingfisher
 import MMUploadImage
 import FaceAware
 import YPImagePicker
+import AcknowList
 
 protocol ContainerToMaster {
     func startUpload(image:UIImage)
     func uploadingImage()
 }
 
-class AccountModalViewController: UIViewController, ContainerToMaster {
-    
-    @IBOutlet weak var profilePicture: ProfileImageView!
-    @IBOutlet weak var userName: UILabel!
-    @IBOutlet weak var userEmail: UILabel!
-    @IBOutlet weak var doneButton: UIButton!
+class AccountModalViewController: UIViewController {
     @IBOutlet var containerView: UIView!
-    
-    var containerViewController: AccountModalTableViewController?
-    var menu: UIAlertController!
-    var dismissWithUpdate: Bool = false
-    var progress: Float = 0.0
-    var selectedImage: UIImage!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         modalPresentationCapturesStatusBarAppearance = true
         self.setNeedsStatusBarAppearanceUpdate()
-        
-        updateInfo()
-        profilePicture.style = .sector
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "modalEmbedSegue" {
-            guard let navVC = segue.destination as? UINavigationController else {
-                return
-            }
-            containerViewController = navVC.topViewController as? AccountModalTableViewController
-            containerViewController!.containerToMaster = self
-        }
-    }
-    
-    func updateInfo() {
-        doneButton.tintColor = UIImage().createGradientImage(size: 50).gradientColor
-        profilePicture.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
-                                   options: [
-                                    .transition(ImageTransition.fade(0.3)),
-                                    .forceTransition,
-                                    .keepCurrentImageWhileLoading
-            ]
-        )
-        profilePicture.contentMode = .scaleAspectFill
-
-        userName.text = NBClient.shared.getCurrentUser().fullName
-        userEmail.text = NBClient.shared.getCurrentUser().email
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -74,6 +36,54 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
     
     @IBAction func done(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+}
+
+class AccountModalTableViewController: UITableViewController {
+    var menu: UIAlertController!
+    var dismissWithUpdate: Bool = false
+    var progress: Float = 0.0
+    var selectedImage: UIImage!
+    
+    @IBOutlet weak var profilePicture: ProfileImageView!
+    @IBOutlet weak var userName: UILabel!
+    @IBOutlet weak var userEmail: UILabel!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        updateInfo()
+        profilePicture.style = .sector
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(changeProfilePic(_:)))
+        tapGesture.numberOfTapsRequired = 1
+        tapGesture.numberOfTouchesRequired = 1
+        profilePicture.addGestureRecognizer(tapGesture)
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
+        self.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+    }
+    
+    @IBAction func doneButtonTapped(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func changeProfilePic(_ sender: Any) {
+        setupMenuForAlert()
+    }
+    
+    func updateInfo() {
+        profilePicture.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    .forceTransition,
+                                    .keepCurrentImageWhileLoading
+            ]
+        )
+        profilePicture.contentMode = .scaleAspectFill
+        
+        userName.text = NBClient.shared.getCurrentUser().fullName
+        userEmail.text = NBClient.shared.getCurrentUser().email
     }
     
     func startUpload(image: UIImage) {
@@ -93,6 +103,9 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
                                                         self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
                                                     })
         }, asyncCompletionHandler: { r in
+            NBClient.shared.resolveCurrentUser(true, completionHandler: {
+                TTLog.debug("refreshed current user")
+            })
             DispatchQueue.main.async(execute: {
                 self.profilePicture.uploadCompleted()
             })
@@ -100,20 +113,10 @@ class AccountModalViewController: UIViewController, ContainerToMaster {
         
         upload.task?.resume()
     }
-}
-
-class AccountModalTableViewController: UITableViewController {
-    var containerToMaster: ContainerToMaster?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
-    }
     
     func setupMenuForAlert() {
         var config = YPImagePickerConfiguration()
+        config.isScrollToChangeModesEnabled = false
         config.targetImageSize = .cappedTo(size: 1024)
         config.albumName = "Notebowl Photos"
         config.startOnScreen = .library
@@ -122,7 +125,6 @@ class AccountModalTableViewController: UITableViewController {
         config.showsFilters = false
         config.library.maxNumberOfItems = 1
         config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-        config.icons.cropIcon = UIImage(named: "crop-vector")!
         config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
         let picker = YPImagePicker(configuration: config)
@@ -136,9 +138,9 @@ class AccountModalTableViewController: UITableViewController {
                 let item = items.first!
                 switch item {
                 case .photo(let photo):
-                    self.containerToMaster?.startUpload(image: photo.image)
+                    self.startUpload(image: photo.image)
                     picker.dismiss(animated: true, completion: {
-                        self.containerToMaster?.uploadingImage()
+                        self.uploadingImage()
                     })
                 default:
                     picker.dismiss(animated: true, completion: nil)
@@ -169,16 +171,14 @@ class AccountModalTableViewController: UITableViewController {
         else if cell.reuseIdentifier == "pushSettingsCell" {
             TTLog.debug("push settings!")
         }
+        else if cell.reuseIdentifier == "appInfoCell" {
+            let ackViewController = AcknowListViewController()
+            navigationController?.pushViewController(ackViewController, animated: true)
+        }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.logoutUser()
             let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
             rootViewController.dismiss(animated: true, completion: nil)
         }
-        else if cell.reuseIdentifier == "appearanceCell" {
-            let urlObj = NSURL.init(string:UIApplicationOpenSettingsURLString)
-            UIApplication.shared.open(urlObj! as URL, options: [ : ], completionHandler: { Success in
-                })
-        }
-   
     }
 }

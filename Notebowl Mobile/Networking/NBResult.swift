@@ -27,7 +27,7 @@ final class NBResult: NSObject {
         self.task = task
     }
     
-    var statusCode: HTTPStatusCode? { return (response as! HTTPURLResponse).statusCodeValue }
+    var statusCode: HTTPStatusCode? { return response != nil ? (response as! HTTPURLResponse).statusCodeValue : nil }
     var reason: String { return (statusCode?.description)! }
     
     override var description: String { return ("\(request!.httpMethod!) \(request!.url!.absoluteString) \(statusCode!.description)") }

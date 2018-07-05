@@ -13,7 +13,6 @@ import FaveButton
 import Haptica
 import ObjectMapper
 import SocketIO
-import NVActivityIndicatorView
 import SwipeCellKit
 import Lightbox
 import FaceAware
@@ -66,6 +65,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     
     @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
+    @IBOutlet weak var pinnedRibbon: UIImageView!
+    @IBOutlet weak var userAvatarConstraint: NSLayoutConstraint!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var postContentTextView: UITextView!
     @IBOutlet weak var postedDate: UILabel!
@@ -83,7 +84,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     
     var images = [UIImage]()
     var lightboxPhotos = [LightboxImage]()
-    var likeIndicator: NVActivityIndicatorView!
     var postForCell: Post!
     var tempCount: Int?
     var collectionViewPaginatedScroll: Bool?
@@ -112,8 +112,10 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         collectionView.register(UINib(nibName: "IndexedCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: IndexedCollectionViewCell.identifier)
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
+        userAvatarConstraint.constant = 12.0
         
-        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal), for: .normal)
+        // postContentTextView.wrapToContent()
+        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nameDateTapped(_:)))
         tapGesture.numberOfTapsRequired = 1
@@ -159,34 +161,42 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         TTLog.debug("nameDate tapped!")
     }
     
- 
     func configure(post: Post) {
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
+        postLikes.text = post.postLikes.isEmpty ? " " : "\(post.postLikes.count)"
+        postComments.text = post.postComments.isEmpty ? " " : "\(post.postComments.count)"
         
-        postLikes.text = post.postLikes.isEmpty ? "0" : "\(post.postLikes.count)"
-        postComments.text = post.postComments.isEmpty ? "0" : "\(post.postComments.count)"
-        postContentTextView.text = post.text
+        if post.text == nil { postContentTextView.isHidden = true }
+        else { postContentTextView.text = post.text! }
         
-        if post.owner is Course {
-            courseForPost.text = (post.owner as! Course).courseFullName
-        }
-        else if post.owner is Group {
-            courseForPost.text = (post.owner as! Group).name
-        }
+        if post.owner is Course { courseForPost.text = (post.owner as! Course).courseFullName }
+        else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
  
-        postedDate.text = post.createdAt.relativelyFormatted
+        if post.editedAt != nil { (postedDate.text = post.createdAt.relativelyFormatted + " (edited)") }
+        else { (postedDate.text = post.createdAt.relativelyFormatted) }
         
-        designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
+        designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fafafa") : UIColor(hexString: "#ffffff"))
         designableView.borderColor = (post.pinned ? UIColor(hexString: "#e1e1e1") : UIColor(hexString: "#e7e7e7"))
         designableView.borderWidth = (post.pinned ? 1.0 : 0.5)
+        
+        pinnedRibbon.isHidden = (post.pinned ? false : true)
+        userAvatarConstraint.constant = (post.pinned ? 40.0 : 12.0)
         
         if post.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")
         }
+        else if post.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+            userName.text = post.creator!.fullName
+            userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    .keepCurrentImageWhileLoading
+                ])
+        }
         else {
             userName.text = post.creator!.fullName
-            userAvatar.kf.setImage(with: post.creator.profileUrl,
+            userAvatar.kf.setImage(with: post.creator!.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
                                     .keepCurrentImageWhileLoading
@@ -208,7 +218,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         else {
             collectionViewHeight.constant = 0.0
         }
-
         self.postForCell = post
     }
     
@@ -224,7 +233,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         super.setSelected(selected, animated: animated)
     }
 
-    
     @IBAction func likeButtonTapped(_ sender: FaveButton) {
         TTLog.debug("isselected: ", sender.isSelected)
         if !sender.isSelected {
@@ -232,7 +240,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                               duration: 0.3,
                               options: .transitionCrossDissolve,
                               animations: {
-                                self.postLikes.text = "\((self.postForCell.postLikes.count - 1))"
+                                self.postLikes.text = (self.postForCell.postLikes.count - 1 == 0 ? "" : "\((self.postForCell.postLikes.count - 1))")
             }) { (_) in
                 DispatchQueue.global(qos: .default).async {
                     let tempLike = self.postForCell.likeFromCurrentUser!
@@ -243,7 +251,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                     
                     let delete = NBNetworking.shared.request(.delete, url: tempLike.url.absoluteString)
                     TTLog.warning("delete url request: ", delete.description)
-                    
                 }
             }
         }

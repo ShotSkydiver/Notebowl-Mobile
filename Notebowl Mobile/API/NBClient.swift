@@ -34,8 +34,8 @@ class NBClient {
     
     private init() { }
     
-    func resolveCurrentUser(_ completionHandler: @escaping (() -> Void)) {
-        if currentUser == nil {
+    func resolveCurrentUser(_ force: Bool? = false, completionHandler: @escaping (() -> Void)) {
+        if currentUser == nil || force! {
             TTLog.debug("currentuser nil!")
             let userReq = NBClient.shared.getMappable(User.self)
 

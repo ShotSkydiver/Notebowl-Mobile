@@ -12,7 +12,6 @@ import Kingfisher
 import FaveButton
 import Haptica
 import ObjectMapper
-import NVActivityIndicatorView
 import SwipeCellKit
 import Lightbox
 
@@ -106,7 +105,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         
-        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal), for: .normal)
+        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
         
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
@@ -115,13 +114,24 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     func configure(comment: Comment) {
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
         
-        commentLikes.text = comment.commentLikes.isEmpty ? "0" : "\(comment.commentLikes.count)"
-        commentContent.text = comment.text
-        postedDate.text = comment.createdAt.relativelyFormatted
+        commentLikes.text = comment.commentLikes.isEmpty ? " " : "\(comment.commentLikes.count)"
+        if comment.text == nil { commentContent.isHidden = true }
+        else { commentContent.text = comment.text! }
+        
+        if comment.editedAt != nil { (postedDate.text = comment.createdAt.relativelyFormatted + " (edited)") }
+        else { (postedDate.text = comment.createdAt.relativelyFormatted) }
         
         if comment.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")!
+        }
+        else if comment.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+            userName.text = comment.creator!.fullName
+            userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    .keepCurrentImageWhileLoading
+                ])
         }
         else {
             userName.text = comment.creator!.fullName
@@ -167,7 +177,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
                               duration: 0.3,
                               options: .transitionCrossDissolve,
                               animations: {
-                                self.commentLikes.text = "\((self.commentForCell.commentLikes.count - 1))"
+                                self.commentLikes.text = (self.commentForCell.commentLikes.count - 1 == 0 ? "" : "\((self.commentForCell.commentLikes.count - 1))")
             }) { (_) in
                 DispatchQueue.global(qos: .default).async {
                     let tempLike = self.commentForCell.likeFromCurrentUser!

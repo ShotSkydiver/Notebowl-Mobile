@@ -17,11 +17,13 @@ target 'Notebowl Mobile' do
     pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
     pod 'Tamamushi'
     pod 'Socket.IO-Client-Swift', '~> 13.1.0'
-    pod 'NVActivityIndicatorView'
     pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
     pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
     pod 'Lightbox'
     pod 'HTTPStatusCodes', '~> 3.2.0'
+    pod 'AcknowList'
+    pod 'MBProgressHUD', '~> 1.1.0'
+    pod 'PKHUD', '~> 5.0'
 end
 
 post_install do |installer|

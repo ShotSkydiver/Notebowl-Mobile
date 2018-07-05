@@ -13,10 +13,10 @@ import ObjectMapper
 import SocketIO
 import YPImagePicker
 import ButtonProgressBar_iOS
-import NVActivityIndicatorView
 import SwipeCellKit
+import PKHUD
 
-class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, NVActivityIndicatorViewable {
+class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC {
     var indexes: Paths = Paths()
     
     var viewIsLoaded = false
@@ -39,7 +39,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return bar
     }()
     
-    open lazy var attachmentManager: AttachmentManager = { [weak self] in
+    lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()
         manager.delegate = self
         manager.dataSource = self
@@ -71,7 +71,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         tableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
         viewIsLoaded = true
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
@@ -94,7 +97,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     config.hidesStatusBar = false
                     config.showsFilters = false
                     config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-                    config.icons.cropIcon = UIImage(named: "crop-vector")!
                     config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                     config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
                     
@@ -125,7 +127,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     self.present(picker, animated: true, completion: nil)
                     
             },
-            .flexibleSpace,
+            
             makeButton(named: "visibility_on-vector")
                 .configure {
                     $0.isEnabled = !self.editingExistingComment
@@ -133,9 +135,21 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }
                 .onSelected { anonButton in
                     self.anonymousToggle.toggle()
+                    
+                    UIView.animate(withDuration: 0.3, animations: {
+                        self.view.layoutIfNeeded()
+                        if self.anonymousToggle {
+                            self.bar.sendButton.setTitle("Reply as Anonymous", for: .normal)
+                            self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX-106), y: self.bar.sendButton.frame.minY, width: 168, height: 36)
+                        }
+                        else if !self.anonymousToggle {
+                            self.bar.sendButton.setTitle("Reply", for: .normal)
+                            self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX+106), y: self.bar.sendButton.frame.minY, width: 62, height: 36)
+                        }
+                    })
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             },
-          
+            .flexibleSpace,
             bar.sendButton.configure {
                 $0.layer.cornerRadius = 8
                 $0.layer.borderWidth = 1.5
@@ -143,12 +157,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 $0.title = "Reply"
                 $0.setTitleColor(.groupTableViewBackground, for: .normal)
                 $0.setTitleColor(.groupTableViewBackground, for: .highlighted)
-                $0.setSize(CGSize(width: 52, height: 36), animated: viewIsLoaded)
+                $0.setSize(CGSize(width: 62, height: 36), animated: viewIsLoaded)
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = UIColor.groupTableViewBackground
                 }.onEnabled {
-                    $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 90)))
+                    $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 200)))
                     $0.layer.borderColor = UIColor.clear.cgColor
                 }.onSelected {
                     $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
@@ -215,13 +229,23 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         
         bar.inputTextView.resignFirstResponder()
         bar.inputPlugins.removeAll()
-
+        resignFirstResponder()
+        
+        let newManager = AttachmentManager()
+        newManager.delegate = self
+        newManager.dataSource = self
+        newManager.isPersistent = false
+        newManager.showAddAttachmentCell = false
+        newManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
+        attachmentManager = newManager
+        
         let newBar = InputBarAccessoryView()
         newBar.delegate = self
         newBar.inputPlugins = [attachmentManager]
         bar = newBar
-
+        
         reloadInputViews()
+        becomeFirstResponder()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -361,16 +385,22 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
         
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
-            let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
                 _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+                PKHUD.sharedHUD.show()
+                PKHUD.sharedHUD.hide(afterDelay: 2.0)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
                 _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+                PKHUD.sharedHUD.show()
+                PKHUD.sharedHUD.hide(afterDelay: 2.0)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             alert.addAction(inappropriate)
@@ -386,7 +416,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         if (selectedCell.commentForCell.creator != nil) && (selectedCell.commentForCell.creator?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete] //, edit]
         }
-        else if ((post.owner as! Course).enrollmentForUser?.role == .professor) {
+        else if (post.owner!.enrollmentForUser?.role == .professor) || (post.owner!.enrollmentForUser?.role == .admin) {
             return [delete, report] // and pin
         }
         else {
@@ -398,7 +428,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
         if (selectedCell.commentForCell.creator != nil) {
-            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((post.owner as! Course).enrollmentForUser?.role == .professor) {
+            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (post.owner!.enrollmentForUser?.role == .professor) || (post.owner!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }
@@ -487,7 +517,12 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
         TTLog.debug("manager didinsert")
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        
+        TTLog.debug("removing at ", index)
+
+        self.attachmentIDs.remove(at: index)
+        self.attachmentManager.reloadData()
+        self.attachmentManager.attachmentView.reloadData()
+
     }
 }
 

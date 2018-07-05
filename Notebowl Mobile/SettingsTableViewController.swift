@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import ObjectMapper
 
+
 class SettingsTableViewController: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
     var settings: [Setting]!
@@ -61,14 +62,13 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = SettingsTableViewHeader.dequeue(from: tableView)!
-        section == 0 ? header.setupHeader(showButton: true) : header.setupHeader(showButton: false)
-        
+        header.setupHeader(showButton: false)
         header.sectionTitle.text = ( self.settingsArray != nil ? self.settingsArray[section].sectionName.uppercased() : "" )
         return header
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return ( section == 0 ?  80 :  40 )
+        return 40
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

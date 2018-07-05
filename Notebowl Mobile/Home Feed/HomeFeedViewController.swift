@@ -16,6 +16,8 @@ import ObjectMapper
 import Tamamushi
 import SwipeCellKit
 import DeckTransition
+import MBProgressHUD
+import PKHUD
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     var indexes: Paths = Paths()
@@ -35,11 +37,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+ 
     func setupNavBar() {
         navigationController?.navigationBar.shadowImage = UIImage.init()
         navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
@@ -89,10 +91,11 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
-            var combined = Array(Set(courseForPicker as [NBModel]) + ((NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]) as [NBModel]))
-            combined.sort() { $0.itemType < $1.itemType }
-            destVC.objectsForPicker = combined
+            let courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            var pickerItems = courseForPicker as [NBModel]
+            let groups = NBClient.shared.storedTypes[Group.classIdentifier]
+            pickerItems += groups!
+            destVC.objectsForPicker = pickerItems
             destVC.selectedObject = destVC.objectsForPicker.first!
             if let senderCell = sender as? HomeFeedPostCell {
                 TTLog.debug("editing existing post!")
@@ -135,12 +138,14 @@ extension HomeFeedViewController {
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                 indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
-                let postsForUser = self.posts.filter({ $0.creator.resourceKey == newObject.resourceKey })
+                let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
                 for post in postsForUser {
+                    //post.creator = NBClient.shared.getCurrentUser()
                     if let index = self.posts.index(of: post) {
                         indexes.reloadIndexPaths.append(IndexPath(row: index, section: 1))
                     }
                 }
+                
             }
         }
         else if newObject.itemType == "CourseUser" {
@@ -236,7 +241,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
             cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                         options: [
                                             .transition(ImageTransition.fade(0.3)),
-                                            // .forceTransition,
                                             .keepCurrentImageWhileLoading
                 ]
             )
@@ -280,16 +284,25 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
         
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
+            
+            
+            
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
                 _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+                PKHUD.sharedHUD.show()
+                PKHUD.sharedHUD.hide(afterDelay: 2.0)
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
                 let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
                 _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
                 alert.dismiss(animated: true, completion: nil)
+                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+                PKHUD.sharedHUD.show()
+                PKHUD.sharedHUD.hide(afterDelay: 2.0)
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             alert.addAction(inappropriate)
@@ -302,10 +315,10 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
         report.hidesWhenSelected = true
         
-        if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+        if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
             return [delete, edit]
         }
-        else if ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == .professor) {
+        else if (selectedCell.postForCell.owner!.enrollmentForUser?.role == .professor) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .admin) {
             return [delete, report] // and pin
         }
         else {
@@ -317,7 +330,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         var options = SwipeTableOptions()
         let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
         if (selectedCell.postForCell.creator != nil) {
-            if (selectedCell.postForCell.creator.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((selectedCell.postForCell.owner as! Course).enrollmentForUser?.role == .professor) {
+            if (selectedCell.postForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .professor) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }

@@ -12,16 +12,15 @@ import QuartzCore
 import ObjectMapper
 import SocketIO
 
-class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
-    var hasAppeared: Bool = false
-    
+class LoadingViewController: UIViewController {
     var loadingView: NBLoadingView!
     var bgView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.delegate = self
+        self.setNeedsStatusBarAppearanceUpdate()
         addLoadingView()
+        showLoading(show: true)
     }
     
     func addLoadingView() {
@@ -30,9 +29,33 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.view.addSubview(bgView)
     }
     
+    func showLoading(show: Bool) {
+        
+        self.loadingView.showLoadView(show)
+        self.bgView.showViewAnimated(show)
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
+    }
+}
+
+class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
+    var hasAppeared: Bool = false
+    var loadingVC: LoadingViewController!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.delegate = self
+        loadingVC = LoadingViewController()
+        
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         TTLog.testing("tabbarVC willappear")
         super.viewWillAppear(animated)
+
+        
         
         let gradColor = UIImage().createGradientImage(size: 40).gradientColor
         
@@ -58,9 +81,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     func loadAllTabs() {
         hasAppeared = true
-        self.loadingView.showLoadView(true)
-        self.bgView.showViewAnimated(true)
-        
+        self.present(loadingVC, animated: true, completion: nil)
         DispatchQueue.main.async {
             self.getData()
             let rootViews: [RootNavigationBarVC] = (self.viewControllers as! [RootNavigationBarVC])
@@ -68,10 +89,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 let _ = (rootViews[1].topViewController as! CoursesTableViewController).view
                 let _ = (rootViews[2].topViewController as! NotificationsTableViewController).view
                 homeVC.reloadTable()
-                self.bgView.showViewAnimated(false)
-                self.bgView.isHidden = true
-                self.loadingView.isHidden = true
-                self.setNeedsStatusBarAppearanceUpdate()
+                self.loadingVC.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -92,7 +110,8 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
+ 
+    
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if selectedViewController == nil || viewController == selectedViewController {
             return false
@@ -116,5 +135,9 @@ class RootNavigationBarVC: UINavigationController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
     }
 }

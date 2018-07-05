@@ -20,7 +20,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var postTextView: PlaceholderTextView!
     @IBOutlet weak var userAvatar: ProfileImageView!
-    
+    @IBOutlet weak var pickedCourseGroup: UILabel!
     @IBOutlet weak var dismissButton: UIBarButtonItem!
     @IBOutlet weak var fakeNavBar: UINavigationBar!
     @IBOutlet weak var fakeNavTitle: UINavigationItem!
@@ -55,6 +55,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     var objectsForPicker: [NBModel]!
     var selectedObject: NBModel!
     var selectedIndex: Int = 0
+    var pickerValues = [String: NBModel]()
+    var pickerViewValues = [[String]]()
+    var pickerAlert: UIAlertController!
+    
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var pinnedToggle: Bool = false
@@ -68,9 +72,30 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         self.setNeedsStatusBarAppearanceUpdate()
         becomeFirstResponder()
         postTextView.inputAccessoryView = bar
+        setupPickerValues()
         setupViews()
         setupInputBar()
         viewIsLoaded = true
+    }
+    
+    func setupPickerValues() {
+        for object in objectsForPicker {
+            print("object: ", object.url)
+            if object is Course {
+                pickerValues[(object as! Course).courseFullName] = object
+                
+            }
+            else if object is Group {
+                pickerValues[("Group: " + (object as! Group).name)] = object
+            }
+        }
+        
+        let itemTitles = pickerValues.keys
+        let keysArray = Array(itemTitles)
+        
+        pickerViewValues = [keysArray.map { $0.description }]
+        
+        
     }
     
     func setupViews() {
@@ -111,6 +136,15 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         postTextView.becomeFirstResponder()
     }
     
+    func textViewDidChange(_ textView: UITextView) {
+        if !textView.text.isEmpty || attachmentManager.attachments.count > 0 {
+            postButtonBarItem.postButton.isEnabled = true
+        }
+        else {
+            postButtonBarItem.postButton.isEnabled = false
+        }
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
@@ -130,7 +164,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             config.hidesStatusBar = false
             config.showsFilters = false
             config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-            config.icons.cropIcon = UIImage(named: "crop-vector")!
             config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             let picker = YPImagePicker(configuration: config)
@@ -161,51 +194,37 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         coursePickerButton = makeButton(image: "school-vector")
         coursePickerButton.configure {
             $0.isEnabled = !self.editingExistingPost
+            
+            
         }
         coursePickerButton.onSelected { courseButton in
-            let alert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course/group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
-            
-            var pickerValues = [String: NBModel]()
-            for object in self.objectsForPicker {
-                print("object: ", object.url)
-                if object is Course {
-                    pickerValues[(object as! Course).courseFullName] = object
-                    
-                }
-                else if object is Group {
-                    pickerValues[("Group: " + (object as! Group).name)] = object
-                }
-            }
-
-            let demoValues = pickerValues.keys
-            let keysArray = Array(demoValues)
-            let pickerViewValues: [[String]] = [keysArray.map { $0.description }]
+            self.pickerAlert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course or group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
             
             let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: self.selectedIndex)
             
-            alert.addPickerView(values: pickerViewValues, initialSelection: demoSelectedValue) { vc, picker, index, values in
+            self.pickerAlert.addPickerView(values: self.pickerViewValues, initialSelection: demoSelectedValue) { vc, picker, index, values in
                 let selectedItem = values[index.column][index.row]
                 print("picker item selected: ", selectedItem)
-                self.selectedObject = pickerValues[selectedItem]
+                self.selectedObject = self.pickerValues[selectedItem]
                 self.selectedIndex = index.row
                 if self.selectedObject is Course {
-                    self.pinnedButton.isEnabled = (self.selectedObject as! Course).enrollmentForUser?.role == .professor
-                    self.fakeNavTitle.title = (self.selectedObject as! Course).courseFullName
+                    self.pinnedButton.isHidden = !((self.selectedObject as! Course).enrollmentForUser?.role == .professor)
+                    self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Course).courseFullName)
                 }
                 else if self.selectedObject is Group {
-                    self.pinnedButton.isEnabled = (self.selectedObject as! Group).enrollmentForUser?.role == .admin
-                    self.fakeNavTitle.title = (self.selectedObject as! Group).name
+                    self.pinnedButton.isHidden = !((self.selectedObject as! Group).enrollmentForUser?.role == .admin)
+                    self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Group).name)
                 }
             }
-            alert.addAction(title: "Done", style: .cancel)
+            self.pickerAlert.addAction(title: "Done", style: .cancel)
             
-            if let popoverController = alert.popoverPresentationController {
+            if let popoverController = self.pickerAlert.popoverPresentationController {
                 popoverController.sourceView = self.view
                 popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
                 popoverController.permittedArrowDirections = []
             }
             
-            self.present(alert, animated: true, completion: nil)
+            self.present(self.pickerAlert, animated: true, completion: nil)
         }
         
         anonymousButton = makeButton(image: "visibility_on-vector")
@@ -215,6 +234,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggle()
+            self.postButtonBarItem.changeText(anon: self.anonymousToggle)
             anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "not_pinned-vector")
@@ -222,15 +242,19 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.pinnedToggle.toggle()
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
+        
         if self.selectedObject is Course {
-            self.pinnedButton.isEnabled = (self.selectedObject as! Course).enrollmentForUser?.role == .professor
-            self.fakeNavTitle.title = (self.selectedObject as! Course).courseFullName
+            self.pinnedButton.isHidden = !((self.selectedObject as! Course).enrollmentForUser?.role == .professor)
+            self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Course).courseFullName)
         }
         else if self.selectedObject is Group {
-            self.pinnedButton.isEnabled = (self.selectedObject as! Group).enrollmentForUser?.role == .admin
-            self.fakeNavTitle.title = (self.selectedObject as! Group).name
+            self.pinnedButton.isHidden = !((self.selectedObject as! Group).enrollmentForUser?.role == .admin)
+            self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Group).name)
         }
         
+        if editingExistingPost {
+            self.pickedCourseGroup.isHidden = true
+        }
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
         bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
         bar.isTranslucent = true
@@ -278,7 +302,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             }
             else {
                 
-                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedObject.url.absoluteString)", "_parent": "\(self.selectedObject.url.absoluteString)", "_related": "\(self.selectedObject.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": ((self.pinnedButton.isEnabled) ? self.pinnedToggle :  false)]
+                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedObject.url.absoluteString)", "_parent": "\(self.selectedObject.url.absoluteString)", "_related": "\(self.selectedObject.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": (!(self.pinnedButton.isHidden) ? self.pinnedToggle :  false)]
                 let postReq = NBNetworking.shared.request(.post, url: Post.endpoint, json: jsonPayload)
                 let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
@@ -400,9 +424,11 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didinsert")
+        if !postButtonBarItem.postButton.isEnabled { postButtonBarItem.postButton.isEnabled = true }
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didremove")
+        if manager.attachments.count == 0 && self.postTextView.isEmpty { postButtonBarItem.postButton.isEnabled = false }
         if self.editingExistingPost {
             let deletedAttachment = self.existingPostToEdit.postAttachments.remove(at: index)
             let delete = NBNetworking.shared.request(.delete, url: deletedAttachment.url.absoluteString)
@@ -424,9 +450,28 @@ class PostButtonNavigationItem: UIBarButtonItem {
         postButton.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
         postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
         postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
-        
+        postButton.isEnabled = false
         logoContainer.addSubview(postButton)
         self.customView = logoContainer
+    }
+    
+    func changeText(anon: Bool) {
+        if anon {
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.customView?.layoutIfNeeded()
+                self.postButton.setTitle("Post as Anonymous", for: .normal)
+                self.postButton.frame = CGRect(x: -82, y: 0, width: 160, height: 34)
+            })
+        }
+        else if !anon {
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.customView?.layoutIfNeeded()
+                self.postButton.setTitle("Post", for: .normal)
+                self.postButton.frame = CGRect(x: 0, y: 0, width: 78, height: 34)
+            })
+        }
     }
 }
 

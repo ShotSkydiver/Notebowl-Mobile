@@ -189,6 +189,8 @@ class Response<T>: Generic where T: NBModel {
     
     public var firstTimeLoading: Bool!
     public var shouldMapParent: Bool!
+    
+    public var enrollmentForUser: Enrollment?
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
@@ -311,8 +313,6 @@ class Response<T>: Generic where T: NBModel {
     public var refreshedOnce: Bool = false
 
     public var categories: [Category]!
-    
-    public var enrollmentForUser: Enrollment?
         
     override class var routeType: ItemType { return .course }
     
@@ -349,7 +349,7 @@ class Response<T>: Generic where T: NBModel {
         }
         
         if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
+            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
         }
     }
 }
@@ -548,7 +548,7 @@ class Response<T>: Generic where T: NBModel {
     }
 }
 
-@objc(Enrollment) class Enrollment: NBModel {
+@objc(Enrollment) public class Enrollment: NBModel {
     
     var role: UserRole!
     var status: String!
@@ -566,7 +566,7 @@ class Response<T>: Generic where T: NBModel {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
@@ -596,8 +596,6 @@ class Response<T>: Generic where T: NBModel {
     var starred: Bool?
 
     override class var routeType: ItemType { return .group }
-    
-    public var enrollmentForUser: Enrollment?
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -627,7 +625,7 @@ class Response<T>: Generic where T: NBModel {
         }
         
         if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { ($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey }) as? Enrollment
+            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
         }
     }
 }
@@ -645,8 +643,6 @@ class Response<T>: Generic where T: NBModel {
     var endDate: Date!
     
     override class var routeType: ItemType { return .event }
-    
-    public var enrollmentForUser: Enrollment?
     
     required public init?(map: Map) {
         super.init(map: map)
@@ -673,7 +669,7 @@ class Response<T>: Generic where T: NBModel {
     var isAnonymous: Bool!
     var pinned: Bool!
     var text: String?
-    var creator: User!
+    var creator: User?
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -720,7 +716,7 @@ class Response<T>: Generic where T: NBModel {
     }
     override public func refresh() {
         if self.creator != nil {
-            self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator.resourceKey }) as! User
+            self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator!.resourceKey }) as? User
         }
         
         self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.resourceKey == self.resourceKey }) as! [Comment]
@@ -861,6 +857,7 @@ class Response<T>: Generic where T: NBModel {
     public var unseenBool: Bool { return status == nil ? true : false }
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
+    public var userProfilePicURL: URL { return URL(string: RequestKind.rpc.requestUrl(url: "notifications/" + self.resourceKey + "/getProfilePicture"))! }
     
     override class var routeType: ItemType { return .notification }
         
@@ -877,14 +874,7 @@ class Response<T>: Generic where T: NBModel {
         text <- map["text"]
         type <- map["type"]
     }
-    
-    func getUrlForAvatar() -> URL? {
-        let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://\(NBClient.baseUrl)/rpc/v1.0/notifications/" + self.resourceKey + "/getProfilePicture")
-        var imageUrl = URL(string: sttt)
-        imageUrl?.appendQueryParameters(params)
-        return imageUrl
-    }
+
 }
 
 

@@ -1,4 +1,5 @@
 PODS:
+  - AcknowList (1.6.1)
   - Bugsnag (5.15.6)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
@@ -17,11 +18,10 @@ PODS:
   - Lightbox (2.1.2):
     - Hue (~> 3.0)
     - Imaginary (~> 3.0)
+  - MBProgressHUD (1.1.0)
   - MMUploadImage (2.0.8)
-  - NVActivityIndicatorView (4.2.1):
-    - NVActivityIndicatorView/Presenter (= 4.2.1)
-  - NVActivityIndicatorView/Presenter (4.2.1)
   - ObjectMapper (3.3.0)
+  - PKHUD (5.1.0)
   - PryntTrimmerView (2.0.1)
   - Socket.IO-Client-Swift (13.1.3):
     - Starscream (~> 3.0.2)
@@ -34,6 +34,7 @@ PODS:
     - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
+  - AcknowList
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -46,9 +47,10 @@ DEPENDENCIES:
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
   - Lightbox
+  - MBProgressHUD (~> 1.1.0)
   - MMUploadImage
-  - NVActivityIndicatorView
   - ObjectMapper (~> 3.1)
+  - PKHUD (~> 5.0)
   - Socket.IO-Client-Swift (~> 13.1.0)
   - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
   - Tamamushi
@@ -56,6 +58,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - AcknowList
     - Bugsnag
     - ButtonProgressBar-iOS
     - Cache
@@ -68,9 +71,10 @@ SPEC REPOS:
     - InputBarAccessoryView
     - Kingfisher
     - Lightbox
+    - MBProgressHUD
     - MMUploadImage
-    - NVActivityIndicatorView
     - ObjectMapper
+    - PKHUD
     - PryntTrimmerView
     - Socket.IO-Client-Swift
     - Starscream
@@ -108,6 +112,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
+  AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
   Bugsnag: 7382eb9b85b46e369be536bf08267a91a56d2753
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
@@ -123,9 +128,10 @@ SPEC CHECKSUMS:
   InputBarAccessoryView: 8b03f46a69b73655f101252bb97addb6a89592f3
   Kingfisher: 976d828df2b24834c6a3f2fc4d82cdbd26552be1
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  NVActivityIndicatorView: 8068ba3ad39cb44cbaab25d89ff2546b3f092681
   ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
+  PKHUD: 62ea46a1e88c4def1da784878d199bb54c841e3c
   PryntTrimmerView: 4260ae497a2f3e1bbfc0b71247eb74ab92bf0490
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
@@ -134,6 +140,6 @@ SPEC CHECKSUMS:
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
   YPImagePicker: 92abff4a72bb03ad259f5f0c5fc2c6c483280f1a
 
-PODFILE CHECKSUM: dc74472559cf7c304361b53844d10f4d019a9e02
+PODFILE CHECKSUM: 61ea580164c78f3db5e1f7939a728d4d93dd0b34
 
 COCOAPODS: 1.5.3
