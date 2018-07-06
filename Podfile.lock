@@ -1,6 +1,6 @@
 PODS:
   - AcknowList (1.6.1)
-  - Bugsnag (5.15.6)
+  - Bugsnag (5.16.0)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
   - DeckTransition (2.0.0)
@@ -113,7 +113,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
-  Bugsnag: 7382eb9b85b46e369be536bf08267a91a56d2753
+  Bugsnag: e195a21dae67e32a37567689ff8e0863e4a17e09
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f

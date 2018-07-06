@@ -39,8 +39,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return bar
     }()
     
-    lazy var attachmentManager: AttachmentManager = { [weak self] in
-        let manager = AttachmentManager()
+    lazy var attachmentManager: AttachmentMan = { [weak self] in
+        let manager = AttachmentMan()
         manager.delegate = self
         manager.dataSource = self
         manager.isPersistent = false
@@ -170,6 +170,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     $0.transform = CGAffineTransform.identity
             }
         ]
+        bar.sendButton.onTextViewDidChange { (button, textView) in
+            if self.attachmentManager.attachments.count > 0 {
+                button.isEnabled = true
+            }
+        }
         bar.inputTextView.placeholder = "Write a comment..."
         bar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
@@ -213,7 +218,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             DispatchQueue.main.async {
                 TTLog.debug("start nested async")
                 inputBar.inputTextView.text = String()
-                self.setupInputBar()
+                
+                self.attachmentIDs = []
+                self.anonymousToggle = false
+                inputBar.invalidatePlugins()
+                
+                
+                
             }
             
         }
@@ -231,7 +242,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         bar.inputPlugins.removeAll()
         resignFirstResponder()
         
-        let newManager = AttachmentManager()
+        let newManager = AttachmentMan()
         newManager.delegate = self
         newManager.dataSource = self
         newManager.isPersistent = false
@@ -348,6 +359,7 @@ extension HomeFeedPostViewController {
             self.tableView.beginUpdates()
             self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
             self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
+            
             if self.reloadSection {
                 self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                 self.reloadSection = false
@@ -355,6 +367,9 @@ extension HomeFeedPostViewController {
             self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
             self.tableView.endUpdates()
             TTLog.warning("COMPLETED????")
+            if !self.indexes.insertIndexPaths.isEmpty {
+                self.tableView.scrollToRow(at: self.indexes.insertIndexPaths.first!, at: .bottom, animated: true)
+            }
             self.indexes = Paths()
         }
     }
@@ -443,7 +458,13 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
 }
 
+class AttachmentMan: AttachmentManager {
+
+}
+
 extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
+    
+    
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
@@ -459,7 +480,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             cell.imageView.image = image
             
             
-            if !cell.uploadStarted {
+            if !cell.uploadStarted || cell.attachmentFileID == "" {
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
                                                          params: ["uuid": UIDevice().uuid],
@@ -472,9 +493,17 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                                                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
+                    
                     cell.attachmentFileID = fileID
                     TTLog.debug("fileid: ", cell.attachmentFileID)
-                    self.attachmentIDs.append(cell.attachmentFileID)
+
+                    if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
+                        self.attachmentIDs.append(cell.attachmentFileID)
+                    }
+                    else {
+                        self.attachmentIDs[index] = cell.attachmentFileID
+                    }
+                    
                     DispatchQueue.main.async(execute: {
                         cell.imageView.uploadCompleted()
                     })
@@ -512,17 +541,25 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     }
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
         TTLog.debug("manager didreloadto")
+
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didinsert")
+        if !bar.sendButton.isEnabled && manager.attachments.count > 0 {
+            bar.sendButton.isEnabled = true
+        }
+        
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("removing at ", index)
 
-        self.attachmentIDs.remove(at: index)
-        self.attachmentManager.reloadData()
-        self.attachmentManager.attachmentView.reloadData()
-
+        if !bar.sendButton.isEnabled && manager.attachments.count > 0 {
+            bar.sendButton.isEnabled = true
+        }
+        else if bar.sendButton.isEnabled && manager.attachments.count == 0 && bar.inputTextView.text.isEmpty {
+            bar.sendButton.isEnabled = false
+        }
+        self.attachmentIDs[index] = ""
     }
 }
 

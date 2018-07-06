@@ -683,12 +683,8 @@ class KerningLabel: UILabel {
 
 extension UITextView {
     public func wrapToContent() {
-        contentInset = UIEdgeInsets.zero
-        scrollIndicatorInsets = UIEdgeInsets.zero
-        contentOffset = CGPoint.zero
-        textContainerInset = UIEdgeInsets.zero
+        textContainerInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: 0.0, right: 0.0)
         textContainer.lineFragmentPadding = 0
-        sizeToFit()
     }
 }
 

@@ -114,7 +114,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         collectionViewHeight.constant = 0.0
         userAvatarConstraint.constant = 12.0
         
-        // postContentTextView.wrapToContent()
+        postContentTextView.wrapToContent()
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nameDateTapped(_:)))
@@ -169,7 +169,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         if post.text == nil { postContentTextView.isHidden = true }
         else { postContentTextView.text = post.text! }
         
-        if post.owner is Course { courseForPost.text = (post.owner as! Course).courseFullName }
+        if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName }
         else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
  
         if post.editedAt != nil { (postedDate.text = post.createdAt.relativelyFormatted + " (edited)") }

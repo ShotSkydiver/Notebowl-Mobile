@@ -91,12 +91,14 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            let courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            courseForPicker.sort() { $0.fullName < $1.fullName }
             var pickerItems = courseForPicker as [NBModel]
-            let groups = NBClient.shared.storedTypes[Group.classIdentifier]
-            pickerItems += groups!
+            var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
+            groups.sort() { $0.fullName < $1.fullName }
+            pickerItems += groups as [NBModel]
             destVC.objectsForPicker = pickerItems
-            destVC.selectedObject = destVC.objectsForPicker.first!
+            
             if let senderCell = sender as? HomeFeedPostCell {
                 TTLog.debug("editing existing post!")
                 destVC.editingExistingPost = true
@@ -137,10 +139,11 @@ extension HomeFeedViewController {
         }
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+                NBClient.shared.setCurrentUser(user: (newObject as! User))
+                
                 indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
                 let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
                 for post in postsForUser {
-                    //post.creator = NBClient.shared.getCurrentUser()
                     if let index = self.posts.index(of: post) {
                         indexes.reloadIndexPaths.append(IndexPath(row: index, section: 1))
                     }

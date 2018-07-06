@@ -76,7 +76,7 @@
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="tintColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="13"/>
+                                                <inset key="imageEdgeInsets" minX="3" minY="0.0" maxX="3" maxY="15"/>
                                                 <state key="normal" image="more-vector"/>
                                                 <connections>
                                                     <action selector="moreButtonAction:" destination="N3g-5j-72E" eventType="touchUpInside" id="bqy-eR-mOC"/>

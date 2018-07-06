@@ -58,6 +58,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wgz-AM-l13">
                                         <rect key="frame" x="292" y="0.0" width="30" height="35.666666666666664"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="3" minY="0.0" maxX="3" maxY="10"/>
                                         <state key="normal" image="more-image"/>
                                         <connections>
                                             <action selector="moreButtonAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="XkN-WI-6sO"/>

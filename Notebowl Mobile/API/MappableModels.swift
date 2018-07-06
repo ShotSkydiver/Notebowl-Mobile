@@ -224,6 +224,11 @@ class Response<T>: Generic where T: NBModel {
     }
 }
 
+public protocol WithName {
+    var name: String! { get }
+    var fullName: String! { get }
+}
+
 
 @objc(User) public class User: NBModel {
 
@@ -280,9 +285,9 @@ class Response<T>: Generic where T: NBModel {
     }
 }
 
-@objc(Course) class Course: NBModel {
-    
+@objc(Course) class Course: NBModel, WithName {
     var name: String!
+
     var number: String!
     var subject: String!
     var units: Int?
@@ -305,7 +310,7 @@ class Response<T>: Generic where T: NBModel {
     public var isAvailable: Bool { return Date().isBetween(availableDate, endDate, includeBounds: true) }
     
     var courseCode: String { return (subject + " " + number) }
-    var courseFullName: String { return (courseCode + ": " + name) }
+    var fullName: String!
     
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval!
@@ -324,6 +329,7 @@ class Response<T>: Generic where T: NBModel {
         super.mapping(map: map)
         
         name <- map["name"]
+        
         number <- map["number"]
         subject <- map["subject"]
         units <- map["units"]
@@ -341,6 +347,8 @@ class Response<T>: Generic where T: NBModel {
         weightedGrades <- map["useWeightedGrades"]
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
+        
+        fullName = (courseCode + ": " + name)
     }
     
     override public func refresh() {
@@ -579,7 +587,7 @@ class Response<T>: Generic where T: NBModel {
 }
 
 
-@objc(Group) class Group: NBModel {
+@objc(Group) class Group: NBModel, WithName {
 
     var availableDate: Date!
     var category: String?
@@ -595,6 +603,8 @@ class Response<T>: Generic where T: NBModel {
     var website: String?
     var starred: Bool?
 
+    var fullName: String!
+    
     override class var routeType: ItemType { return .group }
 
     required public init?(map: Map) {
@@ -611,6 +621,7 @@ class Response<T>: Generic where T: NBModel {
         locked <- map["locked"]
         meeting <- map["meeting"]
         name <- map["name"]
+        fullName = ("Group - " + name)
         orgContact <- map["orgContact"]
         permalink <- map["permalink"]
         status <- map["status"]

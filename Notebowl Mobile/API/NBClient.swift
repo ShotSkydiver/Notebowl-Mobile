@@ -55,6 +55,9 @@ class NBClient {
     func getCurrentUser() -> User {
         return currentUser
     }
+    func setCurrentUser(user: User) {
+        currentUser = user
+    }
     
     public func logoutUser() {
         NBSocket.shared.manager.defaultSocket.removeAllHandlers()

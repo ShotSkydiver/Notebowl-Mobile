@@ -105,6 +105,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         
+        commentContent.wrapToContent()
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
         
         commentLikeButton.isHaptic = true

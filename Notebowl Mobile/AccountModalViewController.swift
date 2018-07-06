@@ -103,11 +103,11 @@ class AccountModalTableViewController: UITableViewController {
                                                         self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
                                                     })
         }, asyncCompletionHandler: { r in
-            NBClient.shared.resolveCurrentUser(true, completionHandler: {
-                TTLog.debug("refreshed current user")
-            })
             DispatchQueue.main.async(execute: {
                 self.profilePicture.uploadCompleted()
+                NBClient.shared.resolveCurrentUser(true, completionHandler: {
+                    TTLog.debug("refreshed current user")
+                })
             })
         })
         

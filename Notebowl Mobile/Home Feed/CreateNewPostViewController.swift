@@ -52,12 +52,13 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
 
     var viewIsLoaded = false
+    
     var objectsForPicker: [NBModel]!
-    var selectedObject: NBModel!
     var selectedIndex: Int = 0
-    var pickerValues = [String: NBModel]()
     var pickerViewValues = [[String]]()
     var pickerAlert: UIAlertController!
+    
+    var attachmentsToDelete = [String]()
     
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
@@ -79,23 +80,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
     
     func setupPickerValues() {
-        for object in objectsForPicker {
-            print("object: ", object.url)
-            if object is Course {
-                pickerValues[(object as! Course).courseFullName] = object
-                
-            }
-            else if object is Group {
-                pickerValues[("Group: " + (object as! Group).name)] = object
-            }
-        }
-        
-        let itemTitles = pickerValues.keys
-        let keysArray = Array(itemTitles)
-        
-        pickerViewValues = [keysArray.map { $0.description }]
-        
-        
+        let itemTitles = objectsForPicker.compactMap({($0 as! WithName).fullName})
+        pickerViewValues = [itemTitles.map { $0 }]
     }
     
     func setupViews() {
@@ -116,16 +102,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             postButtonBarItem.postButton.setTitle("Edit", for: .normal)
             for attachment in existingPostToEdit.postAttachments {
                 if attachment.type.contains("image") {
+                    self.attachmentIDs.append(attachment.url.absoluteString)
                     KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                         if let retrievedImage = image {
                             self.attachmentManager.handleInput(of: retrievedImage)
                         }
                     })
-                    
                 }
-                
             }
-            
         }
         
         postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
@@ -203,18 +187,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: self.selectedIndex)
             
             self.pickerAlert.addPickerView(values: self.pickerViewValues, initialSelection: demoSelectedValue) { vc, picker, index, values in
-                let selectedItem = values[index.column][index.row]
-                print("picker item selected: ", selectedItem)
-                self.selectedObject = self.pickerValues[selectedItem]
                 self.selectedIndex = index.row
-                if self.selectedObject is Course {
-                    self.pinnedButton.isHidden = !((self.selectedObject as! Course).enrollmentForUser?.role == .professor)
-                    self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Course).courseFullName)
-                }
-                else if self.selectedObject is Group {
-                    self.pinnedButton.isHidden = !((self.selectedObject as! Group).enrollmentForUser?.role == .admin)
-                    self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Group).name)
-                }
+                self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
+                self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
             }
             self.pickerAlert.addAction(title: "Done", style: .cancel)
             
@@ -223,7 +198,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
                 popoverController.permittedArrowDirections = []
             }
-            
             self.present(self.pickerAlert, animated: true, completion: nil)
         }
         
@@ -242,15 +216,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.pinnedToggle.toggle()
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
-        
-        if self.selectedObject is Course {
-            self.pinnedButton.isHidden = !((self.selectedObject as! Course).enrollmentForUser?.role == .professor)
-            self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Course).courseFullName)
-        }
-        else if self.selectedObject is Group {
-            self.pinnedButton.isHidden = !((self.selectedObject as! Group).enrollmentForUser?.role == .admin)
-            self.pickedCourseGroup.text = ("Posting to " + (self.selectedObject as! Group).name)
-        }
+
+        self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
+        self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
         
         if editingExistingPost {
             self.pickedCourseGroup.isHidden = true
@@ -294,23 +262,37 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
-                        TTLog.debug("uploading attachment: ", file)
-                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(self.existingPostToEdit.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                        let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                        if !file.contains("https://") {
+                            TTLog.debug("uploading attachment: ", file)
+                            let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(self.existingPostToEdit.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+                            let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                        }
+                    }
+                }
+                
+                if self.attachmentsToDelete.count > 0 || !self.attachmentsToDelete.isEmpty {
+                    for attach in self.attachmentsToDelete {
+                        if let attachDel = self.existingPostToEdit.postAttachments.first(where: {$0.url.absoluteString == attach}) {
+                            self.existingPostToEdit.postAttachments.removeAll(attachDel)
+                            let delete = NBNetworking.shared.request(.delete, url: attachDel.url.absoluteString)
+                            TTLog.warning("delete url request: ", delete.description)
+                        }
                     }
                 }
             }
             else {
                 
-                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.selectedObject.url.absoluteString)", "_parent": "\(self.selectedObject.url.absoluteString)", "_related": "\(self.selectedObject.url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": (!(self.pinnedButton.isHidden) ? self.pinnedToggle :  false)]
+                jsonPayload = ["text": postText!, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.objectsForPicker[self.selectedIndex].url.absoluteString)", "_parent": "\(self.objectsForPicker[self.selectedIndex].url.absoluteString)", "_related": "\(self.objectsForPicker[self.selectedIndex].url.absoluteString)", "isAnonymous": self.anonymousToggle, "availableDate": true, "pinned": (!(self.pinnedButton.isHidden) ? self.pinnedToggle :  false)]
                 let postReq = NBNetworking.shared.request(.post, url: Post.endpoint, json: jsonPayload)
                 let finalmap = Mapper<Post>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
-                        TTLog.debug("uploading attachment: ", file)
-                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                        let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                        if file.count > 1 {
+                            TTLog.debug("uploading attachment: ", file)
+                            let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+                            let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                        }
                     }
                 }
             }
@@ -342,7 +324,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             
             if self.editingExistingPost {
 
-                if indexPath.row < self.existingPostToEdit.postAttachments.count {
+                if indexPath.row < (self.existingPostToEdit.postAttachments.count-self.attachmentsToDelete.count) {
                     guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
                         fatalError()
                     }
@@ -366,7 +348,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             cell.manager = manager
             cell.imageView.image = image
 
-            if !cell.uploadStarted {
+            if !cell.uploadStarted || cell.attachmentFileID == "" {
 
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
@@ -382,7 +364,12 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
                     cell.attachmentFileID = fileID
                     TTLog.debug("fileid: ", cell.attachmentFileID)
-                    self.attachmentIDs.append(cell.attachmentFileID)
+                    if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
+                        self.attachmentIDs.append(cell.attachmentFileID)
+                    }
+                    else {
+                        self.attachmentIDs[index] = cell.attachmentFileID
+                    }
                     DispatchQueue.main.async(execute: {
                         cell.imageView.uploadCompleted()
                     })
@@ -429,12 +416,13 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didremove")
         if manager.attachments.count == 0 && self.postTextView.isEmpty { postButtonBarItem.postButton.isEnabled = false }
-        if self.editingExistingPost {
-            let deletedAttachment = self.existingPostToEdit.postAttachments.remove(at: index)
-            let delete = NBNetworking.shared.request(.delete, url: deletedAttachment.url.absoluteString)
-            TTLog.warning("delete url request: ", delete.description)
-        }
         
+        if self.editingExistingPost {
+            self.attachmentsToDelete.append(self.attachmentIDs[index])
+        }
+        if self.attachmentIDs.count >= manager.attachments.count {
+            self.attachmentIDs.remove(at: index)
+        }
     }
 }
 
@@ -501,6 +489,7 @@ class UploadImageAttachmentCell: AttachmentCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        attachmentFileID = ""
     }
 
     private func setup() {
