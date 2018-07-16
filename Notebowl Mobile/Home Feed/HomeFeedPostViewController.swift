@@ -134,7 +134,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
                 }
                 .onSelected { anonButton in
-                    self.anonymousToggle.toggle()
+                    self.anonymousToggle.toggleValue()
                     
                     UIView.animate(withDuration: 0.3, animations: {
                         self.view.layoutIfNeeded()
@@ -202,15 +202,25 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             else {
                 jsonPayload = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
                 let postReq = NBNetworking.shared.request(.post, url: Comment.endpoint, json: jsonPayload)
-                let finalmap = Mapper<Comment>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
+                //let finalmap = Mapper<Comment>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
+                let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
                 
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
                         TTLog.debug("uploading attachment: ", file)
-                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\(finalmap.url.absoluteString)", "attachmentType": "S3", "attachmentName": "image.jpg"]
+                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\((keyPath["url"] as! String))", "attachmentType": "S3", "attachmentName": "image.jpg"]
                         let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
                         
+                        let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                        let data: Any = ["itemType":"\(ItemType.fromURL((attKeyPath["url"] as! String)))", "updateUrl":"\((attKeyPath["url"] as! String))", "action":"updated", "updatedAt":"\((attKeyPath["updatedAt"] as! String))"]
+                        let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                        let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                        NBSocket.shared.updateHandler(message: JSONString!)
                     }
                 }
             }
@@ -289,14 +299,15 @@ extension HomeFeedPostViewController {
     
     func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
-            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if newObject.itemType == "Comment" {
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
-            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
-            existingComment == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1))
+            existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
+            
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
@@ -304,19 +315,21 @@ extension HomeFeedPostViewController {
             if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
-                if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
+                if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
             }
 
         }
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
-                indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 let commentsForUser = self.post.postComments.filter({ $0.creator!.resourceKey == newObject.resourceKey })
+                var indexPaths = [IndexPath]()
                 for comment in commentsForUser {
                     if let index = self.post.postComments.index(of: comment) {
-                        indexes.reloadIndexPaths.append(IndexPath(row: index, section: 1))
+                        indexPaths.append(IndexPath(row: index, section: 1))
                     }
                 }
+                tableView.reloadRows(at: indexPaths, with: .fade)
             }
         }
     }
@@ -331,22 +344,23 @@ extension HomeFeedPostViewController {
         }
         else if deletedObject.itemType == "Comment" {
             TTLog.warning("deletedobject comment")
-            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
-            let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfComment != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
             
+            let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            if indexOfComment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right) }
             else {
-                self.reloadSection = true
+                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
             }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
             TTLog.warning("deletedobject like attachment")
-            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
+            
             if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
-                if indexOfComment != nil { indexes.reloadIndexPaths.append(IndexPath(row: indexOfComment!, section: 1)) }
+                if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
             }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         
     }
@@ -355,6 +369,7 @@ extension HomeFeedPostViewController {
     }
     
     func reloadTableViews() {
+        /*
         if self.indexes.shouldReload {
             self.tableView.beginUpdates()
             self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
@@ -372,6 +387,7 @@ extension HomeFeedPostViewController {
             }
             self.indexes = Paths()
         }
+        */
     }
 }
 

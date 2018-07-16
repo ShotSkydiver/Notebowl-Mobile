@@ -16,6 +16,7 @@ import SocketIO
 import SwipeCellKit
 import Lightbox
 import FaceAware
+import PKHUD
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -162,6 +163,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
     
     func configure(post: Post) {
+        likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControlEvents.touchUpInside)
+        
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = post.postLikes.isEmpty ? " " : "\(post.postLikes.count)"
         postComments.text = post.postComments.isEmpty ? " " : "\(post.postComments.count)"
@@ -233,44 +236,47 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         super.setSelected(selected, animated: animated)
     }
 
-    @IBAction func likeButtonTapped(_ sender: FaveButton) {
-        TTLog.debug("isselected: ", sender.isSelected)
-        if !sender.isSelected {
-            UIView.transition(with: self.postLikes,
-                              duration: 0.3,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                                self.postLikes.text = (self.postForCell.postLikes.count - 1 == 0 ? "" : "\((self.postForCell.postLikes.count - 1))")
-            }) { (_) in
-                DispatchQueue.global(qos: .default).async {
-                    let tempLike = self.postForCell.likeFromCurrentUser!
-                    self.postForCell.postLikes.removeAll(self.postForCell.likeFromCurrentUser!)
-                    self.postForCell.likeFromCurrentUser = nil
-                    self.postForCell.likedByCurrentUser = false
-                    
-                    
-                    let delete = NBNetworking.shared.request(.delete, url: tempLike.url.absoluteString)
-                    TTLog.warning("delete url request: ", delete.description)
+    @objc func likeActionTriggered(_ sender: FaveButton) {
+        updateLike()
+    }
+        
+    func updateLike() {
+        HUD.show(.progress)
+        NBClient.shared.delay(1.0) {
+            if !self.likeButton.isSelected {
+                let deleteResult = NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
+                TTLog.warning("delete url request: ", deleteResult.description)
+                if deleteResult.statusCode!.rawValue == 410 {
+                    TTLog.warning("bad request! must be already deleted")
+                    let data: Any = ["itemType":"\(ItemType.fromURL(self.postForCell.likeFromCurrentUser!.url.absoluteString))", "updateUrl":"\(self.postForCell.likeFromCurrentUser!.url.absoluteString)", "action":"updated", "updatedAt":"\(self.postForCell.likeFromCurrentUser!.updatedAt)"]
+                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                    NBSocket.shared.updateHandler(message: JSONString!)
+                    HUD.flash(.success, delay: 0.5)
+                    return
                 }
+                let keyPath = (deleteResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
             }
-        }
-        else if sender.isSelected {
-            UIView.transition(with: self.postLikes,
-                              duration: 0.3,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                                self.postLikes.text = "\((self.postForCell.postLikes.count + 1))"
-            }) { (_) in
-                DispatchQueue.global(qos: .default).async {
-                    let fakeLike = Mapper<Like>().map(JSON: ["_parent":self.postForCell.url.absoluteString, "_owner":NBClient.shared.getCurrentUser().url.absoluteString])
-                    self.postForCell.likeFromCurrentUser = fakeLike
-                    self.postForCell.likedByCurrentUser = true
-                    self.postForCell.postLikes.append(fakeLike!)
-                    let payload: Any? = ["_parent": "\(self.postForCell.url.absoluteString)"]
-                    let post = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
-                    TTLog.warning("post url request: ", post.description)
+            else if self.likeButton.isEnabled {
+                let payload: Any? = ["_parent": "\(self.postForCell.url.absoluteString)"]
+                let postResult = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
+                TTLog.warning("post url request: ", postResult.description)
+                if postResult.statusCode!.rawValue == 422 {
+                    TTLog.warning("client error! this value changed and we haven't received a socket response!")
+                    HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
+                    return
                 }
+                let keyPath = (postResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
             }
+            HUD.flash(.success, delay: 0.5)
         }
     }
     

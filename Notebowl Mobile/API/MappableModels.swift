@@ -81,11 +81,12 @@ public struct DefaultValues {
 
 
 class Generic: StaticMappable {
-    var action: ActionType? = .unknown
-    var itemType: String?
-    var updatedAt: Date?
+    var action: ActionType! = .unknown
+    var itemType: String!
+    var updatedAt: Date!
     
     public var genericObject: NBModel?
+    public var isManual: Bool = false
 
     class func objectForMapping(map: Map) -> BaseMappable? {
         if let type: String = map["itemType"].value() {
@@ -147,7 +148,7 @@ class Generic: StaticMappable {
 
 
 class Response<T>: Generic where T: NBModel {
-    var responseObject: T?
+    var responseObject: T!
 
     public override init() {}
     public required init?(map: Map) { }
@@ -155,7 +156,7 @@ class Response<T>: Generic where T: NBModel {
     public override func mapping(map: Map) {
         super.mapping(map: map)
 
-        responseObject <- (map["updateUrl"], ObjectTransform<T>(action: action!, update: updatedAt))
+        responseObject <- (map["updateUrl"], ObjectTransform<T>(action: action, update: updatedAt))
         genericObject = responseObject
     }
 }
@@ -565,6 +566,10 @@ public protocol WithName {
     
     public var statusIsAccepted: Bool {
         if status.contains("Accepted") { return true }
+        else { return false }
+    }
+    public var userRoleIsImportant: Bool {
+        if role == .professor || role == .admin { return true }
         else { return false }
     }
     

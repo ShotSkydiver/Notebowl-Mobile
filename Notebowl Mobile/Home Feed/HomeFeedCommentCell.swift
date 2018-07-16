@@ -14,6 +14,7 @@ import Haptica
 import ObjectMapper
 import SwipeCellKit
 import Lightbox
+import PKHUD
 
 class CommentCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -113,6 +114,8 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     }
     
     func configure(comment: Comment) {
+        commentLikeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControlEvents.touchUpInside)
+        
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
         
         commentLikes.text = comment.commentLikes.isEmpty ? " " : "\(comment.commentLikes.count)"
@@ -171,49 +174,50 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         }
     }
     
-    @IBAction func commentLikeButtonTapped(_ sender: FaveButton) {
-        TTLog.debug("isselected: ", sender.isSelected)
-        if !sender.isSelected {
-            UIView.transition(with: self.commentLikes,
-                              duration: 0.3,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                                self.commentLikes.text = (self.commentForCell.commentLikes.count - 1 == 0 ? "" : "\((self.commentForCell.commentLikes.count - 1))")
-            }) { (_) in
-                DispatchQueue.global(qos: .default).async {
-                    let tempLike = self.commentForCell.likeFromCurrentUser!
-                    self.commentForCell.commentLikes.removeAll(self.commentForCell.likeFromCurrentUser!)
-                    self.commentForCell.likeFromCurrentUser = nil
-                    self.commentForCell.likedByCurrentUser = false
-                    
-                    
-                    let delete = NBNetworking.shared.request(.delete, url: tempLike.url.absoluteString)
-                    TTLog.warning("delete url request: ", delete.description)
-                    
+    func updateLike() {
+        HUD.show(.progress)
+        NBClient.shared.delay(1.0) {
+            if !self.commentLikeButton.isSelected {
+                let deleteResult = NBNetworking.shared.request(.delete, url: self.commentForCell.likeFromCurrentUser!.url.absoluteString)
+                TTLog.warning("delete url request: ", deleteResult.description)
+                if deleteResult.statusCode!.rawValue == 410 {
+                    TTLog.warning("bad request! must be already deleted")
+                    let data: Any = ["itemType":"\(ItemType.fromURL(self.commentForCell.likeFromCurrentUser!.url.absoluteString))", "updateUrl":"\(self.commentForCell.likeFromCurrentUser!.url.absoluteString)", "action":"updated", "updatedAt":"\(self.commentForCell.likeFromCurrentUser!.updatedAt)"]
+                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                    NBSocket.shared.updateHandler(message: JSONString!)
+                    HUD.flash(.success, delay: 0.5)
+                    return
                 }
+                let keyPath = (deleteResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
             }
-        }
-        else if sender.isSelected {
-            UIView.transition(with: self.commentLikes,
-                              duration: 0.3,
-                              options: .transitionCrossDissolve,
-                              animations: {
-                                self.commentLikes.text = "\((self.commentForCell.commentLikes.count + 1))"
-            }) { (_) in
-                DispatchQueue.global(qos: .default).async {
-                    let fakeLike = Mapper<Like>().map(JSON: ["_parent":self.commentForCell.url.absoluteString, "_owner":NBClient.shared.getCurrentUser().url.absoluteString])
-                    self.commentForCell.likeFromCurrentUser = fakeLike
-                    self.commentForCell.likedByCurrentUser = true
-                    self.commentForCell.commentLikes.append(fakeLike!)
-                    let payload: Any? = ["_parent": "\(self.commentForCell.url.absoluteString)"]
-                    let post = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
-                    TTLog.warning("post url request: ", post.description)
+            else if self.commentLikeButton.isEnabled {
+                let payload: Any? = ["_parent": "\(self.commentForCell.url.absoluteString)"]
+                let postResult = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
+                TTLog.warning("post url request: ", postResult.description)
+                if postResult.statusCode!.rawValue == 422 {
+                    TTLog.warning("client error! this value changed and we haven't received a socket response!")
+                    HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
+                    return
                 }
+                let keyPath = (postResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
             }
+            HUD.flash(.success, delay: 0.5)
         }
     }
     
-    
+    @objc func likeActionTriggered(_ sender: FaveButton) {
+        updateLike()
+    }
+
     @IBAction func moreButtonAction(_ sender: Any) {
         self.showSwipe(orientation: .right, animated: true, completion: nil)
     }

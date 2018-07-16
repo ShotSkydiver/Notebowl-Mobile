@@ -25,6 +25,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: TableView?
     
+    var cellHeights: [IndexPath : CGFloat] = [:]
+    
     override func viewDidLoad() {
         TTLog.testing("homeVC didload")
         super.viewDidLoad()
@@ -123,31 +125,36 @@ extension HomeFeedViewController {
             let existingPost = self.bulletinTableView.numberOfRows(inSection: 1) < self.posts.count ? false : true
             
             if existingPost == false {
-                indexes.insertIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+                self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .left)
             }
             else {
                 self.posts.first(where: { $0.resourceKey == newObject.resourceKey })!.refresh()
-                indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1))
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
+                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)}
+            }
+            else {
+                TTLog.testing("ok so we just received a socket response for a like/comment/attachment but the corresponding post doesn't exist in cache, so either it's a post that isn't being displayed in our feed view OR it's a post that someone created recently and we still haven't gotten the socket response for it, in which case, we should get the post from the server and initialize/display it in the feed view along with this comment/like/attach")
             }
         }
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                 NBClient.shared.setCurrentUser(user: (newObject as! User))
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 
-                indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
                 let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
+                var indexPaths = [IndexPath]()
                 for post in postsForUser {
                     if let index = self.posts.index(of: post) {
-                        indexes.reloadIndexPaths.append(IndexPath(row: index, section: 1))
+                        indexPaths.append(IndexPath(row: index, section: 1))
                     }
                 }
+                self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
                 
             }
         }
@@ -159,14 +166,14 @@ extension HomeFeedViewController {
                 // self.getPosts()
                 // self.bgView.showViewAnimated(false)
             }
-            
         }
     }
     
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType == "Post" {
             let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfPost != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
+            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right) }
+            
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
         }
         
@@ -174,7 +181,8 @@ extension HomeFeedViewController {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil  { indexes.reloadIndexPaths.append(IndexPath(row: indexOfPost!, section: 1)) }
+                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade) }
+                
             }
         }
 
@@ -202,18 +210,6 @@ extension HomeFeedViewController {
     }
     
     func reloadTableViews() {
-        if self.indexes.shouldReload {
-            self.bulletinTableView.beginUpdates()
-            self.bulletinTableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .none)
-            self.bulletinTableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-            self.bulletinTableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-            self.bulletinTableView.endUpdates()
-            TTLog.warning("COMPLETED????")
-            self.indexes = Paths()
-        }
-        else {
-            TTLog.warning("indexes empty! not reloading tableview!")
-        }
     }
         
 }
@@ -236,6 +232,15 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
             self.performSegue(withIdentifier: "postDetailSegue", sender: cell)
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellHeights[indexPath] = cell.frame.size.height
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let height = cellHeights[indexPath] else { return 260.0 }
+        return height
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

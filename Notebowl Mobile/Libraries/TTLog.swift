@@ -35,6 +35,7 @@ struct TTLog {
     
     public static func verbose(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file, line: Int = #line, function: String = #function) {
         log(.verbose, items, separator, terminator, file, line, function)
+        
     }
     
     public static func info(_ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file, line: Int = #line, function: String = #function) {

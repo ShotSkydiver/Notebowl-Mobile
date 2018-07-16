@@ -87,12 +87,12 @@ extension CoursesTableViewController {
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             
-            if !existingCourse { indexes.insertIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
+            if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) }
             else {
                 self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
             
                 indexOfCourse = 0
-                indexes.reloadIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0))
+                tableView.reloadRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade)
             }
         }
     }
@@ -101,21 +101,13 @@ extension CoursesTableViewController {
         if ["CourseUser","Course"].contains(deletedObject.itemType) {
   
             let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfCourse != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfCourse!, section: 0)) }
+            if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
         }
     }
     
     func handleElapsed(elapsedObject: NBModel) { }
     
     func reloadTableViews() {
-        if self.indexes.shouldReload {
-            self.tableView.beginUpdates()
-            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-            self.tableView.endUpdates()
-            self.indexes = Paths()
-        }
     }
 }
 

@@ -114,7 +114,9 @@ extension NotificationsTableViewController {
         self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
-            indexOfNotification == nil ? indexes.insertIndexPaths.append(IndexPath(row: 0, section: 0)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfNotification!, section: 0))
+            let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
+            
+            existingNotification == false ? tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         }
@@ -125,7 +127,7 @@ extension NotificationsTableViewController {
         self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfNotification != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfNotification!, section: 0)) }
+            if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         }

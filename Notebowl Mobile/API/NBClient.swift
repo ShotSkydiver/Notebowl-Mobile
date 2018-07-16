@@ -37,6 +37,7 @@ class NBClient {
     func resolveCurrentUser(_ force: Bool? = false, completionHandler: @escaping (() -> Void)) {
         if currentUser == nil || force! {
             TTLog.debug("currentuser nil!")
+            
             let userReq = NBClient.shared.getMappable(User.self)
 
             if (userReq?.isEmpty)! || userReq == nil {
@@ -81,6 +82,8 @@ class NBClient {
             newArray = initArray(from: newArray, refresh: refresh)!
         }
     }
+    
+    //public func check
     
     public func initArray<T>(from array: [T], refresh: Bool? = true) -> [T]? where T: NBModel {
         var mutableArray = array
@@ -178,5 +181,11 @@ class NBClient {
         
         
         return objectResult
+    }
+    
+    
+    func delay(_ delay: Double, closure:@escaping () -> Void) {
+        DispatchQueue.main.asyncAfter(
+            deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: closure)
     }
 }

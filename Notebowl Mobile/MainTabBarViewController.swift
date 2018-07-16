@@ -11,6 +11,7 @@ import UIKit
 import QuartzCore
 import ObjectMapper
 import SocketIO
+import PKHUD
 
 class LoadingViewController: UIViewController {
     var loadingView: NBLoadingView!
@@ -49,6 +50,8 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self
         loadingVC = LoadingViewController()
         
+        HUD.dimsBackground = true
+        HUD.allowsInteraction = false
     }
 
     override func viewWillAppear(_ animated: Bool) {

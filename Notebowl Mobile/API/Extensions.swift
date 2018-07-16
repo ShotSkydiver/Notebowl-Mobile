@@ -54,6 +54,13 @@ public extension DateFormatter {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         return formatter
     }
+static var iso8061GMT: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
+        return formatter
+    }
 }
 public extension DateComponentsFormatter {
     static var monthYear: DateComponentsFormatter {
@@ -726,8 +733,8 @@ extension UIView {
     }
 }
 
-public extension Bool {
-    @discardableResult public mutating func toggle() -> Bool {
+extension Bool {
+    @discardableResult public mutating func toggleValue() -> Bool {
         self = !self
         return self
     }
@@ -758,6 +765,15 @@ public extension UITableView {
             layoutIfNeeded()
             contentOffset = offset
         }
+    }
+    
+    public func reload(tableView: UITableView) {
+        
+        let contentOffset = tableView.contentOffset
+        tableView.reloadData()
+        tableView.layoutIfNeeded()
+        tableView.setContentOffset(contentOffset, animated: false)
+        
     }
 }
 
@@ -1118,3 +1134,4 @@ struct Config {
         }
     }
 }
+

@@ -11,6 +11,17 @@ import UIKit
 import SocketIO
 import ObjectMapper
 
+struct SendData : SocketData {
+    let action: String
+    let updateUrl: String
+    let itemType: String
+    let updatedAt: String
+    
+    func socketRepresentation() -> SocketData {
+        return ["action": action, "updateUrl": updateUrl, "itemType": itemType, "updatedAt": updatedAt]
+    }
+}
+
 class NBSocket {
     static let shared: NBSocket = {
         TTLog.debug("socket shared init")
@@ -21,7 +32,7 @@ class NBSocket {
     }()
     
     let manager = SocketManager(socketURL: URL(string: NBClient.socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
-    
+    var currentlyHandling: String? = nil
     private init() { }
     
     func registerForUser() {
@@ -34,46 +45,75 @@ class NBSocket {
             TTLog.socket("connected")
             self.registerForUser()
         }
-        
-        manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, ackEmitter) in
+        manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, emitter) in
             guard let message = data[0] as? String else { return }
-            if let data = message.data(using: .utf8) {
-                do {
-                    let JSON = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
-                    let mapped = Mapper<Generic>().map(JSON: JSON)!
-                    
-                    guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-                        TTLog.debug("tabController is not presented!")
-                        return
+            self.updateHandler(message: message)
+        }
+    }
+    
+    func updateHandler(message: String) {
+        if let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) {
+            do {
+                
+                let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+                guard let updateUrlString = (JSON["updateUrl"] as? String) else { fatalError() }
+                guard let updatedAtString = (JSON["updatedAt"] as? String) else { fatalError() }
+                let updateUrl = URL(string: updateUrlString)!
+
+                let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(updateUrlString))", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\(updatedAtString)"])
+                
+                guard let object = mapped!.genericObject else { return }
+                
+                if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
+                    if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
+                        TTLog.debug("enrollment object is NOT current user's")
+                        if (object as! Enrollment).parent?.enrollmentForUser == nil {
+                            TTLog.debug("current user isn't even enrolled in this course/group!")
+                            return
+                        }
+                        else if !((object as! Enrollment).parent?.enrollmentForUser?.userRoleIsImportant)! {
+                            TTLog.debug("current user's enrollment role is NOT professor or admin, ignoring this socket response")
+                            return
+                        }
+                        else {
+                            TTLog.debug("current user is either a professor or admin for this course/group, allowing socket response")
+                        }
                     }
-                    if let viewControllers = tabbarVC.viewControllers {
-                        for viewController in viewControllers {
-                            let rootNavController = viewController as! UINavigationController
-                            for vc in rootNavController.viewControllers {
-                                if let switchVC = vc as? UpdateVC {
-                                    guard let object = mapped.genericObject else { return }
-                                    
-                                    switch mapped.action! {
-                                    case .updated:
-                                        switchVC.handleUpdated(newObject: object)
-                                    case .deleted:
-                                        switchVC.handleDeleted(deletedObject: object)
-                                    case .elapsed:
-                                        switchVC.handleElapsed(elapsedObject: object)
-                                    case .unknown:
-                                        TTLog.error("unknown actiontype!")
-                                        return
-                                    }
-                                    
-                                    switchVC.reloadTableViews()
+                    else {
+                        TTLog.debug("enrollment object is current user's")
+                    }
+                }
+                
+                guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
+                    TTLog.debug("tabController is not presented!")
+                    return
+                }
+                if let viewControllers = tabbarVC.viewControllers {
+                    for viewController in viewControllers {
+                        let rootNavController = viewController as! UINavigationController
+                        for vc in rootNavController.viewControllers {
+                            if let switchVC = vc as? UpdateVC {
+                                
+                                switch mapped!.action {
+                                case .updated:
+                                    switchVC.handleUpdated(newObject: object)
+                                case .deleted:
+                                    switchVC.handleDeleted(deletedObject: object)
+                                case .elapsed:
+                                    switchVC.handleElapsed(elapsedObject: object)
+                                default:
+                                    TTLog.error("unknown actiontype!")
+                                    return
                                 }
+
                             }
                         }
                     }
                 }
-                catch let error {
-                    print("Error parsing json: \(error)")
-                }
+
+            }
+            catch let error {
+                print("Error parsing json: \(error)")
             }
         }
     }

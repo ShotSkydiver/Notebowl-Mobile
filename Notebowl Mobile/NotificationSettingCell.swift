@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import ObjectMapper
+import PKHUD
+import SocketIO
 
 class NotificationSettingCell: UITableViewCell {
 
@@ -30,14 +32,15 @@ class NotificationSettingCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-
+    
     func configure(setting: SettingsDefault) {
+        settingSwitch.addTarget(self, action: #selector(switchActionTriggered(_:)), for: UIControlEvents.valueChanged)
+        
         settingName.text = setting.name
         if setting.help != nil { settingSubtitle.text = setting.help }
         else { settingSubtitle.text = nil }
-        
+
         settingSwitch.setOn((setting.userSetting != nil ? setting.userSetting!.value : setting.defaultValue), animated: false)
- 
         self.settingForCell = setting
     }
     
@@ -45,20 +48,57 @@ class NotificationSettingCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    @IBAction func switchToggled(_ sender: Any) {
-        if (settingSwitch.isOn == settingForCell.defaultValue) {
-            let delete = NBNetworking.shared.request(.delete, url: settingForCell.userSetting!.url.absoluteString )
-            TTLog.warning("delete url request: ", delete.description)
-            settingForCell.userSetting = nil
+    func changeSetting() {
+        HUD.show(.progress)
+        NBClient.shared.delay(1.0) {
+            if (self.settingSwitch.isOn == self.settingForCell.defaultValue) {
+                let result = NBNetworking.shared.request(.delete, url: self.settingForCell.userSetting!.url.absoluteString )
+                TTLog.warning("delete url request: ", result.description)
+                
+                if result.statusCode!.rawValue == 410 {
+                    TTLog.warning("bad request! must be already deleted")
+                    let data: Any = ["itemType":"\(ItemType.fromURL(self.settingForCell.userSetting!.url.absoluteString))", "updateUrl":"\(self.settingForCell.userSetting!.url.absoluteString)", "action":"updated", "updatedAt":"\(self.settingForCell.userSetting!.updatedAt)"]
+                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                    NBSocket.shared.updateHandler(message: JSONString!)
+                    HUD.flash(.success, delay: 0.5)
+                    return
+                }
+                
+                self.settingForCell.userSetting = nil
+                let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
+            }
+            else if (self.settingSwitch.isOn != self.settingForCell.defaultValue) {
+                let payload: Any? = ["key": self.settingForCell.key, "value": self.settingSwitch.isOn, "_parent": "\(NBClient.shared.getCurrentUser().url.absoluteString)"]
+                let result = NBNetworking.shared.request(.post, url: Setting.endpoint, json: payload)
+                TTLog.warning("post url request: ", result.description)
+                
+                if result.statusCode!.rawValue == 422 {
+                    TTLog.warning("client error! this value changed and we haven't received a socket response!")
+                    HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
+                    return
+                }
+                
+                let finalmap = Mapper<Setting>().map(JSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)!
+                self.settingForCell.userSetting = finalmap
+                
+                let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                NBSocket.shared.updateHandler(message: JSONString!)
+            }
+            HUD.flash(.success, delay: 0.5)
         }
-        else if (settingSwitch.isOn != settingForCell.defaultValue) {
-            let fakeSetting = Mapper<Setting>().map(JSON: ["key":settingForCell.key, "value":settingSwitch.isOn])
-            settingForCell.userSetting = fakeSetting
-            
-            let payload: Any? = ["key": settingForCell.key, "value": settingSwitch.isOn, "_parent": "\(NBClient.shared.getCurrentUser().url.absoluteString)"]
-            let post = NBNetworking.shared.request(.post, url: Setting.endpoint, json: payload)
-            TTLog.warning("post url request: ", post.description)
-        }
+    }
+    
+    @IBAction func switchActionTriggered(_ sender: UISwitch) {
+        TTLog.warning("switch actiontriggered, animating? ", HUD.isVisible)
+        changeSetting()
     }
 }
 

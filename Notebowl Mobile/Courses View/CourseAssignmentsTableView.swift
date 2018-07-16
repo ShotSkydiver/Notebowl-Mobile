@@ -129,7 +129,7 @@ extension CourseAssignmentsTableView {
             
             let existingAssignment = self.tableView.numberOfRows(inSection: indexOfCategory!) < (self.data[self.categories[indexOfCategory!]]?.count)! ? false : true
             
-            existingAssignment == false ? indexes.insertIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!)) : indexes.reloadIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!))
+            existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
         }
 
         else if newObject.itemType == "Category" {
@@ -141,10 +141,10 @@ extension CourseAssignmentsTableView {
             let existingCategory = self.tableView.numberOfSections < self.data.count ? false : true
             
             if !existingCategory {
-                indexes.insertSections = IndexSet(integer: indexOfCategory!)
+                tableView.insertSections(IndexSet(integer: indexOfCategory!), with: .left)
             }
             else {
-                indexes.reloadSections = IndexSet(integer: indexOfCategory!)
+                tableView.reloadSections(IndexSet(integer: indexOfCategory!), with: .fade)
             }
             
         }
@@ -157,7 +157,7 @@ extension CourseAssignmentsTableView {
             let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0.resourceKey == assignment!.resourceKey })
             let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
             
-            indexes.reloadIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!))
+            tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
         }
         
         else if newObject.itemType == "Course" {
@@ -170,7 +170,7 @@ extension CourseAssignmentsTableView {
 
             let indexOfAssignment = self.data[(deletedObject as! Assignment).category]!.index(where: { $0.resourceKey == deletedObject.resourceKey })
             let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
-            if indexOfAssignment != nil { indexes.deleteIndexPaths.append(IndexPath(row: indexOfAssignment!, section: indexOfCategory!)) }
+            if indexOfAssignment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) }
             self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
             self.updateData()
             
@@ -178,8 +178,7 @@ extension CourseAssignmentsTableView {
 
         else if deletedObject.itemType == "Category" {
             let indexOfCategory = self.categories.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            indexes.deleteSections = IndexSet(integer: indexOfCategory!)
-            
+            tableView.deleteSections(IndexSet(integer: indexOfCategory!), with: .right)
             self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]
             self.updateData()
         }
@@ -196,18 +195,6 @@ extension CourseAssignmentsTableView {
     }
     
     func reloadTableViews() {
-        if self.indexes.shouldReload {
-            self.tableView.beginUpdates()
-            self.tableView.reloadSections(self.indexes.reloadSections, with: .fade)
-            self.tableView.insertSections(self.indexes.insertSections, with: .left)
-            self.tableView.deleteSections(self.indexes.deleteSections, with: .right)
-            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-            self.tableView.endUpdates()
-            TTLog.warning("COMPLETED????")
-            self.indexes = Paths()
-        }
     }
 }
 
