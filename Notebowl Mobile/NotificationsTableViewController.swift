@@ -61,6 +61,8 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
             notification.status = "seen"
         }
+        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
     }
 
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {

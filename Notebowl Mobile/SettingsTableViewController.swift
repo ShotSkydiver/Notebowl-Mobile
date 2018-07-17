@@ -128,7 +128,7 @@ extension SettingsTableViewController {
                 foundSetting.findSetting()
                 
                 let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
-                let cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0.sectionName == section.sectionName })!)
+                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0.sectionName == section.sectionName })!)
                 guard let notificationCell = self.tableView.cellForRow(at: cellIndexPath) as? NotificationSettingCell else { return }
                 if (notificationCell.settingSwitch.isOn == foundSetting.defaultValue) {
                     TTLog.debug("already set previouisly!")

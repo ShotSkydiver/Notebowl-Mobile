@@ -45,6 +45,8 @@ class AccountModalTableViewController: UITableViewController {
     var progress: Float = 0.0
     var selectedImage: UIImage!
     
+    var updatedUser: [String: AnyObject]!
+    
     @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userEmail: UILabel!
@@ -65,6 +67,13 @@ class AccountModalTableViewController: UITableViewController {
     }
     
     @IBAction func doneButtonTapped(_ sender: Any) {
+        
+        if let keyPath = self.updatedUser {
+            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+            NBSocket.shared.updateHandler(message: JSONString!)
+        }
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -103,11 +112,9 @@ class AccountModalTableViewController: UITableViewController {
                                                         self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
                                                     })
         }, asyncCompletionHandler: { r in
+            self.updatedUser = (r.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
             DispatchQueue.main.async(execute: {
                 self.profilePicture.uploadCompleted()
-                NBClient.shared.resolveCurrentUser(true, completionHandler: {
-                    TTLog.debug("refreshed current user")
-                })
             })
         })
         

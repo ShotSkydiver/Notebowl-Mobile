@@ -24,16 +24,17 @@ struct SendData : SocketData {
 
 class NBSocket {
     static let shared: NBSocket = {
-        TTLog.debug("socket shared init")
-        let instance = NBSocket()
-        instance.registerHandlers()
-        instance.manager.connect()
-        return instance
+        return NBSocket()
     }()
     
     let manager = SocketManager(socketURL: URL(string: NBClient.socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
     var currentlyHandling: String? = nil
     private init() { }
+    
+    func setup() {
+        NBSocket.shared.registerHandlers()
+        NBSocket.shared.manager.connect()
+    }
     
     func registerForUser() {
         manager.defaultSocket.emit("register", "platform:status")
@@ -58,7 +59,6 @@ class NBSocket {
                 let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
                 guard let updateUrlString = (JSON["updateUrl"] as? String) else { fatalError() }
                 guard let updatedAtString = (JSON["updatedAt"] as? String) else { fatalError() }
-                let updateUrl = URL(string: updateUrlString)!
 
                 let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(updateUrlString))", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\(updatedAtString)"])
                 

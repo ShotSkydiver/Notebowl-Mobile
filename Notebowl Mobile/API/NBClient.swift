@@ -20,37 +20,37 @@ class NBClient {
     
     enum Environment: String {
         case Production = "platform.notebowl.com"
-        case Staging = "demo.nbstage.com"
+        case Local = "demo.notebowl.xyz"
     }
-    #if DEBUG
+
     static let baseUrl = Environment.Production.rawValue
-    #else
-    static let baseUrl = Bundle.main.infoDictionary!["API_BASE_URL_ENDPOINT"] as! String
-    #endif
-    
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     private var currentUser: User!
     public var storedTypes = [ObjectIdentifier: [NBModel]]()
     
     private init() { }
     
-    func resolveCurrentUser(_ force: Bool? = false, completionHandler: @escaping (() -> Void)) {
+    func resolveCurrentUser(_ force: Bool? = false) -> Bool {
         if currentUser == nil || force! {
             TTLog.debug("currentuser nil!")
-            
-            let userReq = NBClient.shared.getMappable(User.self)
+            print("app uuid:", UIDevice().uuid)
+            let userTest = NBNetworking.shared.request(url: User.endpoint)
+            if !userTest.statusCode!.isSuccess {
+                return false
+            }
+            guard let userReq = NBClient.shared.getMappable(User.self) else {
+                return false
+            }
 
-            if (userReq?.isEmpty)! || userReq == nil {
-                logoutUser()
-                (UIApplication.shared.keyWindow?.rootViewController as! RootViewController).dismiss(animated: true, completion: nil)
+            if let finalUser = userReq.first {
+                setCurrentUser(user: finalUser)
+                return true
             }
             else {
-                self.currentUser = userReq!.first!
+                return false
             }
         }
-        else {
-            completionHandler()
-        }
+        return true
     }
     
     func getCurrentUser() -> User {
@@ -61,8 +61,10 @@ class NBClient {
     }
     
     public func logoutUser() {
-        NBSocket.shared.manager.defaultSocket.removeAllHandlers()
-        NBSocket.shared.manager.disconnect()
+        if NBSocket.shared.manager.status == .connected {
+            NBSocket.shared.manager.defaultSocket.removeAllHandlers()
+            NBSocket.shared.manager.disconnect()
+        }
         _ = NBNetworking.shared.request(.delete, url: User.endpoint)
         currentUser = nil
         UserDefaults.set(hasUserLoggedIn: false)
@@ -83,8 +85,6 @@ class NBClient {
         }
     }
     
-    //public func check
-    
     public func initArray<T>(from array: [T], refresh: Bool? = true) -> [T]? where T: NBModel {
         var mutableArray = array
         if refresh! {
@@ -104,7 +104,7 @@ class NBClient {
             mutableArray.sort() { $0.secondsSinceCreation > $1.secondsSinceCreation }
         }
         return mutableArray
-    }
+    } 
 
     public func requireByResourceKeys<T>(_ object: T.Type, keys: [String]) -> [T]? where T: NBModel {
         var filterString: String = ""
@@ -137,8 +137,9 @@ class NBClient {
         TTLog.debug("getmappable request: ", "\(result.statusCode!) - \(result.url!)")
         if !result.statusCode!.isSuccess || result.statusCode!.isServerError || result.statusCode!.isClientError {
             let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(result.statusCode!): \(result.statusCode!.localizedReasonPhrase), url: \(result.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+            
             Bugsnag.notify(exception) { report in
-                report.addMetadata(["resourceKey":"\(NBClient.shared.getCurrentUser().resourceKey)"], toTabWithName: "user")
+                report.addMetadata(["uuid":"\(UIDevice().uuid)"], toTabWithName: "user")
             }
         }
             

@@ -26,7 +26,14 @@ class RootViewController: UIViewController {
         }
             
         else if UserDefaults.hasUserLoggedIn {
-            self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
+            let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
+            if gotUserSuccess {
+                self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
+            }
+            else if !gotUserSuccess {
+                UserDefaults.set(hasUserLoggedIn: false)
+                self.performSegue(withIdentifier: "presentLoginView", sender: nil)
+            }
         }
     }
     
@@ -53,12 +60,8 @@ class RootViewController: UIViewController {
         }
             
         else if segue.identifier! == "presentTabBarView" {
-            NBClient.shared.resolveCurrentUser {
-                TTLog.debug("we did it???")
-            }
-            let delegate = UIApplication.shared.delegate as! AppDelegate
-            delegate.startBugsnag(user: NBClient.shared.getCurrentUser())
-            _ = NBSocket.shared            
+            Bugsnag.configuration()!.setUser(NBClient.shared.getCurrentUser().resourceKey, withName: NBClient.shared.getCurrentUser().fullName, andEmail: NBClient.shared.getCurrentUser().email!)
+            NBSocket.shared.setup()
         }
     }
 }

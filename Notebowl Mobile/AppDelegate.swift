@@ -12,6 +12,7 @@ import Bugsnag
 import FeedbackSlack
 import Tamamushi
 import ObjectMapper
+import SocketIO
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -39,6 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 "Looks good!"
                 ])
         }
+        
+        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
  
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
@@ -46,13 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.set(hasUserLoggedIn: false)
         }
         return true
-    }
-
-    func startBugsnag(user: User) {
-        let bugConfig = BugsnagConfiguration()
-        bugConfig.apiKey = "572ce3fbfa0c590dcfbc69519080d42e"
-        bugConfig.setUser(user.resourceKey, withName: user.fullName, andEmail: user.email!)
-        Bugsnag.start(with: bugConfig)
     }
     
     func registerNotifications() {
@@ -101,53 +97,56 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         TTLog.debug("in background!")
-        NBSocket.shared.manager.disconnect()
-        disconnectDate = Date()
+        if NBSocket.shared.manager.status == .connected {
+            NBSocket.shared.manager.disconnect()
+            disconnectDate = Date()
+        }
+        
     }
     func applicationWillEnterForeground(_ application: UIApplication) {
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             TTLog.debug("tabController is not presented!")
             return
         }
-        
-        NBSocket.shared.manager.connect()
-        let formatter = DateFormatter.iso8061
-        let dateString = formatter.string(from: self.disconnectDate)
-        let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
-        guard let reqData = recReq.content else { return }
-        do {
-            let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
-            let results: [String] = JSON["result"] as! [String]
-            for result in results {
-                let mapResult = Mapper<Generic>().map(JSONString: result)
-                if let viewControllers = tabbarVC.viewControllers {
-                    for viewController in viewControllers {
-                        let rootNavController = viewController as! UINavigationController
-                        for vc in rootNavController.viewControllers {
-                            if let switchVC = vc as? UpdateVC {
-                                switch mapResult!.action! {
-                                case .updated:
-                                    switchVC.handleUpdated(newObject: mapResult!.genericObject!)
-                                case .deleted:
-                                    switchVC.handleDeleted(deletedObject: mapResult!.genericObject!)
-                                case .elapsed:
-                                    switchVC.handleElapsed(elapsedObject: mapResult!.genericObject!)
-                                case .unknown:
-                                    TTLog.error("unknown actiontype!")
-                                    return
-                                }
-                                if results.last! == result {
-                                    TTLog.debug("last result!")
-                                    switchVC.reloadTableViews()
+        if NBSocket.shared.manager.status == .disconnected {
+            
+            NBSocket.shared.manager.connect()
+            let formatter = DateFormatter.iso8061
+            let dateString = formatter.string(from: self.disconnectDate)
+            let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
+            guard let reqData = recReq.content else { return }
+            do {
+                let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
+                let results: [String] = JSON["result"] as! [String]
+                for result in results {
+                    let mapResult = Mapper<Generic>().map(JSONString: result)
+                    guard let object = mapResult!.genericObject else { return }
+                    if let viewControllers = tabbarVC.viewControllers {
+                        for viewController in viewControllers {
+                            let rootNavController = viewController as! UINavigationController
+                            for vc in rootNavController.viewControllers {
+                                if let switchVC = vc as? UpdateVC {
+                                    switch mapResult!.action {
+                                    case .updated:
+                                        switchVC.handleUpdated(newObject: object)
+                                    case .deleted:
+                                        switchVC.handleDeleted(deletedObject: object)
+                                    case .elapsed:
+                                        switchVC.handleElapsed(elapsedObject: object)
+                                    default:
+                                        TTLog.error("unknown actiontype!")
+                                        return
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-        catch let error {
-            print("Error parsing json: \(error)")
+            catch let error {
+                print("Error parsing json: \(error)")
+            }
+        
         }
     }
 

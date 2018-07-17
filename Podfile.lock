@@ -1,6 +1,6 @@
 PODS:
   - AcknowList (1.6.1)
-  - Bugsnag (5.16.1)
+  - Bugsnag (5.16.2)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
   - DeckTransition (2.0.0)
@@ -116,7 +116,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
-  Bugsnag: 9b76167c85aa54e3f7e1837a6f6f04168a3fbe48
+  Bugsnag: 3f0b439c2036ee8c8aae24a2454e72a80647a855
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
@@ -144,6 +144,6 @@ SPEC CHECKSUMS:
   Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
   YPImagePicker: 92abff4a72bb03ad259f5f0c5fc2c6c483280f1a
 
-PODFILE CHECKSUM: 0b11f2f6d7c282e6cc3249edfac49af3a49fca1f
+PODFILE CHECKSUM: 277ed7980d9e06dfbf7ed9cb2fa230eb09a23480
 
 COCOAPODS: 1.5.3

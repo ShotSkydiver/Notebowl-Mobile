@@ -202,7 +202,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             else {
                 jsonPayload = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
                 let postReq = NBNetworking.shared.request(.post, url: Comment.endpoint, json: jsonPayload)
-                //let finalmap = Mapper<Comment>().map(JSONObject: (postReq.json as AnyObject).value(forKeyPath: "result")!)!
                 let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
                 let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
                 let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
@@ -347,9 +346,6 @@ extension HomeFeedPostViewController {
             
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfComment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right) }
-            else {
-                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            }
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
@@ -369,25 +365,6 @@ extension HomeFeedPostViewController {
     }
     
     func reloadTableViews() {
-        /*
-        if self.indexes.shouldReload {
-            self.tableView.beginUpdates()
-            self.tableView.reloadRows(at: self.indexes.reloadIndexPaths, with: .fade)
-            self.tableView.insertRows(at: self.indexes.insertIndexPaths, with: .left)
-            
-            if self.reloadSection {
-                self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                self.reloadSection = false
-            }
-            self.tableView.deleteRows(at: self.indexes.deleteIndexPaths, with: .right)
-            self.tableView.endUpdates()
-            TTLog.warning("COMPLETED????")
-            if !self.indexes.insertIndexPaths.isEmpty {
-                self.tableView.scrollToRow(at: self.indexes.insertIndexPaths.first!, at: .bottom, animated: true)
-            }
-            self.indexes = Paths()
-        }
-        */
     }
 }
 
@@ -409,7 +386,13 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.post.postComments.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            _ = NBNetworking.shared.request(.delete, url: selectedCell.commentForCell.url.absoluteString)
+            
+            let deleteReq = NBNetworking.shared.request(.delete, url: selectedCell.commentForCell.url.absoluteString)
+            let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+            NBSocket.shared.updateHandler(message: JSONString!)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
@@ -418,20 +401,24 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
             let alert = UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
-                let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
+                HUD.show(.progress)
+                NBClient.shared.delay(1.0) {
+                    
+                    let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
+                    _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                    alert.dismiss(animated: true, completion: nil)
+                    HUD.flash(.labeledSuccess(title: "Report Sent", subtitle: nil), delay: 0.5)
+                }
             })
             let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
-                let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
+                HUD.show(.progress)
+                NBClient.shared.delay(1.0) {
+                    
+                    let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.commentForCell.url.absoluteString)"]
+                    _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+                    alert.dismiss(animated: true, completion: nil)
+                    HUD.flash(.labeledSuccess(title: "Report Sent", subtitle: nil), delay: 0.5)
+                }
             })
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             alert.addAction(inappropriate)

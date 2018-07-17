@@ -145,7 +145,7 @@ extension HomeFeedViewController {
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                 NBClient.shared.setCurrentUser(user: (newObject as! User))
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                
                 
                 let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
                 var indexPaths = [IndexPath]()
@@ -155,6 +155,8 @@ extension HomeFeedViewController {
                     }
                 }
                 self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
+                
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 
             }
         }
@@ -285,7 +287,17 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            _ = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
+            
+            
+            let deleteReq = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
+            let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+            NBSocket.shared.updateHandler(message: JSONString!)
+            
+            
+            
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
