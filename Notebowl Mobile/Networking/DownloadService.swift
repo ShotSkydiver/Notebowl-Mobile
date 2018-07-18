@@ -167,6 +167,7 @@ extension NBNetworking {
             }
             if let URL = urlComponents.url {
                 var request = URLRequest(url: URL)
+                
                 request.cachePolicy = sessionDefaults.cachePolicy
                 request.httpBody = body
                 request.httpMethod = method.rawValue
@@ -285,6 +286,7 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
             requestConfigs[dataTask.taskIdentifier]?.data.append(data)
         }
     }
+    
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let config = requestConfigs[task.taskIdentifier], let handler = config.completionHandler {
             let result = NBResult(data: config.data, response: task.response, error: error, task: task)

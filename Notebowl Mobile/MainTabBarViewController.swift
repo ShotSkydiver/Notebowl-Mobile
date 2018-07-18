@@ -19,6 +19,7 @@ class LoadingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //loadingView.accessibilityIdentifier = "loadingView"
         self.setNeedsStatusBarAppearanceUpdate()
         addLoadingView()
         showLoading(show: true)

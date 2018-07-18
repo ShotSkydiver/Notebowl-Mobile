@@ -28,9 +28,11 @@ class RootViewController: UIViewController {
         else if UserDefaults.hasUserLoggedIn {
             let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
             if gotUserSuccess {
+                TTLog.debug("gotUserSuccess")
                 self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
             }
             else if !gotUserSuccess {
+                TTLog.debug("did not gotUserSuccess")
                 UserDefaults.set(hasUserLoggedIn: false)
                 self.performSegue(withIdentifier: "presentLoginView", sender: nil)
             }
@@ -49,6 +51,7 @@ class RootViewController: UIViewController {
             progressWebVC.url = URL(string: ("https://\(NBClient.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
+            progressWebVC.bypassedSSLHosts = ["demo.notebowl.xyz"]
             progressWebVC.navigationItem.title = "Notebowl Login"
             progressWebVC.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             progressWebVC.doneBarButtonItemPosition = .none

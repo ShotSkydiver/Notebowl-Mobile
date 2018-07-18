@@ -34,11 +34,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if !isAppStore {
             TTLog.debug("not appstore!")
+            /*
             _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
                 "Bug",
                 "Question",
                 "Looks good!"
                 ])
+            */
         }
         
         Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
@@ -114,19 +116,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let formatter = DateFormatter.iso8061
             let dateString = formatter.string(from: self.disconnectDate)
             let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
-            guard let reqData = recReq.content else { return }
+ 
+            guard let keyPaths = (recReq.json as AnyObject).value(forKeyPath: "result")! as? [String] else { return }
             do {
-                let JSON : [String:AnyObject] = try JSONSerialization.jsonObject(with: reqData, options: .allowFragments) as! [String : AnyObject]
-                let results: [String] = JSON["result"] as! [String]
-                for result in results {
-                    let mapResult = Mapper<Generic>().map(JSONString: result)
-                    guard let object = mapResult!.genericObject else { return }
+                if keyPaths.isEmpty || keyPaths.count == 0 { return }
+                for result in keyPaths {
+                    guard let contentData = result.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
+                    let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+                    guard let updateUrlString = (JSON["updateUrl"] as? String) else { return }
+ 
+                    let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(updateUrlString))", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
+                    
+                    guard let object = mapped!.genericObject else { return }
                     if let viewControllers = tabbarVC.viewControllers {
                         for viewController in viewControllers {
                             let rootNavController = viewController as! UINavigationController
                             for vc in rootNavController.viewControllers {
                                 if let switchVC = vc as? UpdateVC {
-                                    switch mapResult!.action {
+                                    switch mapped!.action {
                                     case .updated:
                                         switchVC.handleUpdated(newObject: object)
                                     case .deleted:

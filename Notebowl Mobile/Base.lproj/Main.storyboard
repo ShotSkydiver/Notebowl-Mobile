@@ -393,13 +393,23 @@
                                     <navigationItem largeTitleDisplayMode="never" id="hcz-xE-HcV">
                                         <barButtonItem key="leftBarButtonItem" image="close-vector" id="XaM-lz-BPi">
                                             <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="dismissButton"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="dismissButtonAction:" destination="HMo-CO-fYR" id="iBQ-md-oeu"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" id="Z22-f6-zfW" customClass="PostButtonNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target"/>
+                                        <barButtonItem key="rightBarButtonItem" id="Z22-f6-zfW" customClass="PostButtonNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="postButton"/>
+                                            </userDefinedRuntimeAttributes>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="fakeNavBar"/>
+                                </userDefinedRuntimeAttributes>
                             </navigationBar>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="bJt-gw-CTl" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                 <rect key="frame" x="20" y="84" width="46" height="46"/>
@@ -425,6 +435,7 @@
                                     <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="91D-dL-ydz" customClass="PlaceholderTextView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="16.333333333333343" width="319" height="274.66666666666663"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="createPostText"/>
                                         <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -762,6 +773,9 @@
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="bulletinTableView"/>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <outlet property="dataSource" destination="XYy-Qd-okh" id="rdE-Ka-0Pu"/>
                                     <outlet property="delegate" destination="XYy-Qd-okh" id="KI2-OY-kyR"/>
@@ -909,9 +923,6 @@
         <namedColor name="Backdrop Color">
             <color red="0.16862745098039217" green="0.16862745098039217" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="Backdrop Color">
-            <color red="0.16862745098039217" green="0.16862745098039217" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <namedColor name="Dark Gray">
             <color red="0.30980392156862746" green="0.30980392156862746" blue="0.30980392156862746" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
@@ -920,7 +931,7 @@
         </namedColor>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Uyy-HA-l3J"/>
+        <segue reference="Ssj-YJ-Jbk"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

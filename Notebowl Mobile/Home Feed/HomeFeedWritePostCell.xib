@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,12 +15,12 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="newPostCell" rowHeight="100" id="KGk-i7-Jjw" customClass="HomeFeedWritePostCell" customModule="Notebowl_Mobile" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="414" height="99.666666666666671"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MFb-o8-IQD" customClass="DesignableView" customModule="Notebowl_Mobile" customModuleProvider="target">
-                        <rect key="frame" x="20" y="27" width="46" height="46"/>
+                        <rect key="frame" x="20" y="27.333333333333329" width="46" height="46"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -41,7 +41,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="pfI-Tx-KWH" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
-                        <rect key="frame" x="20" y="27" width="46" height="46"/>
+                        <rect key="frame" x="20" y="27.333333333333329" width="46" height="46"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="46" id="Ho3-sa-OkS"/>
                             <constraint firstAttribute="height" constant="46" id="QkF-cY-8fi"/>
@@ -66,7 +66,8 @@
                         </userDefinedRuntimeAttributes>
                     </imageView>
                     <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Share an update or ask a question..." minimumFontSize="15" translatesAutoresizingMaskIntoConstraints="NO" id="XXb-Da-NxA" customClass="AutoSizeTextField" customModule="Notebowl_Mobile" customModuleProvider="target">
-                        <rect key="frame" x="78" y="27" width="316" height="46"/>
+                        <rect key="frame" x="78" y="27.333333333333329" width="316" height="46"/>
+                        <accessibility key="accessibilityConfiguration" identifier="createPostTextField"/>
                         <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                         <textInputTraits key="textInputTraits"/>

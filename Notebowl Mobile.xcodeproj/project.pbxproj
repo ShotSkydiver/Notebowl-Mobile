@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
+		8522D04B20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */; };
+		8522D05C20FE816400BCBD88 /* NotebowlMobileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */; };
 		852462A720B5FC0E00E944E2 /* NBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A620B5FC0E00E944E2 /* NBBuilder.swift */; };
 		852462A920B5FE5A00E944E2 /* NBHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A820B5FE5A00E944E2 /* NBHelpers.swift */; };
 		852462AB20B6035800E944E2 /* NBResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462AA20B6035800E944E2 /* NBResult.swift */; };
@@ -57,6 +59,23 @@
 		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		8522D04D20FE7B2C00BCBD88 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85E291851F5F619300172C46 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85E2918C1F5F619300172C46;
+			remoteInfo = "Notebowl Mobile";
+		};
+		8522D05E20FE816400BCBD88 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85E291851F5F619300172C46 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85E2918C1F5F619300172C46;
+			remoteInfo = "Notebowl Mobile";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		856A57C6207820AD0080ADAA /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -76,6 +95,12 @@
 		410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.testflight.xcconfig"; sourceTree = "<group>"; };
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
+		8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebowlMobileUITests.swift; sourceTree = "<group>"; };
+		8522D04C20FE7B2C00BCBD88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8522D05920FE816400BCBD88 /* NotebowlMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebowlMobileTests.swift; sourceTree = "<group>"; };
+		8522D05D20FE816400BCBD88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		852462A620B5FC0E00E944E2 /* NBBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBBuilder.swift; sourceTree = "<group>"; };
 		852462A820B5FE5A00E944E2 /* NBHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBHelpers.swift; sourceTree = "<group>"; };
 		852462AA20B6035800E944E2 /* NBResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBResult.swift; sourceTree = "<group>"; };
@@ -118,8 +143,6 @@
 		85E291971F5F619300172C46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85E2919A1F5F619300172C46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		85E2919C1F5F619300172C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		85E291A11F5F619300172C46 /* Notebowl MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Notebowl MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		85E291AC1F5F619300172C46 /* Notebowl MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Notebowl MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E3057320DAB2390019131D /* SettingsTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewHeader.swift; sourceTree = "<group>"; };
 		85E3057520DAB27B0019131D /* SettingsTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsTableViewHeader.xib; sourceTree = "<group>"; };
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
@@ -133,25 +156,25 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8522D04520FE7B2C00BCBD88 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8522D05620FE816400BCBD88 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85E2918A1F5F619300172C46 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		85E2919E1F5F619300172C46 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		85E291A91F5F619300172C46 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,6 +200,24 @@
 				4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		8522D04920FE7B2C00BCBD88 /* NotebowlMobileUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */,
+				8522D04C20FE7B2C00BCBD88 /* Info.plist */,
+			);
+			path = NotebowlMobileUITests;
+			sourceTree = "<group>";
+		};
+		8522D05A20FE816400BCBD88 /* NotebowlMobileTests */ = {
+			isa = PBXGroup;
+			children = (
+				8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */,
+				8522D05D20FE816400BCBD88 /* Info.plist */,
+			);
+			path = NotebowlMobileTests;
 			sourceTree = "<group>";
 		};
 		85250A06202A1AE60003A416 /* Libraries */ = {
@@ -268,6 +309,8 @@
 			isa = PBXGroup;
 			children = (
 				85E2918F1F5F619300172C46 /* Notebowl Mobile */,
+				8522D04920FE7B2C00BCBD88 /* NotebowlMobileUITests */,
+				8522D05A20FE816400BCBD88 /* NotebowlMobileTests */,
 				85E2918E1F5F619300172C46 /* Products */,
 				6463A518FB6F150E6428F592 /* Pods */,
 				46B74E1CE70476650551376B /* Frameworks */,
@@ -278,8 +321,8 @@
 			isa = PBXGroup;
 			children = (
 				85E2918D1F5F619300172C46 /* Notebowl Mobile.app */,
-				85E291A11F5F619300172C46 /* Notebowl MobileTests.xctest */,
-				85E291AC1F5F619300172C46 /* Notebowl MobileUITests.xctest */,
+				8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */,
+				8522D05920FE816400BCBD88 /* NotebowlMobileTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -314,6 +357,42 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8522D04720FE7B2C00BCBD88 /* NotebowlMobileUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8522D05420FE7B2C00BCBD88 /* Build configuration list for PBXNativeTarget "NotebowlMobileUITests" */;
+			buildPhases = (
+				8522D04420FE7B2C00BCBD88 /* Sources */,
+				8522D04520FE7B2C00BCBD88 /* Frameworks */,
+				8522D04620FE7B2C00BCBD88 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8522D04E20FE7B2C00BCBD88 /* PBXTargetDependency */,
+			);
+			name = NotebowlMobileUITests;
+			productName = NotebowlMobileUITests;
+			productReference = 8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		8522D05820FE816400BCBD88 /* NotebowlMobileTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8522D06020FE816400BCBD88 /* Build configuration list for PBXNativeTarget "NotebowlMobileTests" */;
+			buildPhases = (
+				8522D05520FE816400BCBD88 /* Sources */,
+				8522D05620FE816400BCBD88 /* Frameworks */,
+				8522D05720FE816400BCBD88 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8522D05F20FE816400BCBD88 /* PBXTargetDependency */,
+			);
+			name = NotebowlMobileTests;
+			productName = NotebowlMobileTests;
+			productReference = 8522D05920FE816400BCBD88 /* NotebowlMobileTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		85E2918C1F5F619300172C46 /* Notebowl Mobile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 85E291B51F5F619400172C46 /* Build configuration list for PBXNativeTarget "Notebowl Mobile" */;
@@ -335,50 +414,26 @@
 			productReference = 85E2918D1F5F619300172C46 /* Notebowl Mobile.app */;
 			productType = "com.apple.product-type.application";
 		};
-		85E291A01F5F619300172C46 /* Notebowl MobileTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 85E291B81F5F619400172C46 /* Build configuration list for PBXNativeTarget "Notebowl MobileTests" */;
-			buildPhases = (
-				85E2919D1F5F619300172C46 /* Sources */,
-				85E2919E1F5F619300172C46 /* Frameworks */,
-				85E2919F1F5F619300172C46 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Notebowl MobileTests";
-			productName = "NB-MobileTests";
-			productReference = 85E291A11F5F619300172C46 /* Notebowl MobileTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		85E291AB1F5F619300172C46 /* Notebowl MobileUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 85E291BB1F5F619400172C46 /* Build configuration list for PBXNativeTarget "Notebowl MobileUITests" */;
-			buildPhases = (
-				85E291A81F5F619300172C46 /* Sources */,
-				85E291A91F5F619300172C46 /* Frameworks */,
-				85E291AA1F5F619300172C46 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Notebowl MobileUITests";
-			productName = "NB-MobileUITests";
-			productReference = 85E291AC1F5F619300172C46 /* Notebowl MobileUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		85E291851F5F619300172C46 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0900;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Notebowl;
 				TargetAttributes = {
+					8522D04720FE7B2C00BCBD88 = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 85E2918C1F5F619300172C46;
+					};
+					8522D05820FE816400BCBD88 = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 85E2918C1F5F619300172C46;
+					};
 					85E2918C1F5F619300172C46 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0940;
@@ -394,14 +449,6 @@
 								enabled = 1;
 							};
 						};
-					};
-					85E291A01F5F619300172C46 = {
-						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Automatic;
-					};
-					85E291AB1F5F619300172C46 = {
-						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -419,13 +466,27 @@
 			projectRoot = "";
 			targets = (
 				85E2918C1F5F619300172C46 /* Notebowl Mobile */,
-				85E291A01F5F619300172C46 /* Notebowl MobileTests */,
-				85E291AB1F5F619300172C46 /* Notebowl MobileUITests */,
+				8522D04720FE7B2C00BCBD88 /* NotebowlMobileUITests */,
+				8522D05820FE816400BCBD88 /* NotebowlMobileTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8522D04620FE7B2C00BCBD88 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8522D05720FE816400BCBD88 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85E2918B1F5F619300172C46 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -442,20 +503,6 @@
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
 				8549648920D996B300366C60 /* NotificationSettingCell.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		85E2919F1F5F619300172C46 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		85E291AA1F5F619300172C46 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,12 +550,10 @@
 				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Lightbox/Lightbox.framework",
-				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/MMUploadImage/MMUploadImage.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/PKHUD/PKHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework",
-				"${PODS_ROOT}/Reveal-SDK/RevealServer-16/iOS/RevealServer.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
@@ -534,12 +579,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lightbox.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMUploadImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PKHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryntTrimmerView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
@@ -570,6 +613,22 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8522D04420FE7B2C00BCBD88 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8522D04B20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8522D05520FE816400BCBD88 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8522D05C20FE816400BCBD88 /* NotebowlMobileTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85E291891F5F619300172C46 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -612,21 +671,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		85E2919D1F5F619300172C46 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		85E291A81F5F619300172C46 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8522D04E20FE7B2C00BCBD88 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 85E2918C1F5F619300172C46 /* Notebowl Mobile */;
+			targetProxy = 8522D04D20FE7B2C00BCBD88 /* PBXContainerItemProxy */;
+		};
+		8522D05F20FE816400BCBD88 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 85E2918C1F5F619300172C46 /* Notebowl Mobile */;
+			targetProxy = 8522D05E20FE816400BCBD88 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		85E291941F5F619300172C46 /* Main.storyboard */ = {
@@ -648,6 +706,216 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8522D04F20FE7B2C00BCBD88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Notebowl Mobile";
+			};
+			name = Debug;
+		};
+		8522D05020FE7B2C00BCBD88 /* Prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Notebowl Mobile";
+			};
+			name = Prod;
+		};
+		8522D05120FE7B2C00BCBD88 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Notebowl Mobile";
+			};
+			name = Staging;
+		};
+		8522D05220FE7B2C00BCBD88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Notebowl Mobile";
+			};
+			name = Release;
+		};
+		8522D05320FE7B2C00BCBD88 /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Notebowl Mobile";
+			};
+			name = TestFlight;
+		};
+		8522D06120FE816400BCBD88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Notebowl Mobile.app/Notebowl Mobile";
+			};
+			name = Debug;
+		};
+		8522D06220FE816400BCBD88 /* Prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Notebowl Mobile.app/Notebowl Mobile";
+			};
+			name = Prod;
+		};
+		8522D06320FE816400BCBD88 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Notebowl Mobile.app/Notebowl Mobile";
+			};
+			name = Staging;
+		};
+		8522D06420FE816400BCBD88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Notebowl Mobile.app/Notebowl Mobile";
+			};
+			name = Release;
+		};
+		8522D06520FE816400BCBD88 /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8M84348K8B;
+				INFOPLIST_FILE = NotebowlMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Notebowl Mobile.app/Notebowl Mobile";
+			};
+			name = TestFlight;
+		};
 		85774A5620759BFF001CF45A /* TestFlight */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -734,37 +1002,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = TestFlight;
-		};
-		85774A5820759BFF001CF45A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = TestFlight;
-		};
-		85774A5920759BFF001CF45A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -867,37 +1104,6 @@
 			};
 			name = Staging;
 		};
-		85774A5C20759C0F001CF45A /* Staging */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Staging;
-		};
-		85774A5D20759C0F001CF45A /* Staging */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Staging;
-		};
 		85774A5E20759C14001CF45A /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -990,37 +1196,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Prod;
-		};
-		85774A6020759C14001CF45A /* Prod */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Prod;
-		};
-		85774A6120759C14001CF45A /* Prod */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1215,71 +1390,33 @@
 			};
 			name = Release;
 		};
-		85E291B91F5F619400172C46 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		85E291BA1F5F619400172C46 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		85E291BC1F5F619400172C46 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		85E291BD1F5F619400172C46 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8M84348K8B;
-				INFOPLIST_FILE = "Notebowl MobileUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8522D05420FE7B2C00BCBD88 /* Build configuration list for PBXNativeTarget "NotebowlMobileUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8522D04F20FE7B2C00BCBD88 /* Debug */,
+				8522D05020FE7B2C00BCBD88 /* Prod */,
+				8522D05120FE7B2C00BCBD88 /* Staging */,
+				8522D05220FE7B2C00BCBD88 /* Release */,
+				8522D05320FE7B2C00BCBD88 /* TestFlight */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8522D06020FE816400BCBD88 /* Build configuration list for PBXNativeTarget "NotebowlMobileTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8522D06120FE816400BCBD88 /* Debug */,
+				8522D06220FE816400BCBD88 /* Prod */,
+				8522D06320FE816400BCBD88 /* Staging */,
+				8522D06420FE816400BCBD88 /* Release */,
+				8522D06520FE816400BCBD88 /* TestFlight */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		85E291881F5F619300172C46 /* Build configuration list for PBXProject "Notebowl Mobile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1300,30 +1437,6 @@
 				85774A5B20759C0F001CF45A /* Staging */,
 				85E291B71F5F619400172C46 /* Release */,
 				85774A5720759BFF001CF45A /* TestFlight */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		85E291B81F5F619400172C46 /* Build configuration list for PBXNativeTarget "Notebowl MobileTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				85E291B91F5F619400172C46 /* Debug */,
-				85774A6020759C14001CF45A /* Prod */,
-				85774A5C20759C0F001CF45A /* Staging */,
-				85E291BA1F5F619400172C46 /* Release */,
-				85774A5820759BFF001CF45A /* TestFlight */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		85E291BB1F5F619400172C46 /* Build configuration list for PBXNativeTarget "Notebowl MobileUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				85E291BC1F5F619400172C46 /* Debug */,
-				85774A6120759C14001CF45A /* Prod */,
-				85774A5D20759C0F001CF45A /* Staging */,
-				85E291BD1F5F619400172C46 /* Release */,
-				85774A5920759BFF001CF45A /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

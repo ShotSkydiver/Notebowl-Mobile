@@ -16,7 +16,6 @@ import ObjectMapper
 import Tamamushi
 import SwipeCellKit
 import DeckTransition
-import MBProgressHUD
 import PKHUD
 
 class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {

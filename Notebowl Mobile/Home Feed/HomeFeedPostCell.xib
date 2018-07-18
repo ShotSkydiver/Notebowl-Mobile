@@ -225,6 +225,9 @@
             </tableViewCellContentView>
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
             <color key="tintColor" name="Notebowl Blue Color"/>
+            <accessibility key="accessibilityConfiguration" identifier="homeFeedPostCell">
+                <bool key="isElement" value="YES"/>
+            </accessibility>
             <gestureRecognizers/>
             <viewLayoutGuide key="safeArea" id="I3B-8s-kz5"/>
             <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
