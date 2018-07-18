@@ -62,7 +62,8 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             notification.status = "seen"
         }
         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+        let countString = String(format: "%d", (unreadCount.count))
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
     }
 
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
@@ -120,7 +121,8 @@ extension NotificationsTableViewController {
             
             existingNotification == false ? tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+            let countString = String(format: "%d", (unreadCount.count))
+            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
         }
         
     }
@@ -131,7 +133,8 @@ extension NotificationsTableViewController {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+            let countString = String(format: "%d", (unreadCount.count))
+            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
         }
     }
     
