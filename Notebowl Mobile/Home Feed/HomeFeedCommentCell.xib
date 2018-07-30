@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14306.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14278.2"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -22,6 +22,9 @@
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="Dci-7R-6eS" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="20" y="11" width="44" height="44"/>
+                        <accessibility key="accessibilityConfiguration" identifier="commentAvatar">
+                            <bool key="isElement" value="YES"/>
+                        </accessibility>
                         <constraints>
                             <constraint firstAttribute="width" constant="44" id="GLe-2J-b7k"/>
                             <constraint firstAttribute="height" constant="44" id="WTj-bM-pOJ"/>
@@ -43,12 +46,14 @@
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7D-eu-6Ki">
                                                 <rect key="frame" x="0.0" y="0.0" width="255" height="51.666666666666664"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="commentUserName"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                 <color key="textColor" name="Notebowl Backdrop Color"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="43 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91y-cT-n0p">
                                                 <rect key="frame" x="0.0" y="53.666666666666671" width="255" height="13.333333333333329"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="commentPostedDate"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
                                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -57,6 +62,7 @@
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wgz-AM-l13">
                                         <rect key="frame" x="255" y="0.0" width="67" height="67"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="commentMoreButton"/>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="2" minY="0.0" maxX="2" maxY="10"/>
                                         <state key="normal" image="more-image"/>
@@ -70,6 +76,7 @@
                                 <rect key="frame" x="0.0" y="72" width="322" height="6"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" name="Notebowl Blue Color"/>
+                                <accessibility key="accessibilityConfiguration" identifier="commentContent"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                 <color key="textColor" name="Notebowl Backdrop Color"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -88,6 +95,9 @@
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="5" minY="0.0" maxX="5" maxY="0.0"/>
                                 </collectionViewFlowLayout>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="commentAttachments"/>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <outlet property="dataSource" destination="KGk-i7-Jjw" id="dBE-qO-81Z"/>
                                     <outlet property="delegate" destination="KGk-i7-Jjw" id="cb8-Gx-g0e"/>
@@ -98,6 +108,7 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UC2-dx-Jnt" customClass="FaveButton" customModule="FaveButton">
                                         <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="commentLikeButton"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="7H6-RD-5hj"/>
                                             <constraint firstAttribute="width" constant="30" id="a1s-cv-amY"/>
@@ -108,12 +119,13 @@
                                         </state>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
-                                                <color key="value" red="0.32549019610000002" green="0.71372549019999998" blue="0.43529411759999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="value" name="NB NEW DARKER GREEN"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="kVu-c5-emg">
                                         <rect key="frame" x="32" y="0.0" width="290" height="30"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="commentLikeCount"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -134,6 +146,9 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <color key="tintColor" name="Notebowl Blue Color"/>
+            <accessibility key="accessibilityConfiguration" identifier="homeFeedCommentCell">
+                <bool key="isElement" value="YES"/>
+            </accessibility>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="collectionFlowLayout" destination="taZ-4K-a75" id="wzm-W0-VIr"/>
@@ -154,6 +169,9 @@
         <image name="Default Avatar" width="360" height="360"/>
         <image name="more-image" width="67.5" height="67.5"/>
         <image name="thumbs_up-vector" width="30" height="30"/>
+        <namedColor name="NB NEW DARKER GREEN">
+            <color red="0.047058823529411764" green="0.52941176470588236" blue="0.36078431372549019" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="Notebowl Backdrop Color">
             <color red="0.16862745098039217" green="0.16862745098039217" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

@@ -35,7 +35,8 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         placeholderTableView?.placeholderDelegate = self
         
         setupNavBar()
-        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
+        
+        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
         bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
     }
     
@@ -62,7 +63,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     }
     
     func reloadTable() {
-        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+        self.posts = NBClient.shared.storedTypes[Post.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
         self.bulletinTableView.reloadData()
     }
     
@@ -95,9 +96,13 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
             var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
             courseForPicker.sort() { $0.fullName < $1.fullName }
             var pickerItems = courseForPicker as [NBModel]
-            var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
-            groups.sort() { $0.fullName < $1.fullName }
-            pickerItems += groups as [NBModel]
+            
+            if NBClient.shared.storedTypes[Group.classIdentifier] != nil {
+                var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
+                groups.sort() { $0.fullName < $1.fullName }
+                pickerItems += groups as [NBModel]
+            }
+            
             destVC.objectsForPicker = pickerItems
             
             if let senderCell = sender as? HomeFeedPostCell {

@@ -12,6 +12,7 @@ import ObjectMapper
 import HGPlaceholders
 import Bugsnag
 import Kingfisher
+import UITestHelper
 
 public extension String {
     func encodeURIComponent() -> String? {
@@ -201,7 +202,7 @@ public extension UIImage {
     
     public func createGradientImage(size: Int) -> UIImage {
         let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [#colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1).cgColor, #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1).cgColor]
+        gradientLayer.colors = [#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1).cgColor, #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1).cgColor]
         
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -1135,3 +1136,14 @@ struct Config {
     }
 }
 
+enum AccessibilityIdentifier {
+    enum HomeScreen: String {
+        case theLabel
+        case theTextField
+        case theButton
+        case switch1
+        case switch2
+        case showButton
+        case hideButton
+    }
+}

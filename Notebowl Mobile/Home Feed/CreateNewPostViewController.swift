@@ -88,6 +88,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     func setupViews() {
         fakeNavBar.shadowImage = UIImage.init()
         
+        
+        
         userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                options: [
                                 .transition(ImageTransition.fade(0.3)),
@@ -137,8 +139,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     func setupInputBar() {
         resetBar()
         photoLibraryButton = makeButton(image: "add_photo-vector")
+        photoLibraryButton.accessibilityIdentifier = "photoLibraryButton"
         photoLibraryButton.onSelected { libButton in
             var config = YPImagePickerConfiguration()
+            config.library.numberOfItemsInRow = 3
+            config.library.spacingBetweenItems = 4.0
             config.targetImageSize = .cappedTo(size: 1024)
             config.library.maxNumberOfItems = 10
             config.library.skipSelectionsGallery = true
@@ -177,10 +182,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.present(picker, animated: true, completion: nil)
         }
         coursePickerButton = makeButton(image: "school-vector")
+        coursePickerButton.accessibilityIdentifier = "coursePickerButton"
         coursePickerButton.configure {
             $0.isEnabled = !self.editingExistingPost
-            
-            
         }
         coursePickerButton.onSelected { courseButton in
             self.pickerAlert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course or group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
@@ -203,6 +207,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         
         anonymousButton = makeButton(image: "visibility_on-vector")
+        anonymousButton.accessibilityIdentifier = "anonymousButton"
         anonymousButton.configure {
             $0.isEnabled = !self.editingExistingPost
             $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
@@ -213,6 +218,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "not_pinned-vector")
+        pinnedButton.accessibilityIdentifier = "pinnedButton"
         pinnedButton.onSelected { pinButton in
             self.pinnedToggle.toggleValue()
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
@@ -455,14 +461,18 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
 }
 
 class PostButtonNavigationItem: UIBarButtonItem {
-    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 78, height: 34))
-    public let postButton = ButtonProgressBar(frame: CGRect(x: 0, y: 0, width: 78, height: 34))
+    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 108, height: 35))
+    public let postButton = ButtonProgressBar(frame: CGRect(x: 0, y: 0, width: 108, height: 35))
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        postButton.accessibilityIdentifier = "postButton"
         postButton.setTitle("Post", for: .normal)
-        postButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .caption1)
+        
+        postButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        postButton.titleLabel?.minimumScaleFactor = 0.3
+        postButton.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
         postButton.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
         postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
         postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
@@ -475,17 +485,17 @@ class PostButtonNavigationItem: UIBarButtonItem {
         if anon {
             
             UIView.animate(withDuration: 0.3, animations: {
-                self.customView?.layoutIfNeeded()
-                self.postButton.setTitle("Post as Anonymous", for: .normal)
-                self.postButton.frame = CGRect(x: -82, y: 0, width: 160, height: 34)
+                //self.customView?.layoutIfNeeded()
+                self.postButton.setTitle("Anonymous Post", for: .normal)
+                //self.postButton.frame = CGRect(x: -82, y: 0, width: 160, height: 34)
             })
         }
         else if !anon {
             
             UIView.animate(withDuration: 0.3, animations: {
-                self.customView?.layoutIfNeeded()
+                //self.customView?.layoutIfNeeded()
                 self.postButton.setTitle("Post", for: .normal)
-                self.postButton.frame = CGRect(x: 0, y: 0, width: 78, height: 34)
+                //self.postButton.frame = CGRect(x: 0, y: 0, width: 78, height: 34)
             })
         }
     }

@@ -25,12 +25,13 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
         placeholderTableView = tableView as? TableView
         placeholderTableView?.placeholderDelegate = self
         
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
+        
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
         self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         
         setupNavBar()
-        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1), endColor: #colorLiteral(red: 0.3249999881, green: 0.7139999866, blue: 0.4350000024, alpha: 1))
+        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
     }
     @IBAction func profileButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "segueNotifDeck", sender: nil)
@@ -58,12 +59,15 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
     
     func markAsSeen() {
         _ = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
-        for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
-            notification.status = "seen"
+        
+        if NBClient.shared.storedTypes[Notification.classIdentifier] != nil {
+            for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
+                notification.status = "seen"
+            }
+            let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+            let countString = String(format: "%d", (unreadCount.count))
+            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
         }
-        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-        let countString = String(format: "%d", (unreadCount.count))
-        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
     }
 
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
@@ -114,7 +118,7 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
 extension NotificationsTableViewController {
     
     func handleUpdated(newObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true

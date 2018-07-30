@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let token = tokenParts.joined()
         TTLog.debug("Device Token: \(token)")
-        _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token])
+        _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token, "uuid": UIDevice().uuid])
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)

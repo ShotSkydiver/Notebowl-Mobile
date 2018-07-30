@@ -84,9 +84,14 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         
         let items = [
             makeButton(named: "add_photo-vector")
+                .configure {
+                    $0.accessibilityIdentifier = "commentPhotoLibraryButton"
+                }
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true
                     var config = YPImagePickerConfiguration()
+                    config.library.numberOfItemsInRow = 3
+                    config.library.spacingBetweenItems = 4.0
                     config.targetImageSize = .cappedTo(size: 1024)
                     config.library.maxNumberOfItems = 10
                     config.library.skipSelectionsGallery = true
@@ -130,6 +135,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             
             makeButton(named: "visibility_on-vector")
                 .configure {
+                    $0.accessibilityIdentifier = "commentAnonymousButton"
                     $0.isEnabled = !self.editingExistingComment
                     $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
                 }
@@ -139,25 +145,29 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     UIView.animate(withDuration: 0.3, animations: {
                         self.view.layoutIfNeeded()
                         if self.anonymousToggle {
-                            self.bar.sendButton.setTitle("Reply as Anonymous", for: .normal)
-                            self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX-106), y: self.bar.sendButton.frame.minY, width: 168, height: 36)
+                            self.bar.sendButton.setTitle("Anonymous Reply", for: .normal)
+                            //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX-106), y: self.bar.sendButton.frame.minY, width: 168, height: 36)
                         }
                         else if !self.anonymousToggle {
                             self.bar.sendButton.setTitle("Reply", for: .normal)
-                            self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX+106), y: self.bar.sendButton.frame.minY, width: 62, height: 36)
+                            //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX+106), y: self.bar.sendButton.frame.minY, width: 62, height: 36)
                         }
                     })
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             },
             .flexibleSpace,
             bar.sendButton.configure {
+                $0.accessibilityIdentifier = "commentSendButton"
                 $0.layer.cornerRadius = 8
                 $0.layer.borderWidth = 1.5
                 $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                 $0.title = "Reply"
+                $0.titleLabel?.adjustsFontSizeToFitWidth = true
+                $0.titleLabel?.minimumScaleFactor = 0.2
+                $0.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
                 $0.setTitleColor(.groupTableViewBackground, for: .normal)
                 $0.setTitleColor(.groupTableViewBackground, for: .highlighted)
-                $0.setSize(CGSize(width: 62, height: 36), animated: viewIsLoaded)
+                $0.setSize(CGSize(width: 92, height: 36), animated: viewIsLoaded)
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = UIColor.groupTableViewBackground
@@ -165,9 +175,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 200)))
                     $0.layer.borderColor = UIColor.clear.cgColor
                 }.onSelected {
+                    $0.isUserInteractionEnabled = false
                     $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
                 }.onDeselected {
                     $0.transform = CGAffineTransform.identity
+                    $0.isUserInteractionEnabled = true
             }
         ]
         bar.sendButton.onTextViewDidChange { (button, textView) in

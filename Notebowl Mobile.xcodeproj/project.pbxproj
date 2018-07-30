@@ -35,6 +35,11 @@
 		856E9A03209D82A300D167B4 /* PickerViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856E9A02209D82A300D167B4 /* PickerViewViewController.swift */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
+		8587DE612107EBFD00B41DB6 /* PostUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE602107EBFD00B41DB6 /* PostUITests.swift */; };
+		8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE622107EC0A00B41DB6 /* CommentUITests.swift */; };
+		8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */; };
+		8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */; };
+		8587DE692107ED5900B41DB6 /* UITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE682107ED5900B41DB6 /* UITestHelpers.swift */; };
 		8595017220A2614E004640B3 /* IndexedCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */; };
 		8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */; };
 		85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */; };
@@ -57,6 +62,7 @@
 		85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */; };
 		85FCF0C720D86F1D0049737E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FCF0C620D86F1C0049737E /* SettingsTableViewController.swift */; };
 		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
+		BC6BE7EA9487D49AFDC841BD /* libPods-NotebowlMobileUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,7 +100,9 @@
 		3E8127B27DA8552A052240A6 /* Pods-Notebowl Mobile.prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.prod.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.prod.xcconfig"; sourceTree = "<group>"; };
 		410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.testflight.xcconfig"; sourceTree = "<group>"; };
+		4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotebowlMobileUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
+		6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebowlMobileUITests.swift; sourceTree = "<group>"; };
 		8522D04C20FE7B2C00BCBD88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -128,6 +136,11 @@
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
+		8587DE602107EBFD00B41DB6 /* PostUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostUITests.swift; sourceTree = "<group>"; };
+		8587DE622107EC0A00B41DB6 /* CommentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUITests.swift; sourceTree = "<group>"; };
+		8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUITests.swift; sourceTree = "<group>"; };
+		8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscAppUITests.swift; sourceTree = "<group>"; };
+		8587DE682107ED5900B41DB6 /* UITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHelpers.swift; sourceTree = "<group>"; };
 		8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedCollectionViewCell.swift; sourceTree = "<group>"; };
 		8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IndexedCollectionViewCell.xib; sourceTree = "<group>"; };
 		85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedWritePostCell.swift; sourceTree = "<group>"; };
@@ -152,7 +165,11 @@
 		85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedCommentCell.xib; sourceTree = "<group>"; };
 		85FCF0C620D86F1C0049737E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
+		88E9B2CEB79AC0B662B12815 /* Pods-NotebowlMobileUITests.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.testflight.xcconfig"; sourceTree = "<group>"; };
+		9E2481BA85725F1AA813F18C /* Pods-NotebowlMobileUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A269D2501F5E28E05ECA06BE /* Pods-NotebowlMobileUITests.prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.prod.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.prod.xcconfig"; sourceTree = "<group>"; };
 		EDFC7837F5A700769C68A0C2 /* Pods-Notebowl Mobile.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.staging.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.staging.xcconfig"; sourceTree = "<group>"; };
+		F960C56ACB19ECD18F767786 /* Pods-NotebowlMobileUITests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.staging.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.staging.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC6BE7EA9487D49AFDC841BD /* libPods-NotebowlMobileUITests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +204,7 @@
 			children = (
 				8529E5622047D0B700D1E41D /* QuartzCore.framework */,
 				09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */,
+				4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -198,6 +217,11 @@
 				3E8127B27DA8552A052240A6 /* Pods-Notebowl Mobile.prod.xcconfig */,
 				EDFC7837F5A700769C68A0C2 /* Pods-Notebowl Mobile.staging.xcconfig */,
 				4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */,
+				6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */,
+				A269D2501F5E28E05ECA06BE /* Pods-NotebowlMobileUITests.prod.xcconfig */,
+				F960C56ACB19ECD18F767786 /* Pods-NotebowlMobileUITests.staging.xcconfig */,
+				9E2481BA85725F1AA813F18C /* Pods-NotebowlMobileUITests.release.xcconfig */,
+				88E9B2CEB79AC0B662B12815 /* Pods-NotebowlMobileUITests.testflight.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -205,8 +229,13 @@
 		8522D04920FE7B2C00BCBD88 /* NotebowlMobileUITests */ = {
 			isa = PBXGroup;
 			children = (
+				8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */,
+				8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */,
+				8587DE622107EC0A00B41DB6 /* CommentUITests.swift */,
+				8587DE602107EBFD00B41DB6 /* PostUITests.swift */,
 				8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */,
 				8522D04C20FE7B2C00BCBD88 /* Info.plist */,
+				8587DE682107ED5900B41DB6 /* UITestHelpers.swift */,
 			);
 			path = NotebowlMobileUITests;
 			sourceTree = "<group>";
@@ -299,7 +328,6 @@
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
 				856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */,
 				85250A0E202A1B730003A416 /* DefaultPreferences.plist */,
-				85E2919C1F5F619300172C46 /* Info.plist */,
 				85E291971F5F619300172C46 /* Assets.xcassets */,
 			);
 			path = "Support Files";
@@ -330,6 +358,7 @@
 		85E2918F1F5F619300172C46 /* Notebowl Mobile */ = {
 			isa = PBXGroup;
 			children = (
+				85E2919C1F5F619300172C46 /* Info.plist */,
 				85250A06202A1AE60003A416 /* Libraries */,
 				85CC9BF5202B8E68001CABB0 /* Support Files */,
 				85E291901F5F619300172C46 /* AppDelegate.swift */,
@@ -361,6 +390,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8522D05420FE7B2C00BCBD88 /* Build configuration list for PBXNativeTarget "NotebowlMobileUITests" */;
 			buildPhases = (
+				2637FE7984C76D7DF25E47D3 /* [CP] Check Pods Manifest.lock */,
 				8522D04420FE7B2C00BCBD88 /* Sources */,
 				8522D04520FE7B2C00BCBD88 /* Frameworks */,
 				8522D04620FE7B2C00BCBD88 /* Resources */,
@@ -509,6 +539,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2637FE7984C76D7DF25E47D3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NotebowlMobileUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		4C28E457EE249ED0D8D7C4B8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -559,6 +607,7 @@
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
 				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
+				"${BUILT_PRODUCTS_DIR}/UITestHelper-App/UITestHelper.framework",
 				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -588,6 +637,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UITestHelper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -617,7 +667,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */,
+				8587DE692107ED5900B41DB6 /* UITestHelpers.swift in Sources */,
+				8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */,
+				8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */,
 				8522D04B20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift in Sources */,
+				8587DE612107EBFD00B41DB6 /* PostUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,13 +763,15 @@
 /* Begin XCBuildConfiguration section */
 		8522D04F20FE7B2C00BCBD88 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -730,13 +787,15 @@
 		};
 		8522D05020FE7B2C00BCBD88 /* Prod */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A269D2501F5E28E05ECA06BE /* Pods-NotebowlMobileUITests.prod.xcconfig */;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
@@ -752,13 +811,15 @@
 		};
 		8522D05120FE7B2C00BCBD88 /* Staging */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F960C56ACB19ECD18F767786 /* Pods-NotebowlMobileUITests.staging.xcconfig */;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
@@ -774,13 +835,15 @@
 		};
 		8522D05220FE7B2C00BCBD88 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E2481BA85725F1AA813F18C /* Pods-NotebowlMobileUITests.release.xcconfig */;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
@@ -796,13 +859,15 @@
 		};
 		8522D05320FE7B2C00BCBD88 /* TestFlight */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 88E9B2CEB79AC0B662B12815 /* Pods-NotebowlMobileUITests.testflight.xcconfig */;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.NotebowlMobileUITests;
@@ -984,6 +1049,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 136456;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -994,7 +1061,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
+				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1004,6 +1071,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = TestFlight;
 		};
@@ -1081,6 +1149,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 136456;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1091,7 +1161,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
+				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1101,6 +1171,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging;
 		};
@@ -1178,6 +1249,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 136456;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1188,7 +1261,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
+				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1198,6 +1271,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Prod;
 		};
@@ -1255,7 +1329,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1332,6 +1406,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 136456;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1342,7 +1418,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
+				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1352,6 +1428,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -1366,6 +1443,8 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 136456;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1376,7 +1455,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Notebowl Mobile/Support Files/Info.plist";
+				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1387,6 +1466,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14306.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14278.2"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -35,6 +35,9 @@
                                 <subviews>
                                     <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="Pii-Ni-aak" customClass="ProfileImageView" customModule="Notebowl_Mobile" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="46" height="46"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="postUserAvatar">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="2iW-8w-mYh"/>
                                             <constraint firstAttribute="width" constant="46" id="uYY-sD-jI4"/>
@@ -58,12 +61,14 @@
                                                 <subviews>
                                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLX-hS-wuc">
                                                         <rect key="frame" x="0.0" y="0.0" width="258" height="20.333333333333332"/>
+                                                        <accessibility key="accessibilityConfiguration" identifier="userNameLabel"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                         <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="42 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7p-g9-XbK">
                                                         <rect key="frame" x="0.0" y="22.333333333333336" width="258" height="14.333333333333336"/>
+                                                        <accessibility key="accessibilityConfiguration" identifier="postDateLabel"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -72,6 +77,7 @@
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="top" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R1t-fO-Upb">
                                                 <rect key="frame" x="258" y="0.0" width="24" height="36.666666666666664"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="moreButton"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="24" id="sJs-1v-Zs8"/>
                                                 </constraints>
@@ -87,6 +93,9 @@
                                     </stackView>
                                     <textView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pao-Q4-Y1P">
                                         <rect key="frame" x="0.0" y="41.666666666666664" width="282" height="40.999999999999993"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="postContent">
+                                            <accessibilityTraits key="traits" none="YES"/>
+                                        </accessibility>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                         <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -108,7 +117,13 @@
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="5" maxY="0.0"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="collectionFlow"/>
+                                            </userDefinedRuntimeAttributes>
                                         </collectionViewFlowLayout>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="attachmentsCollection"/>
+                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <outlet property="dataSource" destination="N3g-5j-72E" id="5d2-0f-hmg"/>
                                             <outlet property="delegate" destination="N3g-5j-72E" id="tqu-2f-mCD"/>
@@ -119,6 +134,7 @@
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dRu-2e-dXW" customClass="FaveButton" customModule="FaveButton">
                                                 <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="postLikeButton"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="30" id="1nT-xE-tgU"/>
                                                     <constraint firstAttribute="height" constant="30" id="YEa-mm-Auv"/>
@@ -129,12 +145,13 @@
                                                 </state>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="color" keyPath="selectedColor">
-                                                        <color key="value" red="0.32549019610000002" green="0.71372549019999998" blue="0.43529411759999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="value" name="NB NEW DARKER GREEN"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </button>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="12" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gg6-oO-bh0">
                                                 <rect key="frame" x="33" y="0.0" width="29" height="30"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="postLikeCount"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -160,12 +177,14 @@
                                             </button>
                                             <label opaque="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="61" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hd1-bj-bV8">
                                                 <rect key="frame" x="98" y="0.0" width="61" height="30"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="postCommentCount"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.47843137254901957" green="0.47843137254901957" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Course Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="120" translatesAutoresizingMaskIntoConstraints="NO" id="BA2-Es-ZcO">
                                                 <rect key="frame" x="162" y="0.0" width="120" height="30"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="courseLabel"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="120" id="5hx-Ct-J06"/>
                                                 </constraints>
@@ -260,6 +279,9 @@
         <image name="more-vector" width="30" height="30"/>
         <image name="ribbon-thumb-vector-4" width="50" height="50"/>
         <image name="thumbs_up-vector" width="30" height="30"/>
+        <namedColor name="NB NEW DARKER GREEN">
+            <color red="0.047058823529411764" green="0.52941176470588236" blue="0.36078431372549019" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="Notebowl Blue Color">
             <color red="0.22745098039215686" green="0.65098039215686276" blue="0.88235294117647056" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

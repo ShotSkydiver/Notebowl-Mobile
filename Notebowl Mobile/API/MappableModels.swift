@@ -713,8 +713,6 @@ public protocol WithName {
     
     func updateLikes() {
         if NBClient.shared.storedTypes[Like.classIdentifier] != nil {
-            
-        
             self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
             if postLikes.isEmpty || postLikes == nil {
                 likedByCurrentUser = false
@@ -733,7 +731,10 @@ public protocol WithName {
                 }
             }
         }
-        else { self.postLikes = []}
+        else {
+            self.postLikes = []
+            self.likedByCurrentUser = false
+        }
     }
     override public func refresh() {
         if self.creator != nil {
@@ -848,7 +849,10 @@ public protocol WithName {
                 }
             }
         }
-        else { self.commentLikes = []}
+        else {
+            self.commentLikes = []
+            self.likedByCurrentUser = false
+        }
     }
     
     override public func refresh() {

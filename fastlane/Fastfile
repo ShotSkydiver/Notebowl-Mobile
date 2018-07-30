@@ -1,0 +1,50 @@
+#update_fastlane
+require 'fastlane/actions/scan'
+default_platform(:ios)
+
+platform :ios do
+    MY_XCODE_PROJECT_FILEPATH = File.absolute_path('../Notebowl Mobile.xcodeproj')
+
+    lane :manualtests do
+        xcode_select("/Applications/Xcode.app")
+        scan(
+            build_for_testing: true,
+            workspace: File.absolute_path('../Notebowl Mobile.xcworkspace'),
+            scheme: 'Notebowl Mobile'
+        )
+        derived_data_path = Scan.config[:derived_data_path]
+        xctestrun_file = Dir.glob("#{derived_data_path}/Build/Products/*.xctestrun").first
+
+        tests = tests_from_xctestrun(xctestrun: xctestrun_file)
+        UI.header('xctestrun tests')
+        tests.values.flatten.each { 
+            |test_identifier| puts test_identifier
+            run_tests(only_testing: test_identifier)
+            Dir.chdir("../../nb-deployment") do 
+                sh("./fix-broken-db-nonint.sh")
+            end
+        }
+    end
+    
+    lane :beta do
+        ensure_git_status_clean
+        increment_build_number(xcodeproj: "Notebowl Mobile.xcodeproj")
+        commit_version_bump(xcodeproj: "Notebowl Mobile.xcodeproj")
+        add_git_tag(postfix: "-")
+        push_to_git_remote
+        xcode_select("/Applications/Xcode.app")
+        build_app(export_method: "app-store",
+                  export_options: {
+                    provisioningProfiles: {
+                      "com.notebowl.standalone" => "NB Standalone App Store"
+                     }
+                  },
+                  codesigning_identity: "iPhone Distribution: NoteBowl Inc (8M84348K8B)",
+                  scheme: "Notebowl Mobile",
+                  workspace: "Notebowl Mobile.xcworkspace"
+                  )
+        upload_to_testflight
+        slack(username: "@shotskydiver", message: "Successfully uploaded build to App Store Connect")                
+    end
+
+end

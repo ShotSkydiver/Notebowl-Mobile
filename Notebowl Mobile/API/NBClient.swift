@@ -22,9 +22,13 @@ class NBClient {
         case Production = "platform.notebowl.com"
         case Local = "demo.notebowl.xyz"
     }
-
+    #if DEBUG
+    static let baseUrl = Environment.Local.rawValue
+    static let socketUrl = "https://socket.\((Environment.Local.rawValue.components(separatedBy: ".")[1])).com/"
+    #else
     static let baseUrl = Environment.Production.rawValue
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
+    #endif
     private var currentUser: User!
     public var storedTypes = [ObjectIdentifier: [NBModel]]()
     

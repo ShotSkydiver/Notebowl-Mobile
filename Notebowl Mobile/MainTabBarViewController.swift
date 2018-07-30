@@ -19,9 +19,10 @@ class LoadingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //loadingView.accessibilityIdentifier = "loadingView"
+        
         self.setNeedsStatusBarAppearanceUpdate()
         addLoadingView()
+        loadingView.accessibilityIdentifier = "loadingView"
         showLoading(show: true)
     }
     
@@ -50,6 +51,8 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         self.delegate = self
         loadingVC = LoadingViewController()
+        
+        self.tabBar.items![2].accessibilityIdentifier = "notificationsItem"
         
         HUD.dimsBackground = true
         HUD.allowsInteraction = false

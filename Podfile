@@ -22,9 +22,12 @@ target 'Notebowl Mobile' do
     pod 'Lightbox'
     pod 'HTTPStatusCodes', '~> 3.2.0'
     pod 'AcknowList'
-    # pod 'MBProgressHUD', '~> 1.1.0'
     pod 'PKHUD', '~> 5.0'
-    # pod 'Reveal-SDK', :configurations => ['Debug']
+    pod 'UITestHelper/App'
+end
+
+target 'NotebowlMobileUITests' do
+    pod 'UITestHelper'
 end
 
 post_install do |installer|
