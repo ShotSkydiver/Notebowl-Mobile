@@ -53,7 +53,7 @@ class RootViewController: UIViewController {
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.bypassedSSLHosts = ["demo.notebowl.xyz"]
             progressWebVC.navigationItem.title = "Notebowl Login"
-            progressWebVC.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+            progressWebVC.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
             progressWebVC.doneBarButtonItemPosition = .none
             progressWebVC.toolbarItemTypes = []
             progressWebVC.disableZoom = false

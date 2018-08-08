@@ -201,6 +201,8 @@ class Response<T>: Generic where T: NBModel {
     public required init?(map: Map) { }
     
     override init() {}
+    
+    //public init(
  
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
@@ -709,6 +711,8 @@ public protocol WithName {
         pinned <- map["pinned"]
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
+        
+        refresh()
     }
     
     func updateLikes() {

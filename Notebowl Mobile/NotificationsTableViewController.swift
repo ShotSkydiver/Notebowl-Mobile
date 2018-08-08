@@ -14,25 +14,30 @@ import HGPlaceholders
 import QuartzCore
 import Tamamushi
 
-class NotificationsTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
+class NotificationsTableViewController: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
     var notifications: [Notification]!
-    var placeholderTableView: TableView?
+    var placeholderTableView: NotificationTableView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        placeholderTableView = tableView as? TableView
+        placeholderTableView = tableView as? NotificationTableView
         placeholderTableView?.placeholderDelegate = self
-        
-        
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
-        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
+        
+        reloadTable()
     }
+    
+    func reloadTable() {
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
+        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+        placeholderTableView?.reloadData()
+    }
+    
     @IBAction func profileButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "segueNotifDeck", sender: nil)
     }
@@ -68,10 +73,6 @@ class NotificationsTableViewController: UITableViewController, PlaceholderDelega
             let countString = String(format: "%d", (unreadCount.count))
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
         }
-    }
-
-    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
-        placeholderTableView?.showDefault()
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -132,7 +133,7 @@ extension NotificationsTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
@@ -151,8 +152,15 @@ extension NotificationsTableViewController {
     }
 }
 
+extension NotificationsTableViewController: PlaceholderDelegate {
+    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
+        TTLog.debug(placeholder.key.value)
+        self.reloadTable()
+    }
+}
+
 class NotificationTableView: TableView {
     override func customSetup() {
-        placeholdersProvider = .notifsPlaceholders
+        placeholdersProvider = .makePlaceholdersProvider(from: .emptyNotifications)
     }
 }

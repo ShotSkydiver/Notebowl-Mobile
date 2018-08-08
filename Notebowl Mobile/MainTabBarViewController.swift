@@ -70,7 +70,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.tabBar.items![1].selectedImage = self.tabBar.items![1].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![2].selectedImage = self.tabBar.items![2].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         
-        self.tabBar.items![2].badgeColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+        self.tabBar.items![2].badgeColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         
         self.tabBar.tintColor = UIImage().createGradientImage(size: 50).gradientColor
         
@@ -104,9 +104,8 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     func getData() {
         _ = NBClient.shared.getMappable(Setting.self)!
         _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
-        _ = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
-        let postsFilter = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter( { $0.parent is Course || $0.parent is Group } ).compactMap({ $0.parent!.url.absoluteString }).joined(separator: ",")
-        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+        let filter = NBClient.shared.doEnrollmentRequests()
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
         let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
         let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
         _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)

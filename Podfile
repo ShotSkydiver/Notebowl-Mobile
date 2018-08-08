@@ -1,34 +1,40 @@
 platform :ios, '11.0'
+use_frameworks!
 
-target 'Notebowl Mobile' do
-  use_frameworks!
+pod 'HTTPStatusCodes', '~> 3.2.0'
 
-    pod 'Kingfisher', '~> 4.0'
-    pod 'ObjectMapper', '~> 3.1'
-    pod 'FaveButton', :git => 'https://github.com/ShotSkydiver/fave-button'
-    pod 'HGPlaceholders'
-    pod 'Bugsnag'
-    pod 'InputBarAccessoryView'
-    pod 'DeckTransition', '~> 2.0'
-    pod 'MMUploadImage'
-    pod 'FaceAware', :git => 'https://github.com/BeauNouvelle/FaceAware.git'
-    pod 'Haptica'
-    pod 'ButtonProgressBar-iOS'
-    pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
-    pod 'Tamamushi'
-    pod 'Socket.IO-Client-Swift', '~> 13.1.0'
-    pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
-    pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
-    pod 'Lightbox'
-    pod 'HTTPStatusCodes', '~> 3.2.0'
-    pod 'AcknowList'
-    pod 'PKHUD', '~> 5.0'
-    pod 'UITestHelper/App'
-end
+    target 'Notebowl Mobile' do
+        pod 'Kingfisher', '~> 4.0'
+        pod 'ObjectMapper', '~> 3.1'
+        pod 'FaveButton', :git => 'https://github.com/ShotSkydiver/fave-button'
+        pod 'HGPlaceholders'
+        pod 'Bugsnag'
+        pod 'InputBarAccessoryView'
+        pod 'DeckTransition', '~> 2.0'
+        pod 'MMUploadImage'
+        pod 'FaceAware', :git => 'https://github.com/BeauNouvelle/FaceAware.git'
+        pod 'Haptica'
+        pod 'ButtonProgressBar-iOS'
+        pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
+        pod 'Tamamushi'
+        pod 'Socket.IO-Client-Swift', '~> 13.1.0'
+        pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
+        pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
+        pod 'Lightbox'
+        pod 'AcknowList'
+        pod 'PKHUD', '~> 5.0'
+        pod 'Wormholy', :configurations => ['Debug']
+    end
+    
+    target 'NotebowlMobileUITests' do
+        #inherit! :search_paths
+    end
 
-target 'NotebowlMobileUITests' do
-    pod 'UITestHelper'
-end
+
+
+
+
+
 
 post_install do |installer|
     installer.pods_project.build_configurations.each do |config|

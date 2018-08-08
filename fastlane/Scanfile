@@ -1,5 +1,5 @@
 scheme("Notebowl Mobile")
-devices(["iPhone 8 Plus"])
+devices(["iPhone X"])
 workspace("Notebowl Mobile.xcworkspace")
 
 # open_report(true)

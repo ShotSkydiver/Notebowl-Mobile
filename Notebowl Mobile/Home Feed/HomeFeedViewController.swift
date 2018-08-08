@@ -18,26 +18,32 @@ import SwipeCellKit
 import DeckTransition
 import PKHUD
 
-class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
+class HomeFeedViewController: UIViewController, UpdateVC {
     var indexes: Paths = Paths()
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
-    var placeholderTableView: TableView?
+    // var placeholderTableView: TableView?
     
     var cellHeights: [IndexPath : CGFloat] = [:]
     
     override func viewDidLoad() {
         TTLog.testing("homeVC didload")
         super.viewDidLoad()
-        HomeFeedWritePostCell.register(in: bulletinTableView)
+        
+        let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
+        customView.initSetup()
+        customView.reloadAvatar()
+        
+        bulletinTableView.setTableHeaderView(headerView: customView)
+        bulletinTableView.updateHeaderViewFrame()
+        
         HomeFeedPostCell.register(in: bulletinTableView)
-        placeholderTableView = bulletinTableView
-        placeholderTableView?.placeholderDelegate = self
+        
+        bulletinTableView.placeholderDelegate = self
         
         setupNavBar()
-        
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
-        bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
+        //bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -58,13 +64,9 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
     
-    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
-        placeholderTableView?.showDefault()
-    }
-    
     func reloadTable() {
         self.posts = NBClient.shared.storedTypes[Post.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-        self.bulletinTableView.reloadData()
+        bulletinTableView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +76,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
         let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
         
-        if selectedRowIndexPath != nil {
+        if selectedRowIndexPath != nil && !self.posts.isEmpty {
             TTLog.debug("reloading")
             self.bulletinTableView.reloadData(withoutScroll: true)
         }
@@ -82,6 +84,7 @@ class HomeFeedViewController: UIViewController, PlaceholderDelegate, UpdateVC {
     override func viewDidAppear(_ animated: Bool) {
         TTLog.testing("homeVC didappear")
         super.viewDidAppear(animated)
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -126,21 +129,25 @@ extension HomeFeedViewController {
         if newObject.itemType == "Post" {
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             let indexOfPost = self.posts.index(where: { $0.resourceKey == newObject.resourceKey })
-            let existingPost = self.bulletinTableView.numberOfRows(inSection: 1) < self.posts.count ? false : true
+            TTLog.debug("numofrows: ", self.bulletinTableView.numberOfRows(inSection: 0))
+            let existingPost = self.bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
             
-            if existingPost == false {
-                self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .left)
+            if self.bulletinTableView.numberOfRows(inSection: 0) == 1 {
+                self.bulletinTableView.reloadData()
+            }
+            else if existingPost == false {
+                self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .left)
             }
             else {
                 self.posts.first(where: { $0.resourceKey == newObject.resourceKey })!.refresh()
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade)}
+                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)}
             }
             else {
                 TTLog.testing("ok so we just received a socket response for a like/comment/attachment but the corresponding post doesn't exist in cache, so either it's a post that isn't being displayed in our feed view OR it's a post that someone created recently and we still haven't gotten the socket response for it, in which case, we should get the post from the server and initialize/display it in the feed view along with this comment/like/attach")
@@ -150,18 +157,17 @@ extension HomeFeedViewController {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
                 NBClient.shared.setCurrentUser(user: (newObject as! User))
                 
-                
                 let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
                 var indexPaths = [IndexPath]()
                 for post in postsForUser {
                     if let index = self.posts.index(of: post) {
-                        indexPaths.append(IndexPath(row: index, section: 1))
+                        indexPaths.append(IndexPath(row: index, section: 0))
                     }
                 }
                 self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
                 
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                
+                //self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
             }
         }
         else if newObject.itemType == "CourseUser" {
@@ -178,16 +184,20 @@ extension HomeFeedViewController {
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType == "Post" {
             let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .right) }
+            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
             
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+            
+            if self.bulletinTableView.numberOfRows(inSection: 0) == 0 {
+                self.bulletinTableView.reloadData()
+            }
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
                 parentPost.refresh()
-                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 1)], with: .fade) }
+                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade) }
                 
             }
         }
@@ -217,27 +227,26 @@ extension HomeFeedViewController {
     
     func reloadTableViews() {
     }
-        
 }
 
 
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 1
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : (self.posts != nil ? self.posts.count : 0)
+        return self.posts != nil ? self.posts.count : 0
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
-        if (tableView.cellForRow(at: indexPath) as? HomeFeedWritePostCell) != nil {
-            self.performSegue(withIdentifier: "createPostSegue", sender: nil)
-        }
-        else if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedPostCell {
+        if let cell = tableView.cellForRow(at: indexPath) as? HomeFeedPostCell {
             self.performSegue(withIdentifier: "postDetailSegue", sender: cell)
         }
-        
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -250,26 +259,13 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            let cell = HomeFeedWritePostCell.dequeue(from: tableView)!
-            cell.userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
-                                        options: [
-                                            .transition(ImageTransition.fade(0.3)),
-                                            .keepCurrentImageWhileLoading
-                ]
-            )
-            cell.userAvatar.contentMode = .scaleAspectFill
-            return cell
-        }
-        else {
-            let cell = HomeFeedPostCell.dequeue(from: tableView)!
-            let post = self.posts[indexPath.row]
-            cell.parentController = self
-            cell.configure(post: post)
-            cell.delegate = self
-            cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
-            return cell
-        }
+        let cell = HomeFeedPostCell.dequeue(from: tableView)!
+        let post = self.posts[indexPath.row]
+        cell.parentController = self
+        cell.configure(post: post)
+        cell.delegate = self
+        cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)
+        return cell
     }
 }
 
@@ -284,7 +280,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         }
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground
-        edit.backgroundColor = #colorLiteral(red: 0.1019607843, green: 0.5137254902, blue: 0.7411764706, alpha: 1)
+        edit.backgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         edit.hidesWhenSelected = true
         edit.fulfill(with: .reset)
         
@@ -367,8 +363,49 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     }
 }
 
+extension HomeFeedViewController: PlaceholderDelegate {
+    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
+        TTLog.debug(placeholder.key.value)
+        
+        bulletinTableView.reloadData()
+        
+        /*
+        let tabbarVC = self.tabBarController as! MainTabBarViewController
+        tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
+        
+        DispatchQueue.main.async {
+        
+        #if DEBUG
+        _ = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "30")!
+        #else
+        _ = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
+        #endif
+        let postsFilter = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter( { $0.parent is Course || $0.parent is Group } ).compactMap({ $0.parent!.url.absoluteString }).joined(separator: ",")
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+        let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        NBClient.shared.reinitCache()
+
+            
+            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+                let coursesVC = rootViews[1].topViewController as! CoursesTableViewController
+                let notifsVC = rootViews[2].topViewController as! NotificationsTableViewController
+                coursesVC.reloadTable()
+                notifsVC.reloadTable()
+                //homeVC.reloadTable()
+                self.reloadTable()
+            
+                tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
+ 
+        }
+        */
+        // bulletinTableView.reloadData()
+    }
+}
+
 class NotebowlLogoNavigationItem: UINavigationItem {
-    
     let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
     private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
     private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
@@ -384,20 +421,17 @@ class NotebowlLogoNavigationItem: UINavigationItem {
 
 class HomeTableView: TableView {
     override func customSetup() {
-        placeholdersProvider = .homeFeedPlaceholders
+        placeholdersProvider = .makePlaceholdersProvider(from: .emptyHome)
     }
 }
 
 
 final class DeckNoSwipeSegue: UIStoryboardSegue {
-    
     var transition: UIViewControllerTransitioningDelegate?
-    
     public override func perform() {
         transition = DeckTransitioningDelegate(isSwipeToDismissEnabled: false)
         destination.transitioningDelegate = transition
         destination.modalPresentationStyle = .custom
         source.present(destination, animated: true, completion: nil)
     }
-    
 }

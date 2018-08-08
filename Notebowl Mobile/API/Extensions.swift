@@ -12,7 +12,6 @@ import ObjectMapper
 import HGPlaceholders
 import Bugsnag
 import Kingfisher
-import UITestHelper
 
 public extension String {
     func encodeURIComponent() -> String? {
@@ -776,6 +775,31 @@ public extension UITableView {
         tableView.setContentOffset(contentOffset, animated: false)
         
     }
+    
+    /// Set table header view & add Auto layout.
+    func setTableHeaderView(headerView: UIView) {
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Set first.
+        self.tableHeaderView = headerView
+        
+        // Then setup AutoLayout.
+        headerView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        headerView.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
+        headerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+    }
+    
+    /// Update header view's frame.
+    func updateHeaderViewFrame() {
+        guard let headerView = self.tableHeaderView else { return }
+        
+        // Update the size of the header based on its internal content.
+        headerView.layoutIfNeeded()
+        
+        // ***Trigger table view to know that header should be updated.
+        let header = self.tableHeaderView
+        self.tableHeaderView = header
+    }
 }
 
 public extension UIViewController {
@@ -940,14 +964,13 @@ extension Dictionary {
         rhs.forEach { lhs[$0] = $1}
     }
 }
-extension PlaceholdersProvider {
-    
+extension PlaceholderData {
     static var emptyHome: PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "sad-face-vector")
         emptyStyle.title = "It's lonely in here!"
-        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
-        emptyStyle.action = "Check again!"
+        emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here."
+        emptyStyle.action = "Check again?"
         return emptyStyle
     }
     static var emptyCourses: PlaceholderData {
@@ -955,15 +978,15 @@ extension PlaceholdersProvider {
         emptyStyle.image = PlaceholderData.error.image
         emptyStyle.title = "Enroll in some courses!"
         emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
-        emptyStyle.action = "Check again!"
+        emptyStyle.action = "Check again?"
         return emptyStyle
     }
     static var emptyAssignments: PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = PlaceholderData.error.image
         emptyStyle.title = "This course has no assignments!"
-        emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here."
-        emptyStyle.action = "Check again!"
+        emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here. If you have notifications enabled, you'll also be notified about any new or updated assignments."
+        emptyStyle.action = "Check again?"
         return emptyStyle
     }
     static var emptyNotifications: PlaceholderData {
@@ -971,14 +994,17 @@ extension PlaceholdersProvider {
         emptyStyle.image = UIImage(named: "thinking-face-vector")
         emptyStyle.title = "Nothing noteworthy has happened!"
         emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
-        emptyStyle.action = "Check again!"
+        emptyStyle.action = "Check again?"
         return emptyStyle
     }
-    
-    static var commonStyle: PlaceholderStyle {
+}
+
+extension PlaceholdersProvider {
+    static func makePlaceholdersProvider(from: PlaceholderData) -> PlaceholdersProvider {
         var nbStyle = PlaceholderStyle()
+        nbStyle.shouldShowTableViewHeader = true
         nbStyle.backgroundColor = .groupTableViewBackground
-        nbStyle.actionBackgroundColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+        nbStyle.actionBackgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         nbStyle.actionTitleColor = .groupTableViewBackground
         nbStyle.titleColor = .darkText
         nbStyle.subtitleColor = #colorLiteral(red: 0.3098039216, green: 0.3098039216, blue: 0.3098039216, alpha: 1)
@@ -986,28 +1012,13 @@ extension PlaceholdersProvider {
         nbStyle.titleFont = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         nbStyle.subtitleFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
         nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 12.0, weight: .regular)
-        return nbStyle
-    }
-    
-    static var homeFeedPlaceholders: PlaceholdersProvider {
-        let homePlaceholder = Placeholder(data: emptyHome, style: commonStyle, key: .noResultsKey)
-        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: homePlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
-        return provider
-    }
-    static var coursesPlaceholders: PlaceholdersProvider {
-        let coursePlaceholder = Placeholder(data: emptyCourses, style: commonStyle, key: .noResultsKey)
-        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: coursePlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
-        return provider
-    }
-    static var assignmentsPlaceholders: PlaceholdersProvider {
-        let assignmentPlaceholder = Placeholder(data: emptyAssignments, style: commonStyle, key: .noResultsKey)
-        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: assignmentPlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
-        return provider
-    }
-    static var notifsPlaceholders: PlaceholdersProvider {
-        let notificationPlaceholder = Placeholder(data: emptyNotifications, style: commonStyle, key: .noResultsKey)
-        let provider = PlaceholdersProvider(loading: Placeholder(data: .loading, style: commonStyle, key: .loadingKey), error: Placeholder(data: .error, style: commonStyle, key: .errorKey), noResults: notificationPlaceholder, noConnection: Placeholder(data: .noConnection, style: commonStyle, key: .noConnectionKey))
-        return provider
+        
+        let noResultsPlaceholder = Placeholder(data: from, style: nbStyle, key: .noResultsKey)
+        let loadingPlaceholder = Placeholder(data: .loading, style: nbStyle, key: .loadingKey)
+        let errorPlaceholder = Placeholder(data: .error, style: nbStyle, key: .errorKey)
+        let noConnectionPlaceholder = Placeholder(data: .noConnection, style: nbStyle, key: .noConnectionKey)
+        
+        return PlaceholdersProvider(loading: loadingPlaceholder, error: errorPlaceholder, noResults: noResultsPlaceholder, noConnection: noConnectionPlaceholder)
     }
 }
 

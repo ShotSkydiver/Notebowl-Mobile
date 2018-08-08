@@ -21,16 +21,19 @@ class NBClient {
     enum Environment: String {
         case Production = "platform.notebowl.com"
         case Local = "demo.notebowl.xyz"
+        case Jenkins = "demoo.notebowl.xyz"
     }
     #if DEBUG
-    static let baseUrl = Environment.Local.rawValue
-    static let socketUrl = "https://socket.\((Environment.Local.rawValue.components(separatedBy: ".")[1])).com/"
+    static let baseUrl = Environment.Production.rawValue
+    // static let socketUrl = "https://demo.notebowl.xyz/"
+    static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     #else
     static let baseUrl = Environment.Production.rawValue
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     #endif
     private var currentUser: User!
     public var storedTypes = [ObjectIdentifier: [NBModel]]()
+    
     
     private init() { }
     
@@ -73,6 +76,34 @@ class NBClient {
         currentUser = nil
         UserDefaults.set(hasUserLoggedIn: false)
     }
+    
+    
+    
+    public func doEnrollmentRequests() -> String? {
+        let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
+        let nestedJson = (reqEnroll.json as AnyObject).value(forKeyPath: "result")!
+
+        var coursesFilter: String = ""
+        var groupsFilter: String = ""
+        var combinedUrlsFilter: String = ""
+        
+        guard let keyPaths = nestedJson as? [[String: Any]] else { fatalError() }
+        for key in keyPaths {
+            let urlString = (key["_parent"] as! String)
+            let objectType = ItemType.fromURL(urlString)
+            let resKey = URL(string: urlString)!.lastPathComponent
+            objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : TTLog.debug("neither course nor group!"))
+            combinedUrlsFilter = (combinedUrlsFilter + urlString + ",")
+        }
+        let courseReq = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(coursesFilter)\"]")
+        let groupReq = NBClient.shared.getMappable(Group.self, filters: "[\"resourceKey:IN:\(groupsFilter)\"]")
+        
+        let mappy = Mapper<Enrollment>().mapArray(JSONArray: keyPaths)
+        let storedEnrolls = NBClient.shared.storeObjectsInCache(mappy)
+
+        return combinedUrlsFilter
+    }
+    
     
     public func buildFilterArray(from items: [NBModel]) -> [String] {
         var filterArray = [String]()
@@ -136,56 +167,64 @@ class NBClient {
     public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String? = "", sortBy: String? = "", limit: String? = "", completionHandler: (([T]?) -> Void)? = nil) -> [T]? where T: NBModel {
         var objectResult: [T]?
         let requestURL: String = url != nil ? url! : someObject.endpoint
-        
+    
         let result = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
         TTLog.debug("getmappable request: ", "\(result.statusCode!) - \(result.url!)")
-        if !result.statusCode!.isSuccess || result.statusCode!.isServerError || result.statusCode!.isClientError {
-            let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(result.statusCode!): \(result.statusCode!.localizedReasonPhrase), url: \(result.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
-            
-            Bugsnag.notify(exception) { report in
-                report.addMetadata(["uuid":"\(UIDevice().uuid)"], toTabWithName: "user")
-            }
+        if !result.statusCode!.isSuccess {
+            NBClient.shared.sendBugsnagException(fromResult: result)
         }
-            
         else {
             let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
-            objectResult = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
-            var newObjectArray = [T]()
-            for object in objectResult! {
-                
-                if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey.lastPathComponent }) {
-                    if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
-                        TTLog.debug("new object is more recent than existing object!")
-                        NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
-                        newObjectArray.append(object)
-                    }
-                    else {
-                        TTLog.debug("return existing object!")
-                        newObjectArray.append((objectExists as! T))
-                    }
-                    
-                }
-                else {
-                    object.firstTimeLoading = true
-                    
-                    if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
-                        NBClient.shared.storedTypes[T.classIdentifier] = [object]
-                    }
-                    else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == object.resourceKey}) {
-                        NBClient.shared.storedTypes[T.classIdentifier]!.append(object)
-                    }
+            let mapped = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
+            objectResult = NBClient.shared.storeObjectsInCache(mapped)
+        }
+        return objectResult
+    }
+  
+    
+    func storeObjectsInCache<T>(_ objects: [T]?) -> [T]? where T: NBModel {
+        if objects == nil { return [] }
+        
+        var newObjectArray = [T]()
+        for object in objects! {
+            if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey.lastPathComponent }) {
+                if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
+                    TTLog.debug("new object is more recent than existing object!")
+                    NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
                     newObjectArray.append(object)
                 }
+                else {
+                    TTLog.debug("return existing object!")
+                    newObjectArray.append((objectExists as! T))
+                }
             }
-            if !(objectResult?.isEmpty)! || (objectResult?.count)! > 0 {
-                NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
-                newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
+            else {
+                object.firstTimeLoading = true
+                
+                if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
+                    NBClient.shared.storedTypes[T.classIdentifier] = [object]
+                }
+                else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == object.resourceKey}) {
+                    NBClient.shared.storedTypes[T.classIdentifier]!.append(object)
+                }
+                newObjectArray.append(object)
             }
-            return newObjectArray
         }
+        if !(objects?.isEmpty)! || (objects?.count)! > 0 {
+            NBClient.shared.storedTypes[T.classIdentifier]! = NBClient.shared.initArray(from: NBClient.shared.storedTypes[T.classIdentifier]!, refresh: false)!
+            newObjectArray = NBClient.shared.initArray(from: newObjectArray, refresh: false)!
+        }
+        return newObjectArray
+    }
+    
+    
+    func sendBugsnagException(fromResult: NBResult) {
         
+        let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(fromResult.statusCode!): \(fromResult.statusCode!.localizedReasonPhrase), url: \(fromResult.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
         
-        return objectResult
+        Bugsnag.notify(exception) { report in
+            report.addMetadata(["uuid":"\(UIDevice().uuid)"], toTabWithName: "user")
+        }
     }
     
     

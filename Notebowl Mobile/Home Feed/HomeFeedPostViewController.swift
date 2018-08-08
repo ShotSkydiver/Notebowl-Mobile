@@ -33,19 +33,21 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     var reloadSection = false
     
-    lazy var bar: InputBarAccessoryView = { [weak self] in
+    lazy var inputBar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
         bar.delegate = self
         return bar
     }()
     
+    //let inputBar: InputBarAccessoryView
+    
     lazy var attachmentManager: AttachmentMan = { [weak self] in
         let manager = AttachmentMan()
         manager.delegate = self
         manager.dataSource = self
-        manager.isPersistent = false
-        manager.showAddAttachmentCell = false
-        manager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
+        //manager.isPersistent = false
+        //manager.showAddAttachmentCell = false
+        //manager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
         return manager
     }()
     
@@ -53,7 +55,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return true
     }
     override var inputAccessoryView: UIView? {
-        return bar
+        return inputBar
     }
     
     override func loadView() {
@@ -66,26 +68,35 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         HomeFeedPostCell.register(in: self.tableView)
         HomeFeedCommentCell.register(in: self.tableView)
  
+        
+        attachmentManager.isPersistent = false
+        attachmentManager.showAddAttachmentCell = false
+        attachmentManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
+        
+        inputBar.inputPlugins = [attachmentManager]
         setupInputBar()
 
         tableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
         viewIsLoaded = true
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
     }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
 
     func setupInputBar() {
-        resetInput()
+        //resetInput()
         
         let items = [
+            
             makeButton(named: "add_photo-vector")
                 .configure {
-                    $0.accessibilityIdentifier = "commentPhotoLibraryButton"
+                    $0.accessibilityIdentifier = "photoLibraryButton"
                 }
                 .onSelected { libraryButton in
                     self.showingPhotoPicker = true
@@ -102,8 +113,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     config.hidesStatusBar = false
                     config.showsFilters = false
                     config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-                    config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-                    config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+                    config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
+                    config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
                     
                     let picker = YPImagePicker(configuration: config)
                     
@@ -134,8 +145,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             },
             
             makeButton(named: "visibility_on-vector")
+                .onKeyboardEditingEnds({ (anonButton) in
+                    self.anonymousToggle = false
+                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                })
                 .configure {
-                    $0.accessibilityIdentifier = "commentAnonymousButton"
+                    $0.accessibilityIdentifier = "anonymousButton"
                     $0.isEnabled = !self.editingExistingComment
                     $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
                 }
@@ -145,19 +160,19 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     UIView.animate(withDuration: 0.3, animations: {
                         self.view.layoutIfNeeded()
                         if self.anonymousToggle {
-                            self.bar.sendButton.setTitle("Anonymous Reply", for: .normal)
+                            self.inputBar.sendButton.setTitle("Anonymous Reply", for: .normal)
                             //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX-106), y: self.bar.sendButton.frame.minY, width: 168, height: 36)
                         }
                         else if !self.anonymousToggle {
-                            self.bar.sendButton.setTitle("Reply", for: .normal)
+                            self.inputBar.sendButton.setTitle("Reply", for: .normal)
                             //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX+106), y: self.bar.sendButton.frame.minY, width: 62, height: 36)
                         }
                     })
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             },
             .flexibleSpace,
-            bar.sendButton.configure {
-                $0.accessibilityIdentifier = "commentSendButton"
+            inputBar.sendButton.configure {
+                $0.accessibilityIdentifier = "postButton"
                 $0.layer.cornerRadius = 8
                 $0.layer.borderWidth = 1.5
                 $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
@@ -174,24 +189,28 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onEnabled {
                     $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 200)))
                     $0.layer.borderColor = UIColor.clear.cgColor
-                }.onSelected {
-                    $0.isUserInteractionEnabled = false
-                    $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                }.onDeselected {
-                    $0.transform = CGAffineTransform.identity
-                    $0.isUserInteractionEnabled = true
+                //}.onSelected {
+                    //$0.isUserInteractionEnabled = false
+                    //$0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+                //}.onDeselected {
+                    //$0.transform = CGAffineTransform.identity
+                    //$0.isUserInteractionEnabled = true
             }
         ]
+        /*
         bar.sendButton.onTextViewDidChange { (button, textView) in
             if self.attachmentManager.attachments.count > 0 {
                 button.isEnabled = true
             }
         }
-        bar.inputTextView.placeholder = "Write a comment..."
-        bar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        bar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
-        bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        bar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
+        */
+        
+        inputBar.inputTextView.accessibilityIdentifier = "newCommentTextView"
+        inputBar.inputTextView.placeholder = "Write a comment..."
+        inputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        inputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
+        inputBar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
+        inputBar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
 
     }
     
@@ -205,6 +224,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+        inputBar.sendButton.isEnabled = false
+        inputBar.sendButton.setTitle("Reply", for: .normal)
+        
+        
+        let accessButton = inputBar.bottomStackViewItems.first(where: { ($0 as! InputBarButtonItem).accessibilityIdentifier == "anonymousButton" })
+        
         DispatchQueue.main.async {
             var jsonPayload: Any?
             if self.editingExistingComment {
@@ -218,6 +243,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
                 let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
                 let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                
+                
+                TTLog.debug("before updatehandler for post")
                 NBSocket.shared.updateHandler(message: JSONString!)
                 
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
@@ -231,18 +259,21 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                         let data: Any = ["itemType":"\(ItemType.fromURL((attKeyPath["url"] as! String)))", "updateUrl":"\((attKeyPath["url"] as! String))", "action":"updated", "updatedAt":"\((attKeyPath["updatedAt"] as! String))"]
                         let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
                         let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+                        
+                        TTLog.debug("before updatehandler for attachment")
                         NBSocket.shared.updateHandler(message: JSONString!)
                     }
                 }
             }
-        
+            
             DispatchQueue.main.async {
                 TTLog.debug("start nested async")
+                inputBar.inputTextView.resignFirstResponder()
                 inputBar.inputTextView.text = String()
-                
+                inputBar.invalidatePlugins()
                 self.attachmentIDs = []
                 self.anonymousToggle = false
-                inputBar.invalidatePlugins()
+                
                 
                 
                 
@@ -259,10 +290,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         attachmentIDs = []
         anonymousToggle = false
         
-        bar.inputTextView.resignFirstResponder()
-        bar.inputPlugins.removeAll()
+        inputBar.inputTextView.resignFirstResponder()
+        inputBar.inputPlugins.removeAll()
         resignFirstResponder()
-        
+        /*
         let newManager = AttachmentMan()
         newManager.delegate = self
         newManager.dataSource = self
@@ -274,8 +305,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         let newBar = InputBarAccessoryView()
         newBar.delegate = self
         newBar.inputPlugins = [attachmentManager]
-        bar = newBar
-        
+        inputBar = newBar
+        */
         reloadInputViews()
         becomeFirstResponder()
     }
@@ -313,12 +344,16 @@ extension HomeFeedPostViewController {
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if newObject.itemType == "Comment" {
+            TTLog.debug("beginning of handleupdated")
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
-            existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
+            
+            existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
             
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            
+            self.tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .bottom, animated: true)
             
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
@@ -536,7 +571,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     
     func setAttachmentManager(active: Bool) {
         TTLog.debug("setAttachmentManager")
-        let topStackView = bar.topStackView
+        let topStackView = inputBar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             TTLog.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
@@ -560,19 +595,19 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("manager didinsert")
-        if !bar.sendButton.isEnabled && manager.attachments.count > 0 {
-            bar.sendButton.isEnabled = true
+        if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
+            inputBar.sendButton.isEnabled = true
         }
         
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         TTLog.debug("removing at ", index)
 
-        if !bar.sendButton.isEnabled && manager.attachments.count > 0 {
-            bar.sendButton.isEnabled = true
+        if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
+            inputBar.sendButton.isEnabled = true
         }
-        else if bar.sendButton.isEnabled && manager.attachments.count == 0 && bar.inputTextView.text.isEmpty {
-            bar.sendButton.isEnabled = false
+        else if inputBar.sendButton.isEnabled && manager.attachments.count == 0 && inputBar.inputTextView.text.isEmpty {
+            inputBar.sendButton.isEnabled = false
         }
         self.attachmentIDs[index] = ""
     }

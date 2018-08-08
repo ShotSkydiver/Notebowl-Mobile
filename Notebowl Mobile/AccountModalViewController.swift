@@ -134,8 +134,8 @@ class AccountModalTableViewController: UITableViewController {
         config.showsFilters = false
         config.library.maxNumberOfItems = 1
         config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-        config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
-        config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
+        config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
+        config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         let picker = YPImagePicker(configuration: config)
 
         picker.didFinishPicking(completion: { (items, cancelled) in
@@ -181,8 +181,8 @@ class AccountModalTableViewController: UITableViewController {
             TTLog.debug("push settings!")
         }
         else if cell.reuseIdentifier == "appInfoCell" {
-            let ackViewController = AcknowListViewController()
-            navigationController?.pushViewController(ackViewController, animated: true)
+            //let ackViewController = AcknowListViewController()
+            //navigationController?.pushViewController(ackViewController, animated: true)
         }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.logoutUser()

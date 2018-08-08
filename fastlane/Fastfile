@@ -6,6 +6,10 @@ platform :ios do
     MY_XCODE_PROJECT_FILEPATH = File.absolute_path('../Notebowl Mobile.xcodeproj')
 
     lane :manualtests do
+        Dir.chdir("../../nb-deployment") do
+           sh("./queue-runner-silent.sh")
+        end
+                    
         xcode_select("/Applications/Xcode.app")
         scan(
             build_for_testing: true,
@@ -21,7 +25,7 @@ platform :ios do
             |test_identifier| puts test_identifier
             run_tests(only_testing: test_identifier)
             Dir.chdir("../../nb-deployment") do 
-                sh("./fix-broken-db-nonint.sh")
+                sh("./fix-broken-db-nonint-local.sh")
             end
         }
     end
@@ -44,7 +48,12 @@ platform :ios do
                   workspace: "Notebowl Mobile.xcworkspace"
                   )
         upload_to_testflight
-        slack(username: "@shotskydiver", message: "Successfully uploaded build to App Store Connect")                
+        slack(
+            channel: "@shotskydiver",
+            message: "Successfully uploaded build to App Store Connect",
+            slack_url: "https://hooks.slack.com/services/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",
+            use_webhook_configured_username_and_icon: "true"
+            )                
     end
 
 end

@@ -13,21 +13,26 @@ import QuartzCore
 import Tamamushi
 import ObjectMapper
 
-class CoursesTableViewController: UITableViewController, PlaceholderDelegate, UpdateVC {
+class CoursesTableViewController: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
     var courses: [Course]!
-    var placeholderTableView: TableView?
+    var placeholderTableView: CourseTableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
-        
-        placeholderTableView = tableView as? TableView
+        placeholderTableView = tableView as? CourseTableView
         placeholderTableView?.placeholderDelegate = self
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
+        
+        reloadTable()
+    }
+    
+    func reloadTable() {
+        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+        placeholderTableView?.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,10 +51,6 @@ class CoursesTableViewController: UITableViewController, PlaceholderDelegate, Up
         navigationController?.navigationBar.layer.masksToBounds = false
         
         self.view.layer.masksToBounds = false
-    }
-
-    func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
-        placeholderTableView?.showDefault()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -111,9 +112,16 @@ extension CoursesTableViewController {
     }
 }
 
+extension CoursesTableViewController: PlaceholderDelegate {
+    func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
+        TTLog.debug(placeholder.key.value)
+        self.reloadTable()
+    }
+}
+
 class CourseTableView: TableView {
     override func customSetup() {
-        placeholdersProvider = .coursesPlaceholders
+        placeholdersProvider = .makePlaceholdersProvider(from: .emptyCourses)
     }
 }
 

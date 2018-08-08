@@ -7,21 +7,21 @@
 //
 
 import XCTest
-import UITestHelper
 
 
 class MiscAppUITests: XCTestCase {
 
+    let app = XCUIApplication()
+    
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
-        self.tryLaunch()
+        app.launch()
     }
     
     override func tearDown() {
         super.tearDown()
     }
-    
 
     func testChangeSetting() {
         self.waitForLoadingViewToDisappear()
@@ -40,16 +40,13 @@ class MiscAppUITests: XCTestCase {
         let notLoggedIn = app.otherElements["main"].waitForExistence(timeout: 5.0)
 
         if !notLoggedIn {
-            print("loadingview exists!!")
             self.waitForLoadingViewToDisappear()
             app.navigationBars["Profile Nav Controller"].buttons["Profile"].tap()
             app.tables.element(boundBy: 0).cells["logoutCell"].staticTexts["logoutCellLabel"].tap()
             app.otherElements["main"].textFields["Email"].waitForExistence(timeout: 5.0)
         }
 
-        if app.otherElements["main"].textFields["Email"].exists {
-            print("progressWebView exists!!")
-            
+        if app.otherElements["main"].textFields["Email"].exists {            
             app.otherElements["main"].textFields["Email"].tap()
             app.otherElements["main"].textFields["Email"].typeText("chdowen@notebowl.com")
             app.otherElements["main"].buttons["Next"].tap()

@@ -7,20 +7,11 @@
 //
 
 import XCTest
-import UITestHelper
 
-class NotificationUITests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        continueAfterFailure = false
-        self.tryLaunch()
-        self.waitForLoadingViewToDisappear()
-    }
+class NotificationUITests: NBUITests {
     
-    override func tearDown() {
-        super.tearDown()
-    }
+    override func setUp() { super.setUp() }
+    override func tearDown() { super.tearDown() }
 
     func testNotificationsBadgeClear() {
         app.tabBars.buttons["notificationsItem"].tap()

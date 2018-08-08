@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 import HGPlaceholders
 
-class CourseAssignmentsTableView: UITableViewController, PlaceholderDelegate, UpdateVC {
+class CourseAssignmentsTableView: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
-    var placeholderTableView: TableView?
+    var placeholderTableView: AssignmentTableView?
     
     var assignments: [Assignment]!
     var data = [Category: [Assignment]]()
@@ -26,22 +26,17 @@ class CourseAssignmentsTableView: UITableViewController, PlaceholderDelegate, Up
         super.viewDidLoad()
         self.title = selectedCourse.courseCode
         
+        placeholderTableView = tableView as? AssignmentTableView
+        placeholderTableView?.placeholderDelegate = self
+        
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
         
-        placeholderTableView = tableView as? TableView
-        placeholderTableView?.placeholderDelegate = self
-        
-        self.getTableData()
+        reloadTable()
     }
     
-    func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
-        self.getTableData()
-    }
-
-    
-    func getTableData() {
+    func reloadTable() {
         loadingView.showLoadView(true)
         bgView.showViewAnimated(true)
         DispatchQueue.main.async {
@@ -53,9 +48,10 @@ class CourseAssignmentsTableView: UITableViewController, PlaceholderDelegate, Up
             }
             self.updateData()
             
-            self.tableView.reloadData()
+            self.placeholderTableView?.reloadData()
             self.bgView.showViewAnimated(false)
         }
+        
     }
     
     func updateData() {
@@ -161,7 +157,7 @@ extension CourseAssignmentsTableView {
         }
         
         else if newObject.itemType == "Course" {
-            self.getTableData()
+            reloadTable()
         }
     }
     
@@ -198,8 +194,15 @@ extension CourseAssignmentsTableView {
     }
 }
 
+extension CourseAssignmentsTableView: PlaceholderDelegate {
+    func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
+        TTLog.debug(placeholder.key.value)
+        self.reloadTable()
+    }
+}
+
 class AssignmentTableView: TableView {
     override func customSetup() {
-        placeholdersProvider = .assignmentsPlaceholders
+        placeholdersProvider = .makePlaceholdersProvider(from: .emptyAssignments)
     }
 }

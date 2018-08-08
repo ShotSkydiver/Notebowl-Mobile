@@ -126,11 +126,23 @@ extension NBNetworking {
         ) -> URLRequest? {
         if var urlComponents = url.urlComponent {
             let queryString = query(params)
-            if queryString.count > 0 {
+    
+            var finalMethod = method
+            var finalHeaders = headers
+            finalHeaders["X-Notebowl-Method-Override"] = finalMethod.rawValue
+            
+            var jsonFromQuery: [String: Any]?
+            
+            if queryString.count > 0 && queryString.count < 2000 {
                 urlComponents.percentEncodedQuery = queryString
             }
+            else if queryString.count >= 2000 {
+                TTLog.error("url length too long!")
+                finalMethod = .post
+                finalHeaders["X-Notebowl-Method-Override"] = "GET"
+                jsonFromQuery = params
+            }
             
-            var finalHeaders = headers
             var contentType: String? = nil
             var body: Data?
             if let requestData = requestBody {
@@ -140,7 +152,13 @@ extension NBNetworking {
                 let bound = self.sessionDefaults.multipartBoundary
                 contentType = "multipart/form-data; boundary=\(bound)"
             } else {
-                if let requestJSON = json {
+                if let jsonQuery = jsonFromQuery {
+                    TTLog.error("jsonFromQuery!")
+                    contentType = "application/json"
+                    body = try? JSONSerialization.data(withJSONObject: jsonQuery,
+                                                       options: sessionDefaults.JSONWritingOptions)
+                }
+                else if let requestJSON = json {
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: requestJSON,
                                                        options: sessionDefaults.JSONWritingOptions)
@@ -165,12 +183,13 @@ extension NBNetworking {
             {
                 finalHeaders["Authorization"] = "Basic \(utf8.base64EncodedString())"
             }
+
             if let URL = urlComponents.url {
                 var request = URLRequest(url: URL)
-                
+   
                 request.cachePolicy = sessionDefaults.cachePolicy
                 request.httpBody = body
-                request.httpMethod = method.rawValue
+                request.httpMethod = finalMethod.rawValue
                 if let requestTimeout = timeout {
                     request.timeoutInterval = requestTimeout
                 }
@@ -301,7 +320,7 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
 extension URLSessionConfiguration {
     static var withHeaders: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["uuid": UIDevice().uuid]
+        config.httpAdditionalHeaders = ["uuid": UIDevice().uuid, "X-Notebowl-Method-Override": "GET"]
         return config
     }
 }

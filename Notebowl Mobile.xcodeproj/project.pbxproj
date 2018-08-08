@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
-		8522D04B20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */; };
+		667E1A4949A1846B345ED272 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
 		8522D05C20FE816400BCBD88 /* NotebowlMobileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */; };
 		852462A720B5FC0E00E944E2 /* NBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A620B5FC0E00E944E2 /* NBBuilder.swift */; };
 		852462A920B5FE5A00E944E2 /* NBHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A820B5FE5A00E944E2 /* NBHelpers.swift */; };
@@ -19,6 +18,9 @@
 		85250A15202A2DC50003A416 /* QCMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85250A13202A2DC50003A416 /* QCMethod.swift */; };
 		85252DEA20B4225000A67102 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85252DE920B4225000A67102 /* DownloadService.swift */; };
 		852702C12061E18E00CA04B3 /* HomeFeedPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852702C02061E18E00CA04B3 /* HomeFeedPostViewController.swift */; };
+		852CB61C210FA46600B07ED9 /* NBUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852CB61B210FA46600B07ED9 /* NBUITests.swift */; };
+		852CB628210FBB0E00B07ED9 /* LoremSwiftum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852CB627210FBB0E00B07ED9 /* LoremSwiftum.swift */; };
+		852CB62A210FC38B00B07ED9 /* LoremSwiftum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852CB627210FBB0E00B07ED9 /* LoremSwiftum.swift */; };
 		8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8531ACB21FC4EA9F00EC72FA /* Extensions.swift */; };
 		853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */; };
 		853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */; };
@@ -39,11 +41,10 @@
 		8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE622107EC0A00B41DB6 /* CommentUITests.swift */; };
 		8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */; };
 		8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */; };
-		8587DE692107ED5900B41DB6 /* UITestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE682107ED5900B41DB6 /* UITestHelpers.swift */; };
 		8595017220A2614E004640B3 /* IndexedCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */; };
 		8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */; };
-		85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */; };
-		85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */; };
+		85A71DA52076E35100A51075 /* BulletinTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* BulletinTableViewHeader.swift */; };
+		85A71DA62076E35100A51075 /* BulletinTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85A71DA42076E35100A51075 /* BulletinTableViewHeader.xib */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
 		85C5EA99208793A0005B8A22 /* NBSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5EA98208793A0005B8A22 /* NBSocket.swift */; };
 		85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC2DE920873267007073BD /* PlaceholderTextView.swift */; };
@@ -60,9 +61,10 @@
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
 		85F4D03320605865001C7020 /* HomeFeedCommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */; };
 		85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */; };
+		85FB4664210FE33F00151E7F /* StaticValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FB4663210FE33F00151E7F /* StaticValues.swift */; };
 		85FCF0C720D86F1D0049737E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FCF0C620D86F1C0049737E /* SettingsTableViewController.swift */; };
 		85FF86112006A1BA0080D223 /* MappableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF86102006A1BA0080D223 /* MappableModels.swift */; };
-		BC6BE7EA9487D49AFDC841BD /* libPods-NotebowlMobileUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */; };
+		C9F2B88DA4FF113B623B31A0 /* Pods_NotebowlMobileUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E227BE533AF1A1693186E53 /* Pods_NotebowlMobileUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,29 +84,14 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		856A57C6207820AD0080ADAA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Notebowl_Mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E8127B27DA8552A052240A6 /* Pods-Notebowl Mobile.prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.prod.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.prod.xcconfig"; sourceTree = "<group>"; };
 		410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.release.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.release.xcconfig"; sourceTree = "<group>"; };
 		4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.testflight.xcconfig"; sourceTree = "<group>"; };
-		4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotebowlMobileUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebowlMobileUITests.swift; sourceTree = "<group>"; };
 		8522D04C20FE7B2C00BCBD88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8522D05920FE816400BCBD88 /* NotebowlMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebowlMobileTests.swift; sourceTree = "<group>"; };
@@ -119,12 +106,15 @@
 		85252DE920B4225000A67102 /* DownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		852702C02061E18E00CA04B3 /* HomeFeedPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFeedPostViewController.swift; sourceTree = "<group>"; };
 		8529E5622047D0B700D1E41D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		852CB61B210FA46600B07ED9 /* NBUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBUITests.swift; sourceTree = "<group>"; };
+		852CB627210FBB0E00B07ED9 /* LoremSwiftum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoremSwiftum.swift; sourceTree = "<group>"; };
 		8531ACB21FC4EA9F00EC72FA /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedPostCell.swift; sourceTree = "<group>"; };
 		853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedPostCell.xib; sourceTree = "<group>"; };
 		85348E7520463E3A00ABD877 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		85348E7620463E3A00ABD877 /* ProgressWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressWebViewController.swift; sourceTree = "<group>"; };
 		8534A19E2045CF1B0001B5BA /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		853A3003211146BA006F86DD /* Notebowl-Mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Notebowl-Mobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsTableView.swift; sourceTree = "<group>"; };
 		85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentCellView.swift; sourceTree = "<group>"; };
 		8549648620D996B300366C60 /* NotificationSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingCell.swift; sourceTree = "<group>"; };
@@ -140,11 +130,10 @@
 		8587DE622107EC0A00B41DB6 /* CommentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUITests.swift; sourceTree = "<group>"; };
 		8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUITests.swift; sourceTree = "<group>"; };
 		8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscAppUITests.swift; sourceTree = "<group>"; };
-		8587DE682107ED5900B41DB6 /* UITestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHelpers.swift; sourceTree = "<group>"; };
 		8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedCollectionViewCell.swift; sourceTree = "<group>"; };
 		8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IndexedCollectionViewCell.xib; sourceTree = "<group>"; };
-		85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedWritePostCell.swift; sourceTree = "<group>"; };
-		85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedWritePostCell.xib; sourceTree = "<group>"; };
+		85A71DA32076E35100A51075 /* BulletinTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletinTableViewHeader.swift; sourceTree = "<group>"; };
+		85A71DA42076E35100A51075 /* BulletinTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BulletinTableViewHeader.xib; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
 		85C5EA98208793A0005B8A22 /* NBSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBSocket.swift; sourceTree = "<group>"; };
 		85CC2DE920873267007073BD /* PlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
@@ -163,9 +152,11 @@
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
 		85F4D03120605865001C7020 /* HomeFeedCommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedCommentCell.swift; sourceTree = "<group>"; };
 		85F4D03220605865001C7020 /* HomeFeedCommentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeFeedCommentCell.xib; sourceTree = "<group>"; };
+		85FB4663210FE33F00151E7F /* StaticValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticValues.swift; sourceTree = "<group>"; };
 		85FCF0C620D86F1C0049737E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		85FF86102006A1BA0080D223 /* MappableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappableModels.swift; sourceTree = "<group>"; };
 		88E9B2CEB79AC0B662B12815 /* Pods-NotebowlMobileUITests.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.testflight.xcconfig"; sourceTree = "<group>"; };
+		8E227BE533AF1A1693186E53 /* Pods_NotebowlMobileUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotebowlMobileUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E2481BA85725F1AA813F18C /* Pods-NotebowlMobileUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A269D2501F5E28E05ECA06BE /* Pods-NotebowlMobileUITests.prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.prod.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.prod.xcconfig"; sourceTree = "<group>"; };
 		EDFC7837F5A700769C68A0C2 /* Pods-Notebowl Mobile.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.staging.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.staging.xcconfig"; sourceTree = "<group>"; };
@@ -177,7 +168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC6BE7EA9487D49AFDC841BD /* libPods-NotebowlMobileUITests.a in Frameworks */,
+				C9F2B88DA4FF113B623B31A0 /* Pods_NotebowlMobileUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,7 +183,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02D175CF006400C1DD45C3D4 /* Pods_Notebowl_Mobile.framework in Frameworks */,
+				667E1A4949A1846B345ED272 /* Pods_Notebowl_Mobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +195,7 @@
 			children = (
 				8529E5622047D0B700D1E41D /* QuartzCore.framework */,
 				09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */,
-				4C74547666C69119F578E57D /* libPods-NotebowlMobileUITests.a */,
+				8E227BE533AF1A1693186E53 /* Pods_NotebowlMobileUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -233,9 +224,9 @@
 				8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */,
 				8587DE622107EC0A00B41DB6 /* CommentUITests.swift */,
 				8587DE602107EBFD00B41DB6 /* PostUITests.swift */,
-				8522D04A20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift */,
 				8522D04C20FE7B2C00BCBD88 /* Info.plist */,
-				8587DE682107ED5900B41DB6 /* UITestHelpers.swift */,
+				852CB61B210FA46600B07ED9 /* NBUITests.swift */,
+				85FB4663210FE33F00151E7F /* StaticValues.swift */,
 			);
 			path = NotebowlMobileUITests;
 			sourceTree = "<group>";
@@ -252,6 +243,7 @@
 		85250A06202A1AE60003A416 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				852CB627210FBB0E00B07ED9 /* LoremSwiftum.swift */,
 				856E9A02209D82A300D167B4 /* PickerViewViewController.swift */,
 				85CC2DE920873267007073BD /* PlaceholderTextView.swift */,
 				856CC94C20813BED0096A13F /* TTLog.swift */,
@@ -307,8 +299,8 @@
 			isa = PBXGroup;
 			children = (
 				85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */,
-				85A71DA32076E35100A51075 /* HomeFeedWritePostCell.swift */,
-				85A71DA42076E35100A51075 /* HomeFeedWritePostCell.xib */,
+				85A71DA32076E35100A51075 /* BulletinTableViewHeader.swift */,
+				85A71DA42076E35100A51075 /* BulletinTableViewHeader.xib */,
 				85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */,
 				853280DD205B2EB8003D08F9 /* HomeFeedPostCell.swift */,
 				853280DE205B2EB8003D08F9 /* HomeFeedPostCell.xib */,
@@ -358,6 +350,7 @@
 		85E2918F1F5F619300172C46 /* Notebowl Mobile */ = {
 			isa = PBXGroup;
 			children = (
+				853A3003211146BA006F86DD /* Notebowl-Mobile-Bridging-Header.h */,
 				85E2919C1F5F619300172C46 /* Info.plist */,
 				85250A06202A1AE60003A416 /* Libraries */,
 				85CC9BF5202B8E68001CABB0 /* Support Files */,
@@ -394,6 +387,7 @@
 				8522D04420FE7B2C00BCBD88 /* Sources */,
 				8522D04520FE7B2C00BCBD88 /* Frameworks */,
 				8522D04620FE7B2C00BCBD88 /* Resources */,
+				5C2E78C82BA32FDD7E410C35 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -432,7 +426,6 @@
 				85E2918A1F5F619300172C46 /* Frameworks */,
 				85E2918B1F5F619300172C46 /* Resources */,
 				BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */,
-				856A57C6207820AD0080ADAA /* Embed Frameworks */,
 				D7E5A89FA1E972E397CE5793 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
@@ -524,7 +517,7 @@
 				853280E0205B2EB8003D08F9 /* HomeFeedPostCell.xib in Resources */,
 				85E3057620DAB27B0019131D /* SettingsTableViewHeader.xib in Resources */,
 				85551B1720E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist in Resources */,
-				85A71DA62076E35100A51075 /* HomeFeedWritePostCell.xib in Resources */,
+				85A71DA62076E35100A51075 /* BulletinTableViewHeader.xib in Resources */,
 				85F4D03420605865001C7020 /* HomeFeedCommentCell.xib in Resources */,
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */,
@@ -575,6 +568,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		5C2E78C82BA32FDD7E410C35 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/HTTPStatusCodes/HTTPStatusCodes.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTTPStatusCodes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -607,7 +618,7 @@
 				"${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework",
 				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
-				"${BUILT_PRODUCTS_DIR}/UITestHelper-App/UITestHelper.framework",
+				"${BUILT_PRODUCTS_DIR}/Wormholy/Wormholy.framework",
 				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -637,7 +648,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stevia.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UITestHelper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Wormholy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -668,10 +679,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */,
-				8587DE692107ED5900B41DB6 /* UITestHelpers.swift in Sources */,
+				852CB62A210FC38B00B07ED9 /* LoremSwiftum.swift in Sources */,
 				8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */,
+				85FB4664210FE33F00151E7F /* StaticValues.swift in Sources */,
+				852CB61C210FA46600B07ED9 /* NBUITests.swift in Sources */,
 				8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */,
-				8522D04B20FE7B2C00BCBD88 /* NotebowlMobileUITests.swift in Sources */,
 				8587DE612107EBFD00B41DB6 /* PostUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -691,6 +703,7 @@
 				85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */,
 				856CC94D20813BED0096A13F /* TTLog.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
+				852CB628210FBB0E00B07ED9 /* LoremSwiftum.swift in Sources */,
 				852462A920B5FE5A00E944E2 /* NBHelpers.swift in Sources */,
 				85252DEA20B4225000A67102 /* DownloadService.swift in Sources */,
 				852462A720B5FC0E00E944E2 /* NBBuilder.swift in Sources */,
@@ -710,7 +723,7 @@
 				85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */,
 				85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */,
 				85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */,
-				85A71DA52076E35100A51075 /* HomeFeedWritePostCell.swift in Sources */,
+				85A71DA52076E35100A51075 /* BulletinTableViewHeader.swift in Sources */,
 				8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */,
 				852702C12061E18E00CA04B3 /* HomeFeedPostViewController.swift in Sources */,
 				8549648820D996B300366C60 /* NotificationSettingCell.swift in Sources */,
@@ -770,6 +783,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -794,6 +811,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -818,6 +839,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -842,6 +867,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -866,6 +895,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8M84348K8B;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = NotebowlMobileUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1049,7 +1082,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 136456;
+				CURRENT_PROJECT_VERSION = 136460;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1067,7 +1100,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1149,7 +1182,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 136456;
+				CURRENT_PROJECT_VERSION = 136460;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1167,7 +1200,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "27fff1c4-2fc1-42d5-8b0a-cf2f5d0cf2e9";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1249,7 +1282,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 136456;
+				CURRENT_PROJECT_VERSION = 136460;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1267,7 +1300,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b688d251-72c5-4838-86fc-28607af256ca";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1406,7 +1439,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 136456;
+				CURRENT_PROJECT_VERSION = 136460;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1424,7 +1457,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e288911d-7180-476b-ab8b-029d515c44cb";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1443,7 +1476,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 136456;
+				CURRENT_PROJECT_VERSION = 136460;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1462,7 +1495,7 @@
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

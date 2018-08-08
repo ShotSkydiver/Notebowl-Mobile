@@ -7,191 +7,122 @@
 //
 
 import XCTest
-import UITestHelper
+import Foundation
 
-class PostUITests: XCTestCase {
-
+class PostUITests: NBUITests {
+    
+    var textContentForPost: String!
+    
     override func setUp() {
         super.setUp()
-        continueAfterFailure = false
-        self.tryLaunch()
-        self.waitForLoadingViewToDisappear()
+        textContentForPost = Lorem.sentences(2)
     }
+    override func tearDown() { super.tearDown() }
     
-    override func tearDown() {
-        super.tearDown()
-    }
-
-    
-    func createPostWithText(content: String, attachments: Bool, anonymous: Bool) {
-        app.tables.textFields["createPostTextField"].tap()
+    func createPostWithText(content: String? = nil, attachments: Bool = false, anonymous: Bool = false, changeCourse: Bool = false) {
+        app.otherElements["bulletinTableViewHeader"].tap()
+        app.textViews["createPostText"].typeText((content == nil ? self.textContentForPost : content!))
+        XCTAssertEqual(app.textViews["createPostText"].value as? String ?? "", (content == nil ? self.textContentForPost : content!))
         
-        app.textViews["createPostText"].typeText(content)
-        XCTAssertEqual(app.textViews["createPostText"].value as? String ?? "", content)
-        
-        app.buttons["coursePickerButton"].tap()
-        // app.pickerWheels.element.adjust(toPickerWheelValue: "SQK 101: Squeaky Jibbs")
-        app.buttons["Done"].tap()
-        
+        if changeCourse {
+            app.buttons["coursePickerButton"].tap()
+            XCTAssertEqual(app.pickerWheels.element.value as! String, AvailableCourses.firstCourse.rawValue)
+            app.pickerWheels.element.adjust(toPickerWheelValue: AvailableCourses.secondCourse.rawValue)
+            app.buttons["Done"].tap()
+        }
         if attachments {
-            self.handlePhotoPermissions()
-            app.buttons["photoLibraryButton"].tap()
-            app.tap()
-            XCTAssert(app.navigationBars["YPImagePicker.YPPickerVC"].exists)
-            
-            let elementsQuery = app.scrollViews.otherElements
-            let collectionViewsQuery = elementsQuery.collectionViews
-            collectionViewsQuery.children(matching: .cell).element(boundBy: 1).children(matching: .other).element.tap()
-            elementsQuery.buttons["yp multiple"].tap()
-            collectionViewsQuery.children(matching: .cell).element(boundBy: 2).children(matching: .other).element.tap()
-            app.navigationBars["YPImagePicker.YPPickerVC"].buttons["Next"].tap()
+            handlePhotoLibraryPermissions()
+            addAttachmentsToPost(withIndexes: [1,2])
         }
         if anonymous {
             app.buttons["anonymousButton"].tap()
         }
         
-        app.buttons["postButton"].tap()
+        postButton.tap()
     }
     
-    
-    
-    
-    
-    func testCreateNewPost() {
-        self.createPostWithText(content: "Post from automated UI unit test!", attachments: false, anonymous: false)
+    func checkPosted(content: String? = nil, asAnonymous: Bool = false, withAttachments: Bool = false, courseChanged: Bool = false, checkEdited: Bool = false) {
+        let postContent = firstPost.otherElements["postContent"].value as? String ?? ""
         
-        let firstCell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        let postContent = firstCell.otherElements["postContent"].value as? String ?? ""
-        XCTAssertEqual(postContent, "Post from automated UI unit test!")
+        checkEdited ? XCTAssert(postContent.contains(" Post edited!")) : XCTAssertEqual(postContent, (content == nil ? self.textContentForPost : content))
+        checkEdited ? XCTAssert(firstPost.dateLabel.label.contains("edited")) : XCTAssertEqual(firstPost.dateLabel.label, "just now")
+        
+        if asAnonymous { XCTAssertEqual(firstPost.userName.label, "Anonymous") }
+        
+        let attachments = firstPost.children(matching: .staticText).matching(identifier: "attachmentCountLabel").allElementsBoundByIndex
+        if withAttachments { XCTAssert(attachments.count == 2) }
+        
+        if courseChanged { XCTAssertEqual(firstPost.courseLabel.label, AvailableCourses.secondCourse.rawValue) }
+    }
+    
+    func testCreateBasicPost() {
+        createPostWithText()
+        checkPosted()
     }
     
     func testCreateAnonymousPost() {
-        self.createPostWithText(content: "Anonymous Post from automated UI unit test!", attachments: false, anonymous: true)
-        
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        
-        let postContent = cell.otherElements["postContent"].value as? String ?? ""
-        XCTAssertEqual(postContent, "Anonymous Post from automated UI unit test!")
-        
-        let userName = cell.staticTexts["userNameLabel"].label
-        XCTAssertEqual(userName, "Anonymous")
+        createPostWithText(anonymous: true)
+        checkPosted(asAnonymous: true)
     }
     
     func testPostAndChangeCourse() {
-        self.createPostWithText(content: "Course changed Post from automated UI unit test!", attachments: false, anonymous: false)
-        
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        
-        let postContent = cell.otherElements["postContent"].value as? String ?? ""
-        XCTAssertEqual(postContent, "Course changed Post from automated UI unit test!")
-        
-        let postDate = cell.staticTexts["postDateLabel"].label
-        XCTAssertEqual(postDate, "just now")
-        
-        let courseSelected = cell.staticTexts["courseLabel"].label
-        XCTAssertEqual(courseSelected, "SQK 101: Squeaky Jibbs")
+        createPostWithText(changeCourse: true)
+        checkPosted(courseChanged: true)
     }
     
     func testCreateNewPostWithAttachments() {
-        self.createPostWithText(content: "Attachments Post from automated UI unit test!", attachments: true, anonymous: false)
-        
-        let firstCell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        
-        let postContent = firstCell.otherElements["postContent"].value as? String ?? ""
-        XCTAssertEqual(postContent, "Attachments Post from automated UI unit test!")
-        
-        let attachments = firstCell.children(matching: .staticText).matching(identifier: "attachmentCountLabel").allElementsBoundByIndex
-        XCTAssert(attachments.count == 2)
+        createPostWithText(attachments: true)
+        checkPosted(withAttachments: true)
     }
     
     func testDeletePost() {
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        cell.children(matching: .button)["moreButton"].tap()
-        cell.buttons["Delete"].tap()
-        
-        XCTAssert(app.tables["bulletinTableView"].cells.count == 10)
+        createPostFromUser(user: "admin@notebowl.com")
+        let postsCount = app.tables["bulletinTableView"].cells.count
+        doPostAction(action: "Delete")
+        XCTAssertFalse(app.tables["bulletinTableView"].cells["homeFeedPostCell"].exists)
     }
     
     func testEditPostText() {
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        cell.children(matching: .button)["moreButton"].tap()
-        cell.buttons["Edit"].tap()
-        
-        app.textViews["createPostText"].typeText(" Post edited!")
-        let textValue = app.textViews["createPostText"].value as? String ?? ""
-        XCTAssert(textValue.contains(" Post edited!"))
-        
-        app.buttons["postButton"].tap()
-        
-        let cell2 = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        
-        let postContent = cell2.otherElements["postContent"].value as? String ?? ""
-        XCTAssert(postContent.contains(" Post edited!"))
-        
-        let postDate = cell2.staticTexts["postDateLabel"].label
-        XCTAssert(postDate.contains("edited"))
+        createPostFromUser(user: "admin@notebowl.com")
+        doPostAction(action: "Edit")
+        addText(text: " Post edited!")
+        postButton.tap()
+        checkPosted(checkEdited: true)
     }
     
-    func testEditPostAddDeleteAttachments() {
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        let attachments = cell.children(matching: .staticText).matching(identifier: "attachmentCountLabel").allElementsBoundByIndex
-        
-        cell.children(matching: .button)["moreButton"].tap()
-        cell.buttons["Edit"].tap()
-        
-        self.handlePhotoPermissions()
-        app.buttons["photoLibraryButton"].tap()
-        app.tap()
-        XCTAssert(app.navigationBars["YPImagePicker.YPPickerVC"].exists)
-        
-        app.scrollViews.otherElements.collectionViews.children(matching: .cell).element(boundBy: 3).children(matching: .other).element.tap()
-        app.navigationBars["YPImagePicker.YPPickerVC"].buttons["Next"].tap()
-        
-        app.buttons["postButton"].tap()
-        
-        let cell2 = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        let attachments2 = cell2.children(matching: .staticText).matching(identifier: "attachmentCountLabel").allElementsBoundByIndex
-        
-        //XCTAssert(attachments2.count >= 3)
-        XCTAssertGreaterThanOrEqual(attachments2.count, attachments.count)
+    func testEditPostAddAttachments() {
+        createPostFromUser(user: "admin@notebowl.com")
+        let attachmentsCount = firstPost.attachments.count
+        doPostAction(action: "Edit")
+        handlePhotoLibraryPermissions()
+        addAttachmentsToPost(withIndexes: [3])
+        postButton.tap()
+        XCTAssertGreaterThan(firstPost.attachments.count, attachmentsCount)
     }
     
     func testLikeFirstPost() {
-        let cell = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        
-        let isLikedAlready = cell.children(matching: .button)["postLikeButton"].isSelected
-        var likeCountInt = 0
-        cell.staticTexts["postLikeCount"].ifExists { (postLikeCount) in
-            likeCountInt = Int(postLikeCount.label)!
-        }
-        cell.children(matching: .button)["postLikeButton"].tap()
-        
-        self.checkIsElementVisible(element: app.otherElements["PKHUD"])
-        self.waitForHUDToDisappear()
-        
-        let cell2 = app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 1)
-        if isLikedAlready {
-            var likeCountInt2 = 0
-            if cell2.staticTexts["postLikeCount"].exists { likeCountInt2 = Int(cell2.staticTexts["postLikeCount"].label)! }
-            XCTAssert(likeCountInt > likeCountInt2)
-        }
-        else if !isLikedAlready {
-            let likeCountInt2 = Int(cell2.staticTexts["postLikeCount"].label)
-            XCTAssert(likeCountInt2! > likeCountInt)
-        }
+        createPostFromUser(user: "admin@notebowl.com")
+        firstPost.likeButton.tap()
+        isHUDVisible()
+        waitForHUDToDisappear()
+        XCTAssert(Int(firstPost.likeText.label)! > 0)
     }
     
     func testReportPost() {
-        let cells = app.tables["bulletinTableView"].children(matching: .cell).matching(identifier: "homeFeedPostCell").allElementsBoundByIndex
-        
-        for cell in cells {
-            cell.children(matching: .button)["moreButton"].tap()
-            if cell.buttons["Report"].exists {
-                cell.buttons["Report"].tap()
-                app.sheets["Report Post"].buttons["It doesn't belong on Notebowl"].tap()
-                self.checkIsElementVisible(element: app.otherElements["PKHUD"])
-                break
-            }
-        }
+        createPostFromUser(user: "bob.smith@notebowl.com")
+        doPostAction(action: "Report")
+        reportAction.tap()
+        isHUDVisible()
     }
+}
+
+extension XCUIElement {
+    var dateLabel: XCUIElement { return self.staticTexts["dateLabel"] }
+    var userName: XCUIElement { return self.staticTexts["userNameLabel"] }
+    var courseLabel: XCUIElement { return self.staticTexts["courseLabel"] }
+    var likeButton: XCUIElement { return self.children(matching: .button)["likeButton"] }
+    var likeText: XCUIElement { return self.staticTexts["likeCount"] }
+    
+    var attachments: [XCUIElement] { return self.children(matching: .staticText).matching(identifier: "attachmentCountLabel").allElementsBoundByIndex }
+    
 }
