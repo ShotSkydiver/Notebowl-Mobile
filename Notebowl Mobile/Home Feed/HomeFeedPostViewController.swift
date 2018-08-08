@@ -348,12 +348,16 @@ extension HomeFeedPostViewController {
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
-            
-            existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
-            
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             
-            self.tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .bottom, animated: true)
+            if indexOfComment != nil {
+                existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
+                
+                self.tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .bottom, animated: true)
+            }
+            else {
+                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            }
             
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
