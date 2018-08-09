@@ -21,14 +21,15 @@ import PKHUD
 class HomeFeedViewController: UIViewController, UpdateVC {
     var indexes: Paths = Paths()
     var posts: [Post]!
-    @IBOutlet var bulletinTableView: HomeTableView!
-    // var placeholderTableView: TableView?
+    @IBOutlet weak var bulletinTableView: HomeTableView!
     
     var cellHeights: [IndexPath : CGFloat] = [:]
     
     override func viewDidLoad() {
         TTLog.testing("homeVC didload")
         super.viewDidLoad()
+        
+        bulletinTableView.placeholderDelegate = self
         
         let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
         customView.initSetup()
@@ -39,11 +40,10 @@ class HomeFeedViewController: UIViewController, UpdateVC {
         
         HomeFeedPostCell.register(in: bulletinTableView)
         
-        bulletinTableView.placeholderDelegate = self
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
-        //bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
+        // bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -254,7 +254,7 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         guard let height = cellHeights[indexPath] else { return 260.0 }
         return height
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = HomeFeedPostCell.dequeue(from: tableView)!
         let post = self.posts[indexPath.row]
@@ -284,8 +284,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-            
-            
+           
             let deleteReq = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
             let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
@@ -360,6 +359,8 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     }
 }
 
+
+
 extension HomeFeedViewController: PlaceholderDelegate {
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
         TTLog.debug(placeholder.key.value)
@@ -421,7 +422,6 @@ class HomeTableView: TableView {
         placeholdersProvider = .makePlaceholdersProvider(from: .emptyHome)
     }
 }
-
 
 final class DeckNoSwipeSegue: UIStoryboardSegue {
     var transition: UIViewControllerTransitioningDelegate?

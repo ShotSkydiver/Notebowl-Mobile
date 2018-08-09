@@ -1095,7 +1095,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /Library/Developer/Toolchains/swift-4.1.2-RELEASE.xctoolchain/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";
@@ -1195,7 +1195,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /Library/Developer/Toolchains/swift-4.1.2-RELEASE.xctoolchain/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "27fff1c4-2fc1-42d5-8b0a-cf2f5d0cf2e9";
@@ -1295,7 +1295,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /Library/Developer/Toolchains/swift-4.1.2-RELEASE.xctoolchain/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b688d251-72c5-4838-86fc-28607af256ca";
@@ -1452,7 +1452,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /Library/Developer/Toolchains/swift-4.1.2-RELEASE.xctoolchain/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e288911d-7180-476b-ab8b-029d515c44cb";
@@ -1489,7 +1489,7 @@
 					"$(PROJECT_DIR)/Notebowl\\ Mobile/Libraries",
 				);
 				INFOPLIST_FILE = "Notebowl Mobile/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /Library/Developer/Toolchains/swift-4.1.2-RELEASE.xctoolchain/usr/lib/swift/iphonesimulator";
 				PRODUCT_BUNDLE_IDENTIFIER = com.notebowl.standalone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7845eda2-ccc0-471d-94ab-41ec37de7a50";

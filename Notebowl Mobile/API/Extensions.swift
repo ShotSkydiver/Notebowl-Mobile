@@ -969,7 +969,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "sad-face-vector")
         emptyStyle.title = "It's lonely in here!"
-        emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here."
+        emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here. If you're already enrolled in a course or group, be the first to say something! You can create a new post above."
         emptyStyle.action = "Check again?"
         return emptyStyle
     }
@@ -977,7 +977,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = PlaceholderData.error.image
         emptyStyle.title = "Enroll in some courses!"
-        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
+        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments. Courses are sorted by their most recently updated assignment or grade."
         emptyStyle.action = "Check again?"
         return emptyStyle
     }
@@ -993,7 +993,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "thinking-face-vector")
         emptyStyle.title = "Nothing noteworthy has happened!"
-        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments."
+        emptyStyle.subtitle = "Notifications for different users' actions will appear here. You can control what kinds of notifications you do or don't want to see via the User Settings page. Just tap the face at the top!"
         emptyStyle.action = "Check again?"
         return emptyStyle
     }
