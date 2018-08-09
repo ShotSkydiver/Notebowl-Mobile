@@ -15,7 +15,7 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
     var settings: [Setting]!
 
-    var settingsArray: [SettingsGroup]!
+    var settingsArray: [SettingsGroup?]!
 
     var loadingView: NBLoadingView!
     var bgView: UIView!
@@ -44,7 +44,6 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
                 self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
             }
             
-            
             let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
             let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
             let mappedResult = Mapper<SettingDefaults>().map(JSONString: String(data: nestedData!, encoding: .utf8)!)
@@ -63,7 +62,7 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = SettingsTableViewHeader.dequeue(from: tableView)!
         header.setupHeader(showButton: false)
-        header.sectionTitle.text = ( self.settingsArray != nil ? self.settingsArray[section].sectionName.uppercased() : "" )
+        header.sectionTitle.text = ( self.settingsArray != nil ? self.settingsArray[section]!.sectionName.uppercased() : "" )
         return header
     }
     
@@ -72,14 +71,14 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ( self.settingsArray != nil ? self.settingsArray[section].sectionMobileSettings.count : 0 )
+        return ( self.settingsArray != nil ? self.settingsArray[section]!.sectionMobileSettings.count : 0 )
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = NotificationSettingCell.dequeue(from: tableView)!
         
-        if self.restorationIdentifier == "mobileSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section].sectionMobileSettings[indexPath.row]) }
-        else if self.restorationIdentifier == "emailSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section].sectionEmailSettings[indexPath.row]) }
+        if self.restorationIdentifier == "mobileSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionMobileSettings[indexPath.row]) }
+        else if self.restorationIdentifier == "emailSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionEmailSettings[indexPath.row]) }
         
         
         return cell
@@ -93,11 +92,11 @@ extension SettingsTableViewController {
             self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
             var cellIndexPath: IndexPath!
             for section in self.settingsArray {
-                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section.sectionMobileSettings.first(where: {$0.key == (newObject as! Setting).key}) : section.sectionEmailSettings.first(where: {$0.key == (newObject as! Setting).key}) )!
+                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.first(where: {$0.key == (newObject as! Setting).key}) : section!.sectionEmailSettings.first(where: {$0.key == (newObject as! Setting).key}) )!
                 foundSetting.findSetting()
                 
-                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
-                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0.sectionName == section.sectionName })!)
+                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section!.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
+                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0!.sectionName == section!.sectionName })!)
                 
                 guard let notificationCell = self.tableView.cellForRow(at: cellIndexPath) as? NotificationSettingCell else { return }
                 if (notificationCell.settingSwitch.isOn == (newObject as! Setting).value) {
@@ -124,11 +123,11 @@ extension SettingsTableViewController {
             self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
             var cellIndexPath: IndexPath!
             for section in self.settingsArray {
-                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section.sectionMobileSettings.first(where: {$0.key == (deletedObject as! Setting).key}) : section.sectionEmailSettings.first(where: {$0.key == (deletedObject as! Setting).key}) )!
+                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.first(where: {$0.key == (deletedObject as! Setting).key}) : section!.sectionEmailSettings.first(where: {$0.key == (deletedObject as! Setting).key}) )!
                 foundSetting.findSetting()
                 
-                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
-                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0.sectionName == section.sectionName })!)
+                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section!.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
+                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0!.sectionName == section!.sectionName })!)
                 guard let notificationCell = self.tableView.cellForRow(at: cellIndexPath) as? NotificationSettingCell else { return }
                 if (notificationCell.settingSwitch.isOn == foundSetting.defaultValue) {
                     TTLog.debug("already set previouisly!")

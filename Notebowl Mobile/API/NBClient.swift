@@ -25,7 +25,7 @@ class NBClient {
     }
     #if DEBUG
     static let baseUrl = Environment.Production.rawValue
-    // static let socketUrl = "https://demo.notebowl.xyz/"
+    //static let socketUrl = "https://demo.notebowl.xyz/"
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
     #else
     static let baseUrl = Environment.Production.rawValue

@@ -1014,17 +1014,18 @@ struct SettingsGroup {
 class SettingDefaults: Mappable {
     var settingsMobile: [String: [MobileSettingsDefault]]!
     var settingsEmail: [String: [EmailSettingsDefault]]!
-    var settingsArray =  [SettingsGroup]()
+    var settingsArray = [SettingsGroup?](repeating: nil, count: 4)
+    
+    var settingsPositions = ["courses", "groups", "clubs", "posts"]
     
     public required init?(map: Map) { }
-    
     
     public func mapping(map: Map) {
         settingsMobile <- map["notifications"]
         settingsEmail <- map["notifications"]
         
         for (key,value) in settingsMobile {
-            self.settingsArray.append(SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key]))
+            self.settingsArray[settingsPositions.index(of: key)!] = SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key])
         }
     }
 }
