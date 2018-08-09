@@ -22,9 +22,7 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadingView = NBLoadingView()
-        self.bgView = UIView(loadingView: self.loadingView)
-        self.view.addSubview(bgView)
+        
         
         SettingsTableViewHeader.register(in: tableView)
         NotificationSettingCell.register(in: tableView)
@@ -33,12 +31,16 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
         tableView.estimatedRowHeight = 80.0
         tableView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0)
         
+        self.loadingView = NBLoadingView()
+        self.bgView = UIView(loadingView: self.loadingView)
+        self.view.addSubview(bgView)
+        
         self.getTableData()
     }
     
     func getTableData() {
-        loadingView.showLoadView(true)
-        bgView.showViewAnimated(true)
+        loadingView.alpha = 1.0
+        bgView.alpha = 1.0
         DispatchQueue.main.async {
             if NBClient.shared.storedTypes[Setting.classIdentifier] != nil {
                 self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
@@ -51,7 +53,7 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
             self.settingsArray = mappedResult?.settingsArray
    
             self.tableView.reloadData()
-            self.bgView.showViewAnimated(false)
+            self.bgView.alpha = 0.0
         }
     }
     
