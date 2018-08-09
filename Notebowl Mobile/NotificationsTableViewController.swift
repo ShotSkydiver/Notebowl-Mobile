@@ -32,7 +32,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
         self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         placeholderTableView?.reloadData()
@@ -65,14 +65,12 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     func markAsSeen() {
         _ = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
         
-        if NBClient.shared.storedTypes[Notification.classIdentifier] != nil {
             for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
                 notification.status = "seen"
             }
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             let countString = String(format: "%d", (unreadCount.count))
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
-        }
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -119,7 +117,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
 extension NotificationsTableViewController {
     
     func handleUpdated(newObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
@@ -133,7 +131,7 @@ extension NotificationsTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }

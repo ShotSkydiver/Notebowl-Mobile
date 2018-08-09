@@ -183,7 +183,11 @@ class NBClient {
   
     
     func storeObjectsInCache<T>(_ objects: [T]?) -> [T]? where T: NBModel {
-        if objects == nil { return [] }
+        if objects == nil { return nil }
+        else if objects!.isEmpty {
+            if !NBClient.shared.storedTypes.has(key: T.classIdentifier) { NBClient.shared.storedTypes[T.classIdentifier] = [] }
+            return []
+        }
         
         var newObjectArray = [T]()
         for object in objects! {

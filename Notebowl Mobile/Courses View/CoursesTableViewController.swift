@@ -31,7 +31,7 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
         placeholderTableView?.reloadData()
     }
     

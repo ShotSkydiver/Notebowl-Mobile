@@ -65,7 +65,7 @@ class HomeFeedViewController: UIViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.posts = NBClient.shared.storedTypes[Post.classIdentifier] == nil ? [] : NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
         bulletinTableView.reloadData()
     }
     
@@ -100,11 +100,9 @@ class HomeFeedViewController: UIViewController, UpdateVC {
             courseForPicker.sort() { $0.fullName < $1.fullName }
             var pickerItems = courseForPicker as [NBModel]
             
-            if NBClient.shared.storedTypes[Group.classIdentifier] != nil {
-                var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
-                groups.sort() { $0.fullName < $1.fullName }
-                pickerItems += groups as [NBModel]
-            }
+            var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
+            groups.sort() { $0.fullName < $1.fullName }
+            pickerItems += groups as [NBModel]
             
             destVC.objectsForPicker = pickerItems
             
@@ -166,7 +164,6 @@ extension HomeFeedViewController {
                 }
                 self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
                 
-                //self.bulletinTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
             }
         }

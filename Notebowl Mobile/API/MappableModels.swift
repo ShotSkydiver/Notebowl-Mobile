@@ -359,9 +359,7 @@ public protocol WithName {
             if firstTimeLoading { firstTimeLoading = false }
         }
         
-        if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
-        }
+        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
     }
 }
 
@@ -642,9 +640,7 @@ public protocol WithName {
             if firstTimeLoading { firstTimeLoading = false }
         }
         
-        if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-            enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
-        }
+        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
     }
 }
 
@@ -716,43 +712,31 @@ public protocol WithName {
     }
     
     func updateLikes() {
-        if NBClient.shared.storedTypes[Like.classIdentifier] != nil {
-            self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
-            if postLikes.isEmpty || postLikes == nil {
+        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
+        if postLikes.isEmpty || postLikes == nil {
+            likedByCurrentUser = false
+            likeFromCurrentUser = nil
+        }
+        else if postLikes.count > 0 {
+            let like = postLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            
+            if like != nil {
+                likedByCurrentUser = true
+                likeFromCurrentUser = like
+            }
+            else if like == nil {
                 likedByCurrentUser = false
                 likeFromCurrentUser = nil
             }
-            else if postLikes.count > 0 {
-                let like = postLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
-                
-                if like != nil {
-                    likedByCurrentUser = true
-                    likeFromCurrentUser = like
-                }
-                else if like == nil {
-                    likedByCurrentUser = false
-                    likeFromCurrentUser = nil
-                }
-            }
-        }
-        else {
-            self.postLikes = []
-            self.likedByCurrentUser = false
         }
     }
     override public func refresh() {
         if self.creator != nil {
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator!.resourceKey }) as? User
         }
-        if NBClient.shared.storedTypes[Comment.classIdentifier] != nil {
-            self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.resourceKey == self.resourceKey }) as! [Comment]
-            self.postComments = NBClient.shared.initArray(from: self.postComments)
-        }
-        else { self.postComments = []}
-        if NBClient.shared.storedTypes[Attachment.classIdentifier] != nil {
-            self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
-        }
-        else { self.postAttachments = []}
+        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.resourceKey == self.resourceKey }) as! [Comment]
+        self.postComments = NBClient.shared.initArray(from: self.postComments)
+        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
         updateLikes()
     }
 }
@@ -828,34 +812,25 @@ public protocol WithName {
     }
     
     public func getAttachments() {
-        if NBClient.shared.storedTypes[Attachment.classIdentifier] != nil {
-            self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
-        }
-        else { self.commentAttachments = []}
+        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
     }
     public func updateLikes() {
-        if NBClient.shared.storedTypes[Like.classIdentifier] != nil {
-            self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
-            if commentLikes.isEmpty || commentLikes == nil {
+        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
+        if commentLikes.isEmpty || commentLikes == nil {
+            likedByCurrentUser = false
+            likeFromCurrentUser = nil
+        }
+        else if commentLikes.count > 0 {
+            let like = commentLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            
+            if like != nil {
+                likedByCurrentUser = true
+                likeFromCurrentUser = like
+            }
+            else if like == nil {
                 likedByCurrentUser = false
                 likeFromCurrentUser = nil
             }
-            else if commentLikes.count > 0 {
-                let like = commentLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
-                
-                if like != nil {
-                    likedByCurrentUser = true
-                    likeFromCurrentUser = like
-                }
-                else if like == nil {
-                    likedByCurrentUser = false
-                    likeFromCurrentUser = nil
-                }
-            }
-        }
-        else {
-            self.commentLikes = []
-            self.likedByCurrentUser = false
         }
     }
     
