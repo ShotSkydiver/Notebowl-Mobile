@@ -464,6 +464,43 @@ extension DesignableView {
     }
 }
 
+@IBDesignable class FilledButton: UIButton {
+    
+    @IBInspectable var cornerRadius: CGFloat = 5 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    @IBInspectable var masksToBounds: Bool = true {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.layoutIfNeeded()
+        self.applyProperties()
+    }
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)!
+        self.setNeedsDisplay()
+    }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.setNeedsDisplay()
+    }
+    
+    override func layoutSubviews() {
+        self.applyProperties()
+    }
+    
+    func applyProperties() {
+        self.layer.cornerRadius = cornerRadius
+        self.layer.masksToBounds = masksToBounds
+        
+    }
+}
 
 @IBDesignable class ProfileImageView: UIImageView {
     
@@ -967,34 +1004,34 @@ extension Dictionary {
 extension PlaceholderData {
     static var emptyHome: PlaceholderData {
         var emptyStyle = PlaceholderData()
-        emptyStyle.image = UIImage(named: "sad-face-vector")
+        emptyStyle.image = UIImage(named: "hg-empty-posts")
         emptyStyle.title = "It's lonely in here!"
         emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here. If you're already enrolled in a course or group, be the first to say something! You can create a new post above."
-        emptyStyle.action = "Check again?"
+        emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
     static var emptyCourses: PlaceholderData {
         var emptyStyle = PlaceholderData()
-        emptyStyle.image = PlaceholderData.error.image
+        emptyStyle.image = UIImage(named: "hg-empty-courses")
         emptyStyle.title = "Enroll in some courses!"
         emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments. Courses are sorted by their most recently updated assignment or grade."
-        emptyStyle.action = "Check again?"
+        emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
     static var emptyAssignments: PlaceholderData {
         var emptyStyle = PlaceholderData()
-        emptyStyle.image = PlaceholderData.error.image
+        emptyStyle.image = UIImage(named: "hg-empty-courses")
         emptyStyle.title = "This course has no assignments!"
         emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here. If you have notifications enabled, you'll also be notified about any new or updated assignments."
-        emptyStyle.action = "Check again?"
+        emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
     static var emptyNotifications: PlaceholderData {
         var emptyStyle = PlaceholderData()
-        emptyStyle.image = UIImage(named: "thinking-face-vector")
+        emptyStyle.image = UIImage(named: "hg-empty-notifications")
         emptyStyle.title = "Nothing noteworthy has happened!"
         emptyStyle.subtitle = "Notifications for different users' actions will appear here. You can control what kinds of notifications you do or don't want to see via the User Settings page. Just tap the face at the top!"
-        emptyStyle.action = "Check again?"
+        emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
 }
@@ -1005,13 +1042,14 @@ extension PlaceholdersProvider {
         nbStyle.shouldShowTableViewHeader = true
         nbStyle.backgroundColor = .groupTableViewBackground
         nbStyle.actionBackgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-        nbStyle.actionTitleColor = .groupTableViewBackground
         nbStyle.titleColor = .darkText
-        nbStyle.subtitleColor = #colorLiteral(red: 0.3098039216, green: 0.3098039216, blue: 0.3098039216, alpha: 1)
+        nbStyle.subtitleColor = .gray
+        nbStyle.actionTitleColor = UIColor.init(hexString: "#fafafa")
+        nbStyle.actionBackgroundColor = UIColor(red:0.18, green:0.49, blue:0.82, alpha:1.0)
         nbStyle.isAnimated = true
-        nbStyle.titleFont = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
-        nbStyle.subtitleFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
-        nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        nbStyle.titleFont = UIFont.systemFont(ofSize: 19.0, weight: .bold)
+        nbStyle.subtitleFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+        nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 15.0, weight: .bold)
         
         let noResultsPlaceholder = Placeholder(data: from, style: nbStyle, key: .noResultsKey)
         let loadingPlaceholder = Placeholder(data: .loading, style: nbStyle, key: .loadingKey)

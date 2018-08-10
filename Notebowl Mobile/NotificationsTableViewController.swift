@@ -32,7 +32,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification]
+        self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
         self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         placeholderTableView?.reloadData()
@@ -59,7 +59,8 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        markAsSeen()
+        if !notifications.isEmpty { markAsSeen() }
+        
     }
     
     func markAsSeen() {
@@ -117,12 +118,14 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
 extension NotificationsTableViewController {
     
     func handleUpdated(newObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
         if newObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
             
-            existingNotification == false ? tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
+            placeholderTableView?.showDefault()
+            
+            existingNotification == false ? tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) : TTLog.debug("do nothing") //tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             let countString = String(format: "%d", (unreadCount.count))
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
@@ -131,10 +134,15 @@ extension NotificationsTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
+        self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            
+            if tableView.numberOfRows(inSection: 0) == 0 {
+                placeholderTableView?.reloadData()
+            }
             if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
+            else {tableView.reloadSections(IndexSet(integer: 0), with: .automatic) }
             let unreadCount = self.notifications.filter({ $0.unseenBool == true })
             let countString = String(format: "%d", (unreadCount.count))
             self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
@@ -152,7 +160,6 @@ extension NotificationsTableViewController {
 
 extension NotificationsTableViewController: PlaceholderDelegate {
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
-        TTLog.debug(placeholder.key.value)
         self.reloadTable()
     }
 }

@@ -7,7 +7,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Kingfisher', '~> 4.0'
         pod 'ObjectMapper', '~> 3.1'
         pod 'FaveButton', :git => 'https://github.com/ShotSkydiver/fave-button'
-        pod 'HGPlaceholders'
+        pod 'HGPlaceholders', :git => 'https://github.com/ShotSkydiver/HGPlaceholders'
         pod 'Bugsnag'
         pod 'InputBarAccessoryView'
         pod 'DeckTransition', '~> 2.0'
@@ -16,7 +16,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Haptica'
         pod 'ButtonProgressBar-iOS'
         pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
-        pod 'Tamamushi'
+        pod 'Tamamushi', :git => 'https://github.com/ShotSkydiver/Tamamushi'
         pod 'Socket.IO-Client-Swift', '~> 13.1.0'
         pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
         pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
@@ -25,16 +25,10 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'PKHUD', '~> 5.0'
         pod 'Wormholy', :configurations => ['Debug']
     end
-    
+
     target 'NotebowlMobileUITests' do
         #inherit! :search_paths
     end
-
-
-
-
-
-
 
 post_install do |installer|
     installer.pods_project.build_configurations.each do |config|

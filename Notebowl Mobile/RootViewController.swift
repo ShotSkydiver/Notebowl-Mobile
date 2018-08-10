@@ -46,7 +46,7 @@ class RootViewController: UIViewController {
                 return
             }
             progressWebVC.url = URL(string: ("https://\(NBClient.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
-            progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3418.2 Safari/537.36"
+            progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3514.2 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.bypassedSSLHosts = ["demo.notebowl.xyz"]
             progressWebVC.navigationItem.title = "Notebowl Login"

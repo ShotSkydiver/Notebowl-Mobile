@@ -36,7 +36,7 @@ class NBClient {
     
     
     private init() { }
-    
+
     func resolveCurrentUser(_ force: Bool? = false) -> Bool {
         if currentUser == nil || force! {
             TTLog.debug("currentuser nil!")
@@ -184,10 +184,6 @@ class NBClient {
     
     func storeObjectsInCache<T>(_ objects: [T]?) -> [T]? where T: NBModel {
         if objects == nil { return nil }
-        else if objects!.isEmpty {
-            if !NBClient.shared.storedTypes.has(key: T.classIdentifier) { NBClient.shared.storedTypes[T.classIdentifier] = [] }
-            return []
-        }
         
         var newObjectArray = [T]()
         for object in objects! {

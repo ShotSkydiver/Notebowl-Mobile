@@ -35,8 +35,6 @@ class BulletinTableViewHeader: UITableViewHeaderFooterView {
         tapGesture.numberOfTapsRequired = 1
         tapGesture.numberOfTouchesRequired = 1
         self.addGestureRecognizer(tapGesture)
-        
-        
     }
     
     func reloadAvatar() {
@@ -48,15 +46,13 @@ class BulletinTableViewHeader: UITableViewHeaderFooterView {
         )
         userAvatar.contentMode = .scaleAspectFill
     }
-        
     
     @objc func singleTap(gesture: UITapGestureRecognizer) {
-        
-        if let parentVC = parentViewController as? HomeFeedViewController {
-            parentVC.performSegue(withIdentifier: "createPostSegue", sender: nil)
+        if NBClient.shared.storedTypes.has(key: Course.classIdentifier) || NBClient.shared.storedTypes.has(key: Group.classIdentifier) {
+            if let parentVC = parentViewController as? HomeFeedViewController {
+                parentVC.performSegue(withIdentifier: "createPostSegue", sender: nil)
+            }
         }
-        
-        
     }
 }
 

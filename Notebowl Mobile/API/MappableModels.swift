@@ -202,8 +202,6 @@ class Response<T>: Generic where T: NBModel {
     
     override init() {}
     
-    //public init(
- 
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
         createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
@@ -691,6 +689,9 @@ public protocol WithName {
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
+    public var aboutToBeDeleted: Bool!
+    public var inMiddleOfRefresh: Bool!
+    
     override class var routeType: ItemType { return .post }
     
     required public init?(map: Map) {
@@ -708,11 +709,19 @@ public protocol WithName {
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
         
-        refresh()
+        postLikes = []
+        postComments = []
+        postAttachments = []
+        likedByCurrentUser = false
+        likeFromCurrentUser = nil
+        
+        aboutToBeDeleted = false
+        inMiddleOfRefresh = false
     }
     
     func updateLikes() {
-        self.postLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
+        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as? [Like]
+        self.postLikes = (likes == nil ? [] : likes!)
         if postLikes.isEmpty || postLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
@@ -734,9 +743,11 @@ public protocol WithName {
         if self.creator != nil {
             self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator!.resourceKey }) as? User
         }
-        self.postComments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0 as! Comment).parent!.resourceKey == self.resourceKey }) as! [Comment]
-        self.postComments = NBClient.shared.initArray(from: self.postComments)
-        self.postAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
+        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent!.resourceKey == self.resourceKey }) as? [Comment]
+        self.postComments = (comments == nil ? [] : comments!)
+ 
+        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent!.resourceKey == self.resourceKey }) as? [Attachment]
+        self.postAttachments = (attachments == nil ? [] : attachments!)
         updateLikes()
     }
 }
@@ -809,13 +820,20 @@ public protocol WithName {
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
+        
+        commentAttachments = []
+        commentLikes = []
+        likedByCurrentUser = false
+        likeFromCurrentUser = nil
     }
     
     public func getAttachments() {
-        self.commentAttachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as! [Attachment]
+        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as? [Attachment]
+        self.commentAttachments = (attachments == nil ? [] : attachments!)
     }
     public func updateLikes() {
-        self.commentLikes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as! [Like]
+        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as? [Like]
+        self.commentLikes = (likes == nil ? [] : likes!)
         if commentLikes.isEmpty || commentLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil

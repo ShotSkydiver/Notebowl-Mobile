@@ -38,16 +38,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         bar.delegate = self
         return bar
     }()
-    
-    //let inputBar: InputBarAccessoryView
-    
+
     lazy var attachmentManager: AttachmentMan = { [weak self] in
         let manager = AttachmentMan()
         manager.delegate = self
         manager.dataSource = self
-        //manager.isPersistent = false
-        //manager.showAddAttachmentCell = false
-        //manager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
         return manager
     }()
     
@@ -60,14 +55,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func loadView() {
         super.loadView()
-
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         HomeFeedPostCell.register(in: self.tableView)
         HomeFeedCommentCell.register(in: self.tableView)
- 
         
         attachmentManager.isPersistent = false
         attachmentManager.showAddAttachmentCell = false
@@ -90,8 +83,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func setupInputBar() {
-        //resetInput()
-        
         let items = [
             
             makeButton(named: "add_photo-vector")
@@ -161,11 +152,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                         self.view.layoutIfNeeded()
                         if self.anonymousToggle {
                             self.inputBar.sendButton.setTitle("Anonymous Reply", for: .normal)
-                            //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX-106), y: self.bar.sendButton.frame.minY, width: 168, height: 36)
                         }
                         else if !self.anonymousToggle {
                             self.inputBar.sendButton.setTitle("Reply", for: .normal)
-                            //self.bar.sendButton.frame = CGRect(x: (self.bar.sendButton.frame.minX+106), y: self.bar.sendButton.frame.minY, width: 62, height: 36)
                         }
                     })
                     anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
@@ -189,22 +178,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 }.onEnabled {
                     $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 200)))
                     $0.layer.borderColor = UIColor.clear.cgColor
-                //}.onSelected {
-                    //$0.isUserInteractionEnabled = false
-                    //$0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                //}.onDeselected {
-                    //$0.transform = CGAffineTransform.identity
-                    //$0.isUserInteractionEnabled = true
             }
         ]
-        /*
-        bar.sendButton.onTextViewDidChange { (button, textView) in
-            if self.attachmentManager.attachments.count > 0 {
-                button.isEnabled = true
-            }
-        }
-        */
-        
         inputBar.inputTextView.accessibilityIdentifier = "newCommentTextView"
         inputBar.inputTextView.placeholder = "Write a comment..."
         inputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
@@ -226,9 +201,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         inputBar.sendButton.isEnabled = false
         inputBar.sendButton.setTitle("Reply", for: .normal)
-        
-        
-        let accessButton = inputBar.bottomStackViewItems.first(where: { ($0 as! InputBarButtonItem).accessibilityIdentifier == "anonymousButton" })
         
         DispatchQueue.main.async {
             var jsonPayload: Any?
@@ -265,20 +237,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     }
                 }
             }
-            
             DispatchQueue.main.async {
-                TTLog.debug("start nested async")
                 inputBar.inputTextView.resignFirstResponder()
                 inputBar.inputTextView.text = String()
                 inputBar.invalidatePlugins()
                 self.attachmentIDs = []
                 self.anonymousToggle = false
-                
-                
-                
-                
             }
-            
         }
     }
     
@@ -293,20 +258,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.inputTextView.resignFirstResponder()
         inputBar.inputPlugins.removeAll()
         resignFirstResponder()
-        /*
-        let newManager = AttachmentMan()
-        newManager.delegate = self
-        newManager.dataSource = self
-        newManager.isPersistent = false
-        newManager.showAddAttachmentCell = false
-        newManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
-        attachmentManager = newManager
-        
-        let newBar = InputBarAccessoryView()
-        newBar.delegate = self
-        newBar.inputPlugins = [attachmentManager]
-        inputBar = newBar
-        */
         reloadInputViews()
         becomeFirstResponder()
     }
@@ -344,7 +295,6 @@ extension HomeFeedPostViewController {
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if newObject.itemType == "Comment" {
-            TTLog.debug("beginning of handleupdated")
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
@@ -389,34 +339,26 @@ extension HomeFeedPostViewController {
             if deletedObject.resourceKey == self.post.resourceKey {
                 self.navigationController?.popViewController(animated: true)
             }
-
-            TTLog.warning("deletedobject Post")
         }
         else if deletedObject.itemType == "Comment" {
-            TTLog.warning("deletedobject comment")
-            
             let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfComment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right) }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            if indexOfComment != nil {
+                tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right)
+            }
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
-            TTLog.warning("deletedobject like attachment")
             
             if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
                 if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
             }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
-        
     }
     
-    func handleElapsed(elapsedObject: NBModel) {
-    }
+    func handleElapsed(elapsedObject: NBModel) {}
     
-    func reloadTableViews() {
-    }
+    func reloadTableViews() {}
 }
 
 

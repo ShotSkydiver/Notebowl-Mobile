@@ -42,7 +42,7 @@ DEPENDENCIES:
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
   - Haptica
-  - HGPlaceholders
+  - HGPlaceholders (from `https://github.com/ShotSkydiver/HGPlaceholders`)
   - HTTPStatusCodes (~> 3.2.0)
   - InputBarAccessoryView
   - Kingfisher (~> 4.0)
@@ -52,7 +52,7 @@ DEPENDENCIES:
   - PKHUD (~> 5.0)
   - Socket.IO-Client-Swift (~> 13.1.0)
   - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
-  - Tamamushi
+  - Tamamushi (from `https://github.com/ShotSkydiver/Tamamushi`)
   - Wormholy
   - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`)
 
@@ -64,7 +64,6 @@ SPEC REPOS:
     - Cache
     - DeckTransition
     - Haptica
-    - HGPlaceholders
     - HTTPStatusCodes
     - Hue
     - Imaginary
@@ -78,7 +77,6 @@ SPEC REPOS:
     - Socket.IO-Client-Swift
     - Starscream
     - SteviaLayout
-    - Tamamushi
     - Wormholy
 
 EXTERNAL SOURCES:
@@ -88,9 +86,13 @@ EXTERNAL SOURCES:
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :git: https://github.com/ShotSkydiver/SlackFeedback
+  HGPlaceholders:
+    :git: https://github.com/ShotSkydiver/HGPlaceholders
   SwipeCellKit:
     :branch: develop
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
+  Tamamushi:
+    :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
@@ -104,9 +106,15 @@ CHECKOUT OPTIONS:
   FeedbackSlack:
     :commit: 0e5032ad6d9b83081a32d2476ee428f1729a6839
     :git: https://github.com/ShotSkydiver/SlackFeedback
+  HGPlaceholders:
+    :commit: f8456f6c90f11af06df76d42a9c6b5941a570047
+    :git: https://github.com/ShotSkydiver/HGPlaceholders
   SwipeCellKit:
     :commit: f8a53daa475770a05fa64cef4d42fb5b4362f32c
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
+  Tamamushi:
+    :commit: 42376896da7a925e0078d4b2efdd1f1cd3c9a49a
+    :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
     :commit: 2ff204742ee85057366517de460eafa124446dc4
     :git: https://github.com/ShotSkydiver/YPImagePicker
@@ -121,7 +129,7 @@ SPEC CHECKSUMS:
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
   Haptica: 1d75f37903df17327514a18f0c966fe2116d3ad5
-  HGPlaceholders: 2df01c51b04a30acd0b8c9c7161c7cdde4541109
+  HGPlaceholders: ff5ccd1ebc6cd4e8d10f25ba0f2f904e5a43a7a4
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
   Imaginary: 9b45836a5af881f452a86e0a1215772ae4712d00
@@ -136,10 +144,10 @@ SPEC CHECKSUMS:
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
   SwipeCellKit: cee9906e6d3a36e22ad1a852fba7f8fa0839d113
-  Tamamushi: 4c07eb1e0f612f0bd9e67d7c5f0f3edd3a238680
+  Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
   Wormholy: 39a9487ce44afbda62eb3af2dba42b4303d0a6b8
   YPImagePicker: 049aa31e2858c63730ace6b6358bba946178dfe3
 
-PODFILE CHECKSUM: 99b51d80d93f7b4c3830598d337ffb771b38a572
+PODFILE CHECKSUM: 5286a245d155229c45bd942e0c13031363e8dd7a
 
 COCOAPODS: 1.5.3

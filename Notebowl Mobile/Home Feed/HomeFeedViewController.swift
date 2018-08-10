@@ -21,7 +21,8 @@ import PKHUD
 class HomeFeedViewController: UIViewController, UpdateVC {
     var indexes: Paths = Paths()
     var posts: [Post]!
-    @IBOutlet weak var bulletinTableView: HomeTableView!
+    @IBOutlet var bulletinTableView: HomeTableView!
+    var placeholderTableView: HomeTableView?
     
     var cellHeights: [IndexPath : CGFloat] = [:]
     
@@ -30,7 +31,6 @@ class HomeFeedViewController: UIViewController, UpdateVC {
         bulletinTableView.alpha = 0.0
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = true
-        bulletinTableView.placeholderDelegate = self
         
         let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
         customView.initSetup()
@@ -38,13 +38,11 @@ class HomeFeedViewController: UIViewController, UpdateVC {
         
         bulletinTableView.setTableHeaderView(headerView: customView)
         bulletinTableView.updateHeaderViewFrame()
-        
         HomeFeedPostCell.register(in: bulletinTableView)
-        
+        bulletinTableView.placeholderDelegate = self as PlaceholderDelegate
         
         setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
-        // bulletinTableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -66,7 +64,7 @@ class HomeFeedViewController: UIViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+        self.posts = (NBClient.shared.storedTypes.has(key: Post.classIdentifier) ? NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post] : [])
         bulletinTableView.reloadData()
     }
     
@@ -76,18 +74,8 @@ class HomeFeedViewController: UIViewController, UpdateVC {
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
         let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
-        
-        if selectedRowIndexPath != nil && !self.posts.isEmpty {
-            TTLog.debug("reloading")
-            self.bulletinTableView.reloadData(withoutScroll: true)
-        }
     }
-    override func viewDidAppear(_ animated: Bool) {
-        TTLog.testing("homeVC didappear")
-        super.viewDidAppear(animated)
 
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
@@ -101,38 +89,29 @@ class HomeFeedViewController: UIViewController, UpdateVC {
             courseForPicker.sort() { $0.fullName < $1.fullName }
             var pickerItems = courseForPicker as [NBModel]
             
-            var groups = NBClient.shared.storedTypes[Group.classIdentifier] as! [Group]
+            var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
             groups.sort() { $0.fullName < $1.fullName }
             pickerItems += groups as [NBModel]
             
             destVC.objectsForPicker = pickerItems
-            
             if let senderCell = sender as? HomeFeedPostCell {
-                TTLog.debug("editing existing post!")
                 destVC.editingExistingPost = true
                 destVC.existingPostToEdit = senderCell.postForCell
                 destVC.existingCell = senderCell
             }
         }
     }
-    
-    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
-        self.performSegue(withIdentifier: "segueDeck", sender: nil)
-    }
-    
 }
 
 extension HomeFeedViewController {
-
     func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             let indexOfPost = self.posts.index(where: { $0.resourceKey == newObject.resourceKey })
-            TTLog.debug("numofrows: ", self.bulletinTableView.numberOfRows(inSection: 0))
-            let existingPost = self.bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
+            let existingPost = bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
             
-            if self.bulletinTableView.numberOfRows(inSection: 0) == 1 {
-                self.bulletinTableView.reloadData()
+            if self.bulletinTableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
+                self.bulletinTableView.showDefault()
             }
             else if existingPost == false {
                 self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .left)
@@ -148,9 +127,6 @@ extension HomeFeedViewController {
                 parentPost.refresh()
                 if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)}
             }
-            else {
-                TTLog.testing("ok so we just received a socket response for a like/comment/attachment but the corresponding post doesn't exist in cache, so either it's a post that isn't being displayed in our feed view OR it's a post that someone created recently and we still haven't gotten the socket response for it, in which case, we should get the post from the server and initialize/display it in the feed view along with this comment/like/attach")
-            }
         }
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
@@ -164,17 +140,33 @@ extension HomeFeedViewController {
                     }
                 }
                 self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
-                
                 (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
             }
         }
-        else if newObject.itemType == "CourseUser" {
-            if !(newObject as! Enrollment).parent!.firstTimeLoading || (newObject as! Enrollment).parent!.firstTimeLoading == nil {
-                (newObject as! Enrollment).parent!.refresh()
-            }
+        else if ["CourseUser","GroupUser"].contains(newObject.itemType) {
+            if (newObject as! Enrollment).parent!.firstTimeLoading == nil { (newObject as! Enrollment).parent!.refresh() }
+            if !(newObject as! Enrollment).parent!.firstTimeLoading { (newObject as! Enrollment).parent!.refresh() }
+            
             else if (newObject as! Enrollment).parent!.firstTimeLoading {
-                // self.getPosts()
-                // self.bgView.showViewAnimated(false)
+                guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+                tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
+                DispatchQueue.main.async {
+                    let filter = NBClient.shared.doEnrollmentRequests()
+                    let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+                    let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+                    let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+                    _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+                    _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+                    NBClient.shared.reinitCache()
+                    
+                    let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+                    let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
+                    let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
+                    self.reloadTable()
+                    courseVC.reloadTable()
+                    notifsVC.reloadTable()
+                    tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }
@@ -182,38 +174,53 @@ extension HomeFeedViewController {
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject.itemType == "Post" {
             let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
-            
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             
+            if indexOfPost != nil {
+                self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right)
+            }
             if self.bulletinTableView.numberOfRows(inSection: 0) == 0 {
-                self.bulletinTableView.reloadData()
+                self.bulletinTableView.showNoResultsPlaceholder()
             }
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
-                let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
-                parentPost.refresh()
-                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade) }
-                
+                if self.navigationController?.topViewController is HomeFeedViewController {
+                    let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
+                    parentPost.refresh()
+                    if indexOfPost != nil {
+                        TTLog.socket("we're on homefeedview")
+                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
+                    }
+                }
             }
         }
 
-        else if deletedObject.itemType == "CourseUser" {
-            guard let deletedEnrollment = deletedObject as? Enrollment else { return }
-            
-            NBClient.shared.storedTypes[Course.classIdentifier]!.removeAll(deletedEnrollment.parent!)
-            let postsToRemove = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({($0 as! Post).owner!.resourceKey == deletedEnrollment.parent!.resourceKey }) as! [Post]
-            for post in postsToRemove {
-                NBClient.shared.storedTypes[Post.classIdentifier]!.removeAll(post)
+        else if ["CourseUser","GroupUser"].contains(deletedObject.itemType) {
+            guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+            tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+                NBClient.shared.resolveCurrentUser(true)
+                _ = NBClient.shared.getMappable(Setting.self)!
+                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
+                let filter = NBClient.shared.doEnrollmentRequests()
+                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+                let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+                _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+                _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+                NBClient.shared.reinitCache()
+                
+                let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+                let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
+                let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
+                self.reloadTable()
+                courseVC.reloadTable()
+                notifsVC.reloadTable()
+                tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
             }
-            if NBClient.shared.storedTypes[Post.classIdentifier]!.count < 1 {
-                var newPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_owner:TYPE:Course\",\"_parent:TYPE:Course\"]", sortBy: "createdAt:desc", limit: "10")
-                newPosts = NBClient.shared.initArray(from: newPosts!)
-                NBClient.shared.storedTypes[Post.classIdentifier]! = newPosts!
-            }
-            reloadTable()
         }
     }
     
@@ -223,8 +230,7 @@ extension HomeFeedViewController {
         }
     }
     
-    func reloadTableViews() {
-    }
+    func reloadTableViews() {}
 }
 
 
@@ -267,7 +273,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
@@ -285,25 +290,18 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.posts.remove(at: indexPath.row)
             action.fulfill(with: .delete)
-           
             let deleteReq = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
             let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
             let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
             let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
             NBSocket.shared.updateHandler(message: JSONString!)
-            
-            
-            
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
         delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
         
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
-            
-            
-            
             let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
             let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
                 let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
@@ -336,7 +334,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
             return [delete, edit]
         }
         else if (selectedCell.postForCell.owner!.enrollmentForUser?.role == .professor) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .admin) {
-            return [delete, report] // and pin
+            return [delete, report]
         }
         else {
             return [report]
@@ -360,47 +358,9 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     }
 }
 
-
-
 extension HomeFeedViewController: PlaceholderDelegate {
     func view(_ view: Any, actionButtonTappedFor placeholder: HGPlaceholders.Placeholder) {
-        TTLog.debug(placeholder.key.value)
-        
-        bulletinTableView.reloadData()
-        
-        /*
-        let tabbarVC = self.tabBarController as! MainTabBarViewController
-        tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
-        
-        DispatchQueue.main.async {
-        
-        #if DEBUG
-        _ = NBClient.shared.getMappable(Enrollment.self, filters: "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]", limit: "30")!
-        #else
-        _ = NBClient.shared.requireByReference(Enrollment.self, property: "user", value: NBClient.shared.getCurrentUser())!
-        #endif
-        let postsFilter = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.filter( { $0.parent is Course || $0.parent is Group } ).compactMap({ $0.parent!.url.absoluteString }).joined(separator: ",")
-        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(postsFilter!)\"]", sortBy: "createdAt:desc", limit: "10")!
-        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
-        let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
-        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-        NBClient.shared.reinitCache()
-
-            
-            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-                let coursesVC = rootViews[1].topViewController as! CoursesTableViewController
-                let notifsVC = rootViews[2].topViewController as! NotificationsTableViewController
-                coursesVC.reloadTable()
-                notifsVC.reloadTable()
-                //homeVC.reloadTable()
-                self.reloadTable()
-            
-                tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
- 
-        }
-        */
-        // bulletinTableView.reloadData()
+        self.reloadTable()
     }
 }
 

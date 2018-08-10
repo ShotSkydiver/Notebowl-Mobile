@@ -410,8 +410,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                 })
                 upload.task?.resume()
             }
-            
-            
             return cell
         }
         
@@ -483,19 +481,13 @@ class PostButtonNavigationItem: UIBarButtonItem {
     
     func changeText(anon: Bool) {
         if anon {
-            
             UIView.animate(withDuration: 0.3, animations: {
-                //self.customView?.layoutIfNeeded()
                 self.postButton.setTitle("Anonymous Post", for: .normal)
-                //self.postButton.frame = CGRect(x: -82, y: 0, width: 160, height: 34)
             })
         }
         else if !anon {
-            
             UIView.animate(withDuration: 0.3, animations: {
-                //self.customView?.layoutIfNeeded()
                 self.postButton.setTitle("Post", for: .normal)
-                //self.postButton.frame = CGRect(x: 0, y: 0, width: 78, height: 34)
             })
         }
     }

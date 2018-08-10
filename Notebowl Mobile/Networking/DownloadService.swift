@@ -93,20 +93,7 @@ class NBNetworking: NSObject, URLSessionDelegate {
         return task
         
     }
-    
-    func get(url: URLComponentsMutable) {
-        
-    }
-    
-    
-    func upload(url: URLComponentsMutable, file: File) {
-        
-    }
-    
-    
-    func download(url: URLComponentsMutable) {
-        
-    }
+
 }
 
 extension NBNetworking {

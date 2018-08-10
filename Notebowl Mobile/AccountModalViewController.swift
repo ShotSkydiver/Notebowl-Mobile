@@ -181,8 +181,7 @@ class AccountModalTableViewController: UITableViewController {
             TTLog.debug("push settings!")
         }
         else if cell.reuseIdentifier == "appInfoCell" {
-            //let ackViewController = AcknowListViewController()
-            //navigationController?.pushViewController(ackViewController, animated: true)
+            
         }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.logoutUser()

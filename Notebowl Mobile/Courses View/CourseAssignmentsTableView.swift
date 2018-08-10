@@ -40,8 +40,8 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         loadingView.showLoadView(true)
         bgView.showViewAnimated(true)
         DispatchQueue.main.async {
-            self.assignments = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!
-            self.categories = NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!
+            self.assignments = (NBClient.shared.storedTypes.has(key: Assignment.classIdentifier) ? (NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ ($0 as! Assignment).parent!.resourceKey == self.selectedCourse.resourceKey }) as! [Assignment]) : (NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!))
+            self.categories = (NBClient.shared.storedTypes.has(key: Category.classIdentifier) ? (NBClient.shared.storedTypes[Category.classIdentifier]?.filter({ ($0 as! Category).parent!.resourceKey == self.selectedCourse.resourceKey }) as! [Category]) : (NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!))
             
             for assignment in self.assignments {
                 assignment.getGradeString()
@@ -51,7 +51,6 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
             self.placeholderTableView?.reloadData()
             self.bgView.showViewAnimated(false)
         }
-        
     }
     
     func updateData() {
@@ -124,6 +123,8 @@ extension CourseAssignmentsTableView {
             let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
             
             let existingAssignment = self.tableView.numberOfRows(inSection: indexOfCategory!) < (self.data[self.categories[indexOfCategory!]]?.count)! ? false : true
+            
+            placeholderTableView?.showDefault()
             
             existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
         }

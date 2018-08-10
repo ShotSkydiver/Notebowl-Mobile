@@ -31,7 +31,7 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
     }
     
     func reloadTable() {
-        self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+        self.courses = (NBClient.shared.storedTypes.has(key: Course.classIdentifier) ? NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course] : [])
         placeholderTableView?.reloadData()
     }
     
@@ -88,6 +88,8 @@ extension CoursesTableViewController {
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             
+            placeholderTableView?.showDefault()
+            
             if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) }
             else {
                 self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
@@ -103,6 +105,10 @@ extension CoursesTableViewController {
   
             let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
             if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
+            
+            if tableView.numberOfRows(inSection: 0) == 0 {
+                placeholderTableView?.reloadData()
+            }
         }
     }
     
@@ -114,7 +120,6 @@ extension CoursesTableViewController {
 
 extension CoursesTableViewController: PlaceholderDelegate {
     func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
-        TTLog.debug(placeholder.key.value)
         self.reloadTable()
     }
 }

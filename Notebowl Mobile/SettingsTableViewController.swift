@@ -42,7 +42,7 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
         loadingView.alpha = 1.0
         bgView.alpha = 1.0
         DispatchQueue.main.async {
-            self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
+            self.settings = (NBClient.shared.storedTypes.has(key: Setting.classIdentifier) ? NBClient.shared.storedTypes[Setting.classIdentifier]! as! [Setting] : [])
             
             let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
             let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)

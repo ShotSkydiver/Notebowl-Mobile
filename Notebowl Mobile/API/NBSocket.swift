@@ -69,11 +69,11 @@ class NBSocket {
                         TTLog.debug("enrollment object is NOT current user's")
                         if (object as! Enrollment).parent?.enrollmentForUser == nil {
                             TTLog.debug("current user isn't even enrolled in this course/group!")
-                            return
+                            //return
                         }
                         else if !((object as! Enrollment).parent?.enrollmentForUser?.userRoleIsImportant)! {
                             TTLog.debug("current user's enrollment role is NOT professor or admin, ignoring this socket response")
-                            return
+                            //return
                         }
                         else {
                             TTLog.debug("current user is either a professor or admin for this course/group, allowing socket response")
