@@ -24,15 +24,12 @@ class RootViewController: UIViewController {
         if !(UserDefaults.hasUserLoggedIn) {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
-            
         else if UserDefaults.hasUserLoggedIn {
             let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
             if gotUserSuccess {
-                TTLog.debug("gotUserSuccess")
                 self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
             }
             else if !gotUserSuccess {
-                TTLog.debug("did not gotUserSuccess")
                 UserDefaults.set(hasUserLoggedIn: false)
                 self.performSegue(withIdentifier: "presentLoginView", sender: nil)
             }
@@ -69,11 +66,8 @@ class RootViewController: UIViewController {
     }
 }
 
-
 extension RootViewController: ProgressWebViewControllerDelegate {
-    
     func progressWebViewController(_ controller: ProgressWebViewController, didFinish url: URL) {
-        TTLog.debug("progresswebview didfinish: ", controller.url!.absoluteString)
         var components = URLComponents(url: controller.url!.absoluteURL, resolvingAgainstBaseURL: false)
         let pathComponents = components!.path
         if (pathComponents == "/gateway/services/mobile/register") {

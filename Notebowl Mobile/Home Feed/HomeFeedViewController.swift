@@ -26,9 +26,10 @@ class HomeFeedViewController: UIViewController, UpdateVC {
     var cellHeights: [IndexPath : CGFloat] = [:]
     
     override func viewDidLoad() {
-        TTLog.testing("homeVC didload")
         super.viewDidLoad()
-        
+        bulletinTableView.alpha = 0.0
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        tabBarController?.tabBar.isHidden = true
         bulletinTableView.placeholderDelegate = self
         
         let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader

@@ -19,7 +19,6 @@ class LoadingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.setNeedsStatusBarAppearanceUpdate()
         addLoadingView()
         loadingView.accessibilityIdentifier = "loadingView"
@@ -33,7 +32,6 @@ class LoadingViewController: UIViewController {
     }
     
     func showLoading(show: Bool) {
-        
         self.loadingView.showLoadView(show)
         self.bgView.showViewAnimated(show)
     }
@@ -59,21 +57,15 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        TTLog.testing("tabbarVC willappear")
         super.viewWillAppear(animated)
-
-        
         
         let gradColor = UIImage().createGradientImage(size: 40).gradientColor
-        
         self.tabBar.items![0].selectedImage = self.tabBar.items![0].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![1].selectedImage = self.tabBar.items![1].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![2].selectedImage = self.tabBar.items![2].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
-        
         self.tabBar.items![2].badgeColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         
         self.tabBar.tintColor = UIImage().createGradientImage(size: 50).gradientColor
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -88,7 +80,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     func loadAllTabs() {
         hasAppeared = true
-        self.present(loadingVC, animated: true, completion: nil)
+        self.present(loadingVC, animated: false, completion: nil)
         DispatchQueue.main.async {
             self.getData()
             let rootViews: [RootNavigationBarVC] = (self.viewControllers as! [RootNavigationBarVC])
@@ -96,6 +88,9 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 let _ = (rootViews[1].topViewController as! CoursesTableViewController).view
                 let _ = (rootViews[2].topViewController as! NotificationsTableViewController).view
                 homeVC.reloadTable()
+                homeVC.bulletinTableView.alpha = 1.0
+                homeVC.navigationController?.setNavigationBarHidden(false, animated: false)
+                self.tabBar.isHidden = false
                 self.loadingVC.dismiss(animated: true, completion: nil)
             }
         }
@@ -117,12 +112,10 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         return .lightContent
     }
  
-    
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if selectedViewController == nil || viewController == selectedViewController {
             return false
         }
-        
         let fromView = selectedViewController!.view
         let toView = viewController.view
         
