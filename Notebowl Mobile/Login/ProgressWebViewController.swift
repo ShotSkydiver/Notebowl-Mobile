@@ -152,11 +152,7 @@ open class ProgressWebViewController: UIViewController {
         if let userAgent = userAgent {
             webView?.customUserAgent = userAgent
         }
-        
-     
-        webView?.scrollView.contentInsetAdjustmentBehavior = .never
-        
-        
+  
         if let url = url {
             load(url)
         }
