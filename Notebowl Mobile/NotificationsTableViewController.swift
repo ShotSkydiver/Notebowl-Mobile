@@ -95,7 +95,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         let notificationForCell = self.notifications[indexPath.row]
         cell.notification = notificationForCell
         cell.notificationContent.text = notificationForCell.text
-        cell.notificationDate.text = notificationForCell.createdAt.relativelyFormatted
+        cell.notificationDate.text = notificationForCell.createdAt.relativeFormat
         
         let imgUrl = notificationForCell.userProfilePicURL
         

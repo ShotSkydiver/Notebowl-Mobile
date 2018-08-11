@@ -122,8 +122,8 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         if comment.text == nil { commentContent.isHidden = true }
         else { commentContent.text = comment.text! }
         
-        if comment.editedAt != nil { (postedDate.text = comment.createdAt.relativelyFormatted + " (edited)") }
-        else { (postedDate.text = comment.createdAt.relativelyFormatted) }
+        if comment.editedAt != nil { (postedDate.text = comment.createdAt.relativeFormat + " (edited)") }
+        else { (postedDate.text = comment.createdAt.relativeFormat) }
         
         if comment.isAnonymous {
             userName.text = "Anonymous"

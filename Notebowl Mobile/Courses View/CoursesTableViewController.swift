@@ -66,7 +66,7 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
         let courseForCell = self.courses[indexPath.row]
         cell.courseTitle.text = courseForCell.name
         cell.courseNumber.text = courseForCell.courseCode
-        cell.lastUpdated.text = "Updated \(courseForCell.updatedAt.relativelyFormatted)"
+        cell.lastUpdated.text = "Updated \(courseForCell.updatedAt.relativeFormat)"
         cell.showCell(true)
         
         return cell

@@ -175,8 +175,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName }
         else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
  
-        if post.editedAt != nil { (postedDate.text = post.createdAt.relativelyFormatted + " (edited)") }
-        else { (postedDate.text = post.createdAt.relativelyFormatted) }
+        if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") }
+        else { (postedDate.text = post.createdAt.relativeFormat) }
         
         designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fafafa") : UIColor(hexString: "#ffffff"))
         designableView.borderColor = (post.pinned ? UIColor(hexString: "#e1e1e1") : UIColor(hexString: "#e7e7e7"))

@@ -98,7 +98,7 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
             cell.assignmentDesc.text = assignmentForCell?.desc
         }
         cell.assignmentPoints.text = ("\(assignmentForCell?.points! ?? 0)")
-        cell.dueDate.text = assignmentForCell?.dueDate?.relativelyFormatted
+        cell.dueDate.text = assignmentForCell?.dueDate?.relativeFormat
         
         cell.assignmentGrade.text = assignmentForCell?.gradeString
         cell.assignmentStatus.text = assignmentForCell?.getStatus

@@ -308,7 +308,7 @@ public protocol WithName {
     var endDate: Date!
     
     public var gradeGPAEnabled: Bool { return gradeBase?.compare("gpa").rawValue == 0 ? true : false }
-    public var isAvailable: Bool { return Date().isBetween(availableDate, endDate, includeBounds: true) }
+    public var isAvailable: Bool { return Date().isInRange(date: availableDate, and: endDate, orEqual: true, granularity: .hour ) }
     
     var courseCode: String { return (subject + " " + number) }
     var fullName: String!
@@ -375,7 +375,7 @@ public protocol WithName {
     var category: Category!
     
     public var gradeString: String!
-    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isInToday) }
+    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
     public var isPastDue: Bool { return dueDate.isInPast }
     public var getStatus: String { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
     

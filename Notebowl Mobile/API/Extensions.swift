@@ -12,6 +12,7 @@ import ObjectMapper
 import HGPlaceholders
 import Bugsnag
 import Kingfisher
+import SwiftDate
 
 public extension String {
     func encodeURIComponent() -> String? {
@@ -72,60 +73,8 @@ public extension DateComponentsFormatter {
 }
 
 public extension Date {
-    var relativelyFormatted: String {
-        let now = Date()
-        var tense: String = "default"
-        var components: DateComponents!
-        if (self.isInFuture) {
-            components = Calendar.current.dateComponents( [.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: now, to: self)
-            tense = ""
-        }
-        else if (self.isInPast || self.isInToday) {
-            components = Calendar.current.dateComponents( [.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: self, to: now)
-            tense = "ago"
-        }
-        if let years = components.year, years > 0 {
-            return "\(years) year\(years == 1 ? "" : "s") \(tense)"
-        }
-        if let months = components.month, months > 0 {
-            return "\(months) month\(months == 1 ? "" : "s") \(tense)"
-        }
-        if let weeks = components.weekOfYear, weeks > 0 {
-            return "\(weeks) week\(weeks == 1 ? "" : "s") \(tense)"
-        }
-        if let days = components.day, days > 0 {
-            guard days > 1 else { return "yesterday" }
-            return "\(days) day\(days == 1 ? "" : "s") \(tense)"
-        }
-        if let hours = components.hour, hours > 0 {
-            return "\(hours) hour\(hours == 1 ? "" : "s") \(tense)"
-        }
-        if let minutes = components.minute, minutes > 0 {
-            return "\(minutes) minute\(minutes == 1 ? "" : "s") \(tense)"
-        }
-        if let seconds = components.second, seconds > 30 {
-            return "\(seconds) second\(seconds == 1 ? "" : "s") \(tense)"
-        }
-        return "just now"
-    }
-    
-    public var isInFuture: Bool {
-        return self > Date()
-    }
-
-    public var isInPast: Bool {
-        return self < Date()
-    }
-    
-    public var isInToday: Bool {
-        return Calendar.current.isDateInToday(self)
-    }
-    
-    public func isBetween(_ startDate: Date, _ endDate: Date, includeBounds: Bool = false) -> Bool {
-        if includeBounds {
-            return startDate.compare(self).rawValue * compare(endDate).rawValue >= 0
-        }
-        return startDate.compare(self).rawValue * compare(endDate).rawValue > 0
+    var relativeFormat: String {
+        return self.toRelative(style: RelativeFormatter.defaultStyle())
     }
 }
 
