@@ -13,6 +13,7 @@ import FeedbackSlack
 import Tamamushi
 import ObjectMapper
 import SocketIO
+import Siren
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -33,17 +34,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         
         if !isAppStore {
-            TTLog.debug("not appstore!")
-            /*
             _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
                 "Bug",
                 "Question",
                 "Looks good!"
                 ])
-            */
         }
         
         Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
+        
+        let siren = Siren.shared
+        siren.alertType = .force
+        siren.alertMessaging = SirenAlertMessaging(updateTitle: "Update Found")
  
         UNUserNotificationCenter.current().delegate = self
         let defaults = UserDefaults.standard
@@ -86,15 +88,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
         let aps = userInfo["aps"] as! [String: AnyObject]
         TTLog.debug("aps fg: ", aps)
- 
+    }
+    
+    func checkForUpdates() {
+        Siren.shared.checkVersion(checkType: .immediately)
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        TTLog.debug("didbecomeactive!")
-        
     }
+    
     func applicationWillResignActive(_ application: UIApplication) {
-        TTLog.debug("resignactive!")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -106,6 +109,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     func applicationWillEnterForeground(_ application: UIApplication) {
+        checkForUpdates()
+        
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             TTLog.debug("tabController is not presented!")
             return

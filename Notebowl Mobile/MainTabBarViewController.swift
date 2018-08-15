@@ -92,6 +92,8 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 homeVC.navigationController?.setNavigationBarHidden(false, animated: false)
                 self.tabBar.isHidden = false
                 self.loadingVC.dismiss(animated: true, completion: nil)
+                let delegate = UIApplication.shared.delegate as! AppDelegate
+                delegate.checkForUpdates()
             }
         }
     }

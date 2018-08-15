@@ -23,6 +23,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Lightbox'
         pod 'AcknowList'
         pod 'PKHUD', '~> 5.0'
+        pod 'Siren'
         pod 'SwiftDate', '~> 5.0'
         pod 'Wormholy', :configurations => ['Debug']
     end
