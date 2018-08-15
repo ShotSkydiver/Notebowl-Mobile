@@ -56,11 +56,9 @@ class NotificationSettingCell: UITableViewCell {
                 self.settingForCell.userSetting = nil
             }
             else if (self.settingSwitch.isOn != self.settingForCell.defaultValue) {
-                let payload: Any? = ["key": self.settingForCell.key, "value": self.settingSwitch.isOn, "_parent": "\(NBClient.shared.getCurrentUser().url.absoluteString)"]
-                let result = NBNetworking.shared.request(.post, url: Setting.endpoint, json: payload)
-                TTLog.warning("post url request: ", result.description)
+                let newSetting = Setting(key: self.settingForCell.key, value: self.settingSwitch.isOn)
+                let result = newSetting.save()
                 if result.statusCode!.rawValue == 422 {
-                    TTLog.warning("client error! this value changed and we haven't received a socket response!")
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }

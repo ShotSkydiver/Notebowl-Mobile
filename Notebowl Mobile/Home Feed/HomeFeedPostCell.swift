@@ -247,11 +247,9 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                 self.postForCell.likeFromCurrentUser!.deleteSelf()
             }
             else if self.likeButton.isEnabled {
-                let payload: Any? = ["_parent": "\(self.postForCell.url.absoluteString)"]
-                let postResult = NBNetworking.shared.request(.post, url: Like.endpoint, json: payload)
-                TTLog.warning("post url request: ", postResult.description)
+                let newLike = Like(parent: self.postForCell)
+                let postResult = newLike.save()
                 if postResult.statusCode!.rawValue == 422 {
-                    TTLog.warning("client error! this value changed and we haven't received a socket response!")
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }

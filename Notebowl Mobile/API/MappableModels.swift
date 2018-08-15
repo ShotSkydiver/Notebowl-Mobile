@@ -207,13 +207,36 @@ class Response<T>: Generic where T: NBModel {
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
     
-    public func save() {  }
+    func setPayload() -> [String: Any] { return [:] }
+    func save() -> NBResult {
+        let payloadJson = self.setPayload()
+        var json: [String: Any] = [:]
+        for item in payloadJson {
+            if item.value is NBModel {
+                json += ["_\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
+            }
+            else if item.value is Date {
+                json += [item.key: "\((item.value as! Date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))"]
+            }
+            else {
+                json += [item.key: item.value]
+            }
+        }
+        if self.url != nil {
+            let putReq = NBNetworking.shared.request(.put, url: self.url.absoluteString, json: (json as Any))
+            return putReq
+        }
+        else {
+            let postReq = NBNetworking.shared.request(.post, url: type(of: self).endpoint, json: (json as Any))
+            return postReq
+        }
+    }
     
     public func refresh() { }
     
     public required init?(map: Map) { }
     
-    override init() {}
+    override init() { }
     
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
@@ -695,6 +718,7 @@ public protocol WithName {
     var pinned: Bool!
     var text: String?
     var creator: User?
+    var availableDate: Date?
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
@@ -702,15 +726,30 @@ public protocol WithName {
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
-    public var aboutToBeDeleted: Bool!
-    public var inMiddleOfRefresh: Bool!
-    
     override class var routeType: ItemType { return .post }
     
     required public init?(map: Map) {
         super.init(map: map)
-        
-        
+    }
+    
+    init(text: String, owner: NBModel?, parent: NBModel?, isAnonymous: Bool, pinned: Bool) {
+        super.init()
+        self.text = text
+        self.owner = owner
+        self.parent = parent
+        self.isAnonymous = isAnonymous
+        self.pinned = pinned
+    }
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["text"] = text
+        payload["parent"] = self.parent!
+        payload["owner"] = self.owner!
+        payload["related"] = self.parent!
+        payload["isAnonymous"] = self.isAnonymous
+        payload["availableDate"] = (self.availableDate != nil ? self.availableDate! : Date())
+        payload["pinned"] = self.pinned
+        return payload
     }
     
     override public func mapping(map: Map) {
@@ -721,15 +760,13 @@ public protocol WithName {
         pinned <- map["pinned"]
         text <- map["text"]
         creator <- (map["_creator"], ObjectTransform<User>())
+        availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         
         postLikes = []
         postComments = []
         postAttachments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
-        
-        aboutToBeDeleted = false
-        inMiddleOfRefresh = false
     }
     
     func updateLikes() {
@@ -776,10 +813,25 @@ public protocol WithName {
     var size: Int!
     var type: String!
     
+    public var fileID: String!
+    
     override class var routeType: ItemType { return .attachment }
     
     required public init?(map: Map) {
         super.init(map: map)
+    }
+    init(file: String, parent: NBModel?) {
+        super.init()
+        self.fileID = file
+        self.parent = parent
+    }
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["fileId"] = self.fileID
+        payload["parent"] = self.parent!
+        payload["attachmentType"] = "S3"
+        payload["attachmentName"] = "\(self.fileID).jpg"
+        return payload
     }
     
     override public func mapping(map: Map) {
@@ -824,6 +876,21 @@ public protocol WithName {
     
     required public init?(map: Map) {
         super.init(map: map)
+    }
+    init(text: String, owner: NBModel?, parent: NBModel?, isAnonymous: Bool?) {
+        super.init()
+        self.text = text
+        self.owner = owner
+        self.parent = parent
+        self.isAnonymous = isAnonymous
+    }
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["text"] = text
+        payload["parent"] = self.parent!
+        payload["owner"] = self.owner!
+        payload["isAnonymous"] = self.isAnonymous
+        return payload
     }
 
     override public func mapping(map: Map) {
@@ -882,6 +949,15 @@ public protocol WithName {
     required public init?(map: Map) {
         super.init(map: map)
     }
+    init(parent: NBModel?) {
+        super.init()
+        self.parent = parent
+    }
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["parent"] = self.parent!
+        return payload
+    }
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
@@ -890,8 +966,6 @@ public protocol WithName {
     override public func refresh() {
         self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner!.resourceKey })// as! User
     }
-    
-
 }
 
 @objc(Notification) class Notification: NBModel {
@@ -939,10 +1013,11 @@ public protocol WithName {
         self.reason = reason
         self.parent = parent
     }
-    
-    override public func save() {
-        let payload: Any? = ["reason": "\(reason)", "_parent": "\(parent!.url.absoluteString)"]
-        _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["reason"] = self.reason
+        payload["parent"] = self.parent!
+        return payload
     }
     
     override func mapping(map: Map) {
@@ -959,6 +1034,17 @@ public protocol WithName {
     
     required public init?(map: Map) {
         super.init(map: map)
+    }
+    init(key: String, value: Bool) {
+        super.init()
+        self.key = key
+        self.value = value
+    }
+    override func setPayload() -> [String: Any] {
+        var payload: [String: Any] = [:]
+        payload["key"] = self.key
+        payload["value"] = self.value
+        return payload
     }
     
     override func mapping(map: Map) {
@@ -1005,7 +1091,6 @@ class MobileSettingsDefault: SettingsDefault {
         defaultValue <- map["mobileDefault"]
         findSetting()
     }
-
 }
 
 class EmailSettingsDefault: SettingsDefault {
@@ -1020,7 +1105,6 @@ class EmailSettingsDefault: SettingsDefault {
         defaultValue <- map["emailDefault"]
         findSetting()
     }
- 
 }
 
 struct SettingsGroup {

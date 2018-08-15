@@ -36,6 +36,7 @@ public extension URL {
     public func appendingQueryParameters(_ parameters: [String: String]) -> URL {
         var urlComponents = URLComponents(url: self, resolvingAgainstBaseURL: true)!
         var items = urlComponents.queryItems ?? []
+        
         items += parameters.map({ URLQueryItem(name: $0, value: $1) })
         urlComponents.queryItems = items
         return urlComponents.url!

@@ -203,23 +203,22 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.sendButton.setTitle("Reply", for: .normal)
         
         DispatchQueue.main.async {
-            var jsonPayload: Any?
             if self.editingExistingComment {
-                jsonPayload = ["text": text]
-                _ = NBNetworking.shared.request(.put, url: self.existingCommentToEdit.url.absoluteString, json: jsonPayload)
+                self.existingCommentToEdit.text = text
+                self.existingCommentToEdit.save()
             }
             else {
-                jsonPayload = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
-                let postReq = NBNetworking.shared.request(.post, url: Comment.endpoint, json: jsonPayload)
+                let newComment = Comment(text: text, owner: self.post.owner, parent: self.post, isAnonymous: self.anonymousToggle)
+                let postReq = newComment.save()
                 let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
                 NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
-                
+                newComment.url = URL(string: (keyPath["url"] as! String))!
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
                         TTLog.debug("uploading attachment: ", file)
-                        let jsonAttPayload: Any? = ["fileId": file, "_parent": "\((keyPath["url"] as! String))", "attachmentType": "S3", "attachmentName": "image.jpg"]
-                        let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
+                        let newAttach = Attachment(file: file, parent: newComment)
+                        let attReq = newAttach.save()
                         let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
                         NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((attKeyPath["url"] as! String)))", updateUrl: (attKeyPath["url"] as! String), action: "updated", updatedAt: (attKeyPath["updatedAt"] as! String))
                     }
