@@ -18,7 +18,7 @@ import SwipeCellKit
 import DeckTransition
 import PKHUD
 
-class HomeFeedViewController: UIViewController, UpdateVC {
+class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     var indexes: Paths = Paths()
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
@@ -276,69 +276,7 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
-        let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
-            self.performSegue(withIdentifier: "createPostSegue", sender: selectedCell)
-        }
-        edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        edit.textColor = .groupTableViewBackground
-        edit.backgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-        edit.hidesWhenSelected = true
-        edit.fulfill(with: .reset)
-        
-        let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
-            self.posts.remove(at: indexPath.row)
-            action.fulfill(with: .delete)
-            let deleteReq = NBNetworking.shared.request(.delete, url: selectedCell.postForCell.url.absoluteString)
-            let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-            NBSocket.shared.updateHandler(message: JSONString!)
-        }
-        delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        delete.textColor = .groupTableViewBackground
-        delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
-        
-        let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
-            let alert = UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet)
-            let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
-                let payload: Any? = ["reason": "inappropriate", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
-            })
-            let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
-                let payload: Any? = ["reason": "spam", "_parent": "\(selectedCell.postForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
-            })
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            alert.addAction(inappropriate)
-            alert.addAction(spam)
-            alert.addAction(cancel)
-            self.present(alert, animated: true, completion: nil)
-        }
-        report.image = UIImage(named: "report-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        report.textColor = .groupTableViewBackground
-        report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
-        report.hidesWhenSelected = true
-        
-        if (selectedCell.postForCell.creator != nil) && (selectedCell.postForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-            return [delete, edit]
-        }
-        else if (selectedCell.postForCell.owner!.enrollmentForUser?.role == .professor) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .admin) {
-            return [delete, report]
-        }
-        else {
-            return [report]
-        }
+        return self.cellActions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
     }
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
