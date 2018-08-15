@@ -183,8 +183,14 @@ class Response<T>: Generic where T: NBModel {
     
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
-        let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-        let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+        var data: Any!
+        if deleteReq.statusCode!.rawValue == 410 {
+            data = ["itemType":"\(ItemType.fromURL(self.url.absoluteString))", "updateUrl":"\(self.url.absoluteString)", "action":"deleted", "updatedAt":"\(self.updatedAt)"]
+        }
+        else {
+            let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+            data = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+        }
         let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
         let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
         NBSocket.shared.updateHandler(message: JSONString!)
@@ -204,6 +210,8 @@ class Response<T>: Generic where T: NBModel {
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
+    
+    public func save() {  }
     
     public func refresh() { }
     
@@ -881,12 +889,13 @@ public protocol WithName {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-
     }
     
     override public func refresh() {
         self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner!.resourceKey })// as! User
     }
+    
+
 }
 
 @objc(Notification) class Notification: NBModel {
@@ -935,7 +944,7 @@ public protocol WithName {
         self.parent = parent
     }
     
-    func save() {
+    override public func save() {
         let payload: Any? = ["reason": "\(reason)", "_parent": "\(parent!.url.absoluteString)"]
         _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
     }

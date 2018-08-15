@@ -52,25 +52,8 @@ class NotificationSettingCell: UITableViewCell {
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
             if (self.settingSwitch.isOn == self.settingForCell.defaultValue) {
-                let result = NBNetworking.shared.request(.delete, url: self.settingForCell.userSetting!.url.absoluteString )
-                TTLog.warning("delete url request: ", result.description)
-                
-                if result.statusCode!.rawValue == 410 {
-                    TTLog.warning("bad request! must be already deleted")
-                    let data: Any = ["itemType":"\(ItemType.fromURL(self.settingForCell.userSetting!.url.absoluteString))", "updateUrl":"\(self.settingForCell.userSetting!.url.absoluteString)", "action":"updated", "updatedAt":"\(self.settingForCell.userSetting!.updatedAt)"]
-                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                    NBSocket.shared.updateHandler(message: JSONString!)
-                    HUD.flash(.success, delay: 0.5)
-                    return
-                }
-                
+                self.settingForCell.userSetting!.deleteSelf()
                 self.settingForCell.userSetting = nil
-                let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                NBSocket.shared.updateHandler(message: JSONString!)
             }
             else if (self.settingSwitch.isOn != self.settingForCell.defaultValue) {
                 let payload: Any? = ["key": self.settingForCell.key, "value": self.settingSwitch.isOn, "_parent": "\(NBClient.shared.getCurrentUser().url.absoluteString)"]

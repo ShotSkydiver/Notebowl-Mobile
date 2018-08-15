@@ -271,7 +271,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
                 NBSocket.shared.updateHandler(message: JSONString!)
 
-
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
@@ -292,13 +291,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     for attach in self.attachmentsToDelete {
                         if let attachDel = self.existingPostToEdit.postAttachments.first(where: {$0.url.absoluteString == attach}) {
                             self.existingPostToEdit.postAttachments.removeAll(attachDel)
-                            let delete = NBNetworking.shared.request(.delete, url: attachDel.url.absoluteString)
-                            TTLog.warning("delete url request: ", delete.description)
-                            let keyPath = (delete.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                            NBSocket.shared.updateHandler(message: JSONString!)
+                            attachDel.deleteSelf()
                         }
                     }
                 }
@@ -320,7 +313,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                             TTLog.debug("uploading attachment: ", file)
                             let jsonAttPayload: Any? = ["fileId": file, "_parent": "\((keyPath["url"] as! String))", "attachmentType": "S3", "attachmentName": "image.jpg"]
                             let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
-                            
                             let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
                             let data: Any = ["itemType":"\(ItemType.fromURL((attKeyPath["url"] as! String)))", "updateUrl":"\((attKeyPath["url"] as! String))", "action":"updated", "updatedAt":"\((attKeyPath["updatedAt"] as! String))"]
                             let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])

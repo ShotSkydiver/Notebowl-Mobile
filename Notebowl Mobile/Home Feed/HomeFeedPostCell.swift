@@ -244,22 +244,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
             if !self.likeButton.isSelected {
-                let deleteResult = NBNetworking.shared.request(.delete, url: self.postForCell.likeFromCurrentUser!.url.absoluteString)
-                TTLog.warning("delete url request: ", deleteResult.description)
-                if deleteResult.statusCode!.rawValue == 410 {
-                    TTLog.warning("bad request! must be already deleted")
-                    let data: Any = ["itemType":"\(ItemType.fromURL(self.postForCell.likeFromCurrentUser!.url.absoluteString))", "updateUrl":"\(self.postForCell.likeFromCurrentUser!.url.absoluteString)", "action":"updated", "updatedAt":"\(self.postForCell.likeFromCurrentUser!.updatedAt)"]
-                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                    NBSocket.shared.updateHandler(message: JSONString!)
-                    HUD.flash(.success, delay: 0.5)
-                    return
-                }
-                let keyPath = (deleteResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                NBSocket.shared.updateHandler(message: JSONString!)
+                self.postForCell.likeFromCurrentUser!.deleteSelf()
             }
             else if self.likeButton.isEnabled {
                 let payload: Any? = ["_parent": "\(self.postForCell.url.absoluteString)"]
