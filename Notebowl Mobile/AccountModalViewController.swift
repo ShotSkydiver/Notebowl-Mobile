@@ -69,10 +69,7 @@ class AccountModalTableViewController: UITableViewController {
     @IBAction func doneButtonTapped(_ sender: Any) {
         
         if let keyPath = self.updatedUser {
-            let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-            let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-            let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-            NBSocket.shared.updateHandler(message: JSONString!)
+            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
         }
         self.dismiss(animated: true, completion: nil)
     }

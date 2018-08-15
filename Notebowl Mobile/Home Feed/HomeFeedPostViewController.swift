@@ -212,13 +212,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 jsonPayload = ["text": text, "_creator": "\(NBClient.shared.getCurrentUser().url.absoluteString)", "_owner": "\(self.post.owner!.url.absoluteString)", "_parent": "\(self.post.url.absoluteString)", "isAnonymous": self.anonymousToggle]
                 let postReq = NBNetworking.shared.request(.post, url: Comment.endpoint, json: jsonPayload)
                 let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                
-                
-                TTLog.debug("before updatehandler for post")
-                NBSocket.shared.updateHandler(message: JSONString!)
+                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
                 
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
@@ -226,14 +220,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                         TTLog.debug("uploading attachment: ", file)
                         let jsonAttPayload: Any? = ["fileId": file, "_parent": "\((keyPath["url"] as! String))", "attachmentType": "S3", "attachmentName": "image.jpg"]
                         let attReq = NBNetworking.shared.request(.post, url: Attachment.endpoint, json: jsonAttPayload)
-                        
                         let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                        let data: Any = ["itemType":"\(ItemType.fromURL((attKeyPath["url"] as! String)))", "updateUrl":"\((attKeyPath["url"] as! String))", "action":"updated", "updatedAt":"\((attKeyPath["updatedAt"] as! String))"]
-                        let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                        let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                        
-                        TTLog.debug("before updatehandler for attachment")
-                        NBSocket.shared.updateHandler(message: JSONString!)
+                        NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((attKeyPath["url"] as! String)))", updateUrl: (attKeyPath["url"] as! String), action: "updated", updatedAt: (attKeyPath["updatedAt"] as! String))
                     }
                 }
             }

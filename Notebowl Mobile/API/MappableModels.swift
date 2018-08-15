@@ -183,17 +183,13 @@ class Response<T>: Generic where T: NBModel {
     
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
-        var data: Any!
         if deleteReq.statusCode!.rawValue == 410 {
-            data = ["itemType":"\(ItemType.fromURL(self.url.absoluteString))", "updateUrl":"\(self.url.absoluteString)", "action":"deleted", "updatedAt":"\(self.updatedAt)"]
+            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(self.url.absoluteString))", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt)")
         }
         else {
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-            data = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
         }
-        let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-        let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-        NBSocket.shared.updateHandler(message: JSONString!)
     }
     
     class func objectExistsInCache(keyToCompare: String!) -> Bool {

@@ -190,10 +190,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
                     return
                 }
                 let keyPath = (postResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                NBSocket.shared.updateHandler(message: JSONString!)
+                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
             }
             HUD.flash(.success, delay: 0.5)
         }

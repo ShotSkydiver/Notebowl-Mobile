@@ -59,21 +59,15 @@ class NotificationSettingCell: UITableViewCell {
                 let payload: Any? = ["key": self.settingForCell.key, "value": self.settingSwitch.isOn, "_parent": "\(NBClient.shared.getCurrentUser().url.absoluteString)"]
                 let result = NBNetworking.shared.request(.post, url: Setting.endpoint, json: payload)
                 TTLog.warning("post url request: ", result.description)
-                
                 if result.statusCode!.rawValue == 422 {
                     TTLog.warning("client error! this value changed and we haven't received a socket response!")
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }
-                
                 let finalmap = Mapper<Setting>().map(JSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)!
                 self.settingForCell.userSetting = finalmap
-                
                 let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"updated", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                NBSocket.shared.updateHandler(message: JSONString!)
+                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
             }
             HUD.flash(.success, delay: 0.5)
         }
