@@ -1028,56 +1028,14 @@ extension CellActionsVC {
         edit.fulfill(with: .reset)
         
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
-            let confirmation = isPost ? UIAlertController(title: "Delete Post", message: "Are you sure you want to delete this post?", preferredStyle: .alert) : UIAlertController(title: "Delete Comment", message: "Are you sure you want to delete this comment?", preferredStyle: .alert)
-            let nevermind = UIAlertAction(title: "Cancel", style: .cancel, handler: { (cancelAction) in
-                action.fulfill(with: .reset)
-            })
-            let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
-                isPost ? (vc as! HomeFeedViewController).posts.remove(at: indexPath.row) : (vc as! HomeFeedPostViewController).post.postComments.remove(at: indexPath.row)
-                action.fulfill(with: .delete)
-                HUD.show(.progress)
-                NBClient.shared.delay(0.4) {
-                    let deleteReq = isPost ? NBNetworking.shared.request(.delete, url: (selectedCell as! HomeFeedPostCell).postForCell.url.absoluteString) : NBNetworking.shared.request(.delete, url: (selectedCell as! HomeFeedCommentCell).commentForCell.url.absoluteString)
-                    let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                    let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
-                    let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
-                    let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
-                    NBSocket.shared.updateHandler(message: JSONString!)
-                    HUD.flash(.success, delay: 0.5)
-                }
-            })
-            confirmation.addAction(nevermind)
-            confirmation.addAction(confirm)
-            vc.present(confirmation, animated: true, completion: nil)
+            self.delete(isPost: isPost, action: action, indexPath: indexPath, selectedCell: selectedCell, vc: vc)
         }
-        
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
         delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
         
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
-            let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
-            let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
-                let payload: Any? = isPost ? ["reason": "inappropriate", "_parent": "\((selectedCell as! HomeFeedPostCell).postForCell.url.absoluteString)"] : ["reason": "inappropriate", "_parent": "\((selectedCell as! HomeFeedCommentCell).commentForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
-            })
-            let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
-                let payload: Any? = isPost ? ["reason": "spam", "_parent": "\((selectedCell as! HomeFeedPostCell).postForCell.url.absoluteString)"] : ["reason": "spam", "_parent": "\((selectedCell as! HomeFeedCommentCell).commentForCell.url.absoluteString)"]
-                _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
-                alert.dismiss(animated: true, completion: nil)
-                PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
-                PKHUD.sharedHUD.show()
-                PKHUD.sharedHUD.hide(afterDelay: 2.0)
-            })
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            alert.addAction(inappropriate)
-            alert.addAction(spam)
-            alert.addAction(cancel)
-            vc.present(alert, animated: true, completion: nil)
+            self.report(isPost: isPost, action: action, indexPath: indexPath, selectedCell: selectedCell, vc: vc)
         }
         report.image = UIImage(named: "report-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         report.textColor = .groupTableViewBackground
@@ -1106,6 +1064,50 @@ extension CellActionsVC {
                 return [report]
             }
         }
+    }
+    
+    func delete(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
+        let confirmation = isPost ? UIAlertController(title: "Delete Post", message: "Are you sure you want to delete this post?", preferredStyle: .alert) : UIAlertController(title: "Delete Comment", message: "Are you sure you want to delete this comment?", preferredStyle: .alert)
+        let nevermind = UIAlertAction(title: "Cancel", style: .cancel, handler: { (cancelAction) in
+            action.fulfill(with: .reset)
+        })
+        let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
+            isPost ? (vc as! HomeFeedViewController).posts.remove(at: indexPath.row) : (vc as! HomeFeedPostViewController).post.postComments.remove(at: indexPath.row)
+            action.fulfill(with: .delete)
+            HUD.show(.progress)
+            NBClient.shared.delay(0.4) {
+                isPost ? (selectedCell as! HomeFeedPostCell).postForCell.deleteSelf() : (selectedCell as! HomeFeedCommentCell).commentForCell.deleteSelf()
+                HUD.flash(.success, delay: 0.5)
+            }
+        })
+        confirmation.addAction(nevermind)
+        confirmation.addAction(confirm)
+        vc.present(confirmation, animated: true, completion: nil)
+        
+    }
+    func report(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
+        let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
+        let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
+            let abuse = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
+            abuse.save()
+            alert.dismiss(animated: true, completion: nil)
+            PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+            PKHUD.sharedHUD.show()
+            PKHUD.sharedHUD.hide(afterDelay: 2.0)
+        })
+        let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
+            let abuse = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
+            abuse.save()
+            alert.dismiss(animated: true, completion: nil)
+            PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
+            PKHUD.sharedHUD.show()
+            PKHUD.sharedHUD.hide(afterDelay: 2.0)
+        })
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(inappropriate)
+        alert.addAction(spam)
+        alert.addAction(cancel)
+        vc.present(alert, animated: true, completion: nil)
     }
 }
 

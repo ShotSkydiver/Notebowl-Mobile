@@ -181,6 +181,15 @@ class Response<T>: Generic where T: NBModel {
         return ObjectIdentifier(self)
     }
     
+    func deleteSelf() {
+        let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
+        let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+        let data: Any = ["itemType":"\(ItemType.fromURL((keyPath["url"] as! String)))", "updateUrl":"\((keyPath["url"] as! String))", "action":"deleted", "updatedAt":"\((keyPath["updatedAt"] as! String))"]
+        let JSON = try? JSONSerialization.data(withJSONObject: data, options: [])
+        let JSONString = String(data: JSON!, encoding: String.Encoding.utf8)
+        NBSocket.shared.updateHandler(message: JSONString!)
+    }
+    
     class func objectExistsInCache(keyToCompare: String!) -> Bool {
         if NBClient.shared.storedTypes[classIdentifier]!.first(where: { $0.resourceKey == keyToCompare }) != nil {
             return true
@@ -918,6 +927,17 @@ public protocol WithName {
     
     required public init?(map: Map) {
         super.init(map: map)
+    }
+    
+    init(reason: String, parent: NBModel?) {
+        super.init()
+        self.reason = reason
+        self.parent = parent
+    }
+    
+    func save() {
+        let payload: Any? = ["reason": "\(reason)", "_parent": "\(parent!.url.absoluteString)"]
+        _ = NBNetworking.shared.request(.post, url: Abuse.endpoint, json: payload)
     }
     
     override func mapping(map: Map) {
