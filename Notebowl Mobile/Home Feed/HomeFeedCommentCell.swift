@@ -182,13 +182,11 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             }
             else if self.commentLikeButton.isEnabled {
                 let newLike = Like(parent: self.commentForCell)
-                let postResult = newLike.save()
-                if postResult.statusCode!.rawValue == 422 {
+                let finalLike = newLike.save()
+                if finalLike == nil {
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }
-                let keyPath = (postResult.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
             }
             HUD.flash(.success, delay: 0.5)
         }

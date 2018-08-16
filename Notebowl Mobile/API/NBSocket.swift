@@ -54,21 +54,19 @@ class NBSocket {
         }
     }
     
-    func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) {
+    func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) -> NBModel? {
         let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrl)", "action":"\(action)", "updatedAt":"\(updatedAt)"])
-        guard let object = mapped!.genericObject else { return }
+        guard let object = mapped!.genericObject else { return nil }
         
         if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
             if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
                 if !((object as! Enrollment).parent?.enrollmentForUser?.userRoleIsImportant)! {
-                    return
+                    return nil
                 }
             }
         }
         
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            return
-        }
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return nil }
         if let viewControllers = tabbarVC.viewControllers {
             for viewController in viewControllers {
                 let rootNavController = viewController as! UINavigationController
@@ -82,12 +80,13 @@ class NBSocket {
                         case .elapsed:
                             switchVC.handleElapsed(elapsedObject: object)
                         default:
-                            return
+                            return nil
                         }
                         
                     }
                 }
             }
         }
+        return object
     }
 }

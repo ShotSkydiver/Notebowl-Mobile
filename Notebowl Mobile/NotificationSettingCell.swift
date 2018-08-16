@@ -57,15 +57,12 @@ class NotificationSettingCell: UITableViewCell {
             }
             else if (self.settingSwitch.isOn != self.settingForCell.defaultValue) {
                 let newSetting = Setting(key: self.settingForCell.key, value: self.settingSwitch.isOn)
-                let result = newSetting.save()
-                if result.statusCode!.rawValue == 422 {
+                let finalSetting = newSetting.save()
+                if finalSetting == nil {
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }
-                let finalmap = Mapper<Setting>().map(JSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)!
-                self.settingForCell.userSetting = finalmap
-                let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
+                self.settingForCell.userSetting = (finalSetting as! Setting)
             }
             HUD.flash(.success, delay: 0.5)
         }

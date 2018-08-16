@@ -208,7 +208,7 @@ class Response<T>: Generic where T: NBModel {
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
     
     func setPayload() -> [String: Any] { return [:] }
-    func save() -> NBResult {
+    func save() -> NBModel? {
         let payloadJson = self.setPayload()
         var json: [String: Any] = [:]
         for item in payloadJson {
@@ -222,14 +222,21 @@ class Response<T>: Generic where T: NBModel {
                 json += [item.key: item.value]
             }
         }
+        var result: NBResult!
         if self.url != nil {
-            let putReq = NBNetworking.shared.request(.put, url: self.url.absoluteString, json: (json as Any))
-            return putReq
+            result = NBNetworking.shared.request(.put, url: self.url.absoluteString, json: (json as Any))
         }
         else {
-            let postReq = NBNetworking.shared.request(.post, url: type(of: self).endpoint, json: (json as Any))
-            return postReq
+            result = NBNetworking.shared.request(.post, url: type(of: self).endpoint, json: (json as Any))
         }
+        
+        if result.statusCode!.rawValue == 422 {
+            return nil
+        }
+
+        let keyPath = (result.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+        let finalObject = NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
+        return finalObject
     }
     
     public func refresh() { }
@@ -1021,6 +1028,7 @@ public protocol WithName {
     }
     
     override func mapping(map: Map) {
+        shouldMapParent = false
         super.mapping(map: map)
         reason <- map["reason"]
     }

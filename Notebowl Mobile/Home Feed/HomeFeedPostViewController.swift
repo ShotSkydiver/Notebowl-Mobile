@@ -209,18 +209,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             }
             else {
                 let newComment = Comment(text: text, owner: self.post.owner, parent: self.post, isAnonymous: self.anonymousToggle)
-                let postReq = newComment.save()
-                let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
-                newComment.url = URL(string: (keyPath["url"] as! String))!
+                let finalComment = newComment.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
                         TTLog.debug("uploading attachment: ", file)
-                        let newAttach = Attachment(file: file, parent: newComment)
-                        let attReq = newAttach.save()
-                        let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                        NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((attKeyPath["url"] as! String)))", updateUrl: (attKeyPath["url"] as! String), action: "updated", updatedAt: (attKeyPath["updatedAt"] as! String))
+                        let newAttach = Attachment(file: file, parent: finalComment)
+                        newAttach.save()
                     }
                 }
             }

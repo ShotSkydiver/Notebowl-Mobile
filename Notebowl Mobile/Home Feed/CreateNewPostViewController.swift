@@ -263,9 +263,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             let postText = self.postTextView.text
             if self.editingExistingPost {
                 self.existingPostToEdit.text = postText
-                let putReq = self.existingPostToEdit.save()
-                let keyPath = (putReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
+                self.existingPostToEdit.save()
 
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
@@ -273,9 +271,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                         if !file.contains("https://") {
                             TTLog.debug("uploading attachment: ", file)
                             let newAttach = Attachment(file: file, parent: self.existingPostToEdit)
-                            let attReq = newAttach.save()
-                            let keyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
+                            newAttach.save()
                         }
                     }
                 }
@@ -291,19 +287,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             }
             else {
                 let newPost = Post(text: postText!, owner: self.objectsForPicker[self.selectedIndex], parent: self.objectsForPicker[self.selectedIndex], isAnonymous: self.anonymousToggle, pinned: (!(self.pinnedButton.isHidden) ? self.pinnedToggle : false))
-                let postReq = newPost.save()
-                let keyPath = (postReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
-                newPost.url = URL(string: (keyPath["url"] as! String))!
+                let posted = newPost.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
                         if file.count > 1 {
                             TTLog.debug("uploading attachment: ", file)
-                            let newAttach = Attachment(file: file, parent: newPost)
-                            let attReq = newAttach.save()
-                            let attKeyPath = (attReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-                            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((attKeyPath["url"] as! String)))", updateUrl: (attKeyPath["url"] as! String), action: "updated", updatedAt: (attKeyPath["updatedAt"] as! String))
+                            let newAttach = Attachment(file: file, parent: posted)
+                            newAttach.save()
                         }
                     }
                 }
