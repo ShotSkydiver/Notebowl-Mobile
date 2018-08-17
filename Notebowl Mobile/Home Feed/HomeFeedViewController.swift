@@ -101,6 +101,10 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
             }
         }
     }
+    
+    func handleDeleteAction(objectToDelete: NBModel) {
+        self.posts.remove(at: self.posts.index(where: { $0.resourceKey == objectToDelete.resourceKey })!)
+    }
 }
 
 extension HomeFeedViewController {
@@ -186,13 +190,11 @@ extension HomeFeedViewController {
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
-                if self.navigationController?.topViewController is HomeFeedViewController {
-                    let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
-                    parentPost.refresh()
-                    if indexOfPost != nil {
-                        TTLog.socket("we're on homefeedview")
-                        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
-                    }
+                let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
+                parentPost.refresh()
+                if indexOfPost != nil {
+                    TTLog.socket("we're on homefeedview")
+                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
                 }
             }
         }
@@ -280,19 +282,7 @@ extension HomeFeedViewController: SwipeTableViewCellDelegate {
     }
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
-        var options = SwipeTableOptions()
-        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedPostCell
-        if (selectedCell.postForCell.creator != nil) {
-            if (selectedCell.postForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .professor) || (selectedCell.postForCell.owner!.enrollmentForUser?.role == .admin) {
-                options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
-            }
-        }
-        else {
-            options.expansionStyle = SwipeExpansionStyle.fill
-        }
-        options.transitionStyle = SwipeTransitionStyle.border
-        options.buttonSpacing = 11
-        return options
+        return self.cellActionOptions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
     }
 }
 

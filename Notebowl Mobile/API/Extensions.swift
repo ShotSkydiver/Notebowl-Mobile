@@ -1012,15 +1012,38 @@ extension PlaceholdersProvider {
     }
 }
 
-protocol CellActionsVC { }
+protocol CellActionsVC {
+    func handleDeleteAction(objectToDelete: NBModel)
+}
 
 extension CellActionsVC {
+    func cellActionOptions(isPost: Bool, vc: UIViewController, tableView: UITableView, indexPath: IndexPath, orientation: SwipeActionsOrientation) -> SwipeTableOptions {
+        var options = SwipeTableOptions()
+        var selectedCell: UITableViewCell!
+        selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
+        if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator)) != nil) {
+            if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : ((vc as! HomeFeedPostViewController).post.owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : ((vc as! HomeFeedPostViewController).post.owner))!.enrollmentForUser?.role == .admin) {
+                options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
+            }
+        }
+        else {
+            options.expansionStyle = SwipeExpansionStyle.fill
+        }
+        options.transitionStyle = SwipeTransitionStyle.border
+        options.buttonSpacing = 11
+        return options
+    }
+    
     func cellActions(isPost: Bool, vc: UIViewController, tableView: UITableView, indexPath: IndexPath, orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
+        let fromPostDetails = (vc is HomeFeedPostViewController)
         var selectedCell: UITableViewCell!
         selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
         let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
-            if isPost { vc.performSegue(withIdentifier: "createPostSegue", sender: selectedCell) }
+            if isPost {
+                if fromPostDetails { (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedPostCell)) }
+                else { (vc as! HomeFeedViewController).performSegue(withIdentifier: "createPostSegue", sender: (selectedCell as! HomeFeedPostCell)) }
+            }
         }
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground
@@ -1068,24 +1091,27 @@ extension CellActionsVC {
     }
     
     func delete(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
+        let objectToDelete = (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)
         let confirmation = isPost ? UIAlertController(title: "Delete Post", message: "Are you sure you want to delete this post?", preferredStyle: .alert) : UIAlertController(title: "Delete Comment", message: "Are you sure you want to delete this comment?", preferredStyle: .alert)
         let nevermind = UIAlertAction(title: "Cancel", style: .cancel, handler: { (cancelAction) in
             action.fulfill(with: .reset)
         })
         let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
-            isPost ? (vc as! HomeFeedViewController).posts.remove(at: indexPath.row) : (vc as! HomeFeedPostViewController).post.postComments.remove(at: indexPath.row)
-            action.fulfill(with: .delete)
+            (vc as! CellActionsVC).handleDeleteAction(objectToDelete: objectToDelete)
+            if vc.navigationController?.topViewController is HomeFeedViewController && vc is HomeFeedPostViewController { }
+            else { action.fulfill(with: .delete) }
+        
             HUD.show(.progress)
             NBClient.shared.delay(0.4) {
-                isPost ? (selectedCell as! HomeFeedPostCell).postForCell.deleteSelf() : (selectedCell as! HomeFeedCommentCell).commentForCell.deleteSelf()
+                objectToDelete.deleteSelf()
                 HUD.flash(.success, delay: 0.5)
             }
         })
         confirmation.addAction(nevermind)
         confirmation.addAction(confirm)
         vc.present(confirmation, animated: true, completion: nil)
-        
     }
+    
     func report(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
         let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
         let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
@@ -1235,17 +1261,5 @@ struct Config {
         } else {
             return .AppStore
         }
-    }
-}
-
-enum AccessibilityIdentifier {
-    enum HomeScreen: String {
-        case theLabel
-        case theTextField
-        case theButton
-        case switch1
-        case switch2
-        case showButton
-        case hideButton
     }
 }

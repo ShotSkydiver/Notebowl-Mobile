@@ -17,6 +17,8 @@ import SwipeCellKit
 import PKHUD
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
+    
+    
     var indexes: Paths = Paths()
     
     var viewIsLoaded = false
@@ -80,6 +82,35 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "createPostDetailSegue" {
+            let destVC = segue.destination as! CreateNewPostViewController
+            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            courseForPicker.sort() { $0.fullName < $1.fullName }
+            var pickerItems = courseForPicker as [NBModel]
+            
+            var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
+            groups.sort() { $0.fullName < $1.fullName }
+            pickerItems += groups as [NBModel]
+            
+            destVC.objectsForPicker = pickerItems
+            if let senderCell = sender as? HomeFeedPostCell {
+                destVC.editingExistingPost = true
+                destVC.existingPostToEdit = senderCell.postForCell
+                destVC.existingCell = senderCell
+            }
+        }
+    }
+    
+    func handleDeleteAction(objectToDelete: NBModel) {
+        if (objectToDelete is Post) {
+            self.navigationController?.popViewController(animated: true)
+        }
+        else if (objectToDelete is Comment) {
+            self.post.postComments.remove(at: self.post.postComments.index(where: { $0.resourceKey == objectToDelete.resourceKey })!)
+        }
     }
 
     func setupInputBar() {
@@ -256,6 +287,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if indexPath.section == 0 {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
             cell.configure(post: self.post)
+            cell.delegate = self
             return cell
         }
         else {
@@ -274,6 +306,7 @@ extension HomeFeedPostViewController {
     
     func handleUpdated(newObject: NBModel) {
         if newObject.itemType == "Post" {
+            self.post = (NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]).first(where: { $0.resourceKey == newObject.resourceKey })
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if newObject.itemType == "Comment" {
@@ -288,18 +321,15 @@ extension HomeFeedPostViewController {
             else {
                 tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
             }
-            
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
-            indexes.reloadIndexPaths.append(IndexPath(row: 0, section: 0))
             if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
                 let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
                 parentComment.refresh()
                 if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
             }
-
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if newObject.itemType == "User" {
             if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
@@ -327,6 +357,7 @@ extension HomeFeedPostViewController {
             if indexOfComment != nil {
                 tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right)
             }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
             
@@ -335,6 +366,7 @@ extension HomeFeedPostViewController {
                 parentComment.refresh()
                 if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
             }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
     }
     
@@ -347,23 +379,21 @@ extension HomeFeedPostViewController {
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+        if indexPath.section == 0 {
+            return self.cellActions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+        }
+        else {
+            return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+        }
     }
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
-        var options = SwipeTableOptions()
-        let selectedCell = tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell
-        if (selectedCell.commentForCell.creator != nil) {
-            if (selectedCell.commentForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || (post.owner!.enrollmentForUser?.role == .professor) || (post.owner!.enrollmentForUser?.role == .admin) {
-                options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
-            }
+        if indexPath.section == 0 {
+            return self.cellActionOptions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
         else {
-            options.expansionStyle = SwipeExpansionStyle.fill
+            return self.cellActionOptions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
-        options.transitionStyle = SwipeTransitionStyle.border
-        options.buttonSpacing = 11
-        return options
     }
     
     

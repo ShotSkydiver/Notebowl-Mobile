@@ -1,13 +1,13 @@
 PODS:
   - AcknowList (1.6.1)
-  - Bugsnag (5.16.2)
+  - Bugsnag (5.16.3)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
   - DeckTransition (2.0.0)
   - FaceAware (1.4.0)
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
-  - Haptica (2.0.3)
+  - Haptica (2.0.4)
   - HGPlaceholders (0.3.0)
   - HTTPStatusCodes (3.2.0)
   - Hue (3.0.1)
@@ -127,14 +127,14 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
-  Bugsnag: 3f0b439c2036ee8c8aae24a2454e72a80647a855
+  Bugsnag: d4f14e5503b716dfe015c347426b058ad4d6a688
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
   FaceAware: 94410295a219c4a397ce525eab0063d6b17258aa
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
-  Haptica: 1d75f37903df17327514a18f0c966fe2116d3ad5
+  Haptica: 5bf06883f3787ab658820f544d3ef81ee942db50
   HGPlaceholders: ff5ccd1ebc6cd4e8d10f25ba0f2f904e5a43a7a4
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
