@@ -148,7 +148,7 @@ extension HomeFeedViewController {
             }
         }
         else if ["CourseUser","GroupUser"].contains(newObject.itemType) {
-            if (newObject as! Enrollment).parent!.firstTimeLoading == nil { (newObject as! Enrollment).parent!.refresh() }
+            if (newObject as! Enrollment).parent!.firstTimeLoading == nil { ((newObject as! Enrollment).parent as! WithName).firstTimeLoaded() }
             if !(newObject as! Enrollment).parent!.firstTimeLoading { (newObject as! Enrollment).parent!.refresh() }
             
             else if (newObject as! Enrollment).parent!.firstTimeLoading {
@@ -191,11 +191,10 @@ extension HomeFeedViewController {
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
             if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
                 let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
-                parentPost.refresh()
-                if indexOfPost != nil {
-                    TTLog.socket("we're on homefeedview")
-                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
+                if indexOfPost != nil && self.navigationController?.topViewController is HomeFeedViewController {
+                    parentPost.refresh()
                 }
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
             }
         }
 

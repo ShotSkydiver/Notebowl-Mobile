@@ -315,7 +315,6 @@ extension HomeFeedPostViewController {
             
             if indexOfComment != nil {
                 existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
-                
                 self.tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .bottom, animated: true)
             }
             else {
@@ -353,20 +352,30 @@ extension HomeFeedPostViewController {
             }
         }
         else if deletedObject.itemType == "Comment" {
-            let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            if indexOfComment != nil {
-                tableView.deleteRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .right)
+            guard let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == deletedObject.resourceKey }) else { return }
+            let deleted = self.post.postComments.remove(at: indexOfComment)
+            
+            self.tableView.beginUpdates()
+            self.tableView.deleteRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
+            self.post.refresh()
+            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            self.tableView.endUpdates()
+            if let homeVC = (self.parent as! RootNavigationBarVC).childViewControllers[0] as? HomeFeedViewController {
+                homeVC.handleDeleted(deletedObject: deleted)
             }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
-            
-            if let parentComment = NBClient.shared.storedTypes[Comment.classIdentifier]!.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
-                let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey })
+            if let parentComment = self.post.postComments.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
+                guard let indexOfComment = self.post.postComments.index(where: { $0.resourceKey == parentComment.resourceKey }) else { return }
                 parentComment.refresh()
-                if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
+                
+                UIView.setAnimationsEnabled(false)
+                tableView.beginUpdates()
+                tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .none)
+                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+                tableView.endUpdates()
+                UIView.setAnimationsEnabled(true)
             }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
     }
     

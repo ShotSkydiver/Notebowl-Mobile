@@ -1186,7 +1186,7 @@ class ObjectTransform<T: NBModel>: TransformType {
             guard let returnObject = mapReq?.first else {
                 return nil
             }
-            if returnObject.itemType != "Course" {returnObject.refresh() }
+            returnObject.refresh()
             return returnObject
         }
     }

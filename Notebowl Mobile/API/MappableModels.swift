@@ -271,7 +271,9 @@ class Response<T>: Generic where T: NBModel {
 public protocol WithName {
     var name: String! { get }
     var fullName: String! { get }
+    func firstTimeLoaded()
 }
+
 
 
 @objc(User) public class User: NBModel {
@@ -395,11 +397,13 @@ public protocol WithName {
         fullName = (courseCode + ": " + name)
     }
     
-    override public func refresh() {
+    func firstTimeLoaded() {
         if firstTimeLoading != nil {
             if firstTimeLoading { firstTimeLoading = false }
         }
-        
+    }
+    
+    override public func refresh() {
         enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
     }
 }
@@ -675,12 +679,14 @@ public protocol WithName {
         website <- map["website"]
         starred <- map["starred"]
     }
-
-    override public func refresh() {
+    
+    func firstTimeLoaded() {
         if firstTimeLoading != nil {
             if firstTimeLoading { firstTimeLoading = false }
         }
-        
+    }
+
+    override public func refresh() {
         enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
     }
 }
