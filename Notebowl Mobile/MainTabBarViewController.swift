@@ -100,7 +100,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     func getData() {
         _ = NBClient.shared.getMappable(Setting.self)!
-        _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
+        _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc", limit: "110")!
         let filter = NBClient.shared.doEnrollmentRequests()
         let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
         let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!

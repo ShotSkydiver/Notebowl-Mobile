@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 class NotificationsTableViewCell: UITableViewCell {
 
@@ -16,26 +17,54 @@ class NotificationsTableViewCell: UITableViewCell {
     @IBOutlet weak var notificationContent: UILabel!
     @IBOutlet weak var notificationDate: UILabel!
     
-    var notification: Notification?
+    var notificationForCell: Notification!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        updateReadStatus()
+        initSetup()
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        initSetup()
+    }
+    
+    func initSetup() {
+        
+        
+    }
+    
+    func configure(notification: Notification) {
+        notificationContent.text = notification.text
+        notificationDate.text = notification.createdAt.relativeFormat
+        
+        userAvatar.kf.setImage(with: notification.userProfilePicURL,
+                                    options: [
+                                        .transition(ImageTransition.fade(0.3)),
+                                        .fromMemoryCacheOrRefresh,
+                                        .keepCurrentImageWhileLoading
+            ]
+        )
+        
+        self.backgroundColor = (notification.unreadBool ? #colorLiteral(red: 0.9294117647, green: 0.9529411765, blue: 0.9803921569, alpha: 1) : UIColor.white)
+        
+        self.notificationForCell = notification
+    }
+    
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
-    func updateReadStatus() {
-        DispatchQueue.main.async {
-            if self.notification!.unreadBool {
-                self.backgroundColor = #colorLiteral(red: 0.9294117647, green: 0.9529411765, blue: 0.9803921569, alpha: 1)
-            }
-            else  {
-                self.backgroundColor = UIColor.white
-            }
-        }
+}
+
+
+extension NotificationsTableViewCell {
+    static var reuseId: String {
+        return "notificationCell"
+    }
+
+    class func dequeue(from tableView: UITableView) -> NotificationsTableViewCell? {
+        let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseId)
+        return cell as? NotificationsTableViewCell
     }
 }

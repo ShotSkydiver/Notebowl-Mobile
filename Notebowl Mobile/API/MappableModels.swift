@@ -991,7 +991,7 @@ public protocol WithName {
     public var unseenBool: Bool { return status == nil ? true : false }
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
-    public var userProfilePicURL: URL { return URL(string: RequestKind.rpc.requestUrl(url: "notifications/" + self.resourceKey + "/getProfilePicture"))! }
+    public var userProfilePicURL: URL { return URL(string: RequestKind.rpc.requestUrl(url: "notifications/" + self.resourceKey + "/getProfilePicture"))!.appendingQueryParameters(["uuid": UIDevice().uuid]) }
     
     override class var routeType: ItemType { return .notification }
         

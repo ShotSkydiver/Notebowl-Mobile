@@ -21,7 +21,6 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         placeholderTableView = tableView as? NotificationTableView
         placeholderTableView?.placeholderDelegate = self
         
@@ -44,15 +43,14 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     
     func setupNavBar() {
         navigationController?.navigationBar.shadowImage = UIImage.init()
-        
         navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
         navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         navigationController?.navigationBar.layer.shadowRadius = 7.5
         navigationController?.navigationBar.layer.shadowOpacity = 0.7
         navigationController?.navigationBar.layer.masksToBounds = false
-        
         self.view.layer.masksToBounds = false
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
          self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
@@ -60,18 +58,20 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !notifications.isEmpty { markAsSeen() }
-        
+    }
+    
+    func updateBadgeCount() {
+        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+        let countString = String(format: "%d", (unreadCount.count))
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count > 99 ? ("99+") : countString) )
     }
     
     func markAsSeen() {
         _ = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
-        
-            for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
-                notification.status = "seen"
-            }
-            let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-            let countString = String(format: "%d", (unreadCount.count))
-            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
+        for notification in (NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]).filter({ $0.unseenBool == true }) {
+            notification.status = "seen"
+        }
+        updateBadgeCount()
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -90,28 +90,10 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "notificationCell", for: indexPath) as! NotificationsTableViewCell
-        
-        let notificationForCell = self.notifications[indexPath.row]
-        cell.notification = notificationForCell
-        cell.notificationContent.text = notificationForCell.text
-        cell.notificationDate.text = notificationForCell.createdAt.relativeFormat
-        
-        let imgUrl = notificationForCell.userProfilePicURL
-        
-        cell.userAvatar.kf.setImage(with: imgUrl.appendingQueryParameters(["uuid": UIDevice().uuid]),
-                                    options: [
-                                        .transition(ImageTransition.fade(0.3)),
-                                        .keepCurrentImageWhileLoading
-            ]
-        )
-        cell.userAvatar.contentMode = .scaleAspectFill
-        
+        let cell = NotificationsTableViewCell.dequeue(from: tableView)!
+        let notification = self.notifications[indexPath.row]
+        cell.configure(notification: notification)
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        (cell as! NotificationsTableViewCell).updateReadStatus()
     }
 }
 
@@ -123,39 +105,25 @@ extension NotificationsTableViewController {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
             
-            placeholderTableView?.showDefault()
-            
-            existingNotification == false ? tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) : TTLog.debug("do nothing") //tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
-            let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-            let countString = String(format: "%d", (unreadCount.count))
-            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
+            if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell { placeholderTableView?.showDefault() }
+            else if existingNotification == false { tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) }
+            updateBadgeCount()
         }
-        
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
         if deletedObject.itemType == "Notification" {
             let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
+            if indexOfNotification != nil { tableView.deleteRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
+            if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.showNoResultsPlaceholder() }
             
-            if tableView.numberOfRows(inSection: 0) == 0 {
-                placeholderTableView?.reloadData()
-            }
-            if indexOfNotification != nil { tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
-            else {tableView.reloadSections(IndexSet(integer: 0), with: .automatic) }
-            let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-            let countString = String(format: "%d", (unreadCount.count))
-            self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count >= 100 ? (countString+"+") : countString) )
+            updateBadgeCount()
         }
     }
     
-    func handleElapsed(elapsedObject: NBModel) {
-        
-    }
-    
-    func reloadTableViews() {
-
-    }
+    func handleElapsed(elapsedObject: NBModel) { }
+    func reloadTableViews() { }
 }
 
 extension NotificationsTableViewController: PlaceholderDelegate {
