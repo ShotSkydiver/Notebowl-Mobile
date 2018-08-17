@@ -71,6 +71,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.inputPlugins = [attachmentManager]
         setupInputBar()
 
+        refreshAllComments()
         tableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
         viewIsLoaded = true
     }
@@ -82,6 +83,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+    
+    func refreshAllComments() {
+        for comment in self.post.postComments { comment.refresh() }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
