@@ -101,10 +101,9 @@ extension NotificationsTableViewController {
     
     func handleUpdated(newObject: NBModel) {
         self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
-        if newObject.itemType == "Notification" {
-            let indexOfNotification = self.notifications.index(where: { $0.resourceKey == newObject.resourceKey })
+        if let newNotification = newObject as? Notification {
+            let indexOfNotification = self.notifications.index(of: newNotification)
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
-            
             if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell { placeholderTableView?.showDefault() }
             else if existingNotification == false { tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left) }
             updateBadgeCount()
@@ -112,12 +111,11 @@ extension NotificationsTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if deletedObject.itemType == "Notification" {
-            let indexOfNotification = self.notifications.index(where: { $0.resourceKey == deletedObject.resourceKey })
+        if let deleteNotification = deletedObject as? Notification {
+            let indexOfNotification = self.notifications.index(of: deleteNotification)
             self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
             if indexOfNotification != nil { tableView.deleteRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
             if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.showNoResultsPlaceholder() }
-            
             updateBadgeCount()
         }
     }

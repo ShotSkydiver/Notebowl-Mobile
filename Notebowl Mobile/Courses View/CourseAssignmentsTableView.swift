@@ -55,7 +55,7 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
     
     func updateData() {
         for category in self.categories! {
-            let filtered = self.assignments.filter({ $0.category.resourceKey == category.resourceKey })
+            let filtered = self.assignments.filter({ $0.category == category })
             if (filtered.count > 0) {
                 self.data[category] = filtered
             }
@@ -115,13 +115,11 @@ extension CourseAssignmentsTableView {
         if newObject.itemType == "AssignmentGroup" {
             
         }
-        else if newObject.itemType.contains("Assignment") {
+        else if let newAssignment = newObject as? Assignment {
             self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
             self.updateData()
-            
-            let indexOfAssignment = self.data[(newObject as! Assignment).category]!.index(where: { $0.resourceKey == newObject.resourceKey })
-            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
-            
+            let indexOfAssignment = self.data[newAssignment.category]!.index(where: { $0 == newAssignment })
+            let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
             let existingAssignment = self.tableView.numberOfRows(inSection: indexOfCategory!) < (self.data[self.categories[indexOfCategory!]]?.count)! ? false : true
             
             placeholderTableView?.showDefault()
@@ -129,31 +127,21 @@ extension CourseAssignmentsTableView {
             existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
         }
 
-        else if newObject.itemType == "Category" {
+        else if let newCategory = newObject as? Category {
             self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]
             self.updateData()
-            
-            let indexOfCategory = self.categories.index(where: { $0.resourceKey == newObject.resourceKey })
- 
+            let indexOfCategory = self.categories.index(where: { $0 == newCategory })
             let existingCategory = self.tableView.numberOfSections < self.data.count ? false : true
-            
-            if !existingCategory {
-                tableView.insertSections(IndexSet(integer: indexOfCategory!), with: .left)
-            }
-            else {
-                tableView.reloadSections(IndexSet(integer: indexOfCategory!), with: .fade)
-            }
-            
+            if !existingCategory { tableView.insertSections(IndexSet(integer: indexOfCategory!), with: .left) }
+            else { tableView.reloadSections(IndexSet(integer: indexOfCategory!), with: .fade) }
         }
         
         else if newObject.itemType == "Grade" {
-            let assignment = self.assignments.first(where: { $0.resourceKey == newObject.parent?.resourceKey })
+            let assignment = self.assignments.first(where: { $0 == (newObject.parent as! Assignment) })
             assignment!.getGradeString()
             self.updateData()
-            
-            let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0.resourceKey == assignment!.resourceKey })
-            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
-            
+            let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0 == assignment! })
+            let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
             tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
         }
         
@@ -163,36 +151,30 @@ extension CourseAssignmentsTableView {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if deletedObject.itemType.contains("Assignment") {
-
-            let indexOfAssignment = self.data[(deletedObject as! Assignment).category]!.index(where: { $0.resourceKey == deletedObject.resourceKey })
-            let indexOfCategory = self.categories.index(where: { $0.resourceKey == self.assignments[indexOfAssignment!].category.resourceKey })
+        if let deleteAssignment = deletedObject as? Assignment {
+            let indexOfAssignment = self.data[deleteAssignment.category]!.index(where: { $0 == deleteAssignment })
+            let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
             if indexOfAssignment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) }
             self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
             self.updateData()
-            
         }
 
-        else if deletedObject.itemType == "Category" {
-            let indexOfCategory = self.categories.index(where: { $0.resourceKey == deletedObject.resourceKey })
+        else if let deleteCategory = deletedObject as? Category {
+            let indexOfCategory = self.categories.index(where: { $0 == deleteCategory })
             tableView.deleteSections(IndexSet(integer: indexOfCategory!), with: .right)
             self.categories = NBClient.shared.storedTypes[Category.classIdentifier]! as! [Category]
             self.updateData()
         }
         
         else if deletedObject.itemType.contains("Course") {
-            if deletedObject.resourceKey == self.selectedCourse.resourceKey {
+            if (deletedObject as! Course) == self.selectedCourse {
                 self.navigationController?.popViewController(animated: true)
             }
         }
     }
     
-    func handleElapsed(elapsedObject: NBModel) {
-        
-    }
-    
-    func reloadTableViews() {
-    }
+    func handleElapsed(elapsedObject: NBModel) {}
+    func reloadTableViews() {}
 }
 
 extension CourseAssignmentsTableView: PlaceholderDelegate {

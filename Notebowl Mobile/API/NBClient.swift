@@ -188,7 +188,7 @@ class NBClient {
         
         var newObjectArray = [T]()
         for object in objects! {
-            if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == object.resourceKey.lastPathComponent }) {
+            if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0 == object}) {
                 if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
                     TTLog.debug("new object is more recent than existing object!")
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
@@ -205,7 +205,7 @@ class NBClient {
                 if !NBClient.shared.storedTypes.has(key: T.classIdentifier) {
                     NBClient.shared.storedTypes[T.classIdentifier] = [object]
                 }
-                else if !NBClient.shared.storedTypes[T.classIdentifier]!.contains(where: {$0.resourceKey == object.resourceKey}) {
+                else {
                     NBClient.shared.storedTypes[T.classIdentifier]!.append(object)
                 }
                 newObjectArray.append(object)

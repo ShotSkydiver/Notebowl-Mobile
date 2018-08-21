@@ -83,17 +83,15 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
 
 extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
-        if newObject.itemType == "Course" {
-            var indexOfCourse = self.courses.index(where: { $0.resourceKey == newObject.resourceKey })
+        if let newCourse = newObject as? Course {
+            var indexOfCourse = self.courses.index(where: { $0 == newCourse })
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             
             placeholderTableView?.showDefault()
-            
             if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) }
             else {
                 self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
-            
                 indexOfCourse = 0
                 tableView.reloadRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade)
             }
@@ -102,20 +100,14 @@ extension CoursesTableViewController {
     
     func handleDeleted(deletedObject: NBModel) {
         if ["CourseUser","Course"].contains(deletedObject.itemType) {
-  
-            let indexOfCourse = self.courses.index(where: { $0.resourceKey == deletedObject.resourceKey })
+            let indexOfCourse = self.courses.index(where: { $0 == (deletedObject as! Course) })
             if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
-            
-            if tableView.numberOfRows(inSection: 0) == 0 {
-                placeholderTableView?.reloadData()
-            }
+            if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.reloadData() }
         }
     }
     
-    func handleElapsed(elapsedObject: NBModel) { }
-    
-    func reloadTableViews() {
-    }
+    func handleElapsed(elapsedObject: NBModel) {}
+    func reloadTableViews() {}
 }
 
 extension CoursesTableViewController: PlaceholderDelegate {

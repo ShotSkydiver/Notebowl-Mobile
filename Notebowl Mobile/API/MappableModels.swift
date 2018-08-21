@@ -164,7 +164,7 @@ class Response<T>: Generic where T: NBModel {
 
 
 
-@objc(Object) public class NBModel: NSObject, Mappable {
+public class NBModel: Mappable {
     var createdAt: Date!
     var updatedAt: Date!
     var itemType: String!
@@ -190,13 +190,6 @@ class Response<T>: Generic where T: NBModel {
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
             NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
         }
-    }
-    
-    class func objectExistsInCache(keyToCompare: String!) -> Bool {
-        if NBClient.shared.storedTypes[classIdentifier]!.first(where: { $0.resourceKey == keyToCompare }) != nil {
-            return true
-        }
-        return false
     }
     
     public var firstTimeLoading: Bool!
@@ -243,7 +236,7 @@ class Response<T>: Generic where T: NBModel {
     
     public required init?(map: Map) { }
     
-    override init() { }
+    init() { }
     
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
@@ -267,6 +260,15 @@ class Response<T>: Generic where T: NBModel {
         }
     }
 }
+extension NBModel: Hashable {
+    public var hashValue: Int {
+        return ObjectIdentifier(self).hashValue
+    }
+    
+    public static func == (lhs: NBModel, rhs: NBModel) -> Bool {
+        return lhs.resourceKey == rhs.resourceKey
+    }
+}
 
 public protocol WithName {
     var name: String! { get }
@@ -276,7 +278,7 @@ public protocol WithName {
 
 
 
-@objc(User) public class User: NBModel {
+public class User: NBModel {
 
     var firstName: String!
     var lastName: String!
@@ -307,7 +309,7 @@ public protocol WithName {
     }
 }
 
-@objc(Term) class Term: NBModel {
+class Term: NBModel {
     
     var title: String?
     var termStart: Date!
@@ -331,7 +333,7 @@ public protocol WithName {
     }
 }
 
-@objc(Course) class Course: NBModel, WithName {
+class Course: NBModel, WithName {
     var name: String!
 
     var number: String!
@@ -404,11 +406,11 @@ public protocol WithName {
     }
     
     override public func refresh() {
-        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
+        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent == self) && (($0 as! Enrollment).user == NBClient.shared.getCurrentUser()) }) as? Enrollment
     }
 }
 
-@objc(Assignment) public class Assignment: NBModel {
+public class Assignment: NBModel {
     
     var title: String!
     var points: Int?
@@ -522,7 +524,7 @@ public protocol WithName {
     }
 }
 
-@objc(AssignmentGroup) class AssignmentGroup: NBModel {
+class AssignmentGroup: NBModel {
     var name: String!
     var locked: Bool!
     
@@ -540,7 +542,7 @@ public protocol WithName {
     }
 }
 
-@objc(Category) class Category: NBModel {
+class Category: NBModel {
     var title: String!
     var weight: Int!
     var isExtraCredit: Bool!
@@ -562,7 +564,7 @@ public protocol WithName {
     }
 }
 
-@objc(Grade) class Grade: NBModel {
+class Grade: NBModel {
     var grade: Double?
     
     override class var routeType: ItemType { return .grade }
@@ -577,7 +579,7 @@ public protocol WithName {
     }
 }
 
-@objc(University) class University: NBModel {
+class University: NBModel {
     
     var profileLogo: String?
     var defaultLogo: String?
@@ -602,7 +604,7 @@ public protocol WithName {
     }
 }
 
-@objc(Enrollment) public class Enrollment: NBModel {
+public class Enrollment: NBModel {
     
     var role: UserRole!
     var status: String!
@@ -637,7 +639,7 @@ public protocol WithName {
 }
 
 
-@objc(Group) class Group: NBModel, WithName {
+class Group: NBModel, WithName {
 
     var availableDate: Date!
     var category: String?
@@ -687,11 +689,11 @@ public protocol WithName {
     }
 
     override public func refresh() {
-        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent?.resourceKey == self.resourceKey) && (($0 as! Enrollment).user.resourceKey == NBClient.shared.getCurrentUser().resourceKey) }) as? Enrollment
+        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent == self) && (($0 as! Enrollment).user == NBClient.shared.getCurrentUser()) }) as? Enrollment
     }
 }
 
-@objc(Event) class Event: NBModel {
+class Event: NBModel {
     
     var title: String!
     var desc: String?
@@ -724,7 +726,7 @@ public protocol WithName {
 }
 
 
-@objc(Post) public class Post: NBModel {
+public class Post: NBModel {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -783,14 +785,14 @@ public protocol WithName {
     }
     
     func updateLikes() {
-        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as? [Like]
+        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]
         self.postLikes = (likes == nil ? [] : likes!)
         if postLikes.isEmpty || postLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
         }
         else if postLikes.count > 0 {
-            let like = postLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            let like = postLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
             
             if like != nil {
                 likedByCurrentUser = true
@@ -804,18 +806,18 @@ public protocol WithName {
     }
     override public func refresh() {
         if self.creator != nil {
-            self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator!.resourceKey }) as? User
+            self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User) == self.creator! }) as? User
         }
-        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent!.resourceKey == self.resourceKey }) as? [Comment]
+        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
         self.postComments = (comments == nil ? [] : comments!)
  
-        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent!.resourceKey == self.resourceKey }) as? [Attachment]
+        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self }) as? [Attachment]
         self.postAttachments = (attachments == nil ? [] : attachments!)
         updateLikes()
     }
 }
 
-@objc(Attachment) public class Attachment: NBModel {
+public class Attachment: NBModel {
     var fileExt: String!
     var downloadUrl: URL!
     var locationUrl: URL!
@@ -871,7 +873,7 @@ public protocol WithName {
     }
 }
 
-@objc(Comment) public class Comment: NBModel {
+public class Comment: NBModel {
     
     var editedAt: Date?
     var isAnonymous: Bool!
@@ -921,18 +923,18 @@ public protocol WithName {
     }
     
     public func getAttachments() {
-        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent!.resourceKey == self.resourceKey }) as? [Attachment]
+        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent! == self }) as? [Attachment]
         self.commentAttachments = (attachments == nil ? [] : attachments!)
     }
     public func updateLikes() {
-        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent!.resourceKey == self.resourceKey }) as? [Like]
+        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]
         self.commentLikes = (likes == nil ? [] : likes!)
         if commentLikes.isEmpty || commentLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
         }
         else if commentLikes.count > 0 {
-            let like = commentLikes.first(where: { $0.owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey })
+            let like = commentLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
             
             if like != nil {
                 likedByCurrentUser = true
@@ -947,15 +949,15 @@ public protocol WithName {
     
     override public func refresh() {
         updatedOnce = true
-        self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.creator?.resourceKey }) as? User
+        self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User) == self.creator }) as? User
         updateLikes()
         getAttachments()
     }
 }
 
-@objc(Like) public class Like: NBModel {
+public class Like: NBModel {
     
-    public var currentUserLiked: Bool { return owner!.resourceKey == NBClient.shared.getCurrentUser().resourceKey ? true : false}
+    public var currentUserLiked: Bool { return owner! == NBClient.shared.getCurrentUser() ? true : false}
     
     override class var routeType: ItemType { return .like }
     
@@ -977,11 +979,11 @@ public protocol WithName {
     }
     
     override public func refresh() {
-        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User).resourceKey == self.owner!.resourceKey })// as! User
+        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User) == self.owner! })// as! User
     }
 }
 
-@objc(Notification) class Notification: NBModel {
+class Notification: NBModel {
 
     var status: String?
     var text: String?
@@ -1012,7 +1014,7 @@ public protocol WithName {
 }
 
 
-@objc(Abuse) class Abuse: NBModel {
+class Abuse: NBModel {
     var reason: String!
 
     override class var routeType: ItemType { return .abuse }
@@ -1040,7 +1042,7 @@ public protocol WithName {
     }
 }
 
-@objc(Setting) class Setting: NBModel {
+class Setting: NBModel {
     var key: String!
     var value: Bool!
     

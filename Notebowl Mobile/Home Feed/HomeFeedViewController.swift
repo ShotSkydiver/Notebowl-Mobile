@@ -103,15 +103,15 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     }
     
     func handleDeleteAction(objectToDelete: NBModel) {
-        self.posts.remove(at: self.posts.index(where: { $0.resourceKey == objectToDelete.resourceKey })!)
+        self.posts.removeAll(objectToDelete as! Post)
     }
 }
 
 extension HomeFeedViewController {
     func handleUpdated(newObject: NBModel) {
-        if newObject.itemType == "Post" {
+        if let newPost = newObject as? Post {
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-            let indexOfPost = self.posts.index(where: { $0.resourceKey == newObject.resourceKey })
+            let indexOfPost = self.posts.index(of: newPost)
             let existingPost = bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
             
             if self.bulletinTableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
@@ -121,22 +121,20 @@ extension HomeFeedViewController {
                 self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .left)
             }
             else {
-                self.posts.first(where: { $0.resourceKey == newObject.resourceKey })!.refresh()
+                self.posts[indexOfPost!].refresh()
                 self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == newObject.parent!.resourceKey }) {
-                let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
-                parentPost.refresh()
-                if indexOfPost != nil  { self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)}
+            if let indexOfPost = self.posts.index(of: newObject.parent! as! Post) {
+                self.posts[indexOfPost].refresh()
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
             }
         }
-        else if newObject.itemType == "User" {
-            if newObject.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+        else if let newUser = newObject as? User {
+            if newUser == NBClient.shared.getCurrentUser() {
                 NBClient.shared.setCurrentUser(user: (newObject as! User))
-                
-                let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator?.resourceKey == newObject.resourceKey) })
+                let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator == newUser) })
                 var indexPaths = [IndexPath]()
                 for post in postsForUser {
                     if let index = self.posts.index(of: post) {
@@ -158,7 +156,8 @@ extension HomeFeedViewController {
                     let filter = NBClient.shared.doEnrollmentRequests()
                     let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
                     let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
-                    let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+                    var combinedFilter = (retrievedPosts as [NBModel])
+                    combinedFilter.append(contentsOf: (postComments as [NBModel]))
                     _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
                     _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
                     NBClient.shared.reinitCache()
@@ -176,25 +175,19 @@ extension HomeFeedViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if deletedObject.itemType == "Post" {
-            let indexOfPost = self.posts.index(where: { $0.resourceKey == deletedObject.resourceKey })
+        if let deletePost = deletedObject as? Post {
+            let indexOfPost = self.posts.index(of: deletePost)
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
-            
-            if indexOfPost != nil {
-                self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right)
-            }
-            if self.bulletinTableView.numberOfRows(inSection: 0) == 0 {
-                self.bulletinTableView.showNoResultsPlaceholder()
-            }
+            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
+            if self.bulletinTableView.numberOfRows(inSection: 0) == 0 { self.bulletinTableView.showNoResultsPlaceholder() }
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if let parentPost = self.posts.first(where: { $0.resourceKey == deletedObject.parent!.resourceKey }) {
-                let indexOfPost = self.posts.index(where: { $0.resourceKey == parentPost.resourceKey })
-                if indexOfPost != nil && self.navigationController?.topViewController is HomeFeedViewController {
-                    parentPost.refresh()
+            if let indexOfPost = self.posts.index(of: deletedObject.parent! as! Post) {
+                if self.navigationController?.topViewController is HomeFeedViewController {
+                    self.posts[indexOfPost].refresh()
                 }
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
+                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
             }
         }
 
@@ -225,12 +218,7 @@ extension HomeFeedViewController {
         }
     }
     
-    func handleElapsed(elapsedObject: NBModel) {
-        if elapsedObject.itemType == "User" {
-            TTLog.debug("user elapsed")
-        }
-    }
-    
+    func handleElapsed(elapsedObject: NBModel) { }
     func reloadTableViews() {}
 }
 
