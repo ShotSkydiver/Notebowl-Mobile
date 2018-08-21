@@ -328,11 +328,13 @@ extension HomeFeedPostViewController {
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
-            if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
-                self.post.postComments[indexOfComment].refresh()
-                tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
+            if newObject.parent is Comment {
+                if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
+                    self.post.postComments[indexOfComment].refresh()
+                    tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
+                }
+                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if let newUser = newObject as? User {
             if newUser == NBClient.shared.getCurrentUser() {
@@ -368,14 +370,16 @@ extension HomeFeedPostViewController {
             }
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if let indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment) {
-                self.post.postComments[indexOfComment].refresh()
-                UIView.setAnimationsEnabled(false)
-                tableView.beginUpdates()
-                tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .none)
-                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-                tableView.endUpdates()
-                UIView.setAnimationsEnabled(true)
+            if deletedObject.parent is Comment {
+                if let indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment) {
+                    self.post.postComments[indexOfComment].refresh()
+                    UIView.setAnimationsEnabled(false)
+                    tableView.beginUpdates()
+                    tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .none)
+                    tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+                    tableView.endUpdates()
+                    UIView.setAnimationsEnabled(true)
+                }
             }
         }
     }

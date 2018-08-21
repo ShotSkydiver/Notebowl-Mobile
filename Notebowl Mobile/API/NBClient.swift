@@ -88,7 +88,7 @@ class NBClient {
         var groupsFilter: String = ""
         var combinedUrlsFilter: String = ""
         
-        guard let keyPaths = nestedJson as? [[String: Any]] else { fatalError() }
+        guard let keyPaths = nestedJson as? [[String: Any]] else { return "" }
         for key in keyPaths {
             let urlString = (key["_parent"] as! String)
             let objectType = ItemType.fromURL(urlString)

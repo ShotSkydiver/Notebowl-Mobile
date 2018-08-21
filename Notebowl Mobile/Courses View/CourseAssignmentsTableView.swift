@@ -40,8 +40,9 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         loadingView.showLoadView(true)
         bgView.showViewAnimated(true)
         DispatchQueue.main.async {
-            self.assignments = (NBClient.shared.storedTypes.has(key: Assignment.classIdentifier) ? (NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ ($0 as! Assignment).parent!.resourceKey == self.selectedCourse.resourceKey }) as! [Assignment]) : (NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!))
-            self.categories = (NBClient.shared.storedTypes.has(key: Category.classIdentifier) ? (NBClient.shared.storedTypes[Category.classIdentifier]?.filter({ ($0 as! Category).parent!.resourceKey == self.selectedCourse.resourceKey }) as! [Category]) : (NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!))
+            self.assignments = (NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!)
+            self.categories = (NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)!)
+            
             
             for assignment in self.assignments {
                 assignment.getGradeString()
@@ -136,16 +137,17 @@ extension CourseAssignmentsTableView {
             else { tableView.reloadSections(IndexSet(integer: indexOfCategory!), with: .fade) }
         }
         
-        else if newObject.itemType == "Grade" {
-            let assignment = self.assignments.first(where: { $0 == (newObject.parent as! Assignment) })
-            assignment!.getGradeString()
-            self.updateData()
-            let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0 == assignment! })
-            let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
-            tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
+        else if let newGrade = newObject as? Grade {
+            if newGrade.parent is Assignment {
+                let assignment = self.assignments.first(where: { $0 == (newGrade.parent as! Assignment) })
+                assignment!.getGradeString()
+                self.updateData()
+                let indexOfAssignment = self.data[assignment!.category]!.index(where: { $0 == assignment! })
+                let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
+                tableView.reloadRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .fade)
+            }
         }
-        
-        else if newObject.itemType == "Course" {
+        else if newObject is Course {
             reloadTable()
         }
     }
@@ -166,9 +168,11 @@ extension CourseAssignmentsTableView {
             self.updateData()
         }
         
-        else if deletedObject.itemType.contains("Course") {
-            if (deletedObject as! Course) == self.selectedCourse {
-                self.navigationController?.popViewController(animated: true)
+        else if let deleteCourse = deletedObject as? Enrollment {
+            if deleteCourse.parent is Course {
+                if (deleteCourse.parent as! Course) == self.selectedCourse {
+                    self.navigationController?.popViewController(animated: true)
+                }
             }
         }
     }

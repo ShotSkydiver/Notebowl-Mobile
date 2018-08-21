@@ -99,10 +99,12 @@ extension CoursesTableViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if ["CourseUser","Course"].contains(deletedObject.itemType) {
-            let indexOfCourse = self.courses.index(where: { $0 == (deletedObject as! Course) })
-            if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
-            if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.reloadData() }
+        if let deleteCourse = deletedObject as? Enrollment {
+            if deleteCourse.parent is Course {
+                let indexOfCourse = self.courses.index(where: { $0 == (deletedObject.parent as! Course) })
+                if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
+                if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.reloadData() }
+            }
         }
     }
     

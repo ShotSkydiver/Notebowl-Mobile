@@ -101,7 +101,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
         postTextView.delegate = self
         if editingExistingPost {
-            postTextView.text = existingPostToEdit.text!
+            postTextView.text = existingPostToEdit.text ?? ""
             postButtonBarItem.postButton.setTitle("Edit", for: .normal)
             for attachment in existingPostToEdit.postAttachments {
                 if attachment.type.contains("image") {
