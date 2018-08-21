@@ -16,8 +16,7 @@ public enum AvailableCourses: String {
 
 enum Environment: String {
     case Production = "platform.notebowl.com"
-    case Local = "chdowen.notebowl.xyz"
-    case Jenkins = "demo.notebowl.xyz"
+    case Local = "demo.notebowl.xyz"
 }
 
 

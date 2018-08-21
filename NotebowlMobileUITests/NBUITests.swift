@@ -35,6 +35,8 @@ class NBUITests: XCTestCase {
     var inputTextView: XCUIElement { return app.textViews["newCommentTextView"] }
     var postButton: XCUIElement { return app.buttons["postButton"] }
     var reportAction: XCUIElement { return app.sheets.element.buttons["It doesn't belong on Notebowl"] }
+    var deletePostAction: XCUIElement { return app.alerts["Delete Post"].buttons["Delete"] }
+    var deleteCommentAction: XCUIElement { return app.alerts["Delete Comment"].buttons["Delete"] }
     
     func addText(text: String) { app.textViews["createPostText"].typeText(text) }
     

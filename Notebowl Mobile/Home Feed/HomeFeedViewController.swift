@@ -126,9 +126,11 @@ extension HomeFeedViewController {
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
-            if let indexOfPost = self.posts.index(of: newObject.parent! as! Post) {
-                self.posts[indexOfPost].refresh()
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
+            if newObject.parent is Post {
+                if let indexOfPost = self.posts.index(of: newObject.parent! as! Post) {
+                    self.posts[indexOfPost].refresh()
+                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
+                }
             }
         }
         else if let newUser = newObject as? User {

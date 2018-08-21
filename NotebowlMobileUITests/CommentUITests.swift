@@ -80,6 +80,7 @@ class CommentUITests: NBUITests {
         createCommentForPost(user: "admin@notebowl.com")
         let commentsCount = app.tables["postDetailTableView"].cells.count
         doPostAction(action: "Delete", forCell: firstComment)
+        deleteCommentAction.tap()
         XCTAssertEqual(app.tables["postDetailTableView"].cells.count, commentsCount-1)
     }
     

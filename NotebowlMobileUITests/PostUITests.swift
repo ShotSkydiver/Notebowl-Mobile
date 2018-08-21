@@ -79,6 +79,7 @@ class PostUITests: NBUITests {
         createPostFromUser(user: "admin@notebowl.com")
         let postsCount = app.tables["bulletinTableView"].cells.count
         doPostAction(action: "Delete")
+        deletePostAction.tap()
         XCTAssertFalse(app.tables["bulletinTableView"].cells["homeFeedPostCell"].exists)
     }
     
