@@ -43,6 +43,7 @@
 		8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */; };
 		8595017220A2614E004640B3 /* IndexedCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */; };
 		8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */; };
+		859BB17D212DDA6C009745A4 /* PostDetailViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859BB17C212DDA6C009745A4 /* PostDetailViewUITests.swift */; };
 		85A71DA52076E35100A51075 /* BulletinTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A71DA32076E35100A51075 /* BulletinTableViewHeader.swift */; };
 		85A71DA62076E35100A51075 /* BulletinTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85A71DA42076E35100A51075 /* BulletinTableViewHeader.xib */; };
 		85B1FDBF1FCDEC5800F0A81C /* NBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */; };
@@ -132,6 +133,7 @@
 		8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscAppUITests.swift; sourceTree = "<group>"; };
 		8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedCollectionViewCell.swift; sourceTree = "<group>"; };
 		8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IndexedCollectionViewCell.xib; sourceTree = "<group>"; };
+		859BB17C212DDA6C009745A4 /* PostDetailViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewUITests.swift; sourceTree = "<group>"; };
 		85A71DA32076E35100A51075 /* BulletinTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletinTableViewHeader.swift; sourceTree = "<group>"; };
 		85A71DA42076E35100A51075 /* BulletinTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BulletinTableViewHeader.xib; sourceTree = "<group>"; };
 		85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBClient.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 		8522D04920FE7B2C00BCBD88 /* NotebowlMobileUITests */ = {
 			isa = PBXGroup;
 			children = (
+				859BB17C212DDA6C009745A4 /* PostDetailViewUITests.swift */,
 				8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */,
 				8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */,
 				8587DE622107EC0A00B41DB6 /* CommentUITests.swift */,
@@ -685,6 +688,7 @@
 				8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */,
 				852CB62A210FC38B00B07ED9 /* LoremSwiftum.swift in Sources */,
 				8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */,
+				859BB17D212DDA6C009745A4 /* PostDetailViewUITests.swift in Sources */,
 				85FB4664210FE33F00151E7F /* StaticValues.swift in Sources */,
 				852CB61C210FA46600B07ED9 /* NBUITests.swift in Sources */,
 				8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */,
@@ -1086,7 +1090,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 160000;
+				CURRENT_PROJECT_VERSION = 162000;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1186,7 +1190,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 160000;
+				CURRENT_PROJECT_VERSION = 162000;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1286,7 +1290,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 160000;
+				CURRENT_PROJECT_VERSION = 162000;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1443,7 +1447,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 160000;
+				CURRENT_PROJECT_VERSION = 162000;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1480,7 +1484,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 160000;
+				CURRENT_PROJECT_VERSION = 162000;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;

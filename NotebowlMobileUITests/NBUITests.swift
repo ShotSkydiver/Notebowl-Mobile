@@ -16,6 +16,7 @@ class NBUITests: XCTestCase {
     let baseUrl = Environment.Local.rawValue
     
     var firstCourseUrl: String!
+    var textContentForPost: String!
     
     override func setUp() {
         super.setUp()
@@ -29,6 +30,7 @@ class NBUITests: XCTestCase {
     }
     
     var firstPost: XCUIElement { return app.tables["bulletinTableView"].children(matching: .cell).element(boundBy: 0) }
+    var postForDetailView: XCUIElement { return app.tables["postDetailTableView"].children(matching: .cell).element(boundBy: 0) }
     var firstComment: XCUIElement { return app.tables["postDetailTableView"].children(matching: .cell).element(boundBy: 1) }
     var lastComment: XCUIElement { return app.tables["postDetailTableView"].children(matching: .cell).element(boundBy: (app.tables["postDetailTableView"].cells.count - 1)) }
     

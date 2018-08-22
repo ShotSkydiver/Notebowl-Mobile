@@ -311,8 +311,11 @@ extension HomeFeedPostViewController {
     
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
-            self.post = (NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]).first(where: { $0 == newPost })
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            if newPost == self.post {
+                self.post = newPost
+                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            }
+            
         }
         else if let newComment = newObject as? Comment {
             let indexOfComment = self.post.postComments.index(of: newComment)
@@ -333,8 +336,8 @@ extension HomeFeedPostViewController {
                     self.post.postComments[indexOfComment].refresh()
                     tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
                 }
-                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
         else if let newUser = newObject as? User {
             if newUser == NBClient.shared.getCurrentUser() {
@@ -358,29 +361,31 @@ extension HomeFeedPostViewController {
             }
         }
         else if let deleteComment = deletedObject as? Comment {
-            guard let indexOfComment = self.post.postComments.index(of: deleteComment) else { return }
+            guard let indexOfComment = self.post.postComments.index(of: deleteComment) else {
+                self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                (self.parent?.childViewControllers[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
+                return
+            }
             let deleted = self.post.postComments.remove(at: indexOfComment)
             self.tableView.beginUpdates()
             self.tableView.deleteRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
             self.post.refresh()
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             self.tableView.endUpdates()
-            if let homeVC = (self.parent as! RootNavigationBarVC).childViewControllers[0] as? HomeFeedViewController {
-                homeVC.handleDeleted(deletedObject: deleted)
-            }
+            (self.parent?.childViewControllers[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
+            var indexOfComment: Int?
             if deletedObject.parent is Comment {
-                if let indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment) {
-                    self.post.postComments[indexOfComment].refresh()
-                    UIView.setAnimationsEnabled(false)
-                    tableView.beginUpdates()
-                    tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .none)
-                    tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-                    tableView.endUpdates()
-                    UIView.setAnimationsEnabled(true)
-                }
+                indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment)
+                if indexOfComment != nil { self.post.postComments[indexOfComment!].refresh() }
             }
+            UIView.setAnimationsEnabled(false)
+            tableView.beginUpdates()
+            if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .none) }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+            tableView.endUpdates()
+            UIView.setAnimationsEnabled(true)
         }
     }
     

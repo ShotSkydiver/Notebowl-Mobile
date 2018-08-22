@@ -10,7 +10,6 @@ import XCTest
 
 class CommentUITests: NBUITests {
     
-    var textContentForPost: String!
     var parentPost: String!
     
     override func setUp() {
@@ -18,11 +17,9 @@ class CommentUITests: NBUITests {
         textContentForPost = Lorem.sentences(1)
         parentPost = createPostFromUser(user: "admin@notebowl.com")
         firstPost.dateLabel.tap(force: true)
-        
     }
     override func tearDown() { super.tearDown() }
 
-    
     func createCommentForPost(user: String) {
         _ = createNew("comments", parent: parentPost, user: user)
         waitForCondition(element: firstComment, predicate: NSPredicate(format: "exists == true"), timeout: 5.0)
@@ -65,7 +62,6 @@ class CommentUITests: NBUITests {
     func testCreateCommentWithAttachments() {
         createCommentWithText(attachments: true)
         checkPosted(withAttachments: true)
-        
     }
     
     func testLikeComment() {
@@ -73,15 +69,24 @@ class CommentUITests: NBUITests {
         firstComment.likeButton.tap()
         isHUDVisible()
         waitForHUDToDisappear()
-        XCTAssert(Int(firstComment.likeText.label)! > 0)
+        XCTAssert(Int(firstComment.likeText.label)! == 1)
+        XCTAssert(firstComment.likeButton.isSelected)
     }
     
     func testDeleteComment() {
         createCommentForPost(user: "admin@notebowl.com")
-        let commentsCount = app.tables["postDetailTableView"].cells.count
         doPostAction(action: "Delete", forCell: firstComment)
         deleteCommentAction.tap()
-        XCTAssertEqual(app.tables["postDetailTableView"].cells.count, commentsCount-1)
+        XCTAssertEqual(app.tables["postDetailTableView"].cells.count, 1)
+    }
+    
+    func testDeleteSecondComment() {
+        createCommentForPost(user: "admin@notebowl.com")
+        createCommentForPost(user: "admin@notebowl.com")
+        doPostAction(action: "Delete", forCell: firstComment)
+        deleteCommentAction.tap()
+        XCTAssertEqual(app.tables["postDetailTableView"].cells.count, 2)
+        XCTAssert(Int(postForDetailView.commentText.label)! == 1)
     }
     
     func testReportComment() {
