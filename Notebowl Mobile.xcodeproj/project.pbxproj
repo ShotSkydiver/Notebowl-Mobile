@@ -577,7 +577,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/HTTPStatusCodes/HTTPStatusCodes.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -586,7 +586,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */ = {
@@ -595,7 +595,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AcknowList/AcknowList.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/ButtonProgressBar-iOS/ButtonProgressBar_iOS.framework",
@@ -660,7 +660,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D7E5A89FA1E972E397CE5793 /* Upload Bugsnag dSYM */ = {

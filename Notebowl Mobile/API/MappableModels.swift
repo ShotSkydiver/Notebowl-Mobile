@@ -1046,6 +1046,8 @@ class Setting: NBModel {
     var key: String!
     var value: Bool!
     
+    public var group: String { return key.untilFirstCapital }
+    
     override class var routeType: ItemType { return .setting }
     
     required public init?(map: Map) {
@@ -1070,7 +1072,7 @@ class Setting: NBModel {
     }
 }
 
-class SettingsDefault: Mappable {
+class SettingsDefault: Mappable, Equatable {
     var name: String!
     var help: String?
     var rootId: String!
@@ -1093,13 +1095,14 @@ class SettingsDefault: Mappable {
     }
     
     public func findSetting() { userSetting = NBClient.shared.storedTypes[Setting.classIdentifier]?.first(where: { ($0 as! Setting).key == self.key }) as? Setting }
+    
+    static func == (lhs: SettingsDefault, rhs: SettingsDefault) -> Bool {
+        return lhs.name == rhs.name
+    }
 }
 
 class MobileSettingsDefault: SettingsDefault {
-
-    required public init?(map: Map) {
-        super.init(map: map)
-    }
+    required public init?(map: Map) { super.init(map: map) }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
@@ -1108,12 +1111,8 @@ class MobileSettingsDefault: SettingsDefault {
         findSetting()
     }
 }
-
 class EmailSettingsDefault: SettingsDefault {
-
-    required public init?(map: Map) {
-        super.init(map: map)
-    }
+    required public init?(map: Map) { super.init(map: map) }
     
     public override func mapping(map: Map) {
         super.mapping(map: map)
@@ -1122,16 +1121,28 @@ class EmailSettingsDefault: SettingsDefault {
         findSetting()
     }
 }
+class WebSettingsDefault: SettingsDefault {
+    required public init?(map: Map) { super.init(map: map) }
+    
+    public override func mapping(map: Map) {
+        super.mapping(map: map)
+        key <- map["web"]
+        defaultValue <- map["webDefault"]
+        findSetting()
+    }
+}
 
 struct SettingsGroup {
     var sectionName: String!
     var sectionMobileSettings: [MobileSettingsDefault]!
     var sectionEmailSettings: [EmailSettingsDefault]!
+    var sectionWebSettings: [WebSettingsDefault]!
 }
 
 class SettingDefaults: Mappable {
     var settingsMobile: [String: [MobileSettingsDefault]]!
     var settingsEmail: [String: [EmailSettingsDefault]]!
+    var settingsWeb: [String: [WebSettingsDefault]]!
     var settingsArray = [SettingsGroup?](repeating: nil, count: 4)
     
     var settingsPositions = ["courses", "groups", "clubs", "posts"]
@@ -1141,9 +1152,10 @@ class SettingDefaults: Mappable {
     public func mapping(map: Map) {
         settingsMobile <- map["notifications"]
         settingsEmail <- map["notifications"]
+        settingsWeb <- map["notifications"]
         
         for (key,value) in settingsMobile {
-            self.settingsArray[settingsPositions.index(of: key)!] = SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key])
+            self.settingsArray[settingsPositions.index(of: key)!] = SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key], sectionWebSettings: settingsWeb[key])
         }
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 import ObjectMapper
 import PKHUD
 
-class SettingsTableViewController: UITableViewController, UpdateVC {
+class SettingsTableViewController: UITableViewController {
     var indexes: Paths = Paths()
     var settings: [Setting]!
 
@@ -22,7 +22,6 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         SettingsTableViewHeader.register(in: tableView)
         NotificationSettingCell.register(in: tableView)
@@ -76,80 +75,10 @@ class SettingsTableViewController: UITableViewController, UpdateVC {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = NotificationSettingCell.dequeue(from: tableView)!
-        
         if self.restorationIdentifier == "mobileSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionMobileSettings[indexPath.row]) }
         else if self.restorationIdentifier == "emailSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionEmailSettings[indexPath.row]) }
-        
+        else if self.restorationIdentifier == "webSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionWebSettings[indexPath.row]) }
         
         return cell
-    }
-}
-
-
-extension SettingsTableViewController {
-    func handleUpdated(newObject: NBModel) {
-        if newObject.itemType == "Setting" {
-            self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
-            var cellIndexPath: IndexPath!
-            for section in self.settingsArray {
-                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.first(where: {$0.key == (newObject as! Setting).key}) : section!.sectionEmailSettings.first(where: {$0.key == (newObject as! Setting).key}) )!
-                foundSetting.findSetting()
-                
-                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section!.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
-                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0!.sectionName == section!.sectionName })!)
-                
-                guard let notificationCell = self.tableView.cellForRow(at: cellIndexPath) as? NotificationSettingCell else { return }
-                if (notificationCell.settingSwitch.isOn == (newObject as! Setting).value) {
-                    TTLog.debug("already set previouisly!")
-                }
-                else {
-                    notificationCell.settingSwitch.setOn((newObject as! Setting).value, animated: true)
-                }
-                
-            }
-            
-            let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
-            let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
-            let mappedResult = Mapper<SettingDefaults>().map(JSONString: String(data: nestedData!, encoding: .utf8)!)
-            
-            self.settingsArray = mappedResult?.settingsArray
-            
-            if cellIndexPath != nil { tableView.reloadRows(at: [cellIndexPath], with: .fade) }
-        }
-    }
-    
-    func handleDeleted(deletedObject: NBModel) {
-        if deletedObject.itemType == "Setting" {
-            self.settings = NBClient.shared.storedTypes[Setting.classIdentifier] as! [Setting]
-            var cellIndexPath: IndexPath!
-            for section in self.settingsArray {
-                let foundSetting: SettingsDefault = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.first(where: {$0.key == (deletedObject as! Setting).key}) : section!.sectionEmailSettings.first(where: {$0.key == (deletedObject as! Setting).key}) )!
-                foundSetting.findSetting()
-                
-                let indexRow = (self.restorationIdentifier == "mobileSettingsView" ? section!.sectionMobileSettings.index(where: {$0.name == foundSetting.name}) : section!.sectionEmailSettings.index(where: {$0.name == foundSetting.name}))
-                cellIndexPath = IndexPath(row: indexRow!, section: self.settingsArray.index(where: { $0!.sectionName == section!.sectionName })!)
-                guard let notificationCell = self.tableView.cellForRow(at: cellIndexPath) as? NotificationSettingCell else { return }
-                if (notificationCell.settingSwitch.isOn == foundSetting.defaultValue) {
-                    TTLog.debug("already set previouisly!")
-                }
-                else {
-                    notificationCell.settingSwitch.setOn(foundSetting.defaultValue, animated: true)
-                }
-
-            }
-            
-            let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
-            let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
-            let mappedResult = Mapper<SettingDefaults>().map(JSONString: String(data: nestedData!, encoding: .utf8)!)
-            
-            self.settingsArray = mappedResult?.settingsArray
-            if cellIndexPath != nil { tableView.reloadRows(at: [cellIndexPath], with: .fade) }
-        }
-    }
-    
-    func handleElapsed(elapsedObject: NBModel) { }
-    
-    func reloadTableViews() {
- 
     }
 }

@@ -30,6 +30,19 @@ public extension String {
         let rest = String(self.dropFirst())
         return first + rest
     }
+    
+    var untilFirstCapital: String {
+        let mutatingSelf = self
+        let index = mutatingSelf.index(where: { $0.isUppercased }) ?? mutatingSelf.endIndex
+        let trimmed = mutatingSelf[..<index]
+        return String(trimmed)
+    }
+}
+
+public extension Character {
+    public var isUppercased: Bool {
+        return String(self) == String(self).uppercased()
+    }
 }
 
 public extension URL {
@@ -1162,7 +1175,6 @@ class ObjectTransform<T: NBModel>: TransformType {
                 return objectExists as? T
             }
             else if self.actionType == .deleted {
-                TTLog.debug("action type: delete!")
                 return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
             }
             else {

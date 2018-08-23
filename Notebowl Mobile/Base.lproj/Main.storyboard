@@ -589,6 +589,30 @@
                                             <segue destination="p7u-nd-ClW" kind="show" identifier="emailSettingsSegue" id="xd6-y8-CXQ"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="webSettingsCell" textLabel="gwQ-2A-a1j" rowHeight="50" style="IBUITableViewCellStyleDefault" id="bid-e8-MSs">
+                                        <rect key="frame" x="0.0" y="341" width="414" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bid-e8-MSs" id="KNE-eV-sJY">
+                                            <rect key="frame" x="0.0" y="0.0" width="376" height="49.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Web Notifications" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gwQ-2A-a1j">
+                                                    <rect key="frame" x="20" y="0.0" width="356" height="49.666666666666664"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="webSettingsLabel"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Backdrop Color"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration" identifier="webSettingsCell">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
+                                        <connections>
+                                            <segue destination="Ome-fh-ctQ" kind="show" id="Fla-4a-DeR"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection id="Mut-Rc-OAd" userLabel="About">
@@ -607,8 +631,8 @@
                                                     <color key="textColor" name="Backdrop Color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Version 1.4" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
-                                                    <rect key="frame" x="319.33333333333331" y="17" width="74.666666666666671" height="18"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Version 1.6.3" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="z3r-oh-yEg">
+                                                    <rect key="frame" x="307" y="17" width="87" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -666,7 +690,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="54c-7F-6UD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2078" y="3310"/>
+            <point key="canvasLocation" x="1997" y="3569"/>
         </scene>
         <!--Push Notification Settings-->
         <scene sceneID="Exc-eT-nMg">
@@ -689,7 +713,30 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8vR-qf-6J6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2832" y="3222"/>
+            <point key="canvasLocation" x="2910" y="3388"/>
+        </scene>
+        <!--Web Notification Settings-->
+        <scene sceneID="aly-Q5-clG">
+            <objects>
+                <tableViewController storyboardIdentifier="webSettingsView" title="Web Notification Settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ome-fh-ctQ" customClass="SettingsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="70" sectionHeaderHeight="14" estimatedSectionHeaderHeight="-1" sectionFooterHeight="14" estimatedSectionFooterHeight="-1" id="CTd-Fr-Zay">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="711"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="webTable"/>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <outlet property="dataSource" destination="Ome-fh-ctQ" id="O4m-1p-oUr"/>
+                            <outlet property="delegate" destination="Ome-fh-ctQ" id="TK0-Sh-yn4"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Web Notifications" id="k7P-AL-uda"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="i7n-hy-o21" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2909" y="4093"/>
         </scene>
         <!--Email Notification Settings-->
         <scene sceneID="BtY-G8-SFK">
@@ -712,7 +759,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4yI-SX-Tqz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2819" y="4005"/>
+            <point key="canvasLocation" x="3596" y="3610"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="AXa-jz-U2e">
@@ -729,7 +776,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qch-FE-JQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1301" y="3311"/>
+            <point key="canvasLocation" x="1201" y="3569"/>
         </scene>
         <!--Notifications-->
         <scene sceneID="vUx-WI-Ovy">

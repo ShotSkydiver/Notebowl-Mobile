@@ -172,10 +172,10 @@ class AccountModalTableViewController: UITableViewController {
             setupMenuForAlert()
         }
         else if cell.reuseIdentifier == "emailSettingsCell" {
-            TTLog.debug("email settings!")
         }
         else if cell.reuseIdentifier == "pushSettingsCell" {
-            TTLog.debug("push settings!")
+        }
+        else if cell.reuseIdentifier == "webSettingsCell" {
         }
         else if cell.reuseIdentifier == "appInfoCell" {
             
