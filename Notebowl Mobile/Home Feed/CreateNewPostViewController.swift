@@ -16,6 +16,7 @@ import Kingfisher
 import YPImagePicker
 import MMUploadImage
 import SocketIO
+import PKHUD
 
 class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
@@ -23,9 +24,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var pickedCourseGroup: UILabel!
     @IBOutlet weak var dismissButton: UIBarButtonItem!
+    @IBOutlet weak var postButton: UIBarButtonItem!
     @IBOutlet weak var fakeNavBar: UINavigationBar!
     @IBOutlet weak var fakeNavTitle: UINavigationItem!
-    @IBOutlet weak var postButtonBarItem: PostButtonNavigationItem!
     
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -43,7 +44,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }()
     
     var photoLibraryButton: InputBarButtonItem!
-    var cameraButton: InputBarButtonItem!
     var coursePickerButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
     var pinnedButton: InputBarButtonItem!
@@ -87,9 +87,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     func setupViews() {
         fakeNavBar.shadowImage = UIImage.init()
-        
-        
-        
+  
         userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                options: [
                                 .transition(ImageTransition.fade(0.3)),
@@ -97,12 +95,12 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                                 .keepCurrentImageWhileLoading
             ]
         )
-        dismissButton.image = dismissButton.image!.filled(withColor: (UIImage().createGradientImage(size: 35).gradientColor)).withRenderingMode(.alwaysOriginal)
+        dismissButton.image = dismissButton.image!.filled(withColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)).withRenderingMode(.alwaysOriginal)
 
         postTextView.delegate = self
         if editingExistingPost {
             postTextView.text = existingPostToEdit.text ?? ""
-            postButtonBarItem.postButton.setTitle("Edit", for: .normal)
+            postButton.title = "Edit"
             for attachment in existingPostToEdit.postAttachments {
                 if attachment.type.contains("image") {
                     self.attachmentIDs.append(attachment.url.absoluteString)
@@ -114,8 +112,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 }
             }
         }
-        
-        postButtonBarItem.postButton.addTarget(nil, action: #selector(self.postButtonTapped), for: .touchUpInside)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -125,10 +121,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         if !textView.text.isEmpty || attachmentManager.attachments.count > 0 {
-            postButtonBarItem.postButton.isEnabled = true
+            postButton.isEnabled = true
         }
         else {
-            postButtonBarItem.postButton.isEnabled = false
+            postButton.isEnabled = false
         }
     }
     
@@ -214,7 +210,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         anonymousButton.onSelected { anonButton in
             self.anonymousToggle.toggleValue()
-            self.postButtonBarItem.changeText(anon: self.anonymousToggle)
+            if self.anonymousToggle {
+                self.postButton.width = 170
+                self.postButton.title = "Post as Anonymous"
+            }
+            else if !self.anonymousToggle {
+                self.postButton.width = 48
+                self.postButton.title = "Post"
+            }
             anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
         pinnedButton = makeButton(image: "not_pinned-vector")
@@ -257,14 +260,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    @objc func postButtonTapped() {
-        self.postButtonBarItem.postButton.startIndeterminate()
-        DispatchQueue.main.async {
+    @IBAction func postButtonAction(_ sender: Any) {
+        self.postTextView.resignFirstResponder()
+        
+        HUD.show(.progress)
+        NBClient.shared.delay(1.0) {
             let postText = self.postTextView.text
             if self.editingExistingPost {
                 self.existingPostToEdit.text = postText
                 self.existingPostToEdit.save()
-
+                
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
@@ -275,7 +280,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                         }
                     }
                 }
-                
                 if self.attachmentsToDelete.count > 0 || !self.attachmentsToDelete.isEmpty {
                     for attach in self.attachmentsToDelete {
                         if let attachDel = self.existingPostToEdit.postAttachments.first(where: {$0.url.absoluteString == attach}) {
@@ -300,12 +304,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 }
             }
             
-            DispatchQueue.main.async {
-                TTLog.debug("start nested async")
-                self.postButtonBarItem.postButton.triggerCompletion()
-                self.postTextView.resignFirstResponder()
-                self.dismiss(animated: true, completion: nil)
-            }
+            HUD.flash(.success, delay: 0.5)
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -321,12 +321,8 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
     
-        
-        
         if case .image(let image) = attachment {
-            
             if self.editingExistingPost {
-
                 if indexPath.row < (self.existingPostToEdit.postAttachments.count-self.attachmentsToDelete.count) {
                     guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
                         fatalError()
@@ -341,18 +337,15 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                 }
             }
             
-            
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
-            TTLog.debug("cellfor attachment")
             cell.attachment = attachment
             cell.indexPath = indexPath
             cell.manager = manager
             cell.imageView.image = image
 
             if !cell.uploadStarted || cell.attachmentFileID == "" {
-
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
                         params: ["uuid": UIDevice().uuid],
@@ -381,7 +374,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             }
             return cell
         }
-        
         else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
@@ -411,53 +403,16 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
         TTLog.debug("manager didreloadto")
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        TTLog.debug("manager didinsert")
-        if !postButtonBarItem.postButton.isEnabled { postButtonBarItem.postButton.isEnabled = true }
+        if !postButton.isEnabled { postButton.isEnabled = true }
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        TTLog.debug("manager didremove")
-        if manager.attachments.count == 0 && self.postTextView.isEmpty { postButtonBarItem.postButton.isEnabled = false }
+        if manager.attachments.count == 0 && self.postTextView.isEmpty { postButton.isEnabled = false }
         
         if self.editingExistingPost {
             self.attachmentsToDelete.append(self.attachmentIDs[index])
         }
         if self.attachmentIDs.count >= manager.attachments.count {
             self.attachmentIDs.remove(at: index)
-        }
-    }
-}
-
-class PostButtonNavigationItem: UIBarButtonItem {
-    let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 108, height: 35))
-    public let postButton = ButtonProgressBar(frame: CGRect(x: 0, y: 0, width: 108, height: 35))
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        
-        postButton.accessibilityIdentifier = "postButton"
-        postButton.setTitle("Post", for: .normal)
-        
-        postButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        postButton.titleLabel?.minimumScaleFactor = 0.3
-        postButton.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
-        postButton.setBackgroundImage(UIImage().createGradientImage(size: 170), for: .normal)
-        postButton.setProgressColor(color: #colorLiteral(red: 0.2039999962, green: 0.2820000052, blue: 0.3650000095, alpha: 1))
-        postButton.setCompletionImage(image: UIImage(named: "checkmark")!)
-        postButton.isEnabled = false
-        logoContainer.addSubview(postButton)
-        self.customView = logoContainer
-    }
-    
-    func changeText(anon: Bool) {
-        if anon {
-            UIView.animate(withDuration: 0.3, animations: {
-                self.postButton.setTitle("Anonymous Post", for: .normal)
-            })
-        }
-        else if !anon {
-            UIView.animate(withDuration: 0.3, animations: {
-                self.postButton.setTitle("Post", for: .normal)
-            })
         }
     }
 }
@@ -499,7 +454,6 @@ class UploadImageAttachmentCell: AttachmentCell {
 }
 
 private extension UIView {
-    
     func fillSuperview() {
         guard let superview = self.superview else {
             return

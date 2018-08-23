@@ -401,10 +401,14 @@
                                                 <action selector="dismissButtonAction:" destination="HMo-CO-fYR" id="iBQ-md-oeu"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" id="Z22-f6-zfW" customClass="PostButtonNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target">
+                                        <barButtonItem key="rightBarButtonItem" title="Post" style="done" id="aXD-VQ-twh">
+                                            <color key="tintColor" name="NB NEW DARKER BLUE"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="postButton"/>
                                             </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="postButtonAction:" destination="HMo-CO-fYR" id="ej9-NP-BsN"/>
+                                            </connections>
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
@@ -473,7 +477,7 @@
                         <outlet property="fakeNavBar" destination="bLz-kn-epM" id="GyY-v7-r8k"/>
                         <outlet property="fakeNavTitle" destination="hcz-xE-HcV" id="l4L-lK-x4u"/>
                         <outlet property="pickedCourseGroup" destination="dJG-yt-kbl" id="tgd-aH-xhe"/>
-                        <outlet property="postButtonBarItem" destination="Z22-f6-zfW" id="NPc-An-bsc"/>
+                        <outlet property="postButton" destination="aXD-VQ-twh" id="cVW-yv-uk6"/>
                         <outlet property="postTextView" destination="91D-dL-ydz" id="hEn-nq-DZY"/>
                         <outlet property="userAvatar" destination="bJt-gw-CTl" id="wcs-ti-wKM"/>
                     </connections>
@@ -590,7 +594,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="webSettingsCell" textLabel="gwQ-2A-a1j" rowHeight="50" style="IBUITableViewCellStyleDefault" id="bid-e8-MSs">
-                                        <rect key="frame" x="0.0" y="341" width="414" height="50"/>
+                                        <rect key="frame" x="0.0" y="391" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bid-e8-MSs" id="KNE-eV-sJY">
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="49.666666666666664"/>
@@ -618,7 +622,7 @@
                             <tableViewSection id="Mut-Rc-OAd" userLabel="About">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="appInfoCell" textLabel="UpL-Na-1ij" detailTextLabel="z3r-oh-yEg" rowHeight="50" style="IBUITableViewCellStyleValue1" id="isL-J7-5rC">
-                                        <rect key="frame" x="0.0" y="427" width="414" height="50"/>
+                                        <rect key="frame" x="0.0" y="477" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="isL-J7-5rC" id="Toy-HR-SG9">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="49.666666666666664"/>
@@ -646,7 +650,7 @@
                             <tableViewSection id="paC-om-na1" userLabel="Log Out">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logoutCell" textLabel="QZb-Tt-mg4" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Jeg-RQ-wTP">
-                                        <rect key="frame" x="0.0" y="513" width="414" height="50"/>
+                                        <rect key="frame" x="0.0" y="563" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jeg-RQ-wTP" id="dXG-GM-uy7">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="49.666666666666664"/>

@@ -17,8 +17,6 @@ import SwipeCellKit
 import PKHUD
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
-    
-    
     var indexes: Paths = Paths()
     
     var viewIsLoaded = false
@@ -48,6 +46,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return manager
     }()
     
+    var photoLibraryButton: InputBarButtonItem!
+    var anonymousButton: InputBarButtonItem!
+    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -72,7 +73,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         setupInputBar()
 
         refreshAllComments()
-        tableView.contentInset = UIEdgeInsetsMake(-36, 0, -36, 0)
+        tableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
         viewIsLoaded = true
     }
     
@@ -119,101 +120,92 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func setupInputBar() {
-        let items = [
-            
-            makeButton(named: "add_photo-vector")
-                .configure {
-                    $0.accessibilityIdentifier = "photoLibraryButton"
-                }
-                .onSelected { libraryButton in
-                    self.showingPhotoPicker = true
-                    var config = YPImagePickerConfiguration()
-                    config.library.numberOfItemsInRow = 3
-                    config.library.spacingBetweenItems = 4.0
-                    config.targetImageSize = .cappedTo(size: 1024)
-                    config.library.maxNumberOfItems = 10
-                    config.library.skipSelectionsGallery = true
-                    config.albumName = "Notebowl Photos"
-                    config.startOnScreen = .library
-                    config.showsCrop = .none
-                    config.wordings.libraryTitle = "Gallery"
-                    config.hidesStatusBar = false
-                    config.showsFilters = false
-                    config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
-                    config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-                    config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-                    
-                    let picker = YPImagePicker(configuration: config)
-                    
-                    picker.didFinishPicking(completion: { (items, cancelled) in
-                        if cancelled {
-                            TTLog.debug("cancelled")
-                            picker.dismiss(animated: true, completion: nil)
-                        }
-                        else if !cancelled {
-                            self.showingPhotoPicker = false
-                            picker.dismiss(animated: true, completion: {
-                                for item in items {
-                                    if case .photo(let photo) = item {
-                                        self.attachmentManager.handleInput(of: photo.image)
-                                    }
-                                }
-                            })
-                        }
-                    })
-                    
-                    if let popoverController = picker.popoverPresentationController {
-                        popoverController.sourceView = self.view
-                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                        popoverController.permittedArrowDirections = []
+        photoLibraryButton = makeButton(named: "add_photo-vector")
+            .configure {
+                $0.accessibilityIdentifier = "photoLibraryButton"
+            }
+            .onSelected { libraryButton in
+                self.showingPhotoPicker = true
+                var config = YPImagePickerConfiguration()
+                config.library.numberOfItemsInRow = 3
+                config.library.spacingBetweenItems = 4.0
+                config.targetImageSize = .cappedTo(size: 1024)
+                config.library.maxNumberOfItems = 10
+                config.library.skipSelectionsGallery = true
+                config.albumName = "Notebowl Photos"
+                config.startOnScreen = .library
+                config.showsCrop = .none
+                config.wordings.libraryTitle = "Gallery"
+                config.hidesStatusBar = false
+                config.showsFilters = false
+                config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
+                config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
+                config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
+                
+                let picker = YPImagePicker(configuration: config)
+                
+                picker.didFinishPicking(completion: { (items, cancelled) in
+                    if cancelled {
+                        TTLog.debug("cancelled")
+                        picker.dismiss(animated: true, completion: nil)
                     }
-                    self.present(picker, animated: true, completion: nil)
-                    
-            },
-            
-            makeButton(named: "visibility_on-vector")
-                .onKeyboardEditingEnds({ (anonButton) in
-                    self.anonymousToggle = false
-                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                    else if !cancelled {
+                        self.showingPhotoPicker = false
+                        picker.dismiss(animated: true, completion: {
+                            for item in items {
+                                if case .photo(let photo) = item {
+                                    self.attachmentManager.handleInput(of: photo.image)
+                                }
+                            }
+                        })
+                    }
                 })
-                .configure {
-                    $0.accessibilityIdentifier = "anonymousButton"
-                    $0.isEnabled = !self.editingExistingComment
-                    $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                
+                if let popoverController = picker.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
                 }
-                .onSelected { anonButton in
-                    self.anonymousToggle.toggleValue()
-                    
-                    UIView.animate(withDuration: 0.3, animations: {
-                        self.view.layoutIfNeeded()
-                        if self.anonymousToggle {
-                            self.inputBar.sendButton.setTitle("Anonymous Reply", for: .normal)
-                        }
-                        else if !self.anonymousToggle {
-                            self.inputBar.sendButton.setTitle("Reply", for: .normal)
-                        }
-                    })
-                    anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-            },
-            .flexibleSpace,
+                self.present(picker, animated: true, completion: nil)
+                
+        }
+        
+        anonymousButton = makeButton(named: "visibility_on-vector")
+            .configure {
+                $0.accessibilityIdentifier = "anonymousButton"
+                $0.isEnabled = !self.editingExistingComment
+                $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+            }
+            .onSelected { anonButton in
+                self.anonymousToggle.toggleValue()
+                if self.anonymousToggle {
+                    self.inputBar.sendButton.setSize(CGSize(width: 174, height: 36), animated: false)
+                    self.inputBar.sendButton.setTitle("Reply as Anonymous", for: .normal)
+                }
+                else if !self.anonymousToggle {
+                    self.inputBar.sendButton.setSize(CGSize(width: 52, height: 36), animated: false)
+                    self.inputBar.sendButton.setTitle("Reply", for: .normal)
+                }
+                anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+        }
+        
+        let items = [
+            photoLibraryButton,
+            anonymousButton,
+            InputBarButtonItem.flexibleSpace,
             inputBar.sendButton.configure {
                 $0.accessibilityIdentifier = "postButton"
-                $0.layer.cornerRadius = 8
-                $0.layer.borderWidth = 1.5
-                $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                 $0.title = "Reply"
-                $0.titleLabel?.adjustsFontSizeToFitWidth = true
-                $0.titleLabel?.minimumScaleFactor = 0.2
-                $0.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
-                $0.setTitleColor(.groupTableViewBackground, for: .normal)
-                $0.setTitleColor(.groupTableViewBackground, for: .highlighted)
-                $0.setSize(CGSize(width: 92, height: 36), animated: viewIsLoaded)
-                }.onDisabled {
-                    $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
-                    $0.backgroundColor = UIColor.groupTableViewBackground
-                }.onEnabled {
-                    $0.backgroundColor = UIColor(patternImage: (UIImage().createGradientImage(size: 200)))
-                    $0.layer.borderColor = UIColor.clear.cgColor
+                $0.titleLabel?.textAlignment = .right
+                $0.titleLabel?.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
+                $0.setTitleColor(#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), for: .normal)
+                $0.setSize(CGSize(width: 52, height: 36), animated: false)
+                }.onTouchUpInside {
+                    self.anonymousButton.image = self.anonymousButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                    $0.setSize(CGSize(width: 52, height: 36), animated: false)
+                    $0.setTitle("Reply", for: .normal)
+                    $0.isEnabled = false
+                    $0.inputBarAccessoryView?.didSelectSendButton()
             }
         ]
         inputBar.inputTextView.accessibilityIdentifier = "newCommentTextView"
@@ -221,8 +213,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         inputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
         inputBar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        inputBar.setStackViewItems(items, forStack: .bottom, animated: viewIsLoaded)
-
+        inputBar.setStackViewItems(items as! [InputItem], forStack: .bottom, animated: false)
     }
     
     func makeButton(named: String) -> InputBarButtonItem {
@@ -230,15 +221,15 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             .configure {
                 $0.spacing = .fixed(10)
                 $0.image = UIImage(named: named)!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
-                $0.setSize(CGSize(width: 30, height: 36), animated: viewIsLoaded)
-            }
+                $0.setSize(CGSize(width: 30, height: 36), animated: false)
+        }
     }
-
+    
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        inputBar.sendButton.isEnabled = false
-        inputBar.sendButton.setTitle("Reply", for: .normal)
+        inputBar.inputTextView.resignFirstResponder()
         
-        DispatchQueue.main.async {
+        HUD.show(.progress)
+        NBClient.shared.delay(1.0) {
             if self.editingExistingComment {
                 self.existingCommentToEdit.text = text
                 self.existingCommentToEdit.save()
@@ -255,29 +246,16 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     }
                 }
             }
-            DispatchQueue.main.async {
-                inputBar.inputTextView.resignFirstResponder()
-                inputBar.inputTextView.text = String()
-                inputBar.invalidatePlugins()
-                self.attachmentIDs = []
-                self.anonymousToggle = false
-            }
+            inputBar.inputTextView.text = String()
+            inputBar.invalidatePlugins()
+            self.attachmentIDs = []
+            self.anonymousToggle = false
+            HUD.flash(.success, delay: 0.5)
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    }
-    
-    func resetInput() {
-        attachmentIDs = []
-        anonymousToggle = false
-        
-        inputBar.inputTextView.resignFirstResponder()
-        inputBar.inputPlugins.removeAll()
-        resignFirstResponder()
-        reloadInputViews()
-        becomeFirstResponder()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -315,26 +293,29 @@ extension HomeFeedPostViewController {
                 self.post = newPost
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             }
-            
         }
+            
         else if let newComment = newObject as? Comment {
             let indexOfComment = self.post.postComments.index(of: newComment)
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
+            tableView.beginUpdates()
             if indexOfComment != nil {
-                existingComment == false ? tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) : tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
-                self.tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .bottom, animated: true)
+                if existingComment { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
+                else { tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) }
             }
-            else {
-                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-            }
+            else { tableView.reloadSections(IndexSet(integer: 1), with: .automatic) }
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            tableView.endUpdates()
+            tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .none, animated: true)
         }
+            
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
             if newObject.parent is Comment {
                 if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
                     self.post.postComments[indexOfComment].refresh()
                     tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
+                    tableView.scrollToRow(at: IndexPath(row: indexOfComment, section: 1), at: .none, animated: true)
                 }
             }
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
