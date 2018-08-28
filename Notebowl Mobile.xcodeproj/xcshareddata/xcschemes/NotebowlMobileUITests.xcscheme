@@ -39,9 +39,6 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "CommentUITests">
-               </Test>
-               <Test
                   Identifier = "NotebowlMobileUITests">
                </Test>
             </SkippedTests>

@@ -30,6 +30,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
 
     target 'NotebowlMobileUITests' do
         #inherit! :search_paths
+        pod 'SimulatorStatusMagic', :configurations => ['Debug']
     end
 
 post_install do |installer|

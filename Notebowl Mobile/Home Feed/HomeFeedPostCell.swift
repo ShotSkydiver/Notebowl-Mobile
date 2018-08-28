@@ -166,7 +166,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControlEvents.touchUpInside)
         
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
-        postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)"
+        postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
         postComments.text = (post.postComments.isEmpty || post.postComments == nil) ? " " : "\(post.postComments.count)"
         
         if post.text == nil { postContentTextView.isHidden = true }

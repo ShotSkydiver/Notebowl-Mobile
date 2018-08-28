@@ -1,9 +1,20 @@
 #update_fastlane
 require 'fastlane/actions/scan'
+require 'fastlane/actions/snapshot'
 default_platform(:ios)
 
 platform :ios do
     MY_XCODE_PROJECT_FILEPATH = File.absolute_path('../Notebowl Mobile.xcodeproj')
+
+    lane :screenshots do
+        xcode_select("/Applications/Xcode.app")
+        snapshot(
+                workspace: File.absolute_path('../Notebowl Mobile.xcworkspace'),
+                xcargs: '-only-testing:NotebowlMobileUITests/SnapshotUITests'
+        )
+        frame_screenshots(white: true)
+    end
+
 
     lane :manualtests do
         Dir.chdir("../../nb-deployment") do
