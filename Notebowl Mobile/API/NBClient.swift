@@ -27,7 +27,7 @@ class NBClient {
     #if DEBUG
     static let baseUrl = Environment.Production.rawValue
     //static let socketUrl = "https://demo.notebowl.xyz/"
-    static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
+    static let socketUrl = "https://\(Environment.Production.rawValue)/socket.io/"
     #else
     static let baseUrl = Environment.Production.rawValue
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
@@ -75,9 +75,9 @@ class NBClient {
         }
         _ = NBNetworking.shared.request(.delete, url: User.endpoint)
         currentUser = nil
+        NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
         UserDefaults.set(hasUserLoggedIn: false)
     }
-    
     
     
     public func doEnrollmentRequests() -> String? {
