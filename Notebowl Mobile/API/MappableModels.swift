@@ -75,9 +75,6 @@ public enum UserRole: String {
 public struct DefaultValues {
     var DEFAULT_CURVE_AMOUNT = 0
     var DEFAULT_GRADING_PRECISION = 1
-    var DEFAULT_LETTER_GRADE_TITLES = ["F", "D", "C", "B", "A"]
-    var DEFAULT_LETTER_GRADE_MEDIAN = [30, 65, 75, 85, 95]
-    var DEFAULT_LETTER_GRADE_VALUES = [0, 60, 70, 80, 90]
 }
 
 
@@ -338,7 +335,6 @@ class Term: NBModel {
 
 class Course: NBModel, WithName {
     var name: String!
-
     var number: String!
     var subject: String!
     var units: Int?
@@ -347,9 +343,7 @@ class Course: NBModel, WithName {
     var gradeBase: String?
     var gradeCurve: Int?
     var gradePrecision: Int!
-    var customGradeScale: Bool!
-    var gradeScaleTitles: String!
-    var gradeScaleValues: String!
+    var gradeScale: String!
     var gradeType: String!
     var pointsEnabled: Bool!
     var dropLowestGrade: Bool!
@@ -389,10 +383,8 @@ class Course: NBModel, WithName {
         gradeBase <- map["gradeBase"]
         gradeCurve <- map["gradeCurveAmount"]
         gradePrecision <- map["gradePrecision"]
-        customGradeScale <- map["gradeScaleCustom"]
-        gradeScaleTitles <- map["gradeScaleTitles"]
-        gradeScaleValues <- map["gradeScaleValues"]
-        gradeType <- map["gradeType"]
+        gradeScale <- map["gradeScale"]
+        gradeType <- map["gradeScheme"]
         pointsEnabled <- map["pointsEnabled"]
         dropLowestGrade <- map["useDropLowest"]
         weightedGrades <- map["useWeightedGrades"]
@@ -503,24 +495,22 @@ public class Assignment: NBModel {
         else if self.gradeScheme == .letter {
             let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
             
-            var titles = DefaultValues().DEFAULT_LETTER_GRADE_TITLES
-            var values = DefaultValues().DEFAULT_LETTER_GRADE_VALUES
+            var titles: [String] = []
+            var medians: [Int] = []
+            var values: [Int] = []
             
-            if ((self.parent as! Course).customGradeScale) {
-                let yUni: Unicode.Scalar = ";"
-                var yCharSet = CharacterSet.init()
-                yCharSet.insert(yUni)
-                titles = (self.parent as! Course).gradeScaleTitles.components(separatedBy: yCharSet)
-                let tempValues = (self.parent as! Course).gradeScaleValues.components(separatedBy: yCharSet)
-                for item in tempValues {
-                    if values.count == tempValues.index(of: item)! {
-                        values.append(Int(item)!)
-                    }
-                    else {
-                        values[tempValues.index(of: item)!] = Int(item)!
-                    }
-                    
-                }
+            let yUni: Unicode.Scalar = ";"
+            var yCharSet = CharacterSet.init()
+            yCharSet.insert(yUni)
+            let commaCharacter = CharacterSet.init(charactersIn: ",")
+            
+            let separated = (self.parent as! Course).gradeScale.components(separatedBy: yCharSet)
+            
+            for gradeSet in separated {
+                let parts = gradeSet.components(separatedBy: commaCharacter)
+                titles.append(parts[0])
+                values.append(Int(parts[1])!)
+                medians.append(Int(parts[2])!)
             }
             
             if (percentGrade < 0) {
@@ -528,13 +518,16 @@ public class Assignment: NBModel {
             }
             else {
                 for value in values {
-                    let indexAfter = values.index(after: values.index(of: value)!)
+                    let currentIndex = values.index(of: value)!
+                    
+                    let indexAfter = values.index(after: currentIndex)
+                    if indexAfter == values.endIndex { return titles[currentIndex].uppercased() }
+                    
                     if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
-                        return titles[values.index(of: value)!].uppercased()
+                        return titles[currentIndex].uppercased()
                     }
                 }
             }
-            return "error!"
         }
         
         return "\(Int(gradePoints))"
