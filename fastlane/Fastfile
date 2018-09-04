@@ -43,8 +43,8 @@ platform :ios do
     
     lane :beta do
         ensure_git_status_clean
-        increment_version_number(version_number: "1.6.2", xcodeproj: "Notebowl Mobile.xcodeproj")
-        increment_build_number(build_number: "162000", xcodeproj: "Notebowl Mobile.xcodeproj")
+        increment_version_number(version_number: "1.6.12", xcodeproj: "Notebowl Mobile.xcodeproj")
+        increment_build_number(build_number: "1612000", xcodeproj: "Notebowl Mobile.xcodeproj")
         commit_version_bump(xcodeproj: "Notebowl Mobile.xcodeproj")
         add_git_tag(postfix: "-")
         push_to_git_remote

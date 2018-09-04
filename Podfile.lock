@@ -7,14 +7,14 @@ PODS:
   - FaceAware (1.4.0)
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
-  - Haptica (2.0.4)
+  - Haptica (2.0.5)
   - HGPlaceholders (0.3.0)
   - HTTPStatusCodes (3.2.0)
   - Hue (3.0.1)
   - Imaginary (3.0.3):
     - Cache (~> 4.0)
   - InputBarAccessoryView (2.2.2)
-  - Kingfisher (4.8.1)
+  - Kingfisher (4.9.0)
   - Lightbox (2.1.2):
     - Hue (~> 3.0)
     - Imaginary (~> 3.0)
@@ -28,7 +28,7 @@ PODS:
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
   - SteviaLayout (4.2.0)
-  - SwiftDate (5.0.5)
+  - SwiftDate (5.0.7)
   - SwipeCellKit (2.4.3)
   - Tamamushi (0.1.3)
   - Wormholy (1.1.3)
@@ -125,7 +125,7 @@ CHECKOUT OPTIONS:
     :commit: 42376896da7a925e0078d4b2efdd1f1cd3c9a49a
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
-    :commit: 2ff204742ee85057366517de460eafa124446dc4
+    :commit: 63462b1e2991f971b7094a2b91678c984121ef39
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
@@ -137,13 +137,13 @@ SPEC CHECKSUMS:
   FaceAware: 94410295a219c4a397ce525eab0063d6b17258aa
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
-  Haptica: 5bf06883f3787ab658820f544d3ef81ee942db50
+  Haptica: d4a28919fabd38c4b195ee2896cc65d4ecb3f226
   HGPlaceholders: ff5ccd1ebc6cd4e8d10f25ba0f2f904e5a43a7a4
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
   Imaginary: 9b45836a5af881f452a86e0a1215772ae4712d00
   InputBarAccessoryView: 1f7bd07d111815afabaa2c11085a741378bfb247
-  Kingfisher: 868c1149679a7ab6869be118faa9b5aed154aaf0
+  Kingfisher: 64539b51826b778206daa6ed815d12653caa69dd
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
   ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
@@ -154,7 +154,7 @@ SPEC CHECKSUMS:
   Socket.IO-Client-Swift: d30d6fd08a38ad2a182b090936a043bf512ab2de
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
-  SwiftDate: 963ed9f6d97e2de396d4ce73174185de04f9cdb6
+  SwiftDate: f053fb89250c59af5eff777f3b832d2b9dd57403
   SwipeCellKit: cee9906e6d3a36e22ad1a852fba7f8fa0839d113
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
   Wormholy: 39a9487ce44afbda62eb3af2dba42b4303d0a6b8
