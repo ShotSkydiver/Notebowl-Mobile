@@ -99,6 +99,7 @@ extension CoursesTableViewController {
     
     func handleDeleted(deletedObject: NBModel) {
         if let deleteCourse = deletedObject as? Enrollment {
+            TTLog.warning("deletecourse")
             if deleteCourse.parent is Course {
                 let indexOfCourse = self.courses.index(where: { $0 == (deletedObject.parent as! Course) })
                 NBClient.shared.storedTypes[Course.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[Course.classIdentifier]?.index(of: deletedObject.parent!))!)

@@ -1268,6 +1268,7 @@ struct Config {
         return false
         #endif
     }
+    
     static var appConfiguration: AppConfiguration {
         if isDebug {
             return .Debug

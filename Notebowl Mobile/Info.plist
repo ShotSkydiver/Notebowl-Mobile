@@ -49,18 +49,20 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sync your assignment due dates with your calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Use the camera to take a picture and use it as your profile picture!</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Match your contacts with Notebowl users</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save an image attachment from a post or comment directly to your photo library!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Post photos as attachments to your posts and comments!</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Sync your events</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Match your contacts with Notebowl users</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Sync your assignment due dates with your calendar</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -25,8 +25,8 @@ class NBClient {
         case Jenkins = "demoo.notebowl.xyz"
     }
     #if DEBUG
-    static let baseUrl = Environment.Local.rawValue
-    static let socketUrl = "https://\(Environment.Local.rawValue)/socket.io/"
+    static let baseUrl = Environment.Production.rawValue
+    static let socketUrl = "https://\(Environment.Production.rawValue)/socket.io/"
     #else
     static let baseUrl = Environment.Production.rawValue
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
@@ -42,15 +42,15 @@ class NBClient {
             TTLog.debug("currentuser nil!")
             print("app uuid:", UIDevice().uuid)
             let userTest = NBNetworking.shared.request(url: User.endpoint)
-            if !userTest.statusCode!.isSuccess {
-                return false
-            }
+            if userTest.statusCode == nil { return false }
+            if !userTest.statusCode!.isSuccess { return false }
             guard let userReq = NBClient.shared.getMappable(User.self) else {
                 return false
             }
 
             if let finalUser = userReq.first {
                 setCurrentUser(user: finalUser)
+                Bugsnag.configuration()!.setUser(finalUser.resourceKey, withName: finalUser.fullName, andEmail: finalUser.email!)
                 return true
             }
             else {
@@ -66,18 +66,21 @@ class NBClient {
     func setCurrentUser(user: User) {
         currentUser = user
     }
-    
-    public func logoutUser() {
+ 
+    public func resetApp(andLogoutUser logout: Bool) {
         if NBSocket.shared.manager.status == .connected {
             NBSocket.shared.manager.defaultSocket.removeAllHandlers()
             NBSocket.shared.manager.disconnect()
         }
-        _ = NBNetworking.shared.request(.delete, url: User.endpoint)
-        currentUser = nil
+        if logout {
+            _ = NBNetworking.shared.request(.delete, url: User.endpoint)
+            UserDefaults.set(hasUserLoggedIn: false)
+        }
         NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
-        UserDefaults.set(hasUserLoggedIn: false)
+        let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
+        rootViewController.dismiss(animated: true, completion: nil)
     }
-    
+
     
     public func doEnrollmentRequests() -> String? {
         let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
@@ -125,6 +128,7 @@ class NBClient {
         if refresh! {
             for item in mutableArray {
                 item.refresh()
+                if item is WithName { (item as! WithName).firstTimeLoaded() }
             }
         }
         
@@ -169,11 +173,17 @@ class NBClient {
         let requestURL: String = url != nil ? url! : someObject.endpoint
     
         let result = NBNetworking.shared.request(url: requestURL, params: ["filters": "\(filters!)", "sortBy": sortBy!, "limit": limit!])
-        TTLog.debug("getmappable request: ", "\(result.statusCode!) - \(result.url!)")
-        if !result.statusCode!.isSuccess {
+        
+        if result.statusCode == nil {
             NBClient.shared.sendBugsnagException(fromResult: result)
+            return nil
+        }
+        else if !result.statusCode!.isSuccess {
+            NBClient.shared.sendBugsnagException(fromResult: result)
+            return nil
         }
         else {
+            TTLog.debug("getmappable request: ", "\(result.statusCode!) - \(result.url!)")
             let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
             let mapped = Mapper<T>().mapArray(JSONString: String(data: nestedData!, encoding: .utf8)!)
             objectResult = NBClient.shared.storeObjectsInCache(mapped)
@@ -189,11 +199,13 @@ class NBClient {
         for object in objects! {
             if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0 == object}) {
                 if object.updatedAt.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate {
+                    object.firstTimeLoading = false
                     TTLog.debug("new object is more recent than existing object!")
                     NBClient.shared.storedTypes[T.classIdentifier]![NBClient.shared.storedTypes[T.classIdentifier]!.index(of: objectExists)!] = object
                     newObjectArray.append(object)
                 }
                 else {
+                    objectExists.firstTimeLoading = false
                     TTLog.debug("return existing object!")
                     newObjectArray.append((objectExists as! T))
                 }
@@ -218,8 +230,14 @@ class NBClient {
     }
     
     func sendBugsnagException(fromResult: NBResult) {
-        
-        let exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(fromResult.statusCode!): \(fromResult.statusCode!.localizedReasonPhrase), url: \(fromResult.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+        var exception: NSException!
+        if fromResult.statusCode == nil || fromResult.error != nil {
+            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \(fromResult.error!), url: \(fromResult.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+        }
+        else {
+            TTLog.debug("getmappable error: ", "\(fromResult.statusCode!) - \(fromResult.url!)")
+            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(fromResult.statusCode!): \(fromResult.statusCode!.localizedReasonPhrase), url: \(fromResult.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+        }
         
         Bugsnag.notify(exception) { report in
             report.addMetadata(["uuid":"\(UIDevice().uuid)"], toTabWithName: "user")

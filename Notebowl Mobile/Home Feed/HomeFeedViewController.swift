@@ -17,6 +17,8 @@ import Tamamushi
 import SwipeCellKit
 import DeckTransition
 import PKHUD
+import Bugsnag
+import UserNotifications
 
 class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     var indexes: Paths = Paths()
@@ -70,11 +72,26 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        TTLog.testing("homeVC willappear")
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
         let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    func afterFullyLoaded() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.sound,.alert,.badge]) { (granted, error) in
+            if granted {
+                TTLog.debug("Notification Enabled Successfully")
+            } else if error != nil {
+                TTLog.error("Some Error Occured, \(error!.localizedDescription)")
+            }
+        }
+        NBSocket.shared.setup()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -149,13 +166,29 @@ extension HomeFeedViewController {
             }
         }
         else if ["CourseUser","GroupUser"].contains(newObject.itemType) {
-            if (newObject as! Enrollment).parent!.firstTimeLoading == nil { ((newObject as! Enrollment).parent as! WithName).firstTimeLoaded() }
-            if !(newObject as! Enrollment).parent!.firstTimeLoading { (newObject as! Enrollment).parent!.refresh() }
+            if (newObject as! Enrollment).parent!.firstTimeLoading == nil {
+                ((newObject as! Enrollment).parent as! WithName).firstTimeLoaded()
+            }
+            if !(newObject as! Enrollment).parent!.firstTimeLoading {
+                (newObject as! Enrollment).parent!.refresh()
+            }
             
             else if (newObject as! Enrollment).parent!.firstTimeLoading {
                 guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-                tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
+                
+                let loadingViewController = LoadingViewController()
+                if tabbarVC.presentedViewController == nil {
+                    tabbarVC.present(loadingViewController, animated: true, completion: nil)
+                }
+                else if tabbarVC.presentedViewController is LoadingViewController {
+                    return
+                }
+                
                 DispatchQueue.main.async {
+                    NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+                    NBClient.shared.resolveCurrentUser(true)
+                    _ = NBClient.shared.getMappable(Setting.self)!
+                    _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
                     let filter = NBClient.shared.doEnrollmentRequests()
                     let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
                     let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
@@ -171,7 +204,7 @@ extension HomeFeedViewController {
                     self.reloadTable()
                     courseVC.reloadTable()
                     notifsVC.reloadTable()
-                    tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
+                    loadingViewController.dismiss(animated: true, completion: nil)
                 }
             }
         }
@@ -198,7 +231,15 @@ extension HomeFeedViewController {
 
         else if ["CourseUser","GroupUser"].contains(deletedObject.itemType) {
             guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-            tabbarVC.present(tabbarVC.loadingVC, animated: true, completion: nil)
+            let loadingViewController = LoadingViewController()
+            
+            if tabbarVC.presentedViewController == nil {
+                tabbarVC.present(loadingViewController, animated: true, completion: nil)
+            }
+            else if tabbarVC.presentedViewController is LoadingViewController {
+                return
+            }
+ 
             DispatchQueue.main.async {
                 NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
                 NBClient.shared.resolveCurrentUser(true)
@@ -218,7 +259,7 @@ extension HomeFeedViewController {
                 self.reloadTable()
                 courseVC.reloadTable()
                 notifsVC.reloadTable()
-                tabbarVC.loadingVC.dismiss(animated: true, completion: nil)
+                loadingViewController.dismiss(animated: true, completion: nil)
             }
         }
     }

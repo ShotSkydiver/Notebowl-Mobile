@@ -19,10 +19,8 @@ class LoadingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setNeedsStatusBarAppearanceUpdate()
         addLoadingView()
         loadingView.accessibilityIdentifier = "loadingView"
-        showLoading(show: true)
     }
     
     func addLoadingView() {
@@ -51,7 +49,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         loadingVC = LoadingViewController()
         
         self.tabBar.items![2].accessibilityIdentifier = "notificationsItem"
-        
         HUD.dimsBackground = true
         HUD.allowsInteraction = false
     }
@@ -70,9 +67,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        delegate.registerNotifications()
-        
+
         if !hasAppeared {
             loadAllTabs()
         }
@@ -91,9 +86,9 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 homeVC.bulletinTableView.alpha = 1.0
                 homeVC.navigationController?.setNavigationBarHidden(false, animated: false)
                 self.tabBar.isHidden = false
-                self.loadingVC.dismiss(animated: true, completion: nil)
-                let delegate = UIApplication.shared.delegate as! AppDelegate
-                delegate.checkForUpdates()
+                self.loadingVC.dismiss(animated: true, completion: {
+                    homeVC.afterFullyLoaded()
+                })
             }
         }
     }

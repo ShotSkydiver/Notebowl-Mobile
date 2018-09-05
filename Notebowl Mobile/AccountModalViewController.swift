@@ -181,9 +181,7 @@ class AccountModalTableViewController: UITableViewController {
             
         }
         else if cell.reuseIdentifier == "logoutCell" {
-            NBClient.shared.logoutUser()
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-            rootViewController.dismiss(animated: true, completion: nil)
+            NBClient.shared.resetApp(andLogoutUser: true)
         }
     }
 }

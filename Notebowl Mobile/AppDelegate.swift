@@ -21,56 +21,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
-        var isAppStore: Bool = false
-            switch (Config.appConfiguration) {
-            case .Debug:
-                TTLog.debug("is debug!")
-                isAppStore = false
-            case .TestFlight:
-                isAppStore = false
-            case .AppStore:
-                isAppStore = true
-            }
-        
-        if !isAppStore {
-            _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: [
-                "Bug",
-                "Question",
-                "Looks good!"
-                ])
-        }
-        
-        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
-        
-        let siren = Siren.shared
-        siren.alertType = .force
-        siren.alertMessaging = SirenAlertMessaging(updateTitle: "Update Found")
- 
         UNUserNotificationCenter.current().delegate = self
+        application.registerForRemoteNotifications()
+        
+        setupUserDefaults()
+        setupLibraries()
+        
+        return true
+    }
+    
+    func setupUserDefaults() {
         let defaults = UserDefaults.standard
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
-        return true
     }
     
-    func registerNotifications() {
-        #if arch(i386) || arch(x86_64)
-        TTLog.debug("is simulator!")
-        return
-        #endif
+    func setupLibraries() {
+        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
         
-        if !(UIApplication.shared.isRegisteredForRemoteNotifications) {
-            TTLog.debug("not registered!")
-            
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { allow, error in
-                if allow {
-                    TTLog.debug("notifications allowed")
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
-        }
+        let siren = Siren.shared
+        if Config.appConfiguration == .Debug { siren.debugEnabled = true }
+        siren.alertType = .force
+        siren.majorUpdateAlertType = .force
+        siren.minorUpdateAlertType = .force
+        siren.patchUpdateAlertType = .option
+        siren.revisionUpdateAlertType = .option
+        siren.forceLanguageLocalization = .english
+        
+        if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -81,6 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TTLog.debug("Device Token: \(token)")
         _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token, "uuid": UIDevice().uuid])
     }
+    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         TTLog.debug("fail ", error.localizedDescription)
     }
@@ -90,49 +70,98 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TTLog.debug("aps fg: ", aps)
     }
     
-    func checkForUpdates() {
-        Siren.shared.checkVersion(checkType: .immediately)
-    }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+        Siren.shared.checkVersion(checkType: .daily)
     }
     
-    func applicationWillResignActive(_ application: UIApplication) {
-    }
+    func applicationWillResignActive(_ application: UIApplication) { }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        TTLog.debug("in background!")
         if NBSocket.shared.manager.status == .connected {
             NBSocket.shared.manager.disconnect()
             disconnectDate = Date()
         }
-        
     }
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
-        checkForUpdates()
+        Siren.shared.checkVersion(checkType: .immediately)
+
+        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return }
         
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            TTLog.debug("tabController is not presented!")
-            return
-        }
         if NBSocket.shared.manager.status == .disconnected {
-            
             NBSocket.shared.manager.connect()
             let formatter = DateFormatter.iso8061
             let dateString = formatter.string(from: self.disconnectDate)
             let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
  
             guard let keyPaths = (recReq.json as AnyObject).value(forKeyPath: "result")! as? [String] else { return }
+            if keyPaths.isEmpty || keyPaths.count == 0 { return }
+            
+            var doAppReset: Bool = false
+            var enrollments = keyPaths.filter( {$0.contains("enrollment")} )
+            if !enrollments.isEmpty || enrollments.count > 0 {
+                var possibleNewEnrollments: [String] = []
+
+                if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
+                    let cachedEnrollments = (NBClient.shared.storedTypes[Enrollment.classIdentifier]! as! [Enrollment]).filter({ $0.user == NBClient.shared.getCurrentUser() })
+                    for socketResponse in enrollments {
+                        if cachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
+                            if socketResponse.contains("deleted") {
+                                NBClient.shared.resetApp(andLogoutUser: false)
+                                return
+                            }
+                        }
+                        else if socketResponse.contains("updated") {
+                            let otherUsersCachedEnrollments = (NBClient.shared.storedTypes[Enrollment.classIdentifier]! as! [Enrollment]).filter({ $0.user != NBClient.shared.getCurrentUser() })
+                            if !otherUsersCachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
+                                doAppReset = true
+                                possibleNewEnrollments.append(socketResponse)
+                            }
+                        }
+                    }
+                }
+                else {
+                    doAppReset = true
+                }
+                
+                if !possibleNewEnrollments.isEmpty {
+                    var objectsToUpdate: [NBModel] = []
+                    for enrollment in possibleNewEnrollments {
+                        guard let contentData = enrollment.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
+                        let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+                        guard let updateUrlString = (JSON["updateUrl"] as? String) else { return }
+                        let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(updateUrlString))", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
+                        guard let object = mapped!.genericObject else { return }
+                        
+                        objectsToUpdate.append(object)
+                    }
+                    if !objectsToUpdate.contains(where: { ($0 as! Enrollment).user == NBClient.shared.getCurrentUser() }) {
+                        doAppReset = false
+                    }
+                }
+                
+                if doAppReset {
+                    NBClient.shared.resetApp(andLogoutUser: false)
+                    return
+                }
+            }
+            
             do {
-                if keyPaths.isEmpty || keyPaths.count == 0 { return }
                 for result in keyPaths {
                     guard let contentData = result.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
                     let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
                     guard let updateUrlString = (JSON["updateUrl"] as? String) else { return }
- 
                     let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(ItemType.fromURL(updateUrlString))", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
-                    
                     guard let object = mapped!.genericObject else { return }
+ 
+                    if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
+                        if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
+                            TTLog.debug("ignore")
+                            continue
+                        }
+                    }
+                    
                     if let viewControllers = tabbarVC.viewControllers {
                         for viewController in viewControllers {
                             let rootNavController = viewController as! UINavigationController
@@ -146,8 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                     case .elapsed:
                                         switchVC.handleElapsed(elapsedObject: object)
                                     default:
-                                        TTLog.error("unknown actiontype!")
-                                        return
+                                        continue
                                     }
                                 }
                             }

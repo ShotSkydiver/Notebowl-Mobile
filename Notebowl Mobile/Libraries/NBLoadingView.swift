@@ -38,7 +38,7 @@ class NBLoadingView: UIView, CAAnimationDelegate {
             
             super.init(frame: CGRect(x: centerX, y: centerY, width: dimensions, height: dimensions))
             
-            self.alpha = 0.0
+            //self.alpha = 0.0
             
             setupProperties()
             setupLayers()
