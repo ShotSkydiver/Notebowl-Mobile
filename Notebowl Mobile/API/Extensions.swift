@@ -697,6 +697,12 @@ extension UITextView {
     }
 }
 
+extension FloatingPoint {
+    var isInt: Bool {
+        return floor(self) == self
+    }
+}
+
 extension Double {
     func rounded(toPlaces places:Int) -> Double {
         let divisor = pow(10.0, Double(places))

@@ -485,13 +485,14 @@ public class Assignment: NBModel {
             let gpaValue = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
             return String(format: "%.2f", gpaValue)
         }
-            
+        
         else if self.gradeScheme == .percent {
             let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
-            return String(format: "%.2f", percentFormatted)
+            let places = (self.parent as! Course).gradePrecision
+            let formatString = "%.\(places!)f%%"
+            return String(format: formatString, percentFormatted)
         }
           
-        
         else if self.gradeScheme == .letter {
             let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
             
@@ -530,8 +531,12 @@ public class Assignment: NBModel {
                 }
             }
         }
-        return "\(Int(gradePoints))"
-
+        if gradePoints.isInt {
+            return "\(Int(gradePoints))"
+        }
+        else {
+            return "\(gradePoints)"
+        }
     }
 
     override public func refresh() {
