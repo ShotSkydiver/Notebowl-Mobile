@@ -14,11 +14,7 @@ class NotificationUITests: NBUITests {
     override func tearDown() { super.tearDown() }
 
     func testNotificationsBadgeClear() {
-        app.tabBars.buttons["notificationsItem"].tap()
-        guard let badgeValue = app.tabBars.buttons["notificationsItem"].value as? String else {
-            XCTFail("badge value not updated")
-            return
-        }
+        notificationTab.tap()
         XCTAssertEqual(badgeValue, "")
     }
 }

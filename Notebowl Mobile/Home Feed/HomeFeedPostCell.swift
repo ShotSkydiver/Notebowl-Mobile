@@ -95,6 +95,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        collectionView.accessibilityIdentifier = "IndexedCollectionView"
         collectionView.delegate = self
         collectionView.dataSource = self
         initSetup()
@@ -114,6 +115,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         userAvatarConstraint.constant = 12.0
+
+        actionsStackView.setCustomSpacing(UIStackView.spacingUseSystem, after: commentButton)
         
         postContentTextView.wrapToContent()
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
@@ -284,13 +287,24 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IndexedCollectionViewCell.identifier, for: indexPath) as! IndexedCollectionViewCell
-        let attachmentForCell = self.postForCell.postAttachments[indexPath.row]
+        
+        cell.isAccessibilityElement = true
+        cell.accessibilityIdentifier = String(format: "IndexedCollectionViewCell-%d-%d", indexPath.section, indexPath.item)
+        cell.accessibilityLabel = cell.accessibilityIdentifier
+        cell.contentView.accessibilityIdentifier = String(format: "IndexedCollectionContentView-%d-%d", indexPath.section, indexPath.item)
+        cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
+        
+        cell.attachment.accessibilityIdentifier = "IndexedCollectionCellImageView"
+        cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay"
+        cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel"
+        
+        let attachmentForCell = self.postForCell.postAttachments[indexPath.item]
         
         if attachmentForCell.type.contains("image") {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.row == 2 && indexPath.row < self.postForCell.postAttachments.count-1 {
+            if indexPath.item == 2 && indexPath.item < self.postForCell.postAttachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.postForCell.postAttachments.count-2)", forceUpdate: false)
             }
             else {
@@ -308,7 +322,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             newphotos.append(lightboxPhoto)
         }
 
-        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.row)
+        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.item)
         lightbox.pageDelegate = self
         lightbox.dismissalDelegate = self
         lightbox.imageTouchDelegate = self
@@ -333,7 +347,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if indexPath.row > 2 {
+        if indexPath.item > 2 {
             return CGSize(width: 0, height: 90)
         }
         else {

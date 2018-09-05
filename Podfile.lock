@@ -1,5 +1,7 @@
 PODS:
   - AcknowList (1.6.1)
+  - AutoMate (1.5.0)
+  - AutoMate-AppBuddy (1.3.0)
   - Bugsnag (5.16.3)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
@@ -38,6 +40,8 @@ PODS:
 
 DEPENDENCIES:
   - AcknowList
+  - AutoMate
+  - AutoMate-AppBuddy
   - Bugsnag
   - ButtonProgressBar-iOS
   - DeckTransition (~> 2.0)
@@ -65,6 +69,8 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AcknowList
+    - AutoMate
+    - AutoMate-AppBuddy
     - Bugsnag
     - ButtonProgressBar-iOS
     - Cache
@@ -130,6 +136,8 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
+  AutoMate: 6519edb25b2b03f3d26d002c753d25c12d344816
+  AutoMate-AppBuddy: 73ff42c0c9e9d9526fd94f9e4dfe1e47a508c02a
   Bugsnag: d4f14e5503b716dfe015c347426b058ad4d6a688
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
@@ -160,6 +168,6 @@ SPEC CHECKSUMS:
   Wormholy: 39a9487ce44afbda62eb3af2dba42b4303d0a6b8
   YPImagePicker: 049aa31e2858c63730ace6b6358bba946178dfe3
 
-PODFILE CHECKSUM: 83cd15992de9bff6a41a05761d8facafab829bdd
+PODFILE CHECKSUM: 3ce97268a1ddae045aa007eca46d463c93e5089a
 
 COCOAPODS: 1.6.0.beta.1

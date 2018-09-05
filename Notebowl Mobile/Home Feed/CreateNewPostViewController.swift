@@ -35,6 +35,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     
     lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()
+        manager.attachmentView.accessibilityIdentifier = "AttachmentsCollectionView"
         manager.delegate = self
         manager.dataSource = self
         manager.isPersistent = true
@@ -154,9 +155,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             let picker = YPImagePicker(configuration: config)
             
-            picker.didFinishPicking(completion: { (items, cancelled) in
+            picker.didFinishPicking { [unowned picker] items, cancelled in
                 if cancelled {
-                    TTLog.debug("cancelled")
                     picker.dismiss(animated: true, completion: nil)
                 }
                 else if !cancelled {
@@ -168,7 +168,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     }
                     })
                 }
-            })
+            }
             
             if let popoverController = picker.popoverPresentationController {
                 popoverController.sourceView = self.view
@@ -328,6 +328,8 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                         fatalError()
                     }
                     TTLog.debug("this is an existing attachment!")
+                    cell.accessibilityIdentifier = String(format: "ImageAttachmentCell-%d", indexPath.row)
+                    
                     cell.attachment = attachment
                     cell.indexPath = indexPath
                     cell.manager = manager
@@ -340,6 +342,8 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
+            cell.accessibilityIdentifier = String(format: "UploadImageAttachmentCell-%d", indexPath.row)
+            
             cell.attachment = attachment
             cell.indexPath = indexPath
             cell.manager = manager

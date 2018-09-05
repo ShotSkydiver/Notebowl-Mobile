@@ -264,7 +264,7 @@ private extension XCUIElementQuery {
 
             return element.isStatusBar(deviceWidth)
         }
-
+        
         return self.containing(isStatusBar)
     }
 }

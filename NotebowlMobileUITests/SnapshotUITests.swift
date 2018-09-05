@@ -28,8 +28,8 @@ class SnapshotUITests: NBUITests {
     func testHomeFeedDetailScreenshot() {
         let table = app.tables["bulletinTableView"]
         let cell = table.children(matching: .cell).element(boundBy: 1)
-        self.waitForCondition(element: cell.dateLabel, predicate: NSPredicate(format: "exists == true"), timeout: 20.0)
-        cell.dateLabel.tap(force: true)
+        self.waitForCondition(element: cell.staticTexts["dateLabel"], predicate: NSPredicate(format: "exists == true"), timeout: 20.0)
+        cell.staticTexts["dateLabel"].tap(force: true)
         snapshot("02HomeFeedDetailView")
     }
 

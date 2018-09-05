@@ -39,12 +39,14 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Introduction to Extreme" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6ey-pg-wYE">
                                             <rect key="frame" x="20" y="42.666666666666657" width="348" height="34.333333333333343"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="courseTitle"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                             <color key="textColor" red="0.23921568627450979" green="0.23921568627450979" blue="0.23921568627450979" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last updated 20 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JVM-eO-vC0">
                                             <rect key="frame" x="20" y="87" width="174" height="22"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="courseLastUpdated"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="174" id="Xex-KI-8AT"/>
                                                 <constraint firstAttribute="height" constant="22" id="umm-kE-V2i"/>
@@ -55,6 +57,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNI 123" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6o-pc-MXg">
                                             <rect key="frame" x="20" y="10.999999999999998" width="126" height="24.333333333333329"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="courseNumber"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="126" id="8yd-Ha-wOX"/>
                                             </constraints>
@@ -76,6 +79,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <accessibility key="accessibilityConfiguration" identifier="courseCell">
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
                                 <connections>
                                     <outlet property="courseNumber" destination="f6o-pc-MXg" id="H5E-ES-Ubo"/>
                                     <outlet property="courseTitle" destination="6ey-pg-wYE" id="04d-o2-iij"/>
@@ -84,6 +90,9 @@
                                 </connections>
                             </tableViewCell>
                         </prototypes>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="courseTableView"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="JtQ-y2-5t3" id="0aD-Ck-aAL"/>
                             <outlet property="delegate" destination="JtQ-y2-5t3" id="C55-LL-7ha"/>
@@ -114,6 +123,7 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Assignment Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZIE-fy-dMo">
                                             <rect key="frame" x="20" y="11" width="374" height="25"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentName"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="JGP-vu-sZt"/>
                                             </constraints>
@@ -123,6 +133,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Assignment description is right here this is it" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kAA-c0-oIU">
                                             <rect key="frame" x="20" y="36" width="374" height="18"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentDescription"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="18" id="K5t-vF-qeQ"/>
                                             </constraints>
@@ -141,6 +152,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="40" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boB-CN-Ksw">
                                             <rect key="frame" x="128" y="83" width="19.666666666666657" height="16"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentTotalPoints"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -156,6 +168,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Closed" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bwx-Jn-REp">
                                             <rect key="frame" x="189" y="83" width="49.666666666666657" height="16"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentStatus"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -172,6 +185,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Complete" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sfa-fM-FW5">
                                             <rect key="frame" x="20" y="83" width="69.333333333333329" height="16"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentUserGrade"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -187,6 +201,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4 weeks" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0QB-Sy-O0n">
                                             <rect key="frame" x="335" y="83" width="59" height="16"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="assignmentDueDate"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -225,6 +240,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
+                                <accessibility key="accessibilityConfiguration" identifier="assignmentCell">
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
                                 <connections>
                                     <outlet property="assignmentDesc" destination="kAA-c0-oIU" id="ryp-HZ-dVf"/>
                                     <outlet property="assignmentGrade" destination="sfa-fM-FW5" id="NBL-5t-dyl"/>
@@ -235,6 +253,9 @@
                                 </connections>
                             </tableViewCell>
                         </prototypes>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="assignmentsTableView"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="CRV-YB-rwr" id="94m-H1-amf"/>
                             <outlet property="delegate" destination="CRV-YB-rwr" id="DbP-3a-pHp"/>
@@ -786,7 +807,11 @@
         <scene sceneID="vUx-WI-Ovy">
             <objects>
                 <navigationController id="hUS-W2-ld6" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Notifications" image="bell-vector" id="ykP-pp-fDG"/>
+                    <tabBarItem key="tabBarItem" title="Notifications" image="bell-vector" id="ykP-pp-fDG">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="notificationsTab"/>
+                        </userDefinedRuntimeAttributes>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C0V-xe-Ww4">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -808,7 +833,11 @@
         <scene sceneID="ite-OS-Tnq">
             <objects>
                 <navigationController title="Profile Nav Controller" extendedLayoutIncludesOpaqueBars="YES" id="h5w-W2-6Qi" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Bulletin" image="today_apps-vector" id="Lho-Gi-jfY"/>
+                    <tabBarItem key="tabBarItem" title="Bulletin" image="today_apps-vector" id="Lho-Gi-jfY">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="homeTab"/>
+                        </userDefinedRuntimeAttributes>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -968,7 +997,11 @@
         <scene sceneID="Zu3-of-Cjb">
             <objects>
                 <navigationController title="Courses Nav Controller" id="HSI-fu-8pP" customClass="RootNavigationBarVC" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Courses" image="book-vector" id="GaJ-TT-zS9"/>
+                    <tabBarItem key="tabBarItem" title="Courses" image="book-vector" id="GaJ-TT-zS9">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="coursesTab"/>
+                        </userDefinedRuntimeAttributes>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0JD-ga-Hq1">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

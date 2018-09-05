@@ -9,55 +9,43 @@
 import XCTest
 
 class PostDetailViewUITests: NBUITests {
-
-    var parentPost: String!
     
     override func setUp() {
         super.setUp()
-        textContentForPost = Lorem.sentences(1)
-        parentPost = createPostFromUser(user: "admin@notebowl.com")
-        firstPost.dateLabel.tap(force: true)
+        setupBulletin(app, testCase: self)
+        API.createPostFromUser()
+        let parentPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        parentPost.navigateToDetailView()
     }
+
     override func tearDown() { super.tearDown() }
     
     func testDeleteParentPost() {
-        doPostAction(action: "Delete", forCell: postForDetailView)
-        deletePostAction.tap()
-        //isHUDVisible()
-        //waitForHUDToDisappear()
-        XCTAssertFalse(app.tables["bulletinTableView"].cells["homeFeedPostCell"].exists)
+        let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        existingPost.deleteSelf()
     }
     
     func testEditParentPostText() {
-        doPostAction(action: "Edit", forCell: postForDetailView)
-        addText(text: " Post edited!")
-        postButton.tap()
-        checkPost(checkEdited: true, postCell: postForDetailView)
+        let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        existingPost.editText()
     }
     
     func testEditParentPostAddAttachments() {
-        let attachmentsCount = postForDetailView.attachments.count
-        doPostAction(action: "Edit", forCell: postForDetailView)
-        handlePhotoLibraryPermissions()
-        addAttachmentsToPost(withIndexes: [3])
-        postButton.tap()
-        XCTAssertGreaterThan(postForDetailView.attachments.count, attachmentsCount)
+        let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        existingPost.addAttachments(editingExisting: true)
+        Bulletin.finishCreatingAndSubmit()
+        let modifiedPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        modifiedPost.assertAttachmentsExist()
     }
     
     func testLikeParentPost() {
-        postForDetailView.likeButton.tap()
-        isHUDVisible()
-        waitForHUDToDisappear()
-        XCTAssert(Int(postForDetailView.likeText.label)! == 1)
-        XCTAssert(postForDetailView.likeButton.isSelected)
+        let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        existingPost.likeSelf()
     }
     
     func testUnlikeParentPost() {
-        testLikeParentPost()
-        postForDetailView.likeButton.tap()
-        isHUDVisible()
-        waitForHUDToDisappear()
-        XCTAssertFalse(postForDetailView.likeText.exists)
-        XCTAssertFalse(postForDetailView.likeButton.isSelected)
+        let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        existingPost.likeSelf()
+        existingPost.unlikeSelf()
     }
 }

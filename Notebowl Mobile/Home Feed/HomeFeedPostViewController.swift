@@ -269,12 +269,28 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
+            
+            cell.isAccessibilityElement = false
+            cell.accessibilityIdentifier = String(format: "HomeFeedPostCell-DetailView-%d-%d", indexPath.section, indexPath.row)
+            cell.accessibilityLabel = cell.accessibilityIdentifier
+            cell.contentView.isAccessibilityElement = false
+            cell.contentView.accessibilityIdentifier = String(format: "PostCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
+            cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
+            
             cell.configure(post: self.post)
             cell.delegate = self
             return cell
         }
         else {
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
+            
+            cell.isAccessibilityElement = false
+            cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-DetailView-%d-%d", indexPath.section, indexPath.row)
+            cell.accessibilityLabel = cell.accessibilityIdentifier
+            cell.contentView.isAccessibilityElement = false
+            cell.contentView.accessibilityIdentifier = String(format: "CommentCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
+            cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
+            
             let comment = self.post.postComments[indexPath.row]
             cell.configure(comment: comment)
             cell.selectionStyle = .none

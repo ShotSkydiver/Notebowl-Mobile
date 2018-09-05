@@ -25,9 +25,8 @@ class NBClient {
         case Jenkins = "demoo.notebowl.xyz"
     }
     #if DEBUG
-    static let baseUrl = Environment.Production.rawValue
-    //static let socketUrl = "https://demo.notebowl.xyz/"
-    static let socketUrl = "https://\(Environment.Production.rawValue)/socket.io/"
+    static let baseUrl = Environment.Local.rawValue
+    static let socketUrl = "https://\(Environment.Local.rawValue)/socket.io/"
     #else
     static let baseUrl = Environment.Production.rawValue
     static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
@@ -217,7 +216,6 @@ class NBClient {
         }
         return newObjectArray
     }
-    
     
     func sendBugsnagException(fromResult: NBResult) {
         

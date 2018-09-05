@@ -76,6 +76,7 @@ final public class PickerViewViewController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        pickerView.accessibilityIdentifier = "CoursePickerView"
         pickerView.dataSource = self
         pickerView.delegate = self
     }

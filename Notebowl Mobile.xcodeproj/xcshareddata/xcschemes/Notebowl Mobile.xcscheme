@@ -39,7 +39,19 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "CommentUITests">
+               </Test>
+               <Test
+                  Identifier = "MiscAppUITests">
+               </Test>
+               <Test
                   Identifier = "NotebowlMobileUITests">
+               </Test>
+               <Test
+                  Identifier = "PostDetailViewUITests">
+               </Test>
+               <Test
+                  Identifier = "SnapshotUITests">
                </Test>
             </SkippedTests>
          </TestableReference>

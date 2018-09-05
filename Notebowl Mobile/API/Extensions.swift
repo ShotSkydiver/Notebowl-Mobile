@@ -1127,6 +1127,7 @@ extension CellActionsVC {
     
     func report(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
         let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
+        
         let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
             let abuse = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
             abuse.save()
@@ -1135,6 +1136,7 @@ extension CellActionsVC {
             PKHUD.sharedHUD.show()
             PKHUD.sharedHUD.hide(afterDelay: 2.0)
         })
+        
         let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
             let abuse = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
             abuse.save()
@@ -1147,6 +1149,7 @@ extension CellActionsVC {
         alert.addAction(inappropriate)
         alert.addAction(spam)
         alert.addAction(cancel)
+        
         vc.present(alert, animated: true, completion: nil)
     }
 }

@@ -83,6 +83,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        collectionView.accessibilityIdentifier = "IndexedCollectionView-DetailView"
         collectionView.delegate = self
         collectionView.dataSource = self
         initSetup()
@@ -223,13 +224,24 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IndexedCollectionViewCell.identifier, for: indexPath) as! IndexedCollectionViewCell
-        let attachmentForCell = self.commentForCell.commentAttachments[indexPath.row]
+        
+        cell.isAccessibilityElement = true
+        cell.accessibilityIdentifier = String(format: "IndexedCollectionViewCell-DetailView-%d-%d", indexPath.section, indexPath.item)
+        cell.accessibilityLabel = cell.accessibilityIdentifier
+        cell.contentView.accessibilityIdentifier = String(format: "IndexedCollectionContentView-DetailView-%d-%d", indexPath.section, indexPath.item)
+        cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
+        
+        cell.attachment.accessibilityIdentifier = "IndexedCollectionCellImageView-DetailView"
+        cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay-DetailView"
+        cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel-DetailView"
+        
+        let attachmentForCell = self.commentForCell.commentAttachments[indexPath.item]
         
         if attachmentForCell.type.contains("image") {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.row == 2 && indexPath.row < self.commentForCell.commentAttachments.count-1 {
+            if indexPath.item == 2 && indexPath.item < self.commentForCell.commentAttachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.commentForCell.commentAttachments.count-2)", forceUpdate: false)
             }
             else {
@@ -246,7 +258,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
             newphotos.append(lightboxPhoto)
         }
-        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.row)
+        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.item)
         lightbox.pageDelegate = self
         lightbox.dismissalDelegate = self
         lightbox.imageTouchDelegate = self
@@ -272,7 +284,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if indexPath.row > 2 {
+        if indexPath.item > 2 {
             return CGSize(width: 0, height: 90)
         }
         else {

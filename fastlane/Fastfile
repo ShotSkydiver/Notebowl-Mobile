@@ -22,6 +22,18 @@ platform :ios do
         end
                     
         xcode_select("/Applications/Xcode.app")
+        suppress_tests(
+            workspace: File.absolute_path('../Notebowl Mobile.xcworkspace'),
+            scheme: 'Notebowl Mobile',
+            tests: [
+                'NotebowlMobileUITests/CommentUITests',
+                'NotebowlMobileUITests/PostUITests',
+                'NotebowlMobileUITests/PostDetailViewUITests',
+                'NotebowlMobileUITests/SnapshotUITests'
+        #        'NotebowlMobileUITests/NotificationUITests'
+        #        'NotebowlMobileUITests/MiscAppUITests'
+            ]
+        )
         scan(
             build_for_testing: true,
             workspace: File.absolute_path('../Notebowl Mobile.xcworkspace'),
@@ -36,7 +48,7 @@ platform :ios do
             |test_identifier| puts test_identifier
             run_tests(only_testing: test_identifier)
             Dir.chdir("../../nb-deployment") do 
-                sh("./fix-broken-db-nonint-local.sh")
+                sh("./fix-broken-db-nonint.sh")
             end
         }
     end
@@ -68,4 +80,9 @@ platform :ios do
             )                
     end
 
+    lane :refresh_dsyms do
+        download_dsyms
+        upload_symbols_to_bugsnag
+        clean_build_artifacts
+    end
 end

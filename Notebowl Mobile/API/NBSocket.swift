@@ -60,9 +60,7 @@ class NBSocket {
         
         if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
             if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
-                if !((object as! Enrollment).parent?.enrollmentForUser?.userRoleIsImportant)! {
-                    return nil
-                }
+                return nil
             }
         }
         

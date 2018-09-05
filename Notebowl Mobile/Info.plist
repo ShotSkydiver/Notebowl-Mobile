@@ -59,6 +59,8 @@
 	<string>Sync your events</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Match your contacts with Notebowl users</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sync your assignment due dates with your calendar</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

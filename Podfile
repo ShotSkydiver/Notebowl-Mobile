@@ -26,11 +26,13 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Siren'
         pod 'SwiftDate', '~> 5.0'
         pod 'Wormholy', :configurations => ['Debug']
+        pod 'AutoMate-AppBuddy'
     end
 
     target 'NotebowlMobileUITests' do
         #inherit! :search_paths
         pod 'SimulatorStatusMagic', :configurations => ['Debug']
+        pod 'AutoMate'
     end
 
 post_install do |installer|

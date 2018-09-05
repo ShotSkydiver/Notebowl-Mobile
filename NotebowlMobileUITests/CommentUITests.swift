@@ -10,90 +10,61 @@ import XCTest
 
 class CommentUITests: NBUITests {
     
-    var parentPost: String!
-    
     override func setUp() {
         super.setUp()
-        textContentForPost = Lorem.sentences(1)
-        parentPost = createPostFromUser(user: "admin@notebowl.com")
-        firstPost.dateLabel.tap(force: true)
+        setupBulletin(app, testCase: self)
+        API.createPostFromUser()
+        let parentPost = Bulletin.waitUntilPostExists(atIndex: 0)
+        parentPost.navigateToDetailView()
     }
     override func tearDown() { super.tearDown() }
 
-    func createCommentForPost(user: String) {
-        _ = createNew("comments", parent: parentPost, user: user)
-        waitForCondition(element: firstComment, predicate: NSPredicate(format: "exists == true"), timeout: 5.0)
-    }
-    
-    func createCommentWithText(content: String? = nil, attachments: Bool = false, anonymous: Bool = false) {
-        inputTextView.staticTexts.element.tap(force: true)
-        
-        inputTextView.typeText((content == nil ? self.textContentForPost : content!))
-        XCTAssertEqual((inputTextView.value as! String), (content == nil ? self.textContentForPost : content!))
 
-        if attachments {
-            handlePhotoLibraryPermissions()
-            addAttachmentsToPost(withIndexes: [1,2])
-        }
-        if anonymous {
-            app.buttons["anonymousButton"].tap()
-        }
-        postButton.tap()
-    }
-    
-    func checkPosted(content: String? = nil, asAnonymous: Bool = false, withAttachments: Bool = false) {
-        XCTAssertEqual((lastComment.textViews["postContent"].value as! String), (content == nil ? self.textContentForPost : content))
-        XCTAssertEqual(lastComment.dateLabel.label, "just now")
-        
-        if asAnonymous { XCTAssertEqual(lastComment.userName.label, "Anonymous") }
-        if withAttachments { XCTAssert(lastComment.attachments.count > 0) }
-    }
-    
     func testCreateComment() {
-        createCommentWithText()
-        checkPosted()
+        Bulletin.startCreatingNewComment()
+        Bulletin.finishCreatingAndSubmit()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.assertSelf()
     }
-    
+
     func testCreateAnonymousComment() {
-        createCommentWithText(anonymous: true)
-        checkPosted(asAnonymous: true)
+        Bulletin.startCreatingNewComment(asAnonymousUser: true)
+        Bulletin.finishCreatingAndSubmit()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.assertSelf(expectPostedAnonymously: true)
     }
-    
+
     func testCreateCommentWithAttachments() {
-        createCommentWithText(attachments: true)
-        checkPosted(withAttachments: true)
+        Bulletin.startCreatingNewComment()
+        Bulletin.addAttachmentsToNewComment()
+        Bulletin.finishCreatingAndSubmit()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.assertSelf()
+        newComment.assertAttachmentsExist()
     }
-    
+
     func testLikeComment() {
-        createCommentForPost(user: "admin@notebowl.com")
-        firstComment.likeButton.tap()
-        isHUDVisible()
-        waitForHUDToDisappear()
-        XCTAssert(Int(firstComment.likeText.label)! == 1)
-        XCTAssert(firstComment.likeButton.isSelected)
+        API.createCommentForPost()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.likeSelf()
     }
-    
+
     func testDeleteComment() {
-        createCommentForPost(user: "admin@notebowl.com")
-        doPostAction(action: "Delete", forCell: firstComment)
-        deleteCommentAction.tap()
-        XCTAssertEqual(app.tables["postDetailTableView"].cells.count, 1)
+        API.createCommentForPost()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.deleteSelf()
     }
-    
+
     func testDeleteSecondComment() {
-        createCommentForPost(user: "admin@notebowl.com")
-        createCommentForPost(user: "admin@notebowl.com")
-        doPostAction(action: "Delete", forCell: firstComment)
-        deleteCommentAction.tap()
-        XCTAssertEqual(app.tables["postDetailTableView"].cells.count, 2)
-        XCTAssert(Int(postForDetailView.commentText.label)! == 1)
+        API.createCommentForPost()
+        API.createCommentForPost()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 2)
+        newComment.deleteSelf()
     }
-    
+
     func testReportComment() {
-        createCommentForPost(user: "bob.smith@notebowl.com")
-        doPostAction(action: "Report", forCell: firstComment)
-        reportAction.tap()
-        isHUDVisible()
+        API.createCommentForPost(user: "andrew.chaifetz@notebowl.com")
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        newComment.reportSelf()
     }
-    
 }

@@ -258,6 +258,14 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = HomeFeedPostCell.dequeue(from: tableView)!
+       
+        cell.isAccessibilityElement = false
+        cell.accessibilityIdentifier = String(format: "HomeFeedPostCell-%d-%d", indexPath.section, indexPath.row)
+        cell.accessibilityLabel = cell.accessibilityIdentifier
+        cell.contentView.isAccessibilityElement = false
+        cell.contentView.accessibilityIdentifier = String(format: "PostCellContentView-%d-%d", indexPath.section, indexPath.row)
+        cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
+        
         let post = self.posts[indexPath.row]
         cell.parentController = self
         cell.configure(post: post)

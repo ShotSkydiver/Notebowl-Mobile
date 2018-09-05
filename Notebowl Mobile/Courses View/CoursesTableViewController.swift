@@ -84,8 +84,8 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
 extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
         if let newCourse = newObject as? Course {
-            var indexOfCourse = self.courses.index(where: { $0 == newCourse })
             self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+            var indexOfCourse = self.courses.index(of: newCourse)
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             placeholderTableView?.showDefault()
             if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) }

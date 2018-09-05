@@ -9,9 +9,9 @@
 import Foundation
 import XCTest
 
-public enum AvailableCourses: String {
-    case firstCourse = "ENG 109: Honors English"
-    case secondCourse = "PHYS 241: Electro Magnetic Physics"
+public struct AvailableCourses {
+    static var firstCourse = "ENG 109: Honors English"
+    static var secondCourse = "PHYS 241: Electro Magnetic Physics"
 }
 
 enum Environment: String {
@@ -19,4 +19,5 @@ enum Environment: String {
     case Local = "demo.notebowl.xyz"
 }
 
+public var textToEditPostWith: String { return " Post edited!" }
 
