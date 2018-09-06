@@ -98,11 +98,20 @@
                             <outlet property="delegate" destination="JtQ-y2-5t3" id="C55-LL-7ha"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="My Courses" id="ccg-3z-bBX"/>
+                    <navigationItem key="navigationItem" title="My Courses" id="ccg-3z-bBX">
+                        <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" style="plain" id="jrK-U2-ZEu">
+                            <connections>
+                                <action selector="profileButtonTapped:" destination="JtQ-y2-5t3" id="tLW-to-Hlf"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueCourseDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Tmb-rL-p4e"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vbn-dK-6Fe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1727.536231884058" y="1078.5326086956522"/>
+            <point key="canvasLocation" x="1903" y="1048"/>
         </scene>
         <!--Course Assignments Table View-->
         <scene sceneID="KuI-kd-hrA">
@@ -346,7 +355,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Notifications" id="Z04-Zo-9l3">
-                        <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" id="agi-BX-OGO">
+                        <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" style="plain" id="agi-BX-OGO">
                             <connections>
                                 <action selector="profileButtonTapped:" destination="Jd2-FC-big" id="z7G-bY-uzE"/>
                             </connections>
@@ -643,7 +652,7 @@
                             <tableViewSection id="paC-om-na1" userLabel="Log Out">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="logoutCell" textLabel="QZb-Tt-mg4" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Jeg-RQ-wTP">
-                                        <rect key="frame" x="0.0" y="563" width="414" height="50"/>
+                                        <rect key="frame" x="0.0" y="477" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jeg-RQ-wTP" id="dXG-GM-uy7">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="49.666666666666664"/>
@@ -878,7 +887,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NcF-z0-kmO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="1807"/>
+            <point key="canvasLocation" x="2436" y="1732"/>
         </scene>
         <!--Post Detail-->
         <scene sceneID="LWz-jU-F1G">
@@ -903,7 +912,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aBT-R8-zhj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2832" y="1764"/>
+            <point key="canvasLocation" x="3338" y="1732"/>
         </scene>
         <!--Root View-->
         <scene sceneID="UZy-wh-fI0">
@@ -1016,7 +1025,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Ffz-FF-4VI"/>
-        <segue reference="Ssj-YJ-Jbk"/>
+        <segue reference="Tmb-rL-p4e"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>
