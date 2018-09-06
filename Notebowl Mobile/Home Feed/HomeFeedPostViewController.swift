@@ -179,7 +179,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             .onSelected { anonButton in
                 self.anonymousToggle.toggleValue()
                 if self.anonymousToggle {
-                    self.inputBar.sendButton.setSize(CGSize(width: 174, height: 36), animated: false)
+                    self.inputBar.sendButton.setSize(CGSize(width: 184, height: 36), animated: false)
                     self.inputBar.sendButton.setTitle("Reply as Anonymous", for: .normal)
                 }
                 else if !self.anonymousToggle {
@@ -196,7 +196,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             inputBar.sendButton.configure {
                 $0.accessibilityIdentifier = "postButton"
                 $0.title = "Reply"
-                $0.titleLabel?.textAlignment = .right
+                $0.titleLabel?.textAlignment = .left
                 $0.titleLabel?.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
                 $0.setTitleColor(#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), for: .normal)
                 $0.setSize(CGSize(width: 52, height: 36), animated: false)
@@ -219,7 +219,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     func makeButton(named: String) -> InputBarButtonItem {
         return InputBarButtonItem()
             .configure {
-                $0.spacing = .fixed(10)
+                $0.spacing = .fixed(4)
                 $0.image = UIImage(named: named)!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
                 $0.setSize(CGSize(width: 30, height: 36), animated: false)
         }

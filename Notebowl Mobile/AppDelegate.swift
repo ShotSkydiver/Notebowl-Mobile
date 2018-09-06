@@ -21,6 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        if Config.isDebug { TTLog.testing("uuid: ", "\(UIDevice().uuid)") }
+        
         UNUserNotificationCenter.current().delegate = self
         application.registerForRemoteNotifications()
         

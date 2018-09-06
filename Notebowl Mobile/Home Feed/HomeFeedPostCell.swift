@@ -192,7 +192,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")
         }
-        else if post.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+        else if post.creator! == NBClient.shared.getCurrentUser() {
             userName.text = post.creator!.fullName
             userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [

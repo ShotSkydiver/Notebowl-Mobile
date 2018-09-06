@@ -177,9 +177,6 @@ class AccountModalTableViewController: UITableViewController {
         }
         else if cell.reuseIdentifier == "webSettingsCell" {
         }
-        else if cell.reuseIdentifier == "appInfoCell" {
-            
-        }
         else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.resetApp(andLogoutUser: true)
         }
