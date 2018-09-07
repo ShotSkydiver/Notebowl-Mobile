@@ -506,13 +506,15 @@ public class Assignment: NBModel {
             let commaCharacter = CharacterSet.init(charactersIn: ",")
             
             let separated = (self.parent as! Course).gradeScale.components(separatedBy: yCharSet)
-    
+
             for gradeSet in separated {
                 let parts = gradeSet.components(separatedBy: commaCharacter)
                 titles.append(parts[0])
                 values.append(Int(parts[1])!)
                 medians.append(Int(parts[2])!)
             }
+            
+            
 
             if (percentGrade < 0) {
                 return titles[0].uppercased()
@@ -521,12 +523,18 @@ public class Assignment: NBModel {
             else {
                 for value in values {
                     let currentIndex = values.index(of: value)!
-                    
                     let indexAfter = values.index(after: currentIndex)
                     if indexAfter == values.endIndex { return titles[currentIndex].uppercased() }
                     
                     if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
+                        if (Int(percentGrade)) != medians[currentIndex] {
+                            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
+                            let formatString = "%.0f%%"
+                            let percentString = String(format: formatString, percentFormatted)
+                            return (percentString + " (\(titles[currentIndex].uppercased()))")
+                        }
                         return titles[currentIndex].uppercased()
+                        
                     }
                 }
             }
