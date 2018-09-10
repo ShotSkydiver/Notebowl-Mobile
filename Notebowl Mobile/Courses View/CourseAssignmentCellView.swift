@@ -21,7 +21,7 @@ class CourseAssignmentViewCell: UITableViewCell {
     @IBOutlet weak var pointsHeader: UILabel!
     @IBOutlet weak var statusHeader: UILabel!
     
-    var assignmentForCell: Assignment!
+    var assignmentForCell: AssignmentAssessment!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,13 +35,13 @@ class CourseAssignmentViewCell: UITableViewCell {
 
     func initSetup() { }
 
-    func configure(assignment: Assignment) {
+    func configure(assignment: AssignmentAssessment) {
         assignmentName.text = assignment.title
-        assignmentDesc.text = (assignment.gradeOnly ? "" : assignment.desc)
+        assignmentDesc.text = assignment.desc
 
         dueDate.text = assignment.dueDate.relativeFormat
 
-        if assignment.parent?.enrollmentForUser?.role == .professor || assignment.parent?.enrollmentForUser?.role == .admin {
+        if (assignment as! NBModel).parent?.enrollmentForUser?.role == .professor || (assignment as! NBModel).parent?.enrollmentForUser?.role == .admin {
             assignmentGrade.text = ("\(assignment.points ?? 0)")
             gradeHeader.text = "POINTS"
             
@@ -58,7 +58,7 @@ class CourseAssignmentViewCell: UITableViewCell {
             assignmentPoints.text = ("\(assignment.points ?? 0)")
             pointsHeader.text = "POINTS"
             
-            assignmentStatus.text = assignment.getStatus
+            assignmentStatus.text = assignment.status
             statusHeader.text = "STATUS"
         }
         self.assignmentForCell = assignment

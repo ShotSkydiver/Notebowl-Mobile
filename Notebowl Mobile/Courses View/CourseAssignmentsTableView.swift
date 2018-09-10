@@ -14,8 +14,8 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
     var placeholderTableView: AssignmentTableView?
     
-    var assignments: [Assignment]!
-    var data = [Category: [Assignment]]()
+    var assignments: [AssignmentAssessment]!
+    var data = [Category: [AssignmentAssessment]]()
     var selectedCourse: Course!
     var categories: [Category]!
     
@@ -48,8 +48,13 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
                 _ = NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)
                 let assigns = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!
                 _ = NBClient.shared.requireByReferences(Grade.self, property: "_parent", values: assigns)
-                for assign in assigns {
-                    assign.refresh()
+                var combined = assigns as [AssignmentAssessment]
+                let assess = NBClient.shared.requireByReference(Assessment.self, property: "parent", value: self.selectedCourse)!
+                _ = NBClient.shared.requireByReferences(AssessmentSubmission.self, property: "_parent", values: assess)
+                _ = NBClient.shared.requireByReferences(AssessmentQuestion.self, property: "_parent", values: assess)
+                _ = NBClient.shared.requireByReferences(Grade.self, property: "_owner", values: assess)
+                combined += assess as [AssignmentAssessment]
+                for assign in combined {
                     assign.getGradeString()
                 }
                 self.selectedCourse.refresh()
@@ -136,13 +141,14 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
 extension CourseAssignmentsTableView {
     
     func handleUpdated(newObject: NBModel) {
-        if newObject.itemType == "AssignmentGroup" {
-            
-        }
-        else if let newAssignment = newObject as? Assignment {
-            self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
-            let indexOfAssignment = self.assignments.index(of: newAssignment)
-            self.assignments[indexOfAssignment!].refresh()
+        if let newAssignment = newObject as? AssignmentAssessment {
+            let assigns = NBClient.shared.storedTypes[Assignment.classIdentifier]!
+            var combined = assigns as! [AssignmentAssessment]
+            let assess = NBClient.shared.storedTypes[Assessment.classIdentifier]!
+            combined += assess as! [AssignmentAssessment]
+            self.assignments = combined
+
+            let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == (newAssignment as! NBModel) })
             self.assignments[indexOfAssignment!].getGradeString()
             self.updateData()
             let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment!].category)
@@ -152,7 +158,8 @@ extension CourseAssignmentsTableView {
                 placeholderTableView?.showDefault()
             }
 
-            let indexInData = self.data[newAssignment.category]!.index(of: newAssignment)
+            let indexInData = self.data[newAssignment.category]!.index(where: { ($0 as! NBModel) == (newAssignment as! NBModel) })
+
             existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .fade)
         }
 
@@ -167,16 +174,15 @@ extension CourseAssignmentsTableView {
         }
         
         else if let newGrade = newObject as? Grade {
-            if newGrade.parent is Assignment {
-                if (newGrade.parent as! Assignment).parent?.enrollmentForUser?.role == .professor || (newGrade.parent as! Assignment).parent?.enrollmentForUser?.role == .admin {
+            if newGrade.parent is Assessment || newGrade.parent is Assignment {
+                if newGrade.parent!.parent?.enrollmentForUser?.role == .professor || newGrade.parent!.parent?.enrollmentForUser?.role == .admin {
                     return
                 }
-                if let indexOfAssignment = self.assignments.index(of: (newGrade.parent as! Assignment)) {
-                    self.assignments[indexOfAssignment].refresh()
+                if let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == newGrade.parent! }) {
                     self.assignments[indexOfAssignment].getGradeString()
                     self.updateData()
 
-                    let indexInData = self.data[(newGrade.parent as! Assignment).category]!.index(of: (newGrade.parent as! Assignment))
+                    let indexInData = self.data[(newGrade.parent as! AssignmentAssessment).category]!.index(where: { ($0 as! NBModel) == newGrade.parent! })
                     let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment].category)
                     tableView.reloadRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .fade)
                 }
@@ -188,10 +194,16 @@ extension CourseAssignmentsTableView {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if let deleteAssignment = deletedObject as? Assignment {
-            let indexOfAssignment = self.data[deleteAssignment.category]!.index(where: { $0 == deleteAssignment })
+        if let deleteAssignment = deletedObject as? AssignmentAssessment {
+            let indexOfAssignment = self.data[deleteAssignment.category]!.index(where: { ($0 as! NBModel) == (deleteAssignment as! NBModel) })
             let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
-            self.assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]! as! [Assignment]
+
+            let assigns = NBClient.shared.storedTypes[Assignment.classIdentifier]!
+            var combined = assigns as! [AssignmentAssessment]
+            let assess = NBClient.shared.storedTypes[Assessment.classIdentifier]!
+            combined += assess as! [AssignmentAssessment]
+            self.assignments = combined
+
             self.updateData()
 
             if indexOfAssignment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) }

@@ -16,6 +16,10 @@ public enum ItemType: String {
     case assignment = "assignments"
     case assignmentGroup = "assignmentGroups"
     case assignmentGroupUser = "assignmentGroupUsers"
+    case assessment = "assessments"
+    case assessmentSubmission = "assessmentSubmissions"
+    case assessmentQuestion = "assessmentQuestions"
+    case assessmentResponse = "assessmentResponses"
     case category = "categories"
     case grade = "grades"
     case university = "universities"
@@ -103,6 +107,14 @@ class Generic: StaticMappable {
                 return Response<Assignment>()
             case "AssignmentGroup":
                 return Response<AssignmentGroup>()
+            case "Assessment":
+                return Response<Assessment>()
+            case "AssessmentSubmission":
+                return Response<AssessmentSubmission>()
+            case "AssessmentQuestion":
+                return Response<AssessmentQuestion>()
+            case "AssessmentResponse":
+                return Response<AssessmentResponse>()
             case "Category":
                 return Response<Category>()
             case "Grade":
@@ -276,7 +288,100 @@ public protocol WithName {
     func firstTimeLoaded()
 }
 
+public protocol AssignmentAssessment {
+    var title: String! { get }
+    var desc: String! { get }
+    var category: Category! { get }
+    var dueDate: Date! { get }
+    var status: String! { get }
+    var userGrade: Grade! { get }
+    var gradeString: String! { get }
+    var points: Int! { get }
+    func getUserGrade() -> String
+    func getGradeString()
+}
+extension AssignmentAssessment {
 
+    public func getRoundedGradePercent(grade: Double) -> Double {
+        let rawPercent = grade / Double(self.points) * 100
+        let percentRounded = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
+        return percentRounded
+    }
+
+    public func getUserGrade() -> String {
+        if userGrade == nil { return "-" }
+        guard let gradePoints = userGrade.grade else { return "-" }
+
+        if self.gradeScheme == .completion {
+            return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
+        }
+
+        else if self.gradeScheme == .percent && (self.parent as! Course).gradeGPAEnabled {
+            var rawPercent = gradePoints / Double(self.points!) * 100
+            rawPercent = rawPercent / 100 * 4
+            let gpaValue = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
+            return String(format: "%.2f", gpaValue)
+        }
+
+        else if self.gradeScheme == .percent {
+            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
+            let places = (self.parent as! Course).gradePrecision
+            let formatString = "%.\(places!)f%%"
+            return String(format: formatString, percentFormatted)
+        }
+
+        else if self.gradeScheme == .letter {
+            let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
+
+            var titles: [String] = []
+            var medians: [Int] = []
+            var values: [Int] = []
+
+            let yUni: Unicode.Scalar = ";"
+            var yCharSet = CharacterSet.init()
+            yCharSet.insert(yUni)
+            let commaCharacter = CharacterSet.init(charactersIn: ",")
+
+            let separated = (self.parent as! Course).gradeScale.components(separatedBy: yCharSet)
+
+            for gradeSet in separated {
+                let parts = gradeSet.components(separatedBy: commaCharacter)
+                titles.append(parts[0])
+                values.append(Int(parts[1])!)
+                medians.append(Int(parts[2])!)
+            }
+
+            if (percentGrade < 0) {
+                return titles[0].uppercased()
+            }
+
+            else {
+                for value in values {
+                    let currentIndex = values.index(of: value)!
+                    let indexAfter = values.index(after: currentIndex)
+                    if indexAfter == values.endIndex { return titles[currentIndex].uppercased() }
+
+                    if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
+                        if (Int(percentGrade)) != medians[currentIndex] {
+                            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
+                            let formatString = "%.0f%%"
+                            let percentString = String(format: formatString, percentFormatted)
+                            return (percentString + " (\(titles[currentIndex].uppercased()))")
+                        }
+                        return titles[currentIndex].uppercased()
+
+                    }
+                }
+            }
+        }
+        if gradePoints.isInt {
+            return "\(Int(gradePoints))"
+        }
+        else {
+            return "\(gradePoints)"
+        }
+    }
+}
 
 public class User: NBModel {
 
@@ -362,7 +467,7 @@ class Course: NBModel, WithName {
     
     public var refreshedOnce: Bool = false
 
-    public var courseAssignments: [Assignment]!
+    public var courseAssignments: [AssignmentAssessment]!
     public var courseCategories: [Category]!
         
     override class var routeType: ItemType { return .course }
@@ -404,8 +509,13 @@ class Course: NBModel, WithName {
     }
 
     func updateChildren() {
-        let assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent! == self }) as? [Assignment]
-        self.courseAssignments = (assignments == nil ? [] : assignments!)
+        var assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent! == self }) as? [AssignmentAssessment]
+        assignments = (assignments == nil ? [] : assignments!)
+
+        let assessments = NBClient.shared.storedTypes[Assessment.classIdentifier]?.filter({ $0.parent! == self }) as? [AssignmentAssessment]
+        if assessments != nil { assignments! += assessments! }
+        self.courseAssignments = assignments!
+        
         let categories = NBClient.shared.storedTypes[Category.classIdentifier]?.filter({ $0.parent! == self }) as? [Category]
         self.courseCategories = (categories == nil ? [] : categories!)
     }
@@ -416,26 +526,26 @@ class Course: NBModel, WithName {
     }
 }
 
-public class Assignment: NBModel {
-    
-    var title: String!
-    var points: Int?
-    var dueDate: Date!
+public class Assignment: NBModel, AssignmentAssessment {
+
+    public var title: String!
+    public var points: Int!
+    public var dueDate: Date!
     var availableDate: Date!
-    var desc: String?
+    public var desc: String!
     var gradeOnly: Bool!
     var gradeScheme: GradeType!
     var type: String!
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
-    var category: Category!
+    public var category: Category!
 
     public var userGrade: Grade!
     
     public var gradeString: String!
     public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
     public var isPastDue: Bool { return dueDate.isInPast }
-    public var getStatus: String { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
+    public var status: String { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
     
     override class var routeType: ItemType { return .assignment }
     
@@ -450,8 +560,13 @@ public class Assignment: NBModel {
         points <- map["points"]
         dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
-        desc <- map["description"]
         gradeOnly <- map["gradeOnly"]
+        if gradeOnly {
+            desc = ""
+        }
+        else {
+            desc <- map["description"]
+        }
         gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         type <- map["type"]
         gradesPublished <- map["gradesPublished"]
@@ -460,94 +575,17 @@ public class Assignment: NBModel {
         category <- (map["_category"], ObjectTransform<Category>())
         userGrade = nil
     }
-    
+
     public func getGradeString() {
+        let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).parent == self }) as? Grade
+        self.userGrade = (grade == nil ? nil : grade!)
         self.gradeString = getUserGrade()
     }
     
-    func getRoundedGradePercent(grade: Double) -> Double {
-        let rawPercent = grade / Double(self.points!) * 100
-        let percentRounded = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
-        return percentRounded
-    }
-    
-    public func getUserGrade() -> String {
-        if userGrade == nil { return "-" }
-        guard let gradePoints = userGrade.grade else { return "-" }
 
-        if self.gradeScheme == .completion {
-            return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
-        }
-            
-        else if self.gradeScheme == .percent && (self.parent as! Course).gradeGPAEnabled {
-            var rawPercent = gradePoints / Double(self.points!) * 100
-            rawPercent = rawPercent / 100 * 4
-            let gpaValue = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
-            return String(format: "%.2f", gpaValue)
-        }
-        
-        else if self.gradeScheme == .percent {
-            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
-            let places = (self.parent as! Course).gradePrecision
-            let formatString = "%.\(places!)f%%"
-            return String(format: formatString, percentFormatted)
-        }
-          
-        else if self.gradeScheme == .letter {
-            let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
-            
-            var titles: [String] = []
-            var medians: [Int] = []
-            var values: [Int] = []
-            
-            let yUni: Unicode.Scalar = ";"
-            var yCharSet = CharacterSet.init()
-            yCharSet.insert(yUni)
-            let commaCharacter = CharacterSet.init(charactersIn: ",")
-            
-            let separated = (self.parent as! Course).gradeScale.components(separatedBy: yCharSet)
-
-            for gradeSet in separated {
-                let parts = gradeSet.components(separatedBy: commaCharacter)
-                titles.append(parts[0])
-                values.append(Int(parts[1])!)
-                medians.append(Int(parts[2])!)
-            }
-            
-            if (percentGrade < 0) {
-                return titles[0].uppercased()
-            }
-            
-            else {
-                for value in values {
-                    let currentIndex = values.index(of: value)!
-                    let indexAfter = values.index(after: currentIndex)
-                    if indexAfter == values.endIndex { return titles[currentIndex].uppercased() }
-                    
-                    if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
-                        if (Int(percentGrade)) != medians[currentIndex] {
-                            let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
-                            let formatString = "%.0f%%"
-                            let percentString = String(format: formatString, percentFormatted)
-                            return (percentString + " (\(titles[currentIndex].uppercased()))")
-                        }
-                        return titles[currentIndex].uppercased()
-                        
-                    }
-                }
-            }
-        }
-        if gradePoints.isInt {
-            return "\(Int(gradePoints))"
-        }
-        else {
-            return "\(gradePoints)"
-        }
-    }
 
     override public func refresh() {
-        let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).parent == self }) as? Grade
-        self.userGrade = (grade == nil ? nil : grade!)
+        getGradeString()
     }
 }
 
@@ -569,7 +607,149 @@ class AssignmentGroup: NBModel {
     }
 }
 
-class Category: NBModel {
+public class Assessment: NBModel, AssignmentAssessment {
+    var allowPartialCredit: Bool!
+    var answerOrder: String!
+    var availableDate: Date!
+    var defaultQuestionPoints: Int!
+    public var desc: String!
+    public var dueDate: Date!
+    var gracePeriod: Int!
+    var gradeScheme: GradeType!
+    var gradesPublished: Bool!
+    var locked: Bool!
+    var permalink: String!
+    var permittedSubmissionAttempts: Int!
+    var questionOrder: String!
+    var questionScheme: String!
+    var resultScheme: String!
+    var timeLimit: Int!
+    public var title: String!
+    public var category: Category!
+
+    public var points: Int {
+        let questions = NBClient.shared.storedTypes[AssessmentQuestion.classIdentifier]?.filter({ $0.parent! == self }) as? [AssessmentQuestion]
+        var pointsCalculated: Int = 0
+        for question in questions! {
+            if !question.extraCredit {
+                pointsCalculated += question.points
+            }
+        }
+        return pointsCalculated
+    }
+
+    public var userGrade: Grade!
+
+    public var gradeString: String!
+    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
+    public var isPastDue: Bool { return dueDate.isInPast }
+    public var status: String {
+        let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: { ($0 as! AssessmentSubmission).parent == self }) as? AssessmentSubmission
+
+        if submission == nil {
+            return (isPastDue ? "Closed" : "Open")
+        }
+        else if submission!.endDate == nil {
+            return "In Progress"
+        }
+        else {
+            return "Submitted"
+        }
+    }
+
+    override class var routeType: ItemType { return .assessment }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override public func mapping(map: Map) {
+        super.mapping(map: map)
+
+        title <- map["title"]
+        dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
+        availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
+        desc <- map["description"]
+        gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
+        gradesPublished <- map["gradesPublished"]
+
+        category <- (map["_category"], ObjectTransform<Category>())
+        userGrade = nil
+    }
+
+
+
+    public func getGradeString() {
+        let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).owner == self }) as? Grade
+        self.userGrade = (grade == nil ? nil : grade!)
+        self.gradeString = getUserGrade()
+    }
+
+    override public func refresh() {
+        getGradeString()
+    }
+}
+
+class AssessmentQuestion: NBModel {
+    var questionScheme: String!
+    var title: String!
+    var points: Int!
+    var desc: String?
+    var extraCredit: Bool!
+
+    override class var routeType: ItemType { return .assessmentQuestion }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+
+        questionScheme <- map["questionScheme"]
+        title <- map["title"]
+        points <- map["points"]
+        desc <- map["description"]
+        extraCredit <- map["extraCredit"]
+    }
+}
+
+class AssessmentSubmission: NBModel {
+    var startDate: Date!
+    var endDate: Date?
+
+    override class var routeType: ItemType { return .assessmentSubmission }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+
+        startDate <- (map["startDate"], ISO8601FixedDateTransform())
+        endDate <- (map["endDate"], ISO8601FixedDateTransform())
+    }
+}
+
+class AssessmentResponse: NBModel {
+    var textContent: String!
+
+    override class var routeType: ItemType { return .assessmentResponse }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+
+        textContent <- map["textContent"]
+    }
+}
+
+
+public class Category: NBModel {
     var title: String!
     var weight: Int!
     var isExtraCredit: Bool!
@@ -581,7 +761,7 @@ class Category: NBModel {
         super.init(map: map)
     }
     
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
         
         title <- map["title"]
