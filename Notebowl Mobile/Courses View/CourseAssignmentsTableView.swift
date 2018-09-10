@@ -135,6 +135,9 @@ extension CourseAssignmentsTableView {
         
         else if let newGrade = newObject as? Grade {
             if newGrade.parent is Assignment {
+                if (newGrade.parent as! Assignment).parent?.enrollmentForUser?.role == .professor || (newGrade.parent as! Assignment).parent?.enrollmentForUser?.role == .admin {
+                    return
+                }
                 if let indexOfAssignment = self.assignments.index(of: (newGrade.parent as! Assignment)) {
                     self.assignments[indexOfAssignment].refresh()
                     self.assignments[indexOfAssignment].getGradeString()

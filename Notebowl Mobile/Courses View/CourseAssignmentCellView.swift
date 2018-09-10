@@ -17,6 +17,9 @@ class CourseAssignmentViewCell: UITableViewCell {
     @IBOutlet weak var assignmentPoints: UILabel!
     @IBOutlet weak var assignmentStatus: UILabel!
     @IBOutlet weak var dueDate: UILabel!
+    @IBOutlet weak var gradeHeader: UILabel!
+    @IBOutlet weak var pointsHeader: UILabel!
+    @IBOutlet weak var statusHeader: UILabel!
     
     var assignmentForCell: Assignment!
 
@@ -30,21 +33,34 @@ class CourseAssignmentViewCell: UITableViewCell {
         initSetup()
     }
 
-    func initSetup() {
-
-
-    }
+    func initSetup() { }
 
     func configure(assignment: Assignment) {
         assignmentName.text = assignment.title
         assignmentDesc.text = (assignment.gradeOnly ? "" : assignment.desc)
 
-        assignmentPoints.text = ("\(assignment.points ?? 0)")
         dueDate.text = assignment.dueDate.relativeFormat
 
-        assignmentGrade.text = assignment.gradeString
-        assignmentStatus.text = assignment.getStatus
-
+        if assignment.parent?.enrollmentForUser?.role == .professor || assignment.parent?.enrollmentForUser?.role == .admin {
+            assignmentGrade.text = ("\(assignment.points ?? 0)")
+            gradeHeader.text = "POINTS"
+            
+            assignmentPoints.text = ""
+            pointsHeader.text = ""
+            
+            assignmentStatus.text = ""
+            statusHeader.text = ""
+        }
+        else {
+            assignmentGrade.text = assignment.gradeString
+            gradeHeader.text = "GRADE"
+            
+            assignmentPoints.text = ("\(assignment.points ?? 0)")
+            pointsHeader.text = "POINTS"
+            
+            assignmentStatus.text = assignment.getStatus
+            statusHeader.text = "STATUS"
+        }
         self.assignmentForCell = assignment
     }
     

@@ -151,7 +151,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POINTS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kdf-fm-Gbr">
-                                            <rect key="frame" x="128" y="65" width="44" height="14"/>
+                                            <rect key="frame" x="135" y="65" width="44" height="14"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="44" id="P0O-mf-rQ4"/>
                                             </constraints>
@@ -160,14 +160,14 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="40" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boB-CN-Ksw">
-                                            <rect key="frame" x="128" y="83" width="20" height="16"/>
+                                            <rect key="frame" x="135" y="83" width="20" height="16"/>
                                             <accessibility key="accessibilityConfiguration" identifier="assignmentTotalPoints"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STATUS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q7m-zp-t7O">
-                                            <rect key="frame" x="189" y="65" width="44" height="14"/>
+                                            <rect key="frame" x="196" y="65" width="44" height="14"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="44" id="G9E-2W-FDQ"/>
                                             </constraints>
@@ -176,17 +176,17 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Closed" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bwx-Jn-REp">
-                                            <rect key="frame" x="189" y="83" width="50" height="16"/>
+                                            <rect key="frame" x="196" y="83" width="50" height="16"/>
                                             <accessibility key="accessibilityConfiguration" identifier="assignmentStatus"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GRADE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UTU-x8-qCN">
-                                            <rect key="frame" x="20" y="65" width="37" height="14"/>
+                                            <rect key="frame" x="20" y="65" width="44" height="14"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="14" id="Fi3-xy-4PA"/>
-                                                <constraint firstAttribute="width" constant="37" id="e2S-Dm-gKq"/>
+                                                <constraint firstAttribute="width" constant="44" id="e2S-Dm-gKq"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
                                             <color key="textColor" red="0.58039215690000001" green="0.58039215690000001" blue="0.58039215690000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -259,6 +259,9 @@
                                     <outlet property="assignmentPoints" destination="boB-CN-Ksw" id="8nR-WB-LSC"/>
                                     <outlet property="assignmentStatus" destination="bwx-Jn-REp" id="E2Q-7k-ebz"/>
                                     <outlet property="dueDate" destination="0QB-Sy-O0n" id="Kxd-WI-bpA"/>
+                                    <outlet property="gradeHeader" destination="UTU-x8-qCN" id="j48-BT-Fiq"/>
+                                    <outlet property="pointsHeader" destination="Kdf-fm-Gbr" id="4Rs-hJ-QhH"/>
+                                    <outlet property="statusHeader" destination="Q7m-zp-t7O" id="w8G-Z2-zBf"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

@@ -514,8 +514,6 @@ public class Assignment: NBModel {
                 medians.append(Int(parts[2])!)
             }
             
-            
-
             if (percentGrade < 0) {
                 return titles[0].uppercased()
             }
