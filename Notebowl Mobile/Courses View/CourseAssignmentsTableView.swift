@@ -25,6 +25,8 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = selectedCourse.courseCode
+
+        SettingsTableViewHeader.register(in: tableView)
         
         placeholderTableView = tableView as? AssignmentTableView
         placeholderTableView?.placeholderDelegate = self
@@ -33,9 +35,11 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
         
+        tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0)
+        
         reloadTable()
     }
-    
+
     func reloadTable() {
         loadingView.showLoadView(true)
         bgView.showViewAnimated(true)
@@ -83,6 +87,35 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
             return ""
         }
         return title
+    }
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = SettingsTableViewHeader.dequeue(from: tableView)!
+        header.setupHeader(showButton: false)
+        if let count = self.data[self.categories[section]]?.count {
+            if count == 0 {
+                header.sectionTitle.text = ""
+                header.sectionTitle.isHidden = true
+            }
+            else if let title = self.categories[section].title {
+                header.sectionTitle.text = title
+                header.sectionTitle.isHidden = false
+            }
+        }
+        else {
+            header.sectionTitle.text = ""
+        }
+        
+        return header
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if self.data[self.categories[section]]?.count == 0 {
+            return 0
+        }
+        else {
+            return 40
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
