@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -20,17 +21,17 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="dam-sz-zCc">
-                            <rect key="frame" x="20" y="0.0" width="280" height="80"/>
+                            <rect key="frame" x="16" y="0.0" width="288" height="80"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="firstBaseline" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q0a-en-tJk">
-                                    <rect key="frame" x="0.0" y="0.0" width="280" height="40"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="288" height="40"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ny6-Bt-05k">
-                                            <rect key="frame" x="0.0" y="0.0" width="238.5" height="40"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="238" height="40"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </view>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WYW-Wd-BcQ">
-                                            <rect key="frame" x="238.5" y="-22.5" width="41.5" height="33.5"/>
+                                            <rect key="frame" x="238" y="-22.666666666666668" width="50" height="33"/>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                             <state key="normal" title="Done"/>
                                             <connections>
@@ -40,7 +41,8 @@
                                     </subviews>
                                 </stackView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="SECTION TITLE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aFK-KR-f27" customClass="KerningLabel" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="40" width="280" height="40"/>
+                                    <rect key="frame" x="0.0" y="40" width="288" height="40"/>
+                                    <accessibility key="accessibilityConfiguration" identifier="settingsTableViewHeaderLabel"/>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                     <color key="textColor" red="0.4587516191709845" green="0.4587516191709845" blue="0.4587516191709845" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
@@ -56,13 +58,14 @@
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <color key="tintColor" name="Notebowl Blue Color"/>
                     <constraints>
-                        <constraint firstItem="dam-sz-zCc" firstAttribute="trailing" secondItem="xvd-2c-dAp" secondAttribute="trailing" constant="-20" id="Rxu-Ev-jWj"/>
+                        <constraint firstItem="dam-sz-zCc" firstAttribute="trailing" secondItem="xvd-2c-dAp" secondAttribute="trailing" constant="-16" id="Rxu-Ev-jWj"/>
                         <constraint firstItem="dam-sz-zCc" firstAttribute="bottom" secondItem="xvd-2c-dAp" secondAttribute="bottom" id="cbL-US-roi"/>
                         <constraint firstItem="dam-sz-zCc" firstAttribute="top" secondItem="xvd-2c-dAp" secondAttribute="top" id="eAO-ss-j2x"/>
-                        <constraint firstItem="dam-sz-zCc" firstAttribute="leading" secondItem="xvd-2c-dAp" secondAttribute="leading" constant="20" id="ubF-go-7zU"/>
+                        <constraint firstItem="dam-sz-zCc" firstAttribute="leading" secondItem="xvd-2c-dAp" secondAttribute="leading" constant="16" id="ubF-go-7zU"/>
                     </constraints>
                 </view>
             </subviews>
+            <accessibility key="accessibilityConfiguration" identifier="settingsTableViewHeader"/>
             <constraints>
                 <constraint firstItem="xvd-2c-dAp" firstAttribute="leading" secondItem="SKA-uY-itr" secondAttribute="leading" id="KQx-xM-aIl"/>
                 <constraint firstAttribute="bottom" secondItem="xvd-2c-dAp" secondAttribute="bottom" id="TQN-wZ-dTW"/>
@@ -81,7 +84,7 @@
     </objects>
     <resources>
         <namedColor name="Notebowl Blue Color">
-            <color red="0.23100000619888306" green="0.65100002288818359" blue="0.88599997758865356" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.22745098039215686" green="0.65098039215686276" blue="0.88235294117647056" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

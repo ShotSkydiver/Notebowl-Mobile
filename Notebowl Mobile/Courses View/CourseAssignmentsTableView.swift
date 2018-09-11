@@ -30,13 +30,15 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         
         placeholderTableView = tableView as? AssignmentTableView
         placeholderTableView?.placeholderDelegate = self
-        
+
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 70.0
+        tableView.contentInset = UIEdgeInsetsMake(-18, 0, 0, 0)
+
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
-        
-        tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0)
-        
+
         reloadTable()
     }
 
@@ -47,6 +49,7 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
             if self.selectedCourse.courseCategories.isEmpty {
                 _ = NBClient.shared.requireByReference(Category.self, property: "parent", value: self.selectedCourse)
                 let assigns = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)!
+                _ = NBClient.shared.requireByReferences(Submission.self, property: "_parent", values: assigns)
                 _ = NBClient.shared.requireByReferences(Grade.self, property: "_parent", values: assigns)
                 var combined = assigns as [AssignmentAssessment]
                 let assess = NBClient.shared.requireByReference(Assessment.self, property: "parent", value: self.selectedCourse)!
@@ -84,33 +87,16 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         return self.data.count
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if self.data[self.categories[section]]?.count == 0 {
-            return nil
-        }
-        guard let title = self.categories[section].title else {
-            return ""
-        }
-        return title
-    }
-
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = SettingsTableViewHeader.dequeue(from: tableView)!
         header.setupHeader(showButton: false)
-        if let count = self.data[self.categories[section]]?.count {
-            if count == 0 {
-                header.sectionTitle.text = ""
-                header.sectionTitle.isHidden = true
-            }
-            else if let title = self.categories[section].title {
-                header.sectionTitle.text = title
-                header.sectionTitle.isHidden = false
-            }
+        guard let count = self.data[self.categories[section]]?.count else { fatalError() }
+
+        if let title = self.categories[section].title {
+            header.sectionTitle.text = title.uppercased()
+            if count == 0 { header.sectionTitle.alpha = 0.0 }
+            else { header.sectionTitle.alpha = 1.0 }
         }
-        else {
-            header.sectionTitle.text = ""
-        }
-        
         return header
     }
     
@@ -120,6 +106,15 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
         }
         else {
             return 40
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if self.data[self.categories[section]]?.count == 0 {
+            return 0
+        }
+        else {
+            return 18
         }
     }
     
@@ -142,15 +137,19 @@ extension CourseAssignmentsTableView {
     
     func handleUpdated(newObject: NBModel) {
         if let newAssignment = newObject as? AssignmentAssessment {
-            let assigns = NBClient.shared.storedTypes[Assignment.classIdentifier]!
+            let assigns = (NBClient.shared.storedTypes.has(key: Assignment.classIdentifier) ? NBClient.shared.storedTypes[Assignment.classIdentifier]! : [])
             var combined = assigns as! [AssignmentAssessment]
-            let assess = NBClient.shared.storedTypes[Assessment.classIdentifier]!
+            let assess = (NBClient.shared.storedTypes.has(key: Assessment.classIdentifier) ? NBClient.shared.storedTypes[Assessment.classIdentifier]! : [])
             combined += assess as! [AssignmentAssessment]
             self.assignments = combined
 
             let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == (newAssignment as! NBModel) })
+            _ = NBClient.shared.requireByReference(AssessmentQuestion.self, property: "parent", value: newObject)
             self.assignments[indexOfAssignment!].getGradeString()
+            self.selectedCourse.refresh()
+
             self.updateData()
+
             let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment!].category)
             let existingAssignment = tableView.numberOfRows(inSection: indexOfCategory!) < self.data[self.categories[indexOfCategory!]]!.count ? false : true
 
@@ -158,9 +157,26 @@ extension CourseAssignmentsTableView {
                 placeholderTableView?.showDefault()
             }
 
-            let indexInData = self.data[newAssignment.category]!.index(where: { ($0 as! NBModel) == (newAssignment as! NBModel) })
+            if self.data[newAssignment.category]!.count == 1 && !existingAssignment {
+                guard let headerView = tableView.headerView(forSection: indexOfCategory!) as? SettingsTableViewHeader else { return }
+                headerView.sectionTitle.showViewAnimated(true)
+            }
 
+            let indexInData = self.data[newAssignment.category]!.index(where: { ($0 as! NBModel) == (newAssignment as! NBModel) })
             existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .fade)
+        }
+
+        else if let newSubmission = newObject as? Submission {
+            if newSubmission.parent is Assignment {
+                if newSubmission.parent!.parent?.enrollmentForUser?.role == .professor || newSubmission.parent!.parent?.enrollmentForUser?.role == .admin {
+                    return
+                }
+                if let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == newSubmission.parent! }) {
+                    let indexInData = self.data[(newSubmission.parent as! AssignmentAssessment).category]!.index(where: { ($0 as! NBModel) == newSubmission.parent! })
+                    let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment].category)
+                    tableView.reloadRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .fade)
+                }
+            }
         }
 
         else if let newCategory = newObject as? Category {
@@ -174,15 +190,15 @@ extension CourseAssignmentsTableView {
         }
         
         else if let newGrade = newObject as? Grade {
-            if newGrade.parent is Assessment || newGrade.parent is Assignment {
-                if newGrade.parent!.parent?.enrollmentForUser?.role == .professor || newGrade.parent!.parent?.enrollmentForUser?.role == .admin {
+            if newGrade.owner is Assessment || newGrade.owner is Assignment {
+                if newGrade.owner!.parent?.enrollmentForUser?.role == .professor || newGrade.owner!.parent?.enrollmentForUser?.role == .admin {
                     return
                 }
-                if let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == newGrade.parent! }) {
+                if let indexOfAssignment = self.assignments.index(where: { ($0 as! NBModel) == newGrade.owner! }) {
                     self.assignments[indexOfAssignment].getGradeString()
                     self.updateData()
 
-                    let indexInData = self.data[(newGrade.parent as! AssignmentAssessment).category]!.index(where: { ($0 as! NBModel) == newGrade.parent! })
+                    let indexInData = self.data[(newGrade.owner as! AssignmentAssessment).category]!.index(where: { ($0 as! NBModel) == newGrade.owner! })
                     let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment].category)
                     tableView.reloadRows(at: [IndexPath(row: indexInData!, section: indexOfCategory!)], with: .fade)
                 }
@@ -198,16 +214,17 @@ extension CourseAssignmentsTableView {
             let indexOfAssignment = self.data[deleteAssignment.category]!.index(where: { ($0 as! NBModel) == (deleteAssignment as! NBModel) })
             let indexOfCategory = self.categories.index(where: { $0 == self.assignments[indexOfAssignment!].category })
 
-            let assigns = NBClient.shared.storedTypes[Assignment.classIdentifier]!
-            var combined = assigns as! [AssignmentAssessment]
-            let assess = NBClient.shared.storedTypes[Assessment.classIdentifier]!
-            combined += assess as! [AssignmentAssessment]
-            self.assignments = combined
-
+            self.selectedCourse.refresh()
+            self.assignments = self.selectedCourse.courseAssignments
+            self.categories = self.selectedCourse.courseCategories
             self.updateData()
 
             if indexOfAssignment != nil { tableView.deleteRows(at: [IndexPath(row: indexOfAssignment!, section: indexOfCategory!)], with: .left) }
-            if self.data[deleteAssignment.category]!.isEmpty { tableView.reloadSections(IndexSet(integer: indexOfCategory!), with: .fade) }
+            if self.data[deleteAssignment.category]!.count == 0 {
+                guard let headerView = tableView.headerView(forSection: indexOfCategory!) as? SettingsTableViewHeader else { return }
+                headerView.sectionTitle.showViewAnimated(false)
+            }
+            if tableView.visibleCells.count == 0 { placeholderTableView?.showNoResultsPlaceholder() }
         }
 
         else if let deleteCategory = deletedObject as? Category {

@@ -226,8 +226,10 @@ class NBClient {
     
     func sendBugsnagException(fromResult: NBResult) {
         var exception: NSException!
-        if fromResult.statusCode == nil || fromResult.error != nil {
-            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \(fromResult.error!), url: \(fromResult.url!.absoluteString)", userInfo:NBClient.shared.storedTypes)
+        if fromResult.statusCode == nil && fromResult.error != nil {
+            let nsError = fromResult.error! as NSError
+
+            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \((fromResult.error! as NSError).localizedDescription), url: \((fromResult.error! as NSError).domain)", userInfo: (fromResult.error! as NSError).userInfo )
         }
         else {
             TTLog.debug("getmappable error: ", "\(fromResult.statusCode!) - \(fromResult.url!)")

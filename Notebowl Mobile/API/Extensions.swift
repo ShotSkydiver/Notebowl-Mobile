@@ -90,7 +90,8 @@ public extension DateComponentsFormatter {
 
 public extension Date {
     var relativeFormat: String {
-        return self.toRelative(style: RelativeFormatter.defaultStyle())
+        let newStyle = RelativeFormatter.Style(flavours: [.shortConvenient, .short], gradation: .convenient())
+        return self.toRelative(style: newStyle)
     }
 }
 

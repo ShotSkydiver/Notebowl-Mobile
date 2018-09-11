@@ -16,17 +16,14 @@ class SettingsTableViewHeader: UITableViewHeaderFooterView {
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
     }
     
     @IBAction func doneButtonPressed(_ sender: UIButton) {

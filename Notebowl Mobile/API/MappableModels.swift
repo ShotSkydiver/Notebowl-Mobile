@@ -16,6 +16,7 @@ public enum ItemType: String {
     case assignment = "assignments"
     case assignmentGroup = "assignmentGroups"
     case assignmentGroupUser = "assignmentGroupUsers"
+    case submission = "submissions"
     case assessment = "assessments"
     case assessmentSubmission = "assessmentSubmissions"
     case assessmentQuestion = "assessmentQuestions"
@@ -107,6 +108,8 @@ class Generic: StaticMappable {
                 return Response<Assignment>()
             case "AssignmentGroup":
                 return Response<AssignmentGroup>()
+            case "Submission":
+                return Response<Submission>()
             case "Assessment":
                 return Response<Assessment>()
             case "AssessmentSubmission":
@@ -293,8 +296,9 @@ public protocol AssignmentAssessment {
     var desc: String! { get }
     var category: Category! { get }
     var dueDate: Date! { get }
-    var status: String! { get }
+    var status: String { get }
     var userGrade: Grade! { get }
+    var gradeScheme: GradeType! { get }
     var gradeString: String! { get }
     var points: Int! { get }
     func getUserGrade() -> String
@@ -304,7 +308,7 @@ extension AssignmentAssessment {
 
     public func getRoundedGradePercent(grade: Double) -> Double {
         let rawPercent = grade / Double(self.points) * 100
-        let percentRounded = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
+        let percentRounded = rawPercent.rounded(toPlaces: ((self as! NBModel).parent as! Course).gradePrecision)
         return percentRounded
     }
 
@@ -316,16 +320,16 @@ extension AssignmentAssessment {
             return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
         }
 
-        else if self.gradeScheme == .percent && (self.parent as! Course).gradeGPAEnabled {
+        else if self.gradeScheme == .percent && ((self as! NBModel).parent as! Course).gradeGPAEnabled {
             var rawPercent = gradePoints / Double(self.points!) * 100
             rawPercent = rawPercent / 100 * 4
-            let gpaValue = rawPercent.rounded(toPlaces: (self.parent as! Course).gradePrecision)
+            let gpaValue = rawPercent.rounded(toPlaces: ((self as! NBModel).parent as! Course).gradePrecision)
             return String(format: "%.2f", gpaValue)
         }
 
         else if self.gradeScheme == .percent {
             let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
-            let places = (self.parent as! Course).gradePrecision
+            let places = ((self as! NBModel).parent as! Course).gradePrecision
             let formatString = "%.\(places!)f%%"
             return String(format: formatString, percentFormatted)
         }
@@ -342,7 +346,7 @@ extension AssignmentAssessment {
             yCharSet.insert(yUni)
             let commaCharacter = CharacterSet.init(charactersIn: ",")
 
-            let separated = (self.parent as! Course).gradeScale.components(separatedBy: yCharSet)
+            let separated = ((self as! NBModel).parent as! Course).gradeScale.components(separatedBy: yCharSet)
 
             for gradeSet in separated {
                 let parts = gradeSet.components(separatedBy: commaCharacter)
@@ -527,14 +531,13 @@ class Course: NBModel, WithName {
 }
 
 public class Assignment: NBModel, AssignmentAssessment {
-
     public var title: String!
     public var points: Int!
     public var dueDate: Date!
     var availableDate: Date!
     public var desc: String!
     var gradeOnly: Bool!
-    var gradeScheme: GradeType!
+    public var gradeScheme: GradeType!
     var type: String!
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
@@ -545,7 +548,30 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var gradeString: String!
     public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
     public var isPastDue: Bool { return dueDate.isInPast }
-    public var status: String { return isPastDue && !allowLateSubmission ? "Closed" : "Open" }
+
+    public var status: String {
+        let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: { ($0 as! Submission).parent == self }) as? Submission
+        if submission == nil {
+            if isPastDue && allowLateSubmission {
+                return "Past Due"
+            }
+            else if !isPastDue && isAvailable {
+                return "Open"
+            }
+            else if isPastDue && !allowLateSubmission {
+                return "Closed"
+            }
+        }
+        else if submission != nil {
+            if submission!.submittedLate {
+                return "Submitted Late"
+            }
+            else {
+                return "Submitted"
+            }
+        }
+        return "--"
+    }
     
     override class var routeType: ItemType { return .assignment }
     
@@ -607,6 +633,24 @@ class AssignmentGroup: NBModel {
     }
 }
 
+class Submission: NBModel {
+    var text: String?
+
+    public var submittedLate: Bool { return Date().isAfterDate((self.parent as! Assignment).dueDate, orEqual: false, granularity: .second) }
+
+    override class var routeType: ItemType { return .submission }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+
+        text <- map["text"]
+    }
+}
+
 public class Assessment: NBModel, AssignmentAssessment {
     var allowPartialCredit: Bool!
     var answerOrder: String!
@@ -615,7 +659,7 @@ public class Assessment: NBModel, AssignmentAssessment {
     public var desc: String!
     public var dueDate: Date!
     var gracePeriod: Int!
-    var gradeScheme: GradeType!
+    public var gradeScheme: GradeType!
     var gradesPublished: Bool!
     var locked: Bool!
     var permalink: String!
@@ -627,7 +671,7 @@ public class Assessment: NBModel, AssignmentAssessment {
     public var title: String!
     public var category: Category!
 
-    public var points: Int {
+    public var points: Int! {
         let questions = NBClient.shared.storedTypes[AssessmentQuestion.classIdentifier]?.filter({ $0.parent! == self }) as? [AssessmentQuestion]
         var pointsCalculated: Int = 0
         for question in questions! {
