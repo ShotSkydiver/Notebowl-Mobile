@@ -23,10 +23,8 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
         
         placeholderTableView = tableView as? CourseTableView
         placeholderTableView?.placeholderDelegate = self
-        
-        setupNavBar()
-        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
-        self.navigationController?.view.backgroundColor = UIColor.white
+
+        modalPresentationCapturesStatusBarAppearance = true
         reloadTable()
     }
     
@@ -34,12 +32,24 @@ class CoursesTableViewController: UITableViewController, UpdateVC {
         self.courses = (NBClient.shared.storedTypes.has(key: Course.classIdentifier) ? NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course] : [])
         placeholderTableView?.reloadData()
     }
+
+    func setupNav() {
+        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
+        self.navigationController?.view.backgroundColor = UIColor.white
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.setNeedsStatusBarAppearanceUpdate()
-        self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
+    }
+
+    func animateNavigationColors(){
+        transitionCoordinator?.animate(alongsideTransition: { [weak self](context) in
+            self?.setupNav()
+            }, completion: nil)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        self.setupNav()
     }
     
     func setupNavBar() {

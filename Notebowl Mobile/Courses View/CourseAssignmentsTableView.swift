@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import HGPlaceholders
+import Tamamushi
 
 class CourseAssignmentsTableView: UITableViewController, UpdateVC {
     var indexes: Paths = Paths()
@@ -33,13 +34,45 @@ class CourseAssignmentsTableView: UITableViewController, UpdateVC {
 
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 70.0
-        tableView.contentInset = UIEdgeInsetsMake(-18, 0, 0, 0)
+        tableView.contentInset = UIEdgeInsetsMake(-16, 0, 0, 0)
 
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
 
+        modalPresentationCapturesStatusBarAppearance = true
         reloadTable()
+    }
+
+    func setupNav() {
+        if let gradientColors = self.selectedCourse.hexValuesFromGradientHeader() {
+            TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: gradientColors[0], endColor: gradientColors[1])
+        }
+    }
+
+    func animateNavigationColors(){
+        transitionCoordinator?.animate(alongsideTransition: { [weak self](context) in
+            self?.setupNav()
+            }, completion: nil)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        self.setupNav()
+    }
+
+    override func willMove(toParentViewController parent: UIViewController?) {
+        if let last = self.navigationController?.viewControllers.last as? CourseAssignmentsTableView{
+            if last == self && self.navigationController!.viewControllers.count > 1{
+                if let parent = self.navigationController!.viewControllers[self.navigationController!.viewControllers.count - 2] as? CoursesTableViewController{
+                    parent.setupNav()
+                }
+            }
+        }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        if let parent = navigationController?.viewControllers.last as? CoursesTableViewController{
+            parent.animateNavigationColors()
+        }
     }
 
     func reloadTable() {

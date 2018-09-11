@@ -128,7 +128,7 @@ CHECKOUT OPTIONS:
     :commit: f8a53daa475770a05fa64cef4d42fb5b4362f32c
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   Tamamushi:
-    :commit: 42376896da7a925e0078d4b2efdd1f1cd3c9a49a
+    :commit: a892d28c9d4ed9c1032c549965731e16661bf655
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
     :commit: 63462b1e2991f971b7094a2b91678c984121ef39

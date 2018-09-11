@@ -43,7 +43,6 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         HomeFeedPostCell.register(in: bulletinTableView)
         bulletinTableView.placeholderDelegate = self as PlaceholderDelegate
         
-        setupNavBar()
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
         self.navigationController?.view.backgroundColor = UIColor.white
     }

@@ -459,6 +459,7 @@ class Course: NBModel, WithName {
     var weightedGrades: Bool!
     var availableDate: Date!
     var endDate: Date!
+    var profileUrl: URL!
     
     public var gradeGPAEnabled: Bool { return gradeBase?.compare("gpa").rawValue == 0 ? true : false }
     public var isAvailable: Bool { return Date().isInRange(date: availableDate, and: endDate, orEqual: true, granularity: .hour ) }
@@ -499,11 +500,28 @@ class Course: NBModel, WithName {
         weightedGrades <- map["useWeightedGrades"]
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
+        profileUrl <- (map["profileUrl"], URLTransform())
         
         fullName = (courseCode + ": " + name)
 
         courseAssignments = []
         courseCategories = []
+    }
+
+    func hexValuesFromGradientHeader() -> [UIColor]? {
+        if profileUrl.absoluteString.contains("services/generate/profilePicture") {
+            let paths = profileUrl.pathComponents
+            guard let beginningIndex = paths.index(of: "profilePicture") else { return nil }
+            let startHex = paths[paths.index(after: beginningIndex)]
+            let endHex = paths[paths.index(after: paths.index(of: startHex)!)]
+            let startColor = UIColor(hexString: "\(startHex)")
+            let endColor = UIColor(hexString: "\(endHex)")
+
+            return [startColor, endColor]
+        }
+        else {
+            return nil
+        }
     }
     
     func firstTimeLoaded() {

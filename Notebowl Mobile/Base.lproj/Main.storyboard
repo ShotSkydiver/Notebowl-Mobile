@@ -98,7 +98,7 @@
                             <outlet property="delegate" destination="JtQ-y2-5t3" id="C55-LL-7ha"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="My Courses" id="ccg-3z-bBX">
+                    <navigationItem key="navigationItem" title="My Courses" largeTitleDisplayMode="never" id="ccg-3z-bBX">
                         <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" style="plain" id="jrK-U2-ZEu">
                             <connections>
                                 <action selector="profileButtonTapped:" destination="JtQ-y2-5t3" id="tLW-to-Hlf"/>
