@@ -225,27 +225,22 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
 
-
-
-        
         if editingExisting {
             self.pickedCourseGroup.isHidden = true
             self.pickedCourseGroup.text = ""
-
-            
+            self.pinnedButton.isHidden = true
         }
         else {
             self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
-
             self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
         }
-
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        if existingObjectToEdit is Post {
-            bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
-        }
-        else if existingObjectToEdit is Comment {
+
+        if existingObjectToEdit is Comment {
             bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace,anonymousButton], forStack: .left, animated: viewIsLoaded)
+        }
+        else {
+            bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
         }
         bar.isTranslucent = true
     }
