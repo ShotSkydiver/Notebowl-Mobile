@@ -351,7 +351,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
 
             if !cell.uploadStarted || cell.attachmentFileID == "" {
                 cell.uploadStarted = true
-                let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/files/upload"),
+                let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                         params: ["uuid": UIDevice().uuid],
                         files: ["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
                         loadImmediately: false,

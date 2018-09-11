@@ -18,23 +18,9 @@ class NBClient {
     static let shared: NBClient = {
         return NBClient()
     }()
-    
-    enum Environment: String {
-        case Production = "platform.notebowl.com"
-        case Local = "demo.notebowl.xyz"
-        case Jenkins = "demoo.notebowl.xyz"
-    }
-    #if DEBUG
-    static let baseUrl = Environment.Production.rawValue
-    static let socketUrl = "https://\(Environment.Production.rawValue)/socket.io/"
-    #else
-    static let baseUrl = Environment.Production.rawValue
-    static let socketUrl = "https://socket.\((Environment.Production.rawValue.components(separatedBy: ".")[1])).com/"
-    #endif
     private var currentUser: User!
     public var storedTypes = [ObjectIdentifier: [NBModel]]()
-    
-    
+
     private init() { }
 
     func resolveCurrentUser(_ force: Bool = true) -> Bool {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		667E1A4949A1846B345ED272 /* Pods_Notebowl_Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09E6DCD307FC92207A301B39 /* Pods_Notebowl_Mobile.framework */; };
+		8502108321485ACA00534F13 /* StaticValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8502108221485ACA00534F13 /* StaticValues.swift */; };
 		8522D05C20FE816400BCBD88 /* NotebowlMobileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8522D05B20FE816400BCBD88 /* NotebowlMobileTests.swift */; };
 		852462A720B5FC0E00E944E2 /* NBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A620B5FC0E00E944E2 /* NBBuilder.swift */; };
 		852462A920B5FE5A00E944E2 /* NBHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852462A820B5FE5A00E944E2 /* NBHelpers.swift */; };
@@ -99,6 +100,7 @@
 		4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.testflight.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.testflight.xcconfig"; sourceTree = "<group>"; };
 		54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notebowl Mobile.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotebowlMobileUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		8502108221485ACA00534F13 /* StaticValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticValues.swift; sourceTree = "<group>"; };
 		8522D04820FE7B2C00BCBD88 /* NotebowlMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8522D04C20FE7B2C00BCBD88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8522D05920FE816400BCBD88 /* NotebowlMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotebowlMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -300,6 +302,7 @@
 				85B1FDBE1FCDEC5800F0A81C /* NBClient.swift */,
 				85C5EA98208793A0005B8A22 /* NBSocket.swift */,
 				85FF86102006A1BA0080D223 /* MappableModels.swift */,
+				8502108221485ACA00534F13 /* StaticValues.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -780,6 +783,7 @@
 				8534A19F2045CF1B0001B5BA /* RootViewController.swift in Sources */,
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */,
+				8502108321485ACA00534F13 /* StaticValues.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				852462AB20B6035800E944E2 /* NBResult.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,

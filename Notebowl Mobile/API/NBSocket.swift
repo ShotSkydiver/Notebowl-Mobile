@@ -27,7 +27,7 @@ class NBSocket {
         return NBSocket()
     }()
     
-    let manager = SocketManager(socketURL: URL(string: NBClient.socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
     var currentlyHandling: String? = nil
     private init() { }
     

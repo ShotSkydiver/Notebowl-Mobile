@@ -17,7 +17,7 @@ public enum RequestKind: String {
 }
 extension RequestKind {
     func requestUrl(url: String) -> String {
-        return ("https://\(NBClient.baseUrl)\(self.rawValue)\(url)")
+        return ("https://\(baseUrl)\(self.rawValue)\(url)")
     }
 }
 public let errorStatusCodes = [401,403,404,412]

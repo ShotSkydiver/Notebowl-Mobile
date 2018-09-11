@@ -59,7 +59,7 @@ public enum NotificationType: String {
 extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
-        return ("https://\(NBClient.baseUrl)/api/v1.0/" + route)
+        return ("https://\(baseUrl)/api/v1.0/" + route)
     }
 }
 
@@ -1135,7 +1135,7 @@ public class Attachment: NBModel {
     
     func getUrlForAvatar() -> URL? {
         let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://\(NBClient.baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
+        let sttt = ("https://\(baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
         var imageUrl = URL(string: sttt)
         imageUrl?.appendQueryParameters(params)
         return imageUrl

@@ -43,7 +43,7 @@ class RootViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier! == "presentLoginView" {
             guard let webViewRootNavController = segue.destination as? UINavigationController, let progressWebVC = webViewRootNavController.topViewController as? ProgressWebViewController else { return }
-            progressWebVC.url = URL(string: ("https://\(NBClient.baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
+            progressWebVC.url = URL(string: ("https://\(baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3514.2 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
             progressWebVC.bypassedSSLHosts = ["demo.notebowl.xyz"]

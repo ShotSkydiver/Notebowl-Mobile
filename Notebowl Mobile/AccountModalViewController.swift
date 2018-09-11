@@ -99,7 +99,7 @@ class AccountModalTableViewController: UITableViewController {
     }
     
     public func uploadingImage() {
-        let upload = NBNetworking.shared.request(.post, url: ("https://\(NBClient.baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
+        let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
                                                  params: ["uuid": UIDevice().uuid],
                                                  files: ["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
                                                  loadImmediately: false,
