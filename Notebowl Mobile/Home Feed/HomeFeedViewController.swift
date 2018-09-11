@@ -102,19 +102,18 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         }
         else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
-            courseForPicker.sort() { $0.fullName < $1.fullName }
-            var pickerItems = courseForPicker as [NBModel]
-            
-            var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
-            groups.sort() { $0.fullName < $1.fullName }
-            pickerItems += groups as [NBModel]
-            
-            destVC.objectsForPicker = pickerItems
-            if let senderCell = sender as? HomeFeedPostCell {
-                destVC.editingExistingPost = true
-                destVC.existingPostToEdit = senderCell.postForCell
-                destVC.existingCell = senderCell
+            if sender is HomeFeedPostCell {
+                var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+                courseForPicker.sort() { $0.fullName < $1.fullName }
+                var pickerItems = courseForPicker as [NBModel]
+
+                var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
+                groups.sort() { $0.fullName < $1.fullName }
+                pickerItems += groups as [NBModel]
+
+                destVC.objectsForPicker = pickerItems
+                destVC.editingExisting = true
+                destVC.existingObjectToEdit = (sender as! HomeFeedPostCell).postForCell
             }
         }
     }

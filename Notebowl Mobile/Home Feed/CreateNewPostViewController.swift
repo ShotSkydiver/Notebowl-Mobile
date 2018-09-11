@@ -59,16 +59,14 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     var selectedIndex: Int = 0
     var pickerViewValues = [[String]]()
     var pickerAlert: UIAlertController!
-    
+
     var attachmentsToDelete = [String]()
-    
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var pinnedToggle: Bool = false
-    
-    var editingExistingPost: Bool = false
-    var existingPostToEdit: Post!
-    var existingCell: HomeFeedPostCell!
+
+    var editingExisting: Bool = false
+    var existingObjectToEdit: PostsComments!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,10 +97,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         dismissButton.image = dismissButton.image!.filled(withColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)).withRenderingMode(.alwaysOriginal)
 
         postTextView.delegate = self
-        if editingExistingPost {
-            postTextView.text = existingPostToEdit.text ?? ""
+        if editingExisting {
+            postTextView.text = existingObjectToEdit.text
             postButton.title = "Edit"
-            for attachment in existingPostToEdit.postAttachments {
+            for attachment in existingObjectToEdit.attachments {
                 if attachment.type.contains("image") {
                     self.attachmentIDs.append(attachment.url.absoluteString)
                     KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
@@ -180,7 +178,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         coursePickerButton = makeButton(image: "school-vector")
         coursePickerButton.accessibilityIdentifier = "coursePickerButton"
         coursePickerButton.configure {
-            $0.isEnabled = !self.editingExistingPost
+            $0.isEnabled = !self.editingExisting
         }
         coursePickerButton.onSelected { courseButton in
             self.pickerAlert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course or group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
@@ -205,7 +203,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         anonymousButton = makeButton(image: "visibility_on-vector")
         anonymousButton.accessibilityIdentifier = "anonymousButton"
         anonymousButton.configure {
-            $0.isEnabled = !self.editingExistingPost
+            $0.isEnabled = !self.editingExisting
             $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
         }
         anonymousButton.onSelected { anonButton in
@@ -227,14 +225,28 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             pinButton.image = self.pinnedToggle ? UIImage(named: "pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal) : UIImage(named: "not_pinned-vector")!.filled(withColor: (UIImage().createGradientImage(size: 50).gradientColor)).withRenderingMode(.alwaysOriginal)
         }
 
-        self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
-        self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
+
+
         
-        if editingExistingPost {
+        if editingExisting {
             self.pickedCourseGroup.isHidden = true
+            self.pickedCourseGroup.text = ""
+
+            
         }
+        else {
+            self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
+
+            self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
+        }
+
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
+        if existingObjectToEdit is Post {
+            bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
+        }
+        else if existingObjectToEdit is Comment {
+            bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace,anonymousButton], forStack: .left, animated: viewIsLoaded)
+        }
         bar.isTranslucent = true
     }
     
@@ -266,24 +278,21 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
             let postText = self.postTextView.text
-            if self.editingExistingPost {
-                self.existingPostToEdit.text = postText
-                self.existingPostToEdit.save()
+            if self.editingExisting {
+                self.existingObjectToEdit.saveEditedObjectWithText(newText: postText!)
                 
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                    TTLog.debug("attachment count: ", self.attachmentIDs.count)
                     for file in self.attachmentIDs {
                         if !file.contains("https://") {
-                            TTLog.debug("uploading attachment: ", file)
-                            let newAttach = Attachment(file: file, parent: self.existingPostToEdit)
+                            let newAttach = Attachment(file: file, parent: (self.existingObjectToEdit as! NBModel))
                             newAttach.save()
                         }
                     }
                 }
                 if self.attachmentsToDelete.count > 0 || !self.attachmentsToDelete.isEmpty {
                     for attach in self.attachmentsToDelete {
-                        if let attachDel = self.existingPostToEdit.postAttachments.first(where: {$0.url.absoluteString == attach}) {
-                            self.existingPostToEdit.postAttachments.removeAll(attachDel)
+                        if let attachDel = self.existingObjectToEdit.attachments.first(where: {$0.url.absoluteString == attach}) {
+                            self.existingObjectToEdit.attachments.removeAll(attachDel)
                             attachDel.deleteSelf()
                         }
                     }
@@ -322,8 +331,8 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
         let attachment = manager.attachments[indexPath.row]
     
         if case .image(let image) = attachment {
-            if self.editingExistingPost {
-                if indexPath.row < (self.existingPostToEdit.postAttachments.count-self.attachmentsToDelete.count) {
+            if self.editingExisting {
+                if indexPath.row < (self.existingObjectToEdit.attachments.count-self.attachmentsToDelete.count) {
                     guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
                         fatalError()
                     }
@@ -412,7 +421,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if manager.attachments.count == 0 && self.postTextView.isEmpty { postButton.isEnabled = false }
         
-        if self.editingExistingPost {
+        if self.editingExisting {
             self.attachmentsToDelete.append(self.attachmentIDs[index])
         }
         if self.attachmentIDs.count >= manager.attachments.count {

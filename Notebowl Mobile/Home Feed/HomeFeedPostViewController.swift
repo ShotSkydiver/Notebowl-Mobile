@@ -48,7 +48,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     var photoLibraryButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
-    
+
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -59,7 +59,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override func loadView() {
         super.loadView()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         HomeFeedPostCell.register(in: self.tableView)
@@ -93,20 +93,24 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createPostDetailSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
-            courseForPicker.sort() { $0.fullName < $1.fullName }
-            var pickerItems = courseForPicker as [NBModel]
-            
-            var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
-            groups.sort() { $0.fullName < $1.fullName }
-            pickerItems += groups as [NBModel]
-            
-            destVC.objectsForPicker = pickerItems
-            if let senderCell = sender as? HomeFeedPostCell {
-                destVC.editingExistingPost = true
-                destVC.existingPostToEdit = senderCell.postForCell
-                destVC.existingCell = senderCell
+
+            if sender is HomeFeedPostCell {
+                var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+                courseForPicker.sort() { $0.fullName < $1.fullName }
+                var pickerItems = courseForPicker as [NBModel]
+
+                var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
+                groups.sort() { $0.fullName < $1.fullName }
+                pickerItems += groups as [NBModel]
+
+                destVC.objectsForPicker = pickerItems
+                destVC.existingObjectToEdit = (sender as! HomeFeedPostCell).postForCell
             }
+            else if sender is HomeFeedCommentCell {
+                destVC.objectsForPicker = []
+                destVC.existingObjectToEdit = (sender as! HomeFeedCommentCell).commentForCell
+            }
+            destVC.editingExisting = true
         }
     }
     
@@ -235,7 +239,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 self.existingCommentToEdit.save()
             }
             else {
-                let newComment = Comment(text: text, owner: self.post.owner, parent: self.post, isAnonymous: self.anonymousToggle)
+                let newComment = Comment(text: text, parent: self.post, isAnonymous: self.anonymousToggle)
                 let finalComment = newComment.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     TTLog.debug("attachment count: ", self.attachmentIDs.count)

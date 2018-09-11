@@ -210,14 +210,14 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         }
         
         if lightboxPhotos.isEmpty {
-            for attachment in post.postAttachments {
+            for attachment in post.attachments {
                 let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
                 self.lightboxPhotos.append(lightboxPhoto)
             }
         }
         
-        if (!post.postAttachments.isEmpty) && (post.postAttachments.first!.type != nil) {
-            if (post.postAttachments.first!.type.contains("image")) {
+        if (!post.attachments.isEmpty) && (post.attachments.first!.type != nil) {
+            if (post.attachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
             }
         }
@@ -282,7 +282,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.postForCell.postAttachments.count
+        return self.postForCell.attachments.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -298,14 +298,14 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay"
         cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel"
         
-        let attachmentForCell = self.postForCell.postAttachments[indexPath.item]
+        let attachmentForCell = self.postForCell.attachments[indexPath.item]
         
         if attachmentForCell.type.contains("image") {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.item == 2 && indexPath.item < self.postForCell.postAttachments.count-1 {
-                cell.cellDisplaysOverlay(count: "+\(self.postForCell.postAttachments.count-2)", forceUpdate: false)
+            if indexPath.item == 2 && indexPath.item < self.postForCell.attachments.count-1 {
+                cell.cellDisplaysOverlay(count: "+\(self.postForCell.attachments.count-2)", forceUpdate: false)
             }
             else {
                 cell.attachmentOverlay.showViewAnimated(false)
@@ -317,7 +317,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
         var newphotos = [LightboxImage]()
-        for attachment in self.postForCell.postAttachments {
+        for attachment in self.postForCell.attachments {
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
             newphotos.append(lightboxPhoto)
         }

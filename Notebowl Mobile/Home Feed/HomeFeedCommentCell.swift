@@ -149,14 +149,14 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         }
 
         if lightboxPhotos.isEmpty {
-            for attachment in comment.commentAttachments {
+            for attachment in comment.attachments {
                 let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
                 self.lightboxPhotos.append(lightboxPhoto)
             }
         }
         
-        if (!comment.commentAttachments.isEmpty) && (comment.commentAttachments.first!.type != nil) {
-            if (comment.commentAttachments.first!.type.contains("image")) {
+        if (!comment.attachments.isEmpty) && (comment.attachments.first!.type != nil) {
+            if (comment.attachments.first!.type.contains("image")) {
                 collectionViewHeight.constant = 100.0
             }
         }
@@ -219,7 +219,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.commentForCell.commentAttachments.count
+        return self.commentForCell.attachments.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -235,14 +235,14 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay-DetailView"
         cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel-DetailView"
         
-        let attachmentForCell = self.commentForCell.commentAttachments[indexPath.item]
+        let attachmentForCell = self.commentForCell.attachments[indexPath.item]
         
         if attachmentForCell.type.contains("image") {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })
-            if indexPath.item == 2 && indexPath.item < self.commentForCell.commentAttachments.count-1 {
-                cell.cellDisplaysOverlay(count: "+\(self.commentForCell.commentAttachments.count-2)", forceUpdate: false)
+            if indexPath.item == 2 && indexPath.item < self.commentForCell.attachments.count-1 {
+                cell.cellDisplaysOverlay(count: "+\(self.commentForCell.attachments.count-2)", forceUpdate: false)
             }
             else {
                 cell.attachmentOverlay.showViewAnimated(false)
@@ -254,7 +254,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         var newphotos = [LightboxImage]()
-        for attachment in self.commentForCell.commentAttachments {
+        for attachment in self.commentForCell.attachments {
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
             newphotos.append(lightboxPhoto)
         }

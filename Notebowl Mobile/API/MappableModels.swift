@@ -285,6 +285,22 @@ extension NBModel: Hashable {
     }
 }
 
+public protocol PostsComments {
+    var text: String! { get set }
+    var editedAt: Date! { get }
+    var isAnonymous: Bool! { get }
+    var creator: User! { get }
+
+    var attachments: [Attachment]! { get set }
+    mutating func saveEditedObjectWithText(newText: String)
+}
+extension PostsComments {
+    public mutating func saveEditedObjectWithText(newText: String) {
+        self.text = newText
+        (self as! NBModel).save()
+    }
+}
+
 public protocol WithName {
     var name: String! { get }
     var fullName: String! { get }
@@ -995,18 +1011,21 @@ class Event: NBModel {
 }
 
 
-public class Post: NBModel {
-    
-    var editedAt: Date?
-    var isAnonymous: Bool!
+public class Post: NBModel, PostsComments {
+
+    public var text: String!
+    public var creator: User!
+    public var editedAt: Date!
+    public var isAnonymous: Bool!
+
+    public var attachments: [Attachment]!
+
     var pinned: Bool!
-    var text: String?
-    var creator: User?
     var availableDate: Date?
     
     public var postLikes: [Like]!
     public var postComments: [Comment]!
-    public var postAttachments: [Attachment]!
+
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
     
@@ -1042,13 +1061,18 @@ public class Post: NBModel {
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
+
         text <- map["text"]
+        if text == nil {
+            text = ""
+        }
+
         creator <- (map["_creator"], ObjectTransform<User>())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         
         postLikes = []
         postComments = []
-        postAttachments = []
+        attachments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
     }
@@ -1080,8 +1104,8 @@ public class Post: NBModel {
         let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
         self.postComments = (comments == nil ? [] : comments!)
  
-        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self }) as? [Attachment]
-        self.postAttachments = (attachments == nil ? [] : attachments!)
+        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self }) as? [Attachment]
+        self.attachments = (attach == nil ? [] : attach!)
         updateLikes()
     }
 }
@@ -1142,14 +1166,15 @@ public class Attachment: NBModel {
     }
 }
 
-public class Comment: NBModel {
+public class Comment: NBModel, PostsComments {
     
-    var editedAt: Date?
-    var isAnonymous: Bool!
-    var text: String!
-    var creator: User?
-    
-    public var commentAttachments: [Attachment]!
+    public var text: String!
+    public var creator: User!
+    public var editedAt: Date!
+    public var isAnonymous: Bool!
+
+    public var attachments: [Attachment]!
+
     public var commentLikes: [Like]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
@@ -1161,10 +1186,9 @@ public class Comment: NBModel {
     required public init?(map: Map) {
         super.init(map: map)
     }
-    init(text: String, owner: NBModel?, parent: NBModel?, isAnonymous: Bool?) {
+    init(text: String, parent: NBModel?, isAnonymous: Bool?) {
         super.init()
         self.text = text
-        self.owner = owner
         self.parent = parent
         self.isAnonymous = isAnonymous
     }
@@ -1172,7 +1196,6 @@ public class Comment: NBModel {
         var payload: [String: Any] = [:]
         payload["text"] = text
         payload["parent"] = self.parent!
-        payload["owner"] = self.owner!
         payload["isAnonymous"] = self.isAnonymous
         return payload
     }
@@ -1182,18 +1205,23 @@ public class Comment: NBModel {
         
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
+
         text <- map["text"]
+        if text == nil {
+            text = ""
+        }
+        
         creator <- (map["_creator"], ObjectTransform<User>())
         
-        commentAttachments = []
+        attachments = []
         commentLikes = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
     }
     
     public func getAttachments() {
-        let attachments = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent! == self }) as? [Attachment]
-        self.commentAttachments = (attachments == nil ? [] : attachments!)
+        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent! == self }) as? [Attachment]
+        self.attachments = (attach == nil ? [] : attach!)
     }
     public func updateLikes() {
         let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]

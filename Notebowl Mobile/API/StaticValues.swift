@@ -14,11 +14,7 @@ enum Environment: String {
 }
 
 public var baseUrl: String {
-    #if DEBUG
-    return Environment.Local.rawValue
-    #else
     return Environment.Production.rawValue
-    #endif
 }
 
 public var socketUrl: String { return "https://\(baseUrl)/socket.io/" }

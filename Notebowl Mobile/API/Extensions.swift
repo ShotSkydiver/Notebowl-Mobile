@@ -1064,6 +1064,9 @@ extension CellActionsVC {
                 if fromPostDetails { (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedPostCell)) }
                 else { (vc as! HomeFeedViewController).performSegue(withIdentifier: "createPostSegue", sender: (selectedCell as! HomeFeedPostCell)) }
             }
+            else if !isPost {
+                (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedCommentCell))
+            }
         }
         edit.image = UIImage(named: "edit-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         edit.textColor = .groupTableViewBackground
@@ -1087,7 +1090,7 @@ extension CellActionsVC {
         report.hidesWhenSelected = true
         
         if isPost {
-            if ((selectedCell as! HomeFeedPostCell).postForCell.creator != nil) && ((selectedCell as! HomeFeedPostCell).postForCell.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
+            if ((selectedCell as! HomeFeedPostCell).postForCell.creator != nil) && ((selectedCell as! HomeFeedPostCell).postForCell.creator == NBClient.shared.getCurrentUser()) {
                 return [delete, edit]
             }
             else if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
@@ -1098,11 +1101,11 @@ extension CellActionsVC {
             }
         }
         else {
-            if ((selectedCell as! HomeFeedCommentCell).commentForCell.creator != nil) && ((selectedCell as! HomeFeedCommentCell).commentForCell.creator?.resourceKey == NBClient.shared.getCurrentUser().resourceKey) {
-                return [delete] //, edit]
+            if ((selectedCell as! HomeFeedCommentCell).commentForCell.creator != nil) && ((selectedCell as! HomeFeedCommentCell).commentForCell.creator == NBClient.shared.getCurrentUser()) {
+                return [delete, edit]
             }
             else if ((vc as! HomeFeedPostViewController).post.owner!.enrollmentForUser?.role == .professor) || ((vc as! HomeFeedPostViewController).post.owner!.enrollmentForUser?.role == .admin) {
-                return [delete, report] // and pin
+                return [delete, report]
             }
             else {
                 return [report]
