@@ -1088,10 +1088,31 @@ extension CellActionsVC {
         report.textColor = .groupTableViewBackground
         report.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
         report.hidesWhenSelected = true
+
+        let isPinned: Bool = (isPost ? (selectedCell as! HomeFeedPostCell).postForCell.pinned : false)
+        let pin = SwipeAction(style: .default, title: "\((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.pinned ? "Unpin" : "Pin") : ""))") { (action, indexPath) in
+            let currentPost = (selectedCell as! HomeFeedPostCell).postForCell!
+            currentPost.pinned.toggleValue()
+            let custom: [String: Any] = ["pinned": currentPost.pinned]
+
+            HUD.flash(.progress, delay: 0.5)
+            NBClient.shared.delay(0.4) {
+                currentPost.save(withCustomPayload: custom)
+            }
+        }
+        pin.image = isPinned ? UIImage(named: "not_pinned-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal) : UIImage(named: "pinned-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
+        pin.textColor = .groupTableViewBackground
+        pin.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
+        pin.hidesWhenSelected = true
         
         if isPost {
             if ((selectedCell as! HomeFeedPostCell).postForCell.creator != nil) && ((selectedCell as! HomeFeedPostCell).postForCell.creator == NBClient.shared.getCurrentUser()) {
-                return [delete, edit]
+                if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
+                    return [delete, pin, edit]
+                }
+                else {
+                    return [delete, edit]
+                }
             }
             else if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
                 return [delete, report]

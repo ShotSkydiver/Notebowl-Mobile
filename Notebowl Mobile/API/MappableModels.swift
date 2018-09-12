@@ -216,21 +216,30 @@ public class NBModel: Mappable {
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
     
     func setPayload() -> [String: Any] { return [:] }
-    func save() -> NBModel? {
-        let payloadJson = self.setPayload()
+    func save(withCustomPayload: [String: Any]? = nil) -> NBModel? {
+
         var json: [String: Any] = [:]
-        for item in payloadJson {
-            if item.value is NBModel {
-                json += ["_\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
-            }
-            else if item.value is Date {
-                json += [item.key: "\((item.value as! Date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))"]
-            }
-            else {
-                json += [item.key: item.value]
+
+        if withCustomPayload != nil {
+            json = withCustomPayload!
+        }
+        else {
+            let payloadJson = self.setPayload()
+            for item in payloadJson {
+                if item.value is NBModel {
+                    json += ["_\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
+                }
+                else if item.value is Date {
+                    json += [item.key: "\((item.value as! Date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))"]
+                }
+                else {
+                    json += [item.key: item.value]
+                }
             }
         }
+
         var result: NBResult!
+
         if self.url != nil {
             result = NBNetworking.shared.request(.put, url: self.url.absoluteString, json: (json as Any))
         }

@@ -181,8 +181,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") }
         else { (postedDate.text = post.createdAt.relativeFormat) }
         
-        designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fafafa") : UIColor(hexString: "#ffffff"))
-        designableView.borderColor = (post.pinned ? UIColor(hexString: "#e1e1e1") : UIColor(hexString: "#e7e7e7"))
+        designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
+        designableView.borderColor = (post.pinned ? UIColor(hexString: "#dfdfdf") : UIColor(hexString: "#e7e7e7"))
         designableView.borderWidth = (post.pinned ? 1.0 : 0.5)
         
         pinnedRibbon.isHidden = (post.pinned ? false : true)
