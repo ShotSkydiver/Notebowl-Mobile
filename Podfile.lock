@@ -1,8 +1,7 @@
 PODS:
-  - AcknowList (1.6.1)
   - AutoMate (1.5.0)
   - AutoMate-AppBuddy (1.3.0)
-  - Bugsnag (5.16.3)
+  - Bugsnag (5.16.4)
   - ButtonProgressBar-iOS (1.0.1)
   - Cache (4.2.0)
   - DeckTransition (2.0.0)
@@ -15,7 +14,7 @@ PODS:
   - Hue (3.0.1)
   - Imaginary (3.0.3):
     - Cache (~> 4.0)
-  - InputBarAccessoryView (2.2.2)
+  - InputBarAccessoryView (3.0.1)
   - Kingfisher (4.9.0)
   - Lightbox (2.1.2):
     - Hue (~> 3.0)
@@ -39,7 +38,6 @@ PODS:
     - SteviaLayout (~> 4.2.0)
 
 DEPENDENCIES:
-  - AcknowList
   - AutoMate
   - AutoMate-AppBuddy
   - Bugsnag
@@ -61,14 +59,13 @@ DEPENDENCIES:
   - Siren
   - Socket.IO-Client-Swift (~> 13.1.0)
   - SwiftDate (~> 5.0)
-  - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
+  - SwipeCellKit (= 2.4.3)
   - Tamamushi (from `https://github.com/ShotSkydiver/Tamamushi`)
   - Wormholy
   - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - AcknowList
     - AutoMate
     - AutoMate-AppBuddy
     - Bugsnag
@@ -92,6 +89,7 @@ SPEC REPOS:
     - Starscream
     - SteviaLayout
     - SwiftDate
+    - SwipeCellKit
     - Wormholy
 
 EXTERNAL SOURCES:
@@ -103,9 +101,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ShotSkydiver/SlackFeedback
   HGPlaceholders:
     :git: https://github.com/ShotSkydiver/HGPlaceholders
-  SwipeCellKit:
-    :branch: develop
-    :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   Tamamushi:
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
@@ -124,9 +119,6 @@ CHECKOUT OPTIONS:
   HGPlaceholders:
     :commit: f8456f6c90f11af06df76d42a9c6b5941a570047
     :git: https://github.com/ShotSkydiver/HGPlaceholders
-  SwipeCellKit:
-    :commit: f8a53daa475770a05fa64cef4d42fb5b4362f32c
-    :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   Tamamushi:
     :commit: a892d28c9d4ed9c1032c549965731e16661bf655
     :git: https://github.com/ShotSkydiver/Tamamushi
@@ -135,10 +127,9 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
-  AcknowList: c9091be8dd75c95662b56f75e382487a0cbb9a27
   AutoMate: 6519edb25b2b03f3d26d002c753d25c12d344816
   AutoMate-AppBuddy: 73ff42c0c9e9d9526fd94f9e4dfe1e47a508c02a
-  Bugsnag: d4f14e5503b716dfe015c347426b058ad4d6a688
+  Bugsnag: c284912353b72113b549e9bcedb1277ab08a0ecc
   ButtonProgressBar-iOS: 1127f15c7ab843648febc857fc2018c8224675c7
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   DeckTransition: 2300694f94fbeca2c103f365dc9dc09ffae14a4f
@@ -150,7 +141,7 @@ SPEC CHECKSUMS:
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
   Imaginary: 9b45836a5af881f452a86e0a1215772ae4712d00
-  InputBarAccessoryView: 1f7bd07d111815afabaa2c11085a741378bfb247
+  InputBarAccessoryView: 696340bfdaf355ebe11d0044e2cfa53cc7fb281f
   Kingfisher: 64539b51826b778206daa6ed815d12653caa69dd
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
@@ -168,6 +159,6 @@ SPEC CHECKSUMS:
   Wormholy: 39a9487ce44afbda62eb3af2dba42b4303d0a6b8
   YPImagePicker: 049aa31e2858c63730ace6b6358bba946178dfe3
 
-PODFILE CHECKSUM: 3ce97268a1ddae045aa007eca46d463c93e5089a
+PODFILE CHECKSUM: 2723639d4e868fbec0970ec4689bb5e32d03f670
 
 COCOAPODS: 1.6.0.beta.1

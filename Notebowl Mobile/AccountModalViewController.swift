@@ -14,7 +14,6 @@ import Kingfisher
 import MMUploadImage
 import FaceAware
 import YPImagePicker
-import AcknowList
 
 protocol ContainerToMaster {
     func startUpload(image:UIImage)
