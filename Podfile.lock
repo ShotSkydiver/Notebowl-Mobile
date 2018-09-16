@@ -30,7 +30,7 @@ PODS:
   - Starscream (3.0.5)
   - SteviaLayout (4.2.0)
   - SwiftDate (5.0.7)
-  - SwipeCellKit (2.4.3)
+  - SwipeCellKit (2.5.0)
   - Tamamushi (0.1.3)
   - Wormholy (1.1.3)
   - YPImagePicker (3.4.0):
@@ -119,6 +119,9 @@ CHECKOUT OPTIONS:
   HGPlaceholders:
     :commit: f8456f6c90f11af06df76d42a9c6b5941a570047
     :git: https://github.com/ShotSkydiver/HGPlaceholders
+  SwipeCellKit:
+    :commit: 9c69084b9b331c3c9f4767add20afe72112adee8
+    :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   Tamamushi:
     :commit: a892d28c9d4ed9c1032c549965731e16661bf655
     :git: https://github.com/ShotSkydiver/Tamamushi
@@ -154,7 +157,7 @@ SPEC CHECKSUMS:
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: 0d2112caea45707695e8c718262c8ea3dd37ef17
   SwiftDate: f053fb89250c59af5eff777f3b832d2b9dd57403
-  SwipeCellKit: cee9906e6d3a36e22ad1a852fba7f8fa0839d113
+  SwipeCellKit: d8f2617538ce3021cb0a11d1b93856a06a2f2e20
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
   Wormholy: 39a9487ce44afbda62eb3af2dba42b4303d0a6b8
   YPImagePicker: 049aa31e2858c63730ace6b6358bba946178dfe3

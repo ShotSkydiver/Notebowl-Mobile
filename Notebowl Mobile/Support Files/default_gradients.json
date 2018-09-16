@@ -1,0 +1,38 @@
+[
+    {
+        "name": "default_0",
+        "colors": ["#6C58A4", "#5290CE"]
+    },
+    {
+        "name": "default_1",
+        "colors": ["#47689B", "#4897CC"]
+    },
+    {
+        "name": "default_2",
+        "colors": ["#47ACDF", "#49D1DB"]
+    },
+    {
+        "name": "default_3",
+        "colors": ["#59B37A", "#4CAAC2"]
+    },
+    {
+        "name": "default_4",
+        "colors": ["#67BA70", "#CEE751"]
+    },
+    {
+        "name": "default_5",
+        "colors": ["#E47452", "#F6BF84"]
+    },
+    {
+        "name": "default_6",
+        "colors": ["#D172A4", "#CA536D"]
+    },
+    {
+        "name": "default_7",
+        "colors": ["#BF4458", "#854D88"]
+    },
+    {
+        "name": "default_8",
+        "colors": ["#3B4046", "#727376"]
+    }
+]

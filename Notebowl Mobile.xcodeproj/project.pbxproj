@@ -65,6 +65,7 @@
 		85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291991F5F619300172C46 /* LaunchScreen.storyboard */; };
 		85E3057420DAB2390019131D /* SettingsTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E3057320DAB2390019131D /* SettingsTableViewHeader.swift */; };
 		85E3057620DAB27B0019131D /* SettingsTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85E3057520DAB27B0019131D /* SettingsTableViewHeader.xib */; };
+		85E6133F2148B0B300F6F432 /* default_gradients.json in Resources */ = {isa = PBXBuildFile; fileRef = 85E6133E2148B0B200F6F432 /* default_gradients.json */; };
 		85E7E01B1FE97F4F00ECF5F8 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */; };
 		85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */; };
 		85F4545C1FE0AA12006D8B77 /* CoursesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */; };
@@ -165,6 +166,7 @@
 		85E2919C1F5F619300172C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85E3057320DAB2390019131D /* SettingsTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewHeader.swift; sourceTree = "<group>"; };
 		85E3057520DAB27B0019131D /* SettingsTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsTableViewHeader.xib; sourceTree = "<group>"; };
+		85E6133E2148B0B200F6F432 /* default_gradients.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = default_gradients.json; sourceTree = "<group>"; };
 		85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
 		85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewCell.swift; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 		85CC9BF5202B8E68001CABB0 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				85E6133E2148B0B200F6F432 /* default_gradients.json */,
 				85551B1620E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist */,
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
 				856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */,
@@ -557,6 +560,7 @@
 				85E2919B1F5F619300172C46 /* LaunchScreen.storyboard in Resources */,
 				8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */,
 				85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */,
+				85E6133F2148B0B300F6F432 /* default_gradients.json in Resources */,
 				85250A11202A1BE90003A416 /* Login.storyboard in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,

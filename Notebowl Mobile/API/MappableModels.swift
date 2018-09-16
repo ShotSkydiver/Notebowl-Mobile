@@ -544,9 +544,16 @@ class Course: NBModel, WithName {
 
             return [startColor, endColor]
         }
-        else {
+        else if profileUrl.absoluteString.contains("/latest/images/cover/default/default_") {
+            let defaultName = profileUrl.deletingPathExtension().lastPathComponent
+            guard let defaults = Gradients.getDefaultGradients() else { return nil }
+            let gradientColor = Gradients.gradientColorWithName(defaults, name: defaultName)
+            return [gradientColor!.startColor, gradientColor!.endColor]
+        }
+        else if profileUrl.absoluteString.contains("/latest/images/cover/theme/theme_") {
             return nil
         }
+        else { return nil }
     }
     
     func firstTimeLoaded() {
