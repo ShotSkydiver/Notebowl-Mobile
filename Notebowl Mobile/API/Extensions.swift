@@ -37,6 +37,14 @@ public extension String {
         let trimmed = mutatingSelf[..<index]
         return String(trimmed)
     }
+
+    var untilFirstWhitespace: String {
+        let mutatingSelf = self
+        guard let range = mutatingSelf.range(of: " ") else { return "" }
+        let rangeIndex = range.lowerBound
+        let trimmed = mutatingSelf[..<rangeIndex]
+        return String(trimmed)
+    }
 }
 
 public extension Character {
@@ -90,7 +98,11 @@ public extension DateComponentsFormatter {
 
 public extension Date {
     var relativeFormat: String {
-        let newStyle = RelativeFormatter.Style(flavours: [.shortConvenient, .short], gradation: .convenient())
+        let newStyle = RelativeFormatter.Style(flavours: [.longConvenient, .long], gradation: .convenient())
+        return self.toRelative(style: newStyle)
+    }
+    var literalFormat: String {
+        let newStyle = RelativeFormatter.Style(flavours: [.long], gradation: .convenient())
         return self.toRelative(style: newStyle)
     }
 }
@@ -430,6 +442,59 @@ extension DesignableView {
     }
 }
 
+@IBDesignable class BGLabel: UILabel {
+
+    @IBInspectable var kerning: CGFloat = 0.0 {
+        didSet {
+            if attributedText?.length == nil { return }
+
+            let attrStr = NSMutableAttributedString(attributedString: attributedText!)
+            let range = NSMakeRange(0, attributedText!.length)
+            attrStr.addAttributes([NSAttributedStringKey.kern: kerning], range: range)
+            attributedText = attrStr
+        }
+    }
+
+    @IBInspectable open var cornerRadius: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            layer.cornerRadius = newValue
+            layer.masksToBounds = newValue == 0
+        }
+    }
+
+    @IBInspectable open var bgColor: UIColor = UIColor.blue {
+        didSet {
+            layer.backgroundColor = bgColor.cgColor
+        }
+    }
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        customInit()
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        customInit()
+    }
+
+    open func customInit() {
+        addBackground()
+    }
+
+    func addBackground() {
+        backgroundColor = UIColor.clear
+        layer.backgroundColor = bgColor.cgColor
+        layer.cornerRadius = cornerRadius
+        layer.masksToBounds = false
+        layer.shouldRasterize = true
+        layer.rasterizationScale = UIScreen.main.scale
+    }
+}
+
 @IBDesignable class FilledButton: UIButton {
     
     @IBInspectable var cornerRadius: CGFloat = 5 {
@@ -676,6 +741,41 @@ extension DesignableView {
     }
 }
 
+@IBDesignable class PillUILabel: UILabel {
+
+    @IBInspectable var verticalPad: CGFloat = 0
+    @IBInspectable var horizontalPad: CGFloat = 0
+
+    func setup() {
+        layer.cornerRadius = frame.height / 2
+        clipsToBounds = true
+        textAlignment = .center
+    }
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setup()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setup()
+    }
+
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        setup()
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let superSize = super.intrinsicContentSize
+        let newWidth = superSize.width + superSize.height + (2 * horizontalPad)
+        let newHeight = superSize.height + (2 * verticalPad)
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        return newSize
+    }
+}
+
 @IBDesignable
 class KerningLabel: UILabel {
     
@@ -688,6 +788,14 @@ class KerningLabel: UILabel {
             attrStr.addAttributes([NSAttributedStringKey.kern: kerning], range: range)
             attributedText = attrStr
         }
+    }
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 }
 
@@ -801,7 +909,6 @@ public extension UITableView {
     /// Update header view's frame.
     func updateHeaderViewFrame() {
         guard let headerView = self.tableHeaderView else { return }
-        
         // Update the size of the header based on its internal content.
         headerView.layoutIfNeeded()
         
@@ -1029,6 +1136,15 @@ extension PlaceholdersProvider {
         let noConnectionPlaceholder = Placeholder(data: .noConnection, style: nbStyle, key: .noConnectionKey)
         
         return PlaceholdersProvider(loading: loadingPlaceholder, error: errorPlaceholder, noResults: noResultsPlaceholder, noConnection: noConnectionPlaceholder)
+    }
+}
+
+extension UINavigationBar {
+    class func isIphoneX() -> Bool {
+        return UIScreen.main.bounds.equalTo(CGRect(x: 0, y: 0, width: 375, height: 812))
+    }
+    class func navBarBottom() -> Int {
+        return self.isIphoneX() ? 88 : 64;
     }
 }
 

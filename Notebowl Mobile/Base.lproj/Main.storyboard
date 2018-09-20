@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.15" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.9"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -86,7 +86,7 @@
                                     <outlet property="courseNumber" destination="f6o-pc-MXg" id="H5E-ES-Ubo"/>
                                     <outlet property="courseTitle" destination="6ey-pg-wYE" id="04d-o2-iij"/>
                                     <outlet property="lastUpdated" destination="JVM-eO-vC0" id="h4p-1L-F4y"/>
-                                    <segue destination="CRV-YB-rwr" kind="show" identifier="assignmentSegue" id="eE9-KS-SsF"/>
+                                    <segue destination="PvP-kZ-gVx" kind="show" identifier="assignmentsSegue" id="6lu-DH-GTF"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -100,6 +100,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="My Courses" largeTitleDisplayMode="never" id="ccg-3z-bBX">
                         <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" style="plain" id="jrK-U2-ZEu">
+                            <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                             <connections>
                                 <action selector="profileButtonTapped:" destination="JtQ-y2-5t3" id="tLW-to-Hlf"/>
                             </connections>
@@ -114,169 +115,22 @@
             <point key="canvasLocation" x="1903" y="1048"/>
         </scene>
         <!--Course Assignments Table View-->
-        <scene sceneID="KuI-kd-hrA">
+        <scene sceneID="c8K-gR-B7u">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="CRV-YB-rwr" customClass="CourseAssignmentsTableView" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="1" estimatedSectionFooterHeight="-1" id="0MJ-CH-JAQ" customClass="AssignmentTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
+                <tableViewController hidesBottomBarWhenPushed="YES" id="PvP-kZ-gVx" customClass="CourseAssignmentsTableView" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="110" estimatedRowHeight="-1" sectionHeaderHeight="1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="1" estimatedSectionFooterHeight="-1" id="yj4-ih-S5N" customClass="AssignmentTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <color key="tintColor" name="NB NEW DARKER BLUE"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="assignmentCell" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="assignmentCell" rowHeight="110" id="zHu-0h-f96" customClass="CourseAssignmentViewCell" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="414" height="110"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zHu-0h-f96" id="AgF-Jf-8Te">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="109.66666666666667"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Assignment Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZIE-fy-dMo">
-                                            <rect key="frame" x="20" y="11" width="374" height="25"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentName"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="25" id="JGP-vu-sZt"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Assignment description is right here this is it" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kAA-c0-oIU">
-                                            <rect key="frame" x="20" y="36" width="374" height="18"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentDescription"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="18" id="K5t-vF-qeQ"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                            <color key="textColor" red="0.42745098039215684" green="0.42745098039215684" blue="0.42745098039215684" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POINTS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kdf-fm-Gbr">
-                                            <rect key="frame" x="135" y="65" width="44" height="14"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="44" id="P0O-mf-rQ4"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                            <color key="textColor" red="0.58039215686274503" green="0.58039215686274503" blue="0.58039215686274503" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="40" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boB-CN-Ksw">
-                                            <rect key="frame" x="135" y="83" width="20" height="16"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentTotalPoints"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                            <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STATUS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q7m-zp-t7O">
-                                            <rect key="frame" x="196" y="65" width="44" height="14"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="44" id="G9E-2W-FDQ"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                            <color key="textColor" red="0.58039215690000001" green="0.58039215690000001" blue="0.58039215690000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Closed" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bwx-Jn-REp">
-                                            <rect key="frame" x="196" y="83" width="50" height="16"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentStatus"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                            <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GRADE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UTU-x8-qCN">
-                                            <rect key="frame" x="20" y="65" width="44" height="14"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="14" id="Fi3-xy-4PA"/>
-                                                <constraint firstAttribute="width" constant="44" id="e2S-Dm-gKq"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                            <color key="textColor" red="0.58039215690000001" green="0.58039215690000001" blue="0.58039215690000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Complete" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sfa-fM-FW5">
-                                            <rect key="frame" x="20" y="83" width="69.666666666666671" height="16"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentUserGrade"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                            <color key="textColor" red="0.1764705882" green="0.1764705882" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DUE DATE" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zDO-Os-2uE">
-                                            <rect key="frame" x="341" y="65" width="53" height="14"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="53" id="1b4-yd-TvH"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                            <color key="textColor" red="0.58039215690000001" green="0.58039215690000001" blue="0.58039215690000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4 weeks" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0QB-Sy-O0n">
-                                            <rect key="frame" x="335" y="83" width="59" height="16"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="assignmentDueDate"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                            <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="ZIE-fy-dMo" firstAttribute="trailing" secondItem="AgF-Jf-8Te" secondAttribute="trailingMargin" id="0Vd-iR-bsR"/>
-                                        <constraint firstItem="boB-CN-Ksw" firstAttribute="firstBaseline" secondItem="bwx-Jn-REp" secondAttribute="firstBaseline" id="1dK-8L-saR"/>
-                                        <constraint firstItem="Kdf-fm-Gbr" firstAttribute="baseline" secondItem="Q7m-zp-t7O" secondAttribute="baseline" id="2h8-1V-LQu"/>
-                                        <constraint firstItem="UTU-x8-qCN" firstAttribute="firstBaseline" secondItem="Kdf-fm-Gbr" secondAttribute="firstBaseline" id="37t-KN-RKl"/>
-                                        <constraint firstItem="Kdf-fm-Gbr" firstAttribute="leading" secondItem="UTU-x8-qCN" secondAttribute="trailing" constant="71" id="3iw-gw-gHH"/>
-                                        <constraint firstItem="sfa-fM-FW5" firstAttribute="bottom" secondItem="AgF-Jf-8Te" secondAttribute="bottomMargin" id="CJU-3R-YbA"/>
-                                        <constraint firstItem="Q7m-zp-t7O" firstAttribute="firstBaseline" secondItem="zDO-Os-2uE" secondAttribute="firstBaseline" id="Gvh-h7-IGX"/>
-                                        <constraint firstItem="Q7m-zp-t7O" firstAttribute="leading" secondItem="bwx-Jn-REp" secondAttribute="leading" id="JKa-Td-7fj"/>
-                                        <constraint firstItem="UTU-x8-qCN" firstAttribute="baseline" secondItem="Kdf-fm-Gbr" secondAttribute="baseline" id="Kze-ZQ-gO2"/>
-                                        <constraint firstItem="kAA-c0-oIU" firstAttribute="top" secondItem="ZIE-fy-dMo" secondAttribute="bottom" id="M31-ha-hXE"/>
-                                        <constraint firstItem="UTU-x8-qCN" firstAttribute="top" secondItem="kAA-c0-oIU" secondAttribute="bottom" constant="11" id="O6P-Iu-yxp"/>
-                                        <constraint firstItem="sfa-fM-FW5" firstAttribute="top" secondItem="boB-CN-Ksw" secondAttribute="top" id="RV3-PJ-nSA"/>
-                                        <constraint firstItem="ZIE-fy-dMo" firstAttribute="leading" secondItem="kAA-c0-oIU" secondAttribute="leading" id="Rfp-hN-Ts8"/>
-                                        <constraint firstItem="Kdf-fm-Gbr" firstAttribute="leading" secondItem="boB-CN-Ksw" secondAttribute="leading" id="VK3-1f-H83"/>
-                                        <constraint firstItem="zDO-Os-2uE" firstAttribute="trailing" secondItem="0QB-Sy-O0n" secondAttribute="trailing" id="cJn-1A-tIb"/>
-                                        <constraint firstItem="sfa-fM-FW5" firstAttribute="leading" secondItem="UTU-x8-qCN" secondAttribute="leading" id="e99-sg-ecX"/>
-                                        <constraint firstItem="boB-CN-Ksw" firstAttribute="baseline" secondItem="bwx-Jn-REp" secondAttribute="baseline" id="f20-8H-qQv"/>
-                                        <constraint firstItem="Kdf-fm-Gbr" firstAttribute="firstBaseline" secondItem="Q7m-zp-t7O" secondAttribute="firstBaseline" id="gZ8-ok-9d9"/>
-                                        <constraint firstItem="ZIE-fy-dMo" firstAttribute="trailing" secondItem="kAA-c0-oIU" secondAttribute="trailing" id="gqA-tE-RZq"/>
-                                        <constraint firstItem="bwx-Jn-REp" firstAttribute="baseline" secondItem="0QB-Sy-O0n" secondAttribute="baseline" id="jGP-KN-4c4"/>
-                                        <constraint firstItem="Q7m-zp-t7O" firstAttribute="leading" secondItem="Kdf-fm-Gbr" secondAttribute="trailing" constant="17" id="kkk-7I-LcJ"/>
-                                        <constraint firstItem="sfa-fM-FW5" firstAttribute="bottom" secondItem="boB-CN-Ksw" secondAttribute="bottom" id="nNq-y2-APg"/>
-                                        <constraint firstItem="boB-CN-Ksw" firstAttribute="top" secondItem="Kdf-fm-Gbr" secondAttribute="bottom" constant="4" id="nWS-vl-Rpp"/>
-                                        <constraint firstItem="kAA-c0-oIU" firstAttribute="trailing" secondItem="zDO-Os-2uE" secondAttribute="trailing" id="q7Z-45-ERb"/>
-                                        <constraint firstItem="ZIE-fy-dMo" firstAttribute="top" secondItem="AgF-Jf-8Te" secondAttribute="topMargin" id="sEQ-uT-leh"/>
-                                        <constraint firstItem="ZIE-fy-dMo" firstAttribute="leading" secondItem="AgF-Jf-8Te" secondAttribute="leadingMargin" id="so0-Zr-Bc2"/>
-                                        <constraint firstItem="Q7m-zp-t7O" firstAttribute="baseline" secondItem="zDO-Os-2uE" secondAttribute="baseline" id="uza-hq-ya3"/>
-                                        <constraint firstItem="bwx-Jn-REp" firstAttribute="firstBaseline" secondItem="0QB-Sy-O0n" secondAttribute="firstBaseline" id="x0f-W7-Shr"/>
-                                        <constraint firstItem="kAA-c0-oIU" firstAttribute="leading" secondItem="UTU-x8-qCN" secondAttribute="leading" id="yiy-ZK-Mx0"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <color key="backgroundColor" red="0.99215686274509807" green="0.99215686274509807" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
-                                <accessibility key="accessibilityConfiguration" identifier="assignmentCell">
-                                    <bool key="isElement" value="YES"/>
-                                </accessibility>
-                                <connections>
-                                    <outlet property="assignmentDesc" destination="kAA-c0-oIU" id="ryp-HZ-dVf"/>
-                                    <outlet property="assignmentGrade" destination="sfa-fM-FW5" id="NBL-5t-dyl"/>
-                                    <outlet property="assignmentName" destination="ZIE-fy-dMo" id="j8i-EF-mhk"/>
-                                    <outlet property="assignmentPoints" destination="boB-CN-Ksw" id="8nR-WB-LSC"/>
-                                    <outlet property="assignmentStatus" destination="bwx-Jn-REp" id="E2Q-7k-ebz"/>
-                                    <outlet property="dueDate" destination="0QB-Sy-O0n" id="Kxd-WI-bpA"/>
-                                    <outlet property="gradeHeader" destination="UTU-x8-qCN" id="j48-BT-Fiq"/>
-                                    <outlet property="pointsHeader" destination="Kdf-fm-Gbr" id="4Rs-hJ-QhH"/>
-                                    <outlet property="statusHeader" destination="Q7m-zp-t7O" id="w8G-Z2-zBf"/>
-                                </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="assignmentsTableView"/>
-                        </userDefinedRuntimeAttributes>
+                        <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <connections>
-                            <outlet property="dataSource" destination="CRV-YB-rwr" id="94m-H1-amf"/>
-                            <outlet property="delegate" destination="CRV-YB-rwr" id="DbP-3a-pHp"/>
+                            <outlet property="dataSource" destination="PvP-kZ-gVx" id="ot6-pC-iV9"/>
+                            <outlet property="delegate" destination="PvP-kZ-gVx" id="ua0-zA-glQ"/>
                         </connections>
                     </tableView>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iJ5-lv-4LC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MmX-2f-TQ8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2705.7971014492755" y="1029.6195652173915"/>
+            <point key="canvasLocation" x="2790" y="1015"/>
         </scene>
         <!--Notifications TableView Controller-->
         <scene sceneID="4Di-eU-D8S">
@@ -822,7 +676,7 @@
                             <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="homeTab"/>
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="89X-1V-RzI">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="89X-1V-RzI">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -986,13 +840,14 @@
                             <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="coursesTab"/>
                         </userDefinedRuntimeAttributes>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0JD-ga-Hq1">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="0JD-ga-Hq1">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
-                        <color key="barTintColor" red="0.20392156859999999" green="0.28235294119999998" blue="0.36470588240000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
+                            <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
                             <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         </textAttributes>
                     </navigationBar>

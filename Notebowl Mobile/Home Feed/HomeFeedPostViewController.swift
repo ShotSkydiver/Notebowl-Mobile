@@ -12,7 +12,6 @@ import InputBarAccessoryView
 import ObjectMapper
 import SocketIO
 import YPImagePicker
-import ButtonProgressBar_iOS
 import SwipeCellKit
 import PKHUD
 
@@ -84,6 +83,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     func refreshAllComments() {

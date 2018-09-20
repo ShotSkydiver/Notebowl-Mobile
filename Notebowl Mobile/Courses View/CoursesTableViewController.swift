@@ -13,54 +13,38 @@ import QuartzCore
 import Tamamushi
 import ObjectMapper
 
-class CoursesTableViewController: UITableViewController, UpdateVC {
+class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
     var indexes: Paths = Paths()
     var courses: [Course]!
     var placeholderTableView: CourseTableView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         placeholderTableView = tableView as? CourseTableView
         placeholderTableView?.placeholderDelegate = self
 
-        modalPresentationCapturesStatusBarAppearance = true
         reloadTable()
     }
-    
+
+    override func setBeforePopNavigationColors() {
+        navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.groupTableViewBackground]
+        self.preferredStatusBarStyle = UIStatusBarStyle.lightContent
+    }
+
+    override func setNavigationColors(){
+        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.0), endPoint: CGPoint(x: 0.6, y: 0.8))
+        self.navigationController?.view.backgroundColor = UIColor.darkGray
+        navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.groupTableViewBackground]
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        self.preferredStatusBarStyle = UIStatusBarStyle.lightContent
+    }
+
     func reloadTable() {
         self.courses = (NBClient.shared.storedTypes.has(key: Course.classIdentifier) ? NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course] : [])
         placeholderTableView?.reloadData()
-    }
-
-    func setupNav() {
-        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
-        self.navigationController?.view.backgroundColor = UIColor.white
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
-    func animateNavigationColors(){
-        transitionCoordinator?.animate(alongsideTransition: { [weak self](context) in
-            self?.setupNav()
-            }, completion: nil)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        self.setupNav()
-    }
-    
-    func setupNavBar() {
-        navigationController?.navigationBar.shadowImage = UIImage.init()
-        navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
-        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        navigationController?.navigationBar.layer.shadowRadius = 7.5
-        navigationController?.navigationBar.layer.shadowOpacity = 0.7
-        navigationController?.navigationBar.layer.masksToBounds = false
-        
-        self.view.layer.masksToBounds = false
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

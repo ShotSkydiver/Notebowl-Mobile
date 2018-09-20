@@ -109,18 +109,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
- 
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if selectedViewController == nil || viewController == selectedViewController {
-            return false
-        }
-        let fromView = selectedViewController!.view
-        let toView = viewController.view
-        
-        UIView.transition(from: fromView!, to: toView!, duration: 0.3, options: [.transitionCrossDissolve], completion: nil)
-        
-        return true
-    }
 }
 
 class RootNavigationBarVC: UINavigationController {
@@ -129,12 +117,79 @@ class RootNavigationBarVC: UINavigationController {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     override var prefersStatusBarHidden: Bool {
         return false
+    }
+}
+
+extension UINavigationController {
+
+    func setNavigationBarTransparent(_ transparent: Bool, animated: Bool) {
+        UIView.animate(withDuration: (animated ? 0.33 : 0)) {
+            if transparent {
+                self.navigationBar.setBackgroundImage(UIImage(), for: .default)
+                self.navigationBar.shadowImage = UIImage()
+                self.navigationBar.backgroundColor = UIColor.clear
+                self.navigationBar.barTintColor = UIColor.clear
+            }
+            else {
+                self.navigationBar.setBackgroundImage(nil, for: .default)
+            }
+        }
+    }
+}
+
+
+class AnimatedNavBarViewController: UITableViewController {
+
+    private var _preferredStyle = UIStatusBarStyle.lightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        get {
+            return _preferredStyle
+        }
+        set {
+            _preferredStyle = newValue
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+
+    override func viewDidLoad() {
+        modalPresentationCapturesStatusBarAppearance = true
+    }
+
+    override func willMove(toParentViewController parent: UIViewController?) {
+        if let last = self.navigationController?.viewControllers.last as? AnimatedNavBarViewController{
+            if last == self && self.navigationController!.viewControllers.count > 1{
+                if let parent = self.navigationController!.viewControllers[self.navigationController!.viewControllers.count - 2] as? AnimatedNavBarViewController{
+                    parent.setNavigationColors()
+                }
+            }
+        }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        if let parent = navigationController?.viewControllers.last as? AnimatedNavBarViewController{
+            parent.animateNavigationColors()
+        }
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        self.setNavigationColors()
+    }
+
+    func animateNavigationColors(){
+        self.setBeforePopNavigationColors()
+        transitionCoordinator?.animate(alongsideTransition: { [weak self](context) in
+            self?.setNavigationColors()
+            }, completion: nil)
+    }
+
+    func setBeforePopNavigationColors() {
+    }
+
+    func setNavigationColors(){
     }
 }

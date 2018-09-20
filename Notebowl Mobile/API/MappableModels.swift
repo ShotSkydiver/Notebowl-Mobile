@@ -321,6 +321,7 @@ public protocol AssignmentAssessment {
     var desc: String! { get }
     var category: Category! { get }
     var dueDate: Date! { get }
+    var availableDate: Date! { get }
     var status: String { get }
     var userGrade: Grade! { get }
     var gradeScheme: GradeType! { get }
@@ -329,7 +330,11 @@ public protocol AssignmentAssessment {
     func getUserGrade() -> String
     func getGradeString()
 }
+
 extension AssignmentAssessment {
+
+    var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
+    var isPastDue: Bool { return dueDate.isInPast }
 
     public func getRoundedGradePercent(grade: Double) -> Double {
         let rawPercent = grade / Double(self.points) * 100
@@ -485,18 +490,14 @@ class Course: NBModel, WithName {
     var availableDate: Date!
     var endDate: Date!
     var profileUrl: URL!
-    
+    var term: Term!
     public var gradeGPAEnabled: Bool { return gradeBase?.compare("gpa").rawValue == 0 ? true : false }
     public var isAvailable: Bool { return Date().isInRange(date: availableDate, and: endDate, orEqual: true, granularity: .hour ) }
-    
     var courseCode: String { return (subject + " " + number) }
     var fullName: String!
-    
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval!
-    
     public var refreshedOnce: Bool = false
-
     public var courseAssignments: [AssignmentAssessment]!
     public var courseCategories: [Category]!
         
@@ -526,6 +527,8 @@ class Course: NBModel, WithName {
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
+
+        term <- (map["_term"], ObjectTransform<Term>())
         
         fullName = (courseCode + ": " + name)
 
@@ -550,10 +553,11 @@ class Course: NBModel, WithName {
             let gradientColor = Gradients.gradientColorWithName(defaults, name: defaultName)
             return [gradientColor!.startColor, gradientColor!.endColor]
         }
-        else if profileUrl.absoluteString.contains("/latest/images/cover/theme/theme_") {
-            return nil
+        else {
+            guard let defaults = Gradients.getDefaultGradients() else { return nil }
+            let gradientColor = Gradients.gradientColorWithName(defaults, name: "default_7")
+            return [gradientColor!.startColor, gradientColor!.endColor]
         }
-        else { return nil }
     }
     
     func firstTimeLoaded() {
@@ -584,7 +588,7 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var title: String!
     public var points: Int!
     public var dueDate: Date!
-    var availableDate: Date!
+    public var availableDate: Date!
     public var desc: String!
     var gradeOnly: Bool!
     public var gradeScheme: GradeType!
@@ -592,12 +596,8 @@ public class Assignment: NBModel, AssignmentAssessment {
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
     public var category: Category!
-
     public var userGrade: Grade!
-    
     public var gradeString: String!
-    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
-    public var isPastDue: Bool { return dueDate.isInPast }
 
     public var status: String {
         let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: { ($0 as! Submission).parent == self }) as? Submission
@@ -657,8 +657,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         self.userGrade = (grade == nil ? nil : grade!)
         self.gradeString = getUserGrade()
     }
-    
-
 
     override public func refresh() {
         getGradeString()
@@ -704,7 +702,7 @@ class Submission: NBModel {
 public class Assessment: NBModel, AssignmentAssessment {
     var allowPartialCredit: Bool!
     var answerOrder: String!
-    var availableDate: Date!
+    public var availableDate: Date!
     var defaultQuestionPoints: Int!
     public var desc: String!
     public var dueDate: Date!
@@ -735,8 +733,6 @@ public class Assessment: NBModel, AssignmentAssessment {
     public var userGrade: Grade!
 
     public var gradeString: String!
-    public var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
-    public var isPastDue: Bool { return dueDate.isInPast }
     public var status: String {
         let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: { ($0 as! AssessmentSubmission).parent == self }) as? AssessmentSubmission
 
@@ -770,8 +766,6 @@ public class Assessment: NBModel, AssignmentAssessment {
         category <- (map["_category"], ObjectTransform<Category>())
         userGrade = nil
     }
-
-
 
     public func getGradeString() {
         let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).owner == self }) as? Grade

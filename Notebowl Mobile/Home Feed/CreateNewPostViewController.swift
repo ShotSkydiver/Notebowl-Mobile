@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import InputBarAccessoryView
 import FaceAware
-import ButtonProgressBar_iOS
 import ObjectMapper
 import Kingfisher
 import YPImagePicker

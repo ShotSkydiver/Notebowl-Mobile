@@ -37,28 +37,19 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
         customView.initSetup()
         customView.reloadAvatar()
-        
+
         bulletinTableView.setTableHeaderView(headerView: customView)
         bulletinTableView.updateHeaderViewFrame()
         HomeFeedPostCell.register(in: bulletinTableView)
         bulletinTableView.placeholderDelegate = self as PlaceholderDelegate
-        
-        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1))
+
+        bulletinTableView.separatorColor = bulletinTableView.backgroundColor
+        TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.0), endPoint: CGPoint(x: 0.6, y: 0.8))
         self.navigationController?.view.backgroundColor = UIColor.white
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
-    }
- 
-    func setupNavBar() {
-        navigationController?.navigationBar.shadowImage = UIImage.init()
-        navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
-        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        navigationController?.navigationBar.layer.shadowRadius = 7.5
-        navigationController?.navigationBar.layer.shadowOpacity = 0.7
-        navigationController?.navigationBar.layer.masksToBounds = false
-        self.view.layer.masksToBounds = false
     }
     
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {

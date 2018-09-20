@@ -31,7 +31,6 @@
 		8538F6E8212F65440072D288 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8538F6E7212F65430072D288 /* SnapshotHelper.swift */; };
 		8538F6EA212F65830072D288 /* SnapshotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8538F6E9212F65830072D288 /* SnapshotUITests.swift */; };
 		85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */; };
-		85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */; };
 		8549648820D996B300366C60 /* NotificationSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8549648620D996B300366C60 /* NotificationSettingCell.swift */; };
 		8549648920D996B300366C60 /* NotificationSettingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8549648720D996B300366C60 /* NotificationSettingCell.xib */; };
 		85551B1720E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 85551B1620E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist */; };
@@ -58,6 +57,8 @@
 		85C623CE2135DAA000D6DA22 /* CourseAssignmentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C623CD2135DAA000D6DA22 /* CourseAssignmentsUITests.swift */; };
 		85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC2DE920873267007073BD /* PlaceholderTextView.swift */; };
 		85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */; };
+		85DD173F214D9FB2004A3DC2 /* CourseDetailViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD173D214D9FB2004A3DC2 /* CourseDetailViewCell.swift */; };
+		85DD1740214D9FB2004A3DC2 /* CourseDetailViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85DD173E214D9FB2004A3DC2 /* CourseDetailViewCell.xib */; };
 		85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */; };
 		85E291911F5F619300172C46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E291901F5F619300172C46 /* AppDelegate.swift */; };
 		85E291961F5F619300172C46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85E291941F5F619300172C46 /* Main.storyboard */; };
@@ -129,7 +130,6 @@
 		8538F6E9212F65830072D288 /* SnapshotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotUITests.swift; sourceTree = "<group>"; };
 		853A3003211146BA006F86DD /* Notebowl-Mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Notebowl-Mobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsTableView.swift; sourceTree = "<group>"; };
-		85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentCellView.swift; sourceTree = "<group>"; };
 		8549648620D996B300366C60 /* NotificationSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingCell.swift; sourceTree = "<group>"; };
 		8549648720D996B300366C60 /* NotificationSettingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotificationSettingCell.xib; sourceTree = "<group>"; };
 		85551B1620E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Pods-Notebowl Mobile-acknowledgements.plist"; path = "Pods/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-acknowledgements.plist"; sourceTree = SOURCE_ROOT; };
@@ -157,6 +157,8 @@
 		85C623CD2135DAA000D6DA22 /* CourseAssignmentsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseAssignmentsUITests.swift; sourceTree = "<group>"; };
 		85CC2DE920873267007073BD /* PlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		85CC9BF6202B903C001CABB0 /* HomeFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFeedViewController.swift; sourceTree = "<group>"; };
+		85DD173D214D9FB2004A3DC2 /* CourseDetailViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailViewCell.swift; sourceTree = "<group>"; };
+		85DD173E214D9FB2004A3DC2 /* CourseDetailViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CourseDetailViewCell.xib; sourceTree = "<group>"; };
 		85DF6C93206C449A001E0CAE /* AccountModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountModalViewController.swift; sourceTree = "<group>"; };
 		85E2918D1F5F619300172C46 /* Notebowl Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Notebowl Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85E291901F5F619300172C46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -315,7 +317,8 @@
 				85F454591FE0A888006D8B77 /* CoursesTableViewController.swift */,
 				85F4545B1FE0AA12006D8B77 /* CoursesTableViewCell.swift */,
 				85429AE12047732800E34C7D /* CourseAssignmentsTableView.swift */,
-				85429AE32047736F00E34C7D /* CourseAssignmentCellView.swift */,
+				85DD173D214D9FB2004A3DC2 /* CourseDetailViewCell.swift */,
+				85DD173E214D9FB2004A3DC2 /* CourseDetailViewCell.xib */,
 			);
 			path = "Courses View";
 			sourceTree = "<group>";
@@ -562,6 +565,7 @@
 				85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */,
 				85E6133F2148B0B300F6F432 /* default_gradients.json in Resources */,
 				85250A11202A1BE90003A416 /* Login.storyboard in Resources */,
+				85DD1740214D9FB2004A3DC2 /* CourseDetailViewCell.xib in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
 				8549648920D996B300366C60 /* NotificationSettingCell.xib in Resources */,
@@ -638,12 +642,12 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AutoMate-AppBuddy/AutoMate_AppBuddy.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
-				"${BUILT_PRODUCTS_DIR}/ButtonProgressBar-iOS/ButtonProgressBar_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/Cache/Cache.framework",
 				"${BUILT_PRODUCTS_DIR}/DeckTransition/DeckTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/FaceAware/FaceAware.framework",
 				"${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework",
 				"${BUILT_PRODUCTS_DIR}/FeedbackSlack/FeedbackSlack.framework",
+				"${BUILT_PRODUCTS_DIR}/GSKStretchyHeaderView/GSKStretchyHeaderView.framework",
 				"${BUILT_PRODUCTS_DIR}/HGPlaceholders/HGPlaceholders.framework",
 				"${BUILT_PRODUCTS_DIR}/HTTPStatusCodes/HTTPStatusCodes.framework",
 				"${BUILT_PRODUCTS_DIR}/Haptica/Haptica.framework",
@@ -663,19 +667,18 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
 				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
-				"${BUILT_PRODUCTS_DIR}/Wormholy/Wormholy.framework",
 				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoMate_AppBuddy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ButtonProgressBar_iOS.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeckTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaceAware.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FaveButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FeedbackSlack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GSKStretchyHeaderView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HGPlaceholders.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTTPStatusCodes.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Haptica.framework",
@@ -695,7 +698,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Wormholy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -755,7 +757,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85429AE42047736F00E34C7D /* CourseAssignmentCellView.swift in Sources */,
 				856CC94D20813BED0096A13F /* TTLog.swift in Sources */,
 				85E291911F5F619300172C46 /* AppDelegate.swift in Sources */,
 				852CB628210FBB0E00B07ED9 /* LoremSwiftum.swift in Sources */,
@@ -767,6 +768,7 @@
 				85DF6C94206C449A001E0CAE /* AccountModalViewController.swift in Sources */,
 				85348E7820463E3A00ABD877 /* ProgressWebViewController.swift in Sources */,
 				85429AE22047732800E34C7D /* CourseAssignmentsTableView.swift in Sources */,
+				85DD173F214D9FB2004A3DC2 /* CourseDetailViewCell.swift in Sources */,
 				85CC9BF7202B903C001CABB0 /* HomeFeedViewController.swift in Sources */,
 				8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */,
 				853280DF205B2EB8003D08F9 /* HomeFeedPostCell.swift in Sources */,
