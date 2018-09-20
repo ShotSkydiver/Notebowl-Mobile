@@ -8,7 +8,7 @@ PODS:
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
   - GSKStretchyHeaderView (1.0.4)
-  - Haptica (2.1.1)
+  - Haptica (2.0.5)
   - HGPlaceholders (0.3.0)
   - HTTPStatusCodes (3.2.0)
   - Hue (3.0.1)
@@ -45,7 +45,7 @@ DEPENDENCIES:
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`)
   - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
   - GSKStretchyHeaderView
-  - Haptica
+  - Haptica (= 2.0.5)
   - HGPlaceholders (from `https://github.com/ShotSkydiver/HGPlaceholders`)
   - HTTPStatusCodes (~> 3.2.0)
   - InputBarAccessoryView (= 3.0.1)
@@ -137,7 +137,7 @@ SPEC CHECKSUMS:
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: b60e455bf0c18cf8b92ae4f42685e4b23667e0f5
   GSKStretchyHeaderView: 9743704c12bdc9cf7c7947bad3af8bf24f7061e3
-  Haptica: e9220bdd6652f4d237147f6eba0f8509f6ceb370
+  Haptica: d4a28919fabd38c4b195ee2896cc65d4ecb3f226
   HGPlaceholders: ff5ccd1ebc6cd4e8d10f25ba0f2f904e5a43a7a4
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
@@ -159,6 +159,6 @@ SPEC CHECKSUMS:
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
   YPImagePicker: 2cc64e1b8b8bac827cf99865fcd1e304ab342315
 
-PODFILE CHECKSUM: fb5fa1f60e14f4e983651f38f8b36a3d07b42e33
+PODFILE CHECKSUM: eab324531f676ff5e8f8ee6d59cd85b4620b04d6
 
 COCOAPODS: 1.6.0.beta.1

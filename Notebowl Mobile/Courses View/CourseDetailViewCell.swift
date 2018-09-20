@@ -37,6 +37,7 @@ class CourseDetailViewCell: UITableViewCell {
         else {
             let parsedDateString = assignment.dueDate.literalFormat
             var dateStringComponents = parsedDateString.components(separatedBy: " ")
+            if dateStringComponents[0] == "in" { dateStringComponents.remove(at: 0) }
             if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
                 dueDateNumber.text = dateStringComponents[0]
                 if assignment.isAvailable && !assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " left") }

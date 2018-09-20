@@ -29,6 +29,7 @@ public enum ItemType: String {
     case event = "events"
     case post = "posts"
     case attachment = "attachments"
+    case folder = "folders"
     case comment = "comments"
     case like = "likes"
     case notification = "notifications"
@@ -136,6 +137,8 @@ class Generic: StaticMappable {
                 return Response<Attachment>()
             case "AttachmentS3":
                 return Response<Attachment>()
+            case "Folder":
+                return Response<Folder>()
             case "Comment":
                 return Response<Comment>()
             case "Like":
@@ -368,8 +371,8 @@ extension AssignmentAssessment {
             let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
 
             var titles: [String] = []
-            var medians: [Int] = []
-            var values: [Int] = []
+            var values: [Double] = []
+            var medians: [Double] = []
 
             let yUni: Unicode.Scalar = ";"
             var yCharSet = CharacterSet.init()
@@ -381,8 +384,8 @@ extension AssignmentAssessment {
             for gradeSet in separated {
                 let parts = gradeSet.components(separatedBy: commaCharacter)
                 titles.append(parts[0])
-                values.append(Int(parts[1])!)
-                medians.append(Int(parts[2])!)
+                values.append(Double(parts[1])!)
+                medians.append(Double(parts[2])!)
             }
 
             if (percentGrade < 0) {
@@ -395,8 +398,8 @@ extension AssignmentAssessment {
                     let indexAfter = values.index(after: currentIndex)
                     if indexAfter == values.endIndex { return titles[currentIndex].uppercased() }
 
-                    if ((Int(percentGrade) >= value) && (Int(percentGrade) < values[indexAfter])) {
-                        if (Int(percentGrade)) != medians[currentIndex] {
+                    if (percentGrade >= value) && (percentGrade < values[indexAfter]) {
+                        if percentGrade != medians[currentIndex] {
                             let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
                             let formatString = "%.0f%%"
                             let percentString = String(format: formatString, percentFormatted)
@@ -684,7 +687,7 @@ class AssignmentGroup: NBModel {
 class Submission: NBModel {
     var text: String?
 
-    public var submittedLate: Bool { return Date().isAfterDate((self.parent as! Assignment).dueDate, orEqual: false, granularity: .second) }
+    public var submittedLate: Bool { return createdAt.isAfterDate((self.parent as! Assignment).dueDate, orEqual: false, granularity: .second) }
 
     override class var routeType: ItemType { return .submission }
 
@@ -1173,6 +1176,22 @@ public class Attachment: NBModel {
         var imageUrl = URL(string: sttt)
         imageUrl?.appendQueryParameters(params)
         return imageUrl
+    }
+}
+
+class Folder: NBModel {
+    var attachmentName: String!
+
+    override class var routeType: ItemType { return .folder }
+
+    required public init?(map: Map) {
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        shouldMapParent = false
+        super.mapping(map: map)
+        attachmentName <- map["attachmentName"]
     }
 }
 
