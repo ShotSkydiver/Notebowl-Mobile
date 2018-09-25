@@ -15,7 +15,6 @@ import PKHUD
 
 class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     var indexes: Paths = Paths()
-    var placeholderTableView: AssignmentTableView?
     
     var assignments: [AssignmentAssessment]!
     var data = [Category: [AssignmentAssessment]]()
@@ -48,15 +47,12 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
 
         tableView.separatorColor = tableView.backgroundColor
         tableView.contentInsetAdjustmentBehavior = .never
-        tableView.contentInset = UIEdgeInsetsMake(160, 0, 12, 0)
+        tableView.contentInset = UIEdgeInsets(top: 160, left: 0, bottom: 12, right: 0)
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: self.tableView.frame.width, height: (self.stretchyHeaderView.maximumContentHeight-self.stretchyHeaderView.minimumContentHeight)+12))
 
         SettingsTableViewHeader.register(in: tableView)
         CourseDetailViewCell.register(in: tableView)
 
-        placeholderTableView = tableView as? AssignmentTableView
-        placeholderTableView?.placeholderDelegate = self
-        
         reloadTable()
     }
 
@@ -64,7 +60,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         navigationController?.navigationBar.shadowImage = UIImage()
         if gradientImage != nil { navigationController?.navigationBar.barTintColor = UIColor(patternImage: gradientImage) }
         navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.groupTableViewBackground]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.groupTableViewBackground]
         self.preferredStatusBarStyle = UIStatusBarStyle.lightContent
     }
 
@@ -94,7 +90,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
             self.assignments = self.selectedCourse.courseAssignments
             self.categories = self.selectedCourse.courseCategories
             self.updateData()
-            self.placeholderTableView?.reloadData()
+            self.tableView.reloadData()
             self.navigationController?.setNavigationBarTransparent(true, animated: true)
             HUD.hide(animated: true)
         }
@@ -122,15 +118,22 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         guard let count = self.data[self.categories[section]]?.count else { fatalError() }
 
         if let title = self.categories[section].title {
-            header.sectionTitle.text = title.uppercased()
-            if count == 0 { header.sectionTitle.alpha = 0.0 }
-            else { header.sectionTitle.alpha = 1.0 }
+
+            if count == 0 && section == 0 {
+                header.sectionTitle.text = "NO ASSIGNMENTS"
+                header.sectionTitle.alpha = 1.0
+            }
+            else {
+                header.sectionTitle.text = title.uppercased()
+                if count == 0 { header.sectionTitle.alpha = 0.0 }
+                else { header.sectionTitle.alpha = 1.0 }
+            }
         }
         return header
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if self.data[self.categories[section]]?.count == 0 {
+        if self.data[self.categories[section]]?.count == 0 && section != 0 {
             return 0
         }
         else {
@@ -183,12 +186,11 @@ extension CourseAssignmentsTableView {
             let indexOfCategory = self.categories.index(of: self.assignments[indexOfAssignment!].category)
             let existingAssignment = tableView.numberOfRows(inSection: indexOfCategory!) < self.data[self.categories[indexOfCategory!]]!.count ? false : true
 
-            if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
-                placeholderTableView?.showDefault()
-            }
-
             if self.data[newAssignment.category]!.count == 1 && !existingAssignment {
                 guard let headerView = tableView.headerView(forSection: indexOfCategory!) as? SettingsTableViewHeader else { return }
+                if indexOfCategory! == 0 {
+                    headerView.sectionTitle.text = self.categories[0].title
+                }
                 headerView.sectionTitle.showViewAnimated(true)
             }
 
@@ -254,7 +256,11 @@ extension CourseAssignmentsTableView {
                 guard let headerView = tableView.headerView(forSection: indexOfCategory!) as? SettingsTableViewHeader else { return }
                 headerView.sectionTitle.showViewAnimated(false)
             }
-            if tableView.visibleCells.count == 0 { placeholderTableView?.showNoResultsPlaceholder() }
+            if tableView.visibleCells.count == 0 {
+                guard let headerView = tableView.headerView(forSection: 0) as? SettingsTableViewHeader else { return }
+                headerView.sectionTitle.text = "NO ASSIGNMENTS"
+                headerView.sectionTitle.showViewAnimated(true)
+            }
         }
 
         else if let deleteCategory = deletedObject as? Category {
@@ -275,19 +281,6 @@ extension CourseAssignmentsTableView {
     
     func handleElapsed(elapsedObject: NBModel) {}
     func reloadTableViews() {}
-}
-
-extension CourseAssignmentsTableView: PlaceholderDelegate {
-    func view(_ view: Any, actionButtonTappedFor placeholder: Placeholder) {
-        TTLog.debug(placeholder.key.value)
-        self.reloadTable()
-    }
-}
-
-class AssignmentTableView: TableView {
-    override func customSetup() {
-        placeholdersProvider = .makePlaceholdersProvider(from: .emptyAssignments)
-    }
 }
 
 class AssignmentsHeaderView: GSKStretchyHeaderView {

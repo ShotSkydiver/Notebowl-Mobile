@@ -166,7 +166,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
     
     func configure(post: Post) {
-        likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControlEvents.touchUpInside)
+        likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControl.Event.touchUpInside)
         
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "

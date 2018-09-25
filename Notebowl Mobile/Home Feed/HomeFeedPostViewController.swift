@@ -72,7 +72,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         setupInputBar()
 
         refreshAllComments()
-        tableView.contentInset = UIEdgeInsetsMake(-36, 0, 0, 0)
+        tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 0, right: 0)
         viewIsLoaded = true
     }
     
@@ -367,7 +367,7 @@ extension HomeFeedPostViewController {
         else if let deleteComment = deletedObject as? Comment {
             guard let indexOfComment = self.post.postComments.index(of: deleteComment) else {
                 self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                (self.parent?.childViewControllers[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
+                (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
                 return
             }
             let deleted = self.post.postComments.remove(at: indexOfComment)
@@ -376,7 +376,7 @@ extension HomeFeedPostViewController {
             self.post.refresh()
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             self.tableView.endUpdates()
-            (self.parent?.childViewControllers[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
+            (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
             var indexOfComment: Int?

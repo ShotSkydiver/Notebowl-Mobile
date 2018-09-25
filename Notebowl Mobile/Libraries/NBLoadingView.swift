@@ -97,14 +97,14 @@ class NBLoadingView: UIView, CAAnimationDelegate {
         let originalLogoFrame           = CGRect(x: 47.5, y: 56.16, width: 55, height: 37.4)
         nblogotransparent.frame           = CGRect(x: 57.5, y: 66.16, width: 55, height: 37.4)
         nblogotransparent.contents        = UIImage(named:"nb-logo-transparent")?.cgImage
-        nblogotransparent.contentsGravity = kCAGravityResizeAspect
+        nblogotransparent.contentsGravity = CALayerContentsGravity.resizeAspect
         self.layer.addSublayer(nblogotransparent)
         layers["nblogotransparent"] = nblogotransparent
     }
     
     
     func addUntitled2Animation(){
-        let fillMode : String = kCAFillModeForwards
+        let fillMode : String = CAMediaTimingFillMode.forwards.rawValue
         
         let ovalTransformAnim         = CAKeyframeAnimation(keyPath:"transform.rotation.z")
         ovalTransformAnim.values      = [0,

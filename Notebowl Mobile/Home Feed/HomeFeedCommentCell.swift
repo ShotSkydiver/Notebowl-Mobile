@@ -115,7 +115,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     }
     
     func configure(comment: Comment) {
-        commentLikeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControlEvents.touchUpInside)
+        commentLikeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControl.Event.touchUpInside)
         
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
         

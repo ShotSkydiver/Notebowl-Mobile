@@ -26,9 +26,9 @@ class SettingsTableViewController: UITableViewController {
         SettingsTableViewHeader.register(in: tableView)
         NotificationSettingCell.register(in: tableView)
         
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80.0
-        tableView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0)
+        tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)

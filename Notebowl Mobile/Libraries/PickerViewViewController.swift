@@ -11,7 +11,7 @@ extension UIAlertController {
         }
     }
     
-    func addAction(image: UIImage? = nil, title: String, color: UIColor? = nil, style: UIAlertActionStyle = .default, isEnabled: Bool = true, handler: ((UIAlertAction) -> Void)? = nil) {
+    func addAction(image: UIImage? = nil, title: String, color: UIColor? = nil, style: UIAlertAction.Style = .default, isEnabled: Bool = true, handler: ((UIAlertAction) -> Void)? = nil) {
         //let isPad: Bool = UIDevice.current.userInterfaceIdiom == .pad
         //let action = UIAlertAction(title: title, style: isPad && style == .cancel ? .default : style, handler: handler)
         let action = UIAlertAction(title: title, style: style, handler: handler)

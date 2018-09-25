@@ -27,14 +27,17 @@ class CourseDetailViewCell: UITableViewCell {
 
     func configure(assignment: AssignmentAssessment, color: UIColor) {
         assignmentName.text = assignment.title
-        assignmentCategory.text = assignment.status
-        submittedText.text = assignment.getUserGrade()
 
         if assignment.dueDate == nil {
-            dueDateNumber.text = " "
-            dueDateText.text = "Unpublished"
+            dueDateNumber.text = "--"
+            dueDateText.text = ""
+            assignmentCategory.text = "Unpublished"
+            submittedText.text = ""
         }
         else {
+            assignmentCategory.text = assignment.status
+            submittedText.text = assignment.getUserGrade()
+
             let parsedDateString = assignment.dueDate.literalFormat
             var dateStringComponents = parsedDateString.components(separatedBy: " ")
             if dateStringComponents[0] == "in" { dateStringComponents.remove(at: 0) }

@@ -34,7 +34,7 @@ class NotificationSettingCell: UITableViewCell {
     }
     
     func configure(setting: SettingsDefault) {
-        settingSwitch.addTarget(self, action: #selector(switchActionTriggered(_:)), for: UIControlEvents.valueChanged)
+        settingSwitch.addTarget(self, action: #selector(switchActionTriggered(_:)), for: UIControl.Event.valueChanged)
         settingName.text = setting.name
         settingSubtitle.text = (setting.help != nil ? setting.help : nil)
         settingSwitch.setOn((setting.userSetting != nil ? setting.userSetting!.value : setting.defaultValue), animated: false)

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 extension NBNetworking {
-    func queryComponents(_ key: String, _ value: Any) -> [(String, String)] {
+    func queryComponents(_ key: String, _ value: Any!) -> [(String, String)] {
         var components: [(String, String)] = []
         if let dictionary = value as? [String: Any] {
             for (nestedKey, value) in dictionary {
@@ -20,10 +20,10 @@ extension NBNetworking {
             for value in array {
                 components += queryComponents("\(key)", value)
             }
-        } else {
+        } else if let queryString = value as? String {
             components.append((
                 percentEncodeString(key),
-                percentEncodeString("\(value)"))
+                percentEncodeString(queryString))
             )
         }
         return components
@@ -32,8 +32,8 @@ extension NBNetworking {
     func query(_ parameters: [String: Any]) -> String {
         var components: [(String, String)] = []
         for key in Array(parameters.keys).sorted(by: <) {
-            let value: Any! = parameters[key]
-            components += self.queryComponents(key, value)
+            let empty = parameters[key]
+            components += self.queryComponents(key, empty)
         }
         return (components.map{"\($0)=\($1)"} as [String]).joined(separator: "&")
     }

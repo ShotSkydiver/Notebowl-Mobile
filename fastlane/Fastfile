@@ -55,12 +55,12 @@ platform :ios do
     
     lane :beta do
         ensure_git_status_clean
-        increment_version_number(version_number: "1.7.2", xcodeproj: "Notebowl Mobile.xcodeproj")
-        increment_build_number(build_number: "1720000", xcodeproj: "Notebowl Mobile.xcodeproj")
+        #increment_version_number(version_number: "1.7.2", xcodeproj: "Notebowl Mobile.xcodeproj")
+        increment_build_number(build_number: "1720003", xcodeproj: "Notebowl Mobile.xcodeproj")
         commit_version_bump(xcodeproj: "Notebowl Mobile.xcodeproj")
         add_git_tag(postfix: "-")
         push_to_git_remote
-        xcode_select("/Applications/Xcode 9.app")
+        xcode_select("/Applications/Xcode.app")
         build_app(export_method: "app-store",
                   export_options: {
                     provisioningProfiles: {
@@ -72,12 +72,13 @@ platform :ios do
                   workspace: "Notebowl Mobile.xcworkspace"
                   )
         upload_to_testflight
-        slack(
-            channel: "@shotskydiver",
-            message: "Successfully uploaded build to App Store Connect",
-            slack_url: "https://hooks.slack.com/services/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",
-            use_webhook_configured_username_and_icon: "true"
-            )                
+        #slack(
+        #    channel: "@shotskydiver",
+        #    message: "Successfully uploaded build to App Store Connect",
+        #    slack_url: "https://hooks.slack.com/services/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",
+        #    use_webhook_configured_username_and_icon: "true"
+        #    )
+        upload_symbols_to_bugsnag                
     end
 
     lane :refresh_dsyms do

@@ -854,7 +854,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Notebowl Mobile";
 			};
@@ -882,7 +882,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Notebowl Mobile";
 			};
@@ -910,7 +910,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Notebowl Mobile";
 			};
@@ -938,7 +938,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Notebowl Mobile";
 			};
@@ -966,7 +966,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Notebowl Mobile";
 			};
@@ -1140,7 +1140,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720000;
+				CURRENT_PROJECT_VERSION = 1720003;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1160,7 +1160,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone Ad Hoc Distribution";
 				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1240,7 +1240,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720000;
+				CURRENT_PROJECT_VERSION = 1720003;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1260,7 +1260,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1340,7 +1340,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720000;
+				CURRENT_PROJECT_VERSION = 1720003;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1360,7 +1360,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1497,7 +1497,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720000;
+				CURRENT_PROJECT_VERSION = 1720003;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1517,7 +1517,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "NB Standalone DEV";
 				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1534,7 +1534,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720000;
+				CURRENT_PROJECT_VERSION = 1720003;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1555,7 +1555,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_OBJC_BRIDGING_HEADER = "Notebowl Mobile/Notebowl-Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

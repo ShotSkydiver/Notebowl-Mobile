@@ -85,7 +85,7 @@ public struct DefaultValues {
 
 
 class Generic: StaticMappable {
-    var action: ActionType! = .unknown
+    var action: ActionType = .unknown
     var itemType: String!
     var updatedAt: Date!
     
@@ -202,7 +202,7 @@ public class NBModel: Mappable {
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
         if deleteReq.statusCode!.rawValue == 410 {
-            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(self.url.absoluteString))", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt)")
+            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(self.url.absoluteString))", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
         }
         else {
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
@@ -1151,7 +1151,7 @@ public class Attachment: NBModel {
         payload["fileId"] = self.fileID
         payload["parent"] = self.parent!
         payload["attachmentType"] = "S3"
-        payload["attachmentName"] = "\(self.fileID).jpg"
+        payload["attachmentName"] = "\(self.fileID ?? "attachment").jpg"
         return payload
     }
     

@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var disconnectDate: Date!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         if Config.isDebug { TTLog.testing("uuid: ", "\(UIDevice().uuid)") }
         
         UNUserNotificationCenter.current().delegate = self
@@ -101,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if keyPaths.isEmpty || keyPaths.count == 0 { return }
             
             var doAppReset: Bool = false
-            var enrollments = keyPaths.filter( {$0.contains("enrollment")} )
+            let enrollments = keyPaths.filter( {$0.contains("enrollment")} )
             if !enrollments.isEmpty || enrollments.count > 0 {
                 var possibleNewEnrollments: [String] = []
 

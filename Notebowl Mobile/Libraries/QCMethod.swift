@@ -53,7 +53,7 @@ class QCMethod
 				groupAnim.animations = [basicAnim]
 				groupAnim.duration = maxDuration(ofAnimations: groupAnim.animations! as [CAAnimation])
 				for anim in groupAnim.animations!{
-					anim.fillMode = kCAFillModeBoth
+                    anim.fillMode = CAMediaTimingFillMode.both
 				}
 				newAnim = groupAnim
 			}
@@ -75,7 +75,7 @@ class QCMethod
 				groupAnim.animations = [keyAnim]
 				groupAnim.duration = maxDuration(ofAnimations: groupAnim.animations! as [CAAnimation])
 				for anim in groupAnim.animations!{
-					anim.fillMode = kCAFillModeBoth
+                    anim.fillMode = CAMediaTimingFillMode.both
 				}
 				newAnim = groupAnim
 				}else{
@@ -91,7 +91,7 @@ class QCMethod
 			
 			groupAnim.animations = newSubAnims
 			for anim in groupAnim.animations!{
-				anim.fillMode = kCAFillModeBoth
+                anim.fillMode = CAMediaTimingFillMode.both
 			}
 			groupAnim.duration = maxDuration(ofAnimations: newSubAnims)
 			newAnim = groupAnim
@@ -108,10 +108,10 @@ class QCMethod
 		if (fillMode != nil){
 			if let animations = groupAnimation.animations {
 				for anim in animations {
-					anim.fillMode = fillMode
+                    anim.fillMode = CAMediaTimingFillMode(rawValue: fillMode!)
 				}
 			}
-			groupAnimation.fillMode = fillMode
+            groupAnimation.fillMode = CAMediaTimingFillMode(rawValue: fillMode!)
 			groupAnimation.isRemovedOnCompletion = false
 		}
 		

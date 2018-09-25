@@ -207,7 +207,7 @@ public extension UIImage {
     }
  
     public func compressedData(quality: CGFloat = 0.5) -> Data? {
-        return UIImageJPEGRepresentation(self, quality)
+        return self.jpegData(compressionQuality:quality)
     }
 
     public func cropped(to rect: CGRect) -> UIImage {
@@ -450,7 +450,7 @@ extension DesignableView {
 
             let attrStr = NSMutableAttributedString(attributedString: attributedText!)
             let range = NSMakeRange(0, attributedText!.length)
-            attrStr.addAttributes([NSAttributedStringKey.kern: kerning], range: range)
+            attrStr.addAttributes([NSAttributedString.Key.kern: kerning], range: range)
             attributedText = attrStr
         }
     }
@@ -626,7 +626,7 @@ extension DesignableView {
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.strokeColor = borderColorImg.cgColor
         shapeLayer.lineWidth = borderWidthImg
-        shapeLayer.lineJoin = kCALineJoinRound
+        shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         if dashedBorder{
             shapeLayer.lineDashPattern = [6,3]
         }
@@ -785,7 +785,7 @@ class KerningLabel: UILabel {
             
             let attrStr = NSMutableAttributedString(attributedString: attributedText!)
             let range = NSMakeRange(0, attributedText!.length)
-            attrStr.addAttributes([NSAttributedStringKey.kern: kerning], range: range)
+            attrStr.addAttributes([NSAttributedString.Key.kern: kerning], range: range)
             attributedText = attrStr
         }
     }
@@ -1251,7 +1251,7 @@ extension CellActionsVC {
     }
     
     func delete(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
-        let objectToDelete = (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)
+        let objectToDelete: NBModel = (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)
         let confirmation = isPost ? UIAlertController(title: "Delete Post", message: "Are you sure you want to delete this post?", preferredStyle: .alert) : UIAlertController(title: "Delete Comment", message: "Are you sure you want to delete this comment?", preferredStyle: .alert)
         let nevermind = UIAlertAction(title: "Cancel", style: .cancel, handler: { (cancelAction) in
             action.fulfill(with: .reset)
