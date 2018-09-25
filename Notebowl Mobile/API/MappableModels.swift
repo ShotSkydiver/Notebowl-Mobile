@@ -539,28 +539,28 @@ class Course: NBModel, WithName {
         courseCategories = []
     }
 
-    func hexValuesFromGradientHeader() -> [UIColor]? {
+    func hexValuesFromGradientHeader() -> [UIColor] {
         if profileUrl.absoluteString.contains("services/generate/profilePicture") {
             let paths = profileUrl.pathComponents
-            guard let beginningIndex = paths.index(of: "profilePicture") else { return nil }
-            let startHex = paths[paths.index(after: beginningIndex)]
-            let endHex = paths[paths.index(after: paths.index(of: startHex)!)]
-            let startColor = UIColor(hexString: "\(startHex)")
-            let endColor = UIColor(hexString: "\(endHex)")
-
-            return [startColor, endColor]
+            if let beginningIndex = paths.index(of: "profilePicture") {
+                let startHex = paths[paths.index(after: beginningIndex)]
+                let endHex = paths[paths.index(after: paths.index(of: startHex)!)]
+                let startColor = UIColor(hexString: "\(startHex)")
+                let endColor = UIColor(hexString: "\(endHex)")
+                return [startColor, endColor]
+            }
         }
         else if profileUrl.absoluteString.contains("/latest/images/cover/default/default_") {
             let defaultName = profileUrl.deletingPathExtension().lastPathComponent
-            guard let defaults = Gradients.getDefaultGradients() else { return nil }
-            let gradientColor = Gradients.gradientColorWithName(defaults, name: defaultName)
-            return [gradientColor!.startColor, gradientColor!.endColor]
+            if let defaults = Gradients.getDefaultGradients() {
+                let gradientColor = Gradients.gradientColorWithName(defaults, name: defaultName)
+                return [gradientColor!.startColor, gradientColor!.endColor]
+            }
         }
         else {
-            guard let defaults = Gradients.getDefaultGradients() else { return nil }
-            let gradientColor = Gradients.gradientColorWithName(defaults, name: "default_7")
-            return [gradientColor!.startColor, gradientColor!.endColor]
+            return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
         }
+        return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
     }
     
     func firstTimeLoaded() {
@@ -603,8 +603,20 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var gradeString: String!
 
     public var status: String {
-        let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: { ($0 as! Submission).parent == self }) as? Submission
-        if submission == nil {
+        if let grade = self.userGrade, grade.grade != nil {
+            return "Graded"
+        }
+
+        else if let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: {$0.parent == self}) as? Submission {
+            if submission.submittedLate {
+                return "Submitted Late"
+            }
+            else {
+                return "Submitted"
+            }
+        }
+            
+        else {
             if isPastDue && allowLateSubmission {
                 return "Past Due"
             }
@@ -613,14 +625,6 @@ public class Assignment: NBModel, AssignmentAssessment {
             }
             else if isPastDue && !allowLateSubmission {
                 return "Closed"
-            }
-        }
-        else if submission != nil {
-            if submission!.submittedLate {
-                return "Submitted Late"
-            }
-            else {
-                return "Submitted"
             }
         }
         return "--"
@@ -656,8 +660,10 @@ public class Assignment: NBModel, AssignmentAssessment {
     }
 
     public func getGradeString() {
-        let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).parent == self }) as? Grade
-        self.userGrade = (grade == nil ? nil : grade!)
+        if let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: {$0.parent == self}) as? Grade {
+            self.userGrade = grade
+        }
+
         self.gradeString = getUserGrade()
     }
 
@@ -734,19 +740,28 @@ public class Assessment: NBModel, AssignmentAssessment {
     }
 
     public var userGrade: Grade!
-
     public var gradeString: String!
-    public var status: String {
-        let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: { ($0 as! AssessmentSubmission).parent == self }) as? AssessmentSubmission
 
-        if submission == nil {
-            return (isPastDue ? "Closed" : "Open")
+    public var status: String {
+        if let grade = self.userGrade, grade.grade != nil {
+            return "Graded"
         }
-        else if submission!.endDate == nil {
-            return "In Progress"
+
+        else if let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: {$0.parent == self}) as? AssessmentSubmission {
+            if let end = submission.endDate {
+                return "Submitted"
+            }
+            else {
+                return "In Progress"
+            }
         }
         else {
-            return "Submitted"
+            if isPastDue {
+                return "Closed"
+            }
+            else {
+                return "Open"
+            }
         }
     }
 
@@ -771,8 +786,9 @@ public class Assessment: NBModel, AssignmentAssessment {
     }
 
     public func getGradeString() {
-        let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: { ($0 as! Grade).owner == self }) as? Grade
-        self.userGrade = (grade == nil ? nil : grade!)
+        if let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: {$0.owner == self}) as? Grade {
+            self.userGrade = grade
+        }
         self.gradeString = getUserGrade()
     }
 

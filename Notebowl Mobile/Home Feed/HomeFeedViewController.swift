@@ -21,7 +21,6 @@ import Bugsnag
 import UserNotifications
 
 class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
-    var indexes: Paths = Paths()
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
@@ -182,7 +181,7 @@ extension HomeFeedViewController {
                     _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
                     let filter = NBClient.shared.doEnrollmentRequests()
                     let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
-                    let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+                    let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
                     var combinedFilter = (retrievedPosts as [NBModel])
                     combinedFilter.append(contentsOf: (postComments as [NBModel]))
                     _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
@@ -238,7 +237,7 @@ extension HomeFeedViewController {
                 _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")
                 let filter = NBClient.shared.doEnrollmentRequests()
                 let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
-                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)!
+                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
                 let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
                 _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
                 _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
@@ -256,7 +255,6 @@ extension HomeFeedViewController {
     }
     
     func handleElapsed(elapsedObject: NBModel) { }
-    func reloadTableViews() {}
 }
 
 

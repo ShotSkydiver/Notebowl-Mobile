@@ -1389,15 +1389,11 @@ struct Paths {
 }
 
 protocol UpdateVC {
-    
+
     func handleUpdated(newObject: NBModel)
     func handleDeleted(deletedObject: NBModel)
     func handleElapsed(elapsedObject: NBModel)
-    
-    func reloadTableViews()
 }
-
-
 
 enum AppConfiguration {
     case Debug

@@ -12,9 +12,7 @@ import ObjectMapper
 import PKHUD
 
 class SettingsTableViewController: UITableViewController {
-    var indexes: Paths = Paths()
     var settings: [Setting]!
-
     var settingsArray: [SettingsGroup?]!
 
     var loadingView: NBLoadingView!

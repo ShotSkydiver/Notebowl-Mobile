@@ -16,8 +16,6 @@ import SwipeCellKit
 import PKHUD
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
-    var indexes: Paths = Paths()
-    
     var viewIsLoaded = false
     var post: Post!
     var staticComments: [Comment]!
@@ -394,7 +392,6 @@ extension HomeFeedPostViewController {
     }
     
     func handleElapsed(elapsedObject: NBModel) {}
-    func reloadTableViews() {}
 }
 
 

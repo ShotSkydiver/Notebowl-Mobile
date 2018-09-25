@@ -19,6 +19,7 @@ class CourseDetailViewCell: UITableViewCell {
     @IBOutlet weak var totalPointsNumber: UILabel!
     @IBOutlet weak var totalPointsText: UILabel!
     @IBOutlet weak var submittedText: UILabel!
+    @IBOutlet weak var userGradeText: UILabel!
 
     var assignmentForCell: AssignmentAssessment!
 
@@ -27,16 +28,22 @@ class CourseDetailViewCell: UITableViewCell {
 
     func configure(assignment: AssignmentAssessment, color: UIColor) {
         assignmentName.text = assignment.title
+        assignmentCategory.text = assignment.category.title
 
         if assignment.dueDate == nil {
             dueDateNumber.text = "--"
             dueDateText.text = ""
-            assignmentCategory.text = "Unpublished"
-            submittedText.text = ""
+            submittedText.text = "Not Published"
         }
+        else if assignment.availableDate.isInFuture {
+            dueDateNumber.text = "--"
+            dueDateText.text = ""
+            submittedText.text = "Not Available Yet"
+        }
+
         else {
-            assignmentCategory.text = assignment.status
-            submittedText.text = assignment.getUserGrade()
+            userGradeText.text = assignment.getUserGrade()
+            submittedText.text = assignment.status
 
             let parsedDateString = assignment.dueDate.literalFormat
             var dateStringComponents = parsedDateString.components(separatedBy: " ")
@@ -55,8 +62,7 @@ class CourseDetailViewCell: UITableViewCell {
         totalPointsText.text = "pts"
 
         assignmentCategory.backgroundColor = color
-        dueDateNumber.textColor = color
-        totalPointsNumber.textColor = color
+        userGradeText.textColor = color
         submittedText.textColor = color
 
         self.assignmentForCell = assignment

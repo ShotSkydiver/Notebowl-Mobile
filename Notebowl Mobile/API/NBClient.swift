@@ -114,18 +114,19 @@ class NBClient {
         let req = NBClient.shared.getMappable(object, filters: "[\"resourceKey:IN:\(filterString)\"]")
         return req
     }
-    public func requireByReferences<T>(_ object: T.Type, property: String, values: [NBModel]) -> [T]? where T: NBModel {
+    
+    public func requireByReferences<T>(_ object: T.Type, property: String, values: [NBModel]) -> [T] where T: NBModel {
         var filterString: String = ""
         for value in values {
             filterString = (filterString + value.url.absoluteString + ",")
         }
-        let req = NBClient.shared.getMappable(object, filters: "[\"\(property):IN:\(filterString)\"]")
+        guard let req = getMappable(object, filters: "[\"\(property):IN:\(filterString)\"]") else { return [] }
         return req
     }
 
-    public func requireByReference<T>(_ object: T.Type, property: String, value: NBModel) -> [T]? where T: NBModel {
-        let filterString = "_\(property)"
-        let req = NBClient.shared.getMappable(object, filters: "[\"\(filterString):IN:\(value.url.absoluteString)\"]")
+    public func requireByReference<T>(_ object: T.Type, property: String, value: NBModel) -> [T] where T: NBModel {
+        let filterString: String = "_\(property)"
+        guard let req = getMappable(object, filters: "[\"\(filterString):IN:\(value.url.absoluteString)\"]") else { return [] }
         return req
     }
 
