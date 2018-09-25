@@ -68,7 +68,13 @@ class AccountModalTableViewController: UITableViewController {
     @IBAction func doneButtonTapped(_ sender: Any) {
         
         if let keyPath = self.updatedUser {
-            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
+            let fileID = keyPath["fileId"] as! String
+            let json: [String: Any] = ["fileId": fileID]
+            let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
+                                                      json: (json as Any))
+
+            let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((newKeys["url"] as! String)))", updateUrl: (newKeys["url"] as! String), action: "updated", updatedAt: (newKeys["updatedAt"] as! String))
         }
         self.dismiss(animated: true, completion: nil)
     }
@@ -98,7 +104,7 @@ class AccountModalTableViewController: UITableViewController {
     }
     
     public func uploadingImage() {
-        let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
+        let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                                                  params: ["uuid": UIDevice().uuid],
                                                  files: ["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
                                                  loadImmediately: false,
