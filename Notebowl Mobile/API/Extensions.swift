@@ -1292,7 +1292,9 @@ extension CellActionsVC {
             PKHUD.sharedHUD.show()
             PKHUD.sharedHUD.hide(afterDelay: 2.0)
         })
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: { (cancelAction) in
+            action.fulfill(with: .reset)
+        })
         alert.addAction(inappropriate)
         alert.addAction(spam)
         alert.addAction(cancel)

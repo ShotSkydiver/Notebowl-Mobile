@@ -322,7 +322,10 @@ extension HomeFeedPostViewController {
             
             tableView.beginUpdates()
             if indexOfComment != nil {
-                if existingComment { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade) }
+                if existingComment {
+                    self.post.postComments[indexOfComment!].refresh()
+                    tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
+                }
                 else { tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) }
             }
             else { tableView.reloadSections(IndexSet(integer: 1), with: .automatic) }
