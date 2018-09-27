@@ -50,9 +50,6 @@
                <Test
                   Identifier = "PostDetailViewUITests">
                </Test>
-               <Test
-                  Identifier = "SnapshotUITests">
-               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

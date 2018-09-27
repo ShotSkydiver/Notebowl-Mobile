@@ -27,9 +27,9 @@ class SnapshotUITests: NBUITests {
 
     func testHomeFeedDetailScreenshot() {
         let table = app.tables["bulletinTableView"]
-        let cell = table.children(matching: .cell).element(boundBy: 1)
-        self.waitForCondition(element: cell.staticTexts["dateLabel"], predicate: NSPredicate(format: "exists == true"), timeout: 20.0)
-        cell.staticTexts["dateLabel"].tap(force: true)
+        let cell = table.cells["HomeFeedPostCell-0-1"]
+        self.waitForCondition(element: cell.staticTexts["userNameLabel"], predicate: NSPredicate(format: "exists == true"), timeout: 20.0)
+        cell.staticTexts["userNameLabel"].tap(force: true)
         snapshot("02HomeFeedDetailView")
     }
 
@@ -45,10 +45,8 @@ class SnapshotUITests: NBUITests {
 
     func testAssignmentsScreenshot() {
         app.tabBars.buttons["Courses"].tap()
-        let table = app.tables.element(boundBy: 0)
-        let cell = table.cells.staticTexts["Astronomy: Exploring Time and Space"]
-        table.scrollToElement(element: cell)
-        cell.tap(force: true)
+        app.tables.children(matching: .cell).element(boundBy: 0).tap()
+        XCTestHelpers.waitForElementToDisappear(app.HUD)
         snapshot("05AssignmentsView")
     }
 

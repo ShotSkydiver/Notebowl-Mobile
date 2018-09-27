@@ -159,7 +159,7 @@ open class Snapshot: NSObject {
                 print("XCUIApplication is not set. Please call setupSnapshot(app) before snapshot().")
                 return
             }
-            
+
             guard let window = app.windows.allElementsBoundByIndex.first(where: { $0.frame.isEmpty == false }) else {
                 print("Couldn't find an element window in XCUIApplication with a non-empty frame.")
                 return
@@ -264,7 +264,6 @@ private extension XCUIElementQuery {
 
             return element.isStatusBar(deviceWidth)
         }
-        
         return self.containing(isStatusBar)
     }
 }
@@ -277,4 +276,4 @@ private extension CGFloat {
 
 // Please don't remove the lines below
 // They are used to detect outdated configuration files
-// SnapshotHelperVersion [1.11]
+// SnapshotHelperVersion [1.12]
