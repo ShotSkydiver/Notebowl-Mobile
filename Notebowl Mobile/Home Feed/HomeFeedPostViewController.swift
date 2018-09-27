@@ -151,7 +151,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 
                 picker.didFinishPicking(completion: { (items, cancelled) in
                     if cancelled {
-                        TTLog.debug("cancelled")
+                        log.debug("cancelled")
                         picker.dismiss(animated: true, completion: nil)
                     }
                     else if !cancelled {
@@ -237,17 +237,17 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         NBClient.shared.delay(1.0) {
             if self.editingExistingComment {
                 self.existingCommentToEdit.text = text
-                self.existingCommentToEdit.save()
+                _ = self.existingCommentToEdit.save()
             }
             else {
                 let newComment = Comment(text: text, parent: self.post, isAnonymous: self.anonymousToggle)
                 let finalComment = newComment.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                    TTLog.debug("attachment count: ", self.attachmentIDs.count)
+                    log.debug("attachment count: \(self.attachmentIDs.count)")
                     for file in self.attachmentIDs {
-                        TTLog.debug("uploading attachment: ", file)
+                        log.debug("uploading attachment: \(file)")
                         let newAttach = Attachment(file: file, parent: finalComment)
-                        newAttach.save()
+                        _ = newAttach.save()
                     }
                 }
             }
@@ -436,7 +436,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
-            TTLog.debug("cellfor attachment")
+            log.debug("cellfor attachment")
             cell.attachment = attachment
             cell.indexPath = indexPath
             cell.manager = self.attachmentManager
@@ -451,14 +451,14 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                                                          loadImmediately: false,
                                                          asyncProgressHandler: { p in
                                                             DispatchQueue.main.async(execute: {
-                                                                TTLog.debug("prgoress: ", p.percentageUpload)
+                                                                log.debug("prgoress: \(p.percentageUpload)")
                                                                 cell.imageView.uploadImage(image: image, progress: Float(p.percentageUpload))
                                                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
                     
                     cell.attachmentFileID = fileID
-                    TTLog.debug("fileid: ", cell.attachmentFileID)
+                    log.debug(cell.attachmentFileID)
 
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)
@@ -483,39 +483,31 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     }
     
     func setAttachmentManager(active: Bool) {
-        TTLog.debug("setAttachmentManager")
         let topStackView = inputBar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            TTLog.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
             
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            TTLog.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             topStackView.layoutIfNeeded()
         }
     }
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
-        TTLog.debug("manager didselectaddattachment")
     }
+
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
         setAttachmentManager(active: shouldBecomeVisible)
     }
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
-        TTLog.debug("manager didreloadto")
-
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        TTLog.debug("manager didinsert")
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
             inputBar.sendButton.isEnabled = true
         }
         
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        TTLog.debug("removing at ", index)
-
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
             inputBar.sendButton.isEnabled = true
         }

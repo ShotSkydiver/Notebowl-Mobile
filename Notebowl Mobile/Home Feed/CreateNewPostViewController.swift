@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import InputBarAccessoryView
-import FaceAware
 import ObjectMapper
 import Kingfisher
 import YPImagePicker
@@ -279,7 +278,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     for file in self.attachmentIDs {
                         if !file.contains("https://") {
                             let newAttach = Attachment(file: file, parent: (self.existingObjectToEdit as! NBModel))
-                            newAttach.save()
+                            _ = newAttach.save()
                         }
                     }
                 }
@@ -296,12 +295,12 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 let newPost = Post(text: postText!, owner: self.objectsForPicker[self.selectedIndex], parent: self.objectsForPicker[self.selectedIndex], isAnonymous: self.anonymousToggle, pinned: (!(self.pinnedButton.isHidden) ? self.pinnedToggle : false))
                 let posted = newPost.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                    TTLog.debug("attachment count: ", self.attachmentIDs.count)
+                    log.debug("attachment count: \(self.attachmentIDs.count)")
                     for file in self.attachmentIDs {
                         if file.count > 1 {
-                            TTLog.debug("uploading attachment: ", file)
+                            log.debug(file)
                             let newAttach = Attachment(file: file, parent: posted)
-                            newAttach.save()
+                            _ = newAttach.save()
                         }
                     }
                 }
@@ -330,7 +329,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
                         fatalError()
                     }
-                    TTLog.debug("this is an existing attachment!")
+                    log.debug("this is an existing attachment!")
                     cell.accessibilityIdentifier = String(format: "ImageAttachmentCell-%d", indexPath.row)
                     
                     cell.attachment = attachment
@@ -360,13 +359,13 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                         loadImmediately: false,
                         asyncProgressHandler: { p in
                             DispatchQueue.main.async(execute: {
-                                TTLog.debug("prgoress: ", p.percentageUpload)
+                                log.debug("prgoress: \(p.percentageUpload)")
                                 cell.imageView.uploadImage(image: image, progress: Float(p.percentageUpload))
                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
                     cell.attachmentFileID = fileID
-                    TTLog.debug("fileid: ", cell.attachmentFileID)
+                    log.debug(cell.attachmentFileID)
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)
                     }
@@ -387,27 +386,27 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     }
     
     func setAttachmentManager(active: Bool) {
-        TTLog.debug("setAttachmentManager")
+        log.debug("setAttachmentManager")
         let topStackView = bar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            TTLog.debug("setAttachmentManager active")
+            log.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
             
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            TTLog.debug("setAttachmentManager not active")
+            log.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             topStackView.layoutIfNeeded()
         }
     }
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
-        TTLog.debug("manager didselectaddattachment")
+        log.debug("manager didselectaddattachment")
     }
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
         setAttachmentManager(active: shouldBecomeVisible)
     }
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
-        TTLog.debug("manager didreloadto")
+        log.debug("manager didreloadto")
     }
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         if !postButton.isEnabled { postButton.isEnabled = true }
@@ -432,7 +431,7 @@ class UploadImageAttachmentCell: AttachmentCell {
     public var uploadStarted: Bool = false
     public var isExistingAttachment: Bool = false
     
-    open let imageView: UIImageView = {
+    public let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         return imageView

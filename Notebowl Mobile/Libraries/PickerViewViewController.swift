@@ -67,7 +67,7 @@ final public class PickerViewViewController: UIViewController {
     }
     
     deinit {
-        TTLog.debug("has deinitialized")
+        log.debug("has deinitialized")
     }
     
     override public func loadView() {

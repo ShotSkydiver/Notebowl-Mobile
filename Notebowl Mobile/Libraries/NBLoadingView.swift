@@ -94,7 +94,7 @@ class NBLoadingView: UIView, CAAnimationDelegate {
         layers["oval3"] = oval3
         
         let nblogotransparent = CALayer()
-        let originalLogoFrame           = CGRect(x: 47.5, y: 56.16, width: 55, height: 37.4)
+        _ = CGRect(x: 47.5, y: 56.16, width: 55, height: 37.4)
         nblogotransparent.frame           = CGRect(x: 57.5, y: 66.16, width: 55, height: 37.4)
         nblogotransparent.contents        = UIImage(named:"nb-logo-transparent")?.cgImage
         nblogotransparent.contentsGravity = CALayerContentsGravity.resizeAspect

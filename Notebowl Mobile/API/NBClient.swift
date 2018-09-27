@@ -78,7 +78,7 @@ class NBClient {
             let urlString = (key["_parent"] as! String)
             let objectType = ItemType.fromURL(urlString)
             let resKey = URL(string: urlString)!.lastPathComponent
-            objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : TTLog.debug("neither course nor group!"))
+            objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : log.debug("neither course nor group!"))
             combinedUrlsFilter = (combinedUrlsFilter + urlString + ",")
         }
         _ = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(coursesFilter)\"]")
@@ -141,7 +141,7 @@ class NBClient {
         let result: NBResult = NBNetworking.shared.request(url: requestUrl, params: payload)
 
         if let resultStatus = result.statusCode, let resultUrl = result.url, resultStatus.isSuccess {
-            TTLog.debug("URL Request: ", "\(resultStatus) - \(resultUrl.absoluteString)")
+            log.debug("URL Request: \(resultStatus) - \(resultUrl.absoluteString)")
 
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
 
@@ -181,14 +181,13 @@ class NBClient {
                 }
             }
 
-
             else {
                 object.firstTimeLoading = true
                 if let oldData = storedTypes.updateValue([object], forKey: T.classIdentifier) {
                     storedTypes[T.classIdentifier]!.append(contentsOf: oldData)
                 }
                 else {
-                    TTLog.debug("no existing key")
+                    log.verbose("no existing key")
                 }
                 newObjectArray.append(object)
             }
@@ -201,7 +200,7 @@ class NBClient {
             newObjectArray.sortByDate()
 
             if storedTypes[T.classIdentifier]!.containSameElements(newObjectArray) {
-                TTLog.error("SAME!")
+                log.verbose("SAME!")
             }
         }
 
@@ -214,7 +213,7 @@ class NBClient {
             exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \(resultError.localizedDescription), url: \(resultError.domain)", userInfo: resultError.userInfo )
         }
         else if let statusCode: HTTPStatusCode = fromResult.statusCode, let resultUrl: URL = fromResult.url {
-            TTLog.debug("getmappable error: ", "\(statusCode) - \(resultUrl.absoluteString)")
+            log.debug("getmappable error: \(statusCode) - \(resultUrl.absoluteString)")
             exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(statusCode): \(statusCode.localizedReasonPhrase), url: \(resultUrl.absoluteString)", userInfo:nil)
         }
         Bugsnag.notify(exception)

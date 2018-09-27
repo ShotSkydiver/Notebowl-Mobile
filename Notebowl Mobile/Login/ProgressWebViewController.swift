@@ -157,7 +157,7 @@ open class ProgressWebViewController: UIViewController {
             load(url)
         }
         else {
-            TTLog.debug("[ProgressWebViewController][Error] NULL URL")
+            log.debug("[ProgressWebViewController][Error] NULL URL")
         }
     }
     

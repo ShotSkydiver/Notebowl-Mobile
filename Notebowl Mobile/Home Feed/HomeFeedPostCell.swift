@@ -15,7 +15,6 @@ import ObjectMapper
 import SocketIO
 import SwipeCellKit
 import Lightbox
-import FaceAware
 import PKHUD
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
@@ -137,7 +136,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                     completion?(nil)
                 }
                 else {
-                    TTLog.debug("lightbox loaded!")
+                    log.debug("lightbox loaded!")
                     completion?(image)
                 }
             })
@@ -162,7 +161,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
 
     @objc func nameDateTapped(_ sender: Any) {
-        TTLog.debug("nameDate tapped!")
+        log.debug("nameDate tapped!")
     }
     
     func configure(post: Post) {
@@ -366,10 +365,10 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
 extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
     func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-        TTLog.debug("lightbox page: ", page)
+        log.debug(page)
     }
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        TTLog.debug("lightbox dismiss")
+        log.debug("lightbox dismiss")
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             return
         }
@@ -379,7 +378,7 @@ extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDi
     }
     
     func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
-        TTLog.debug("lightbox didtouch")
+        log.debug("lightbox didtouch")
     }
 }
 

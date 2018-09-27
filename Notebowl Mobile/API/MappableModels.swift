@@ -202,11 +202,11 @@ public class NBModel: Mappable {
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
         if deleteReq.statusCode!.rawValue == 410 {
-            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(self.url.absoluteString))", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
+            _ = NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(self.url.absoluteString))", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
         }
         else {
             let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
+            _ = NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((keyPath["url"] as! String)))", updateUrl: (keyPath["url"] as! String), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
         }
     }
     
@@ -309,7 +309,7 @@ public protocol PostsComments {
 extension PostsComments {
     public mutating func saveEditedObjectWithText(newText: String) {
         self.text = newText
-        (self as! NBModel).save()
+        _ = (self as! NBModel).save()
     }
 }
 
@@ -608,6 +608,8 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var sortOrder: Int!
 
     public func getStatus() {
+
+
         if self.parent?.enrollmentForUser?.role == .professor || self.parent?.enrollmentForUser?.role == .admin {
             if dueDate == nil {
                 self.status = "Not Published"

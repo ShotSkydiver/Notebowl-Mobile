@@ -124,7 +124,7 @@ extension NBNetworking {
                 urlComponents.percentEncodedQuery = queryString
             }
             else if queryString.count >= 2000 {
-                TTLog.error("url length too long!")
+                log.verbose("url length too long!")
                 finalMethod = .post
                 finalHeaders["X-Notebowl-Method-Override"] = "GET"
                 jsonFromQuery = params
@@ -140,7 +140,6 @@ extension NBNetworking {
                 contentType = "multipart/form-data; boundary=\(bound)"
             } else {
                 if let jsonQuery = jsonFromQuery {
-                    TTLog.error("jsonFromQuery!")
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: jsonQuery,
                                                        options: sessionDefaults.JSONWritingOptions)
@@ -234,7 +233,7 @@ extension NBNetworking {
             }
             if isSynchronous {
                 requestResult = result
-                TTLog.warning("should we not implement semaphore???")
+                log.verbose("should we not implement semaphore???")
                 semaphore.signal()
             }
         }
@@ -244,7 +243,7 @@ extension NBNetworking {
                 task.resume()
             }
             else {
-                TTLog.warning("delayed start babbyyyy")
+                log.warning("delayed start babbyyyy")
                 return NBResult(data: nil, response: nil, error: taskNeverStarted, task: task)
             }
         }

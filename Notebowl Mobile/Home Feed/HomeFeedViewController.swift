@@ -63,7 +63,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     override func viewWillAppear(_ animated: Bool) {
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
-        let selectedRowIndexPath = self.bulletinTableView.indexPathForSelectedRow
+        _ = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
     }
     
@@ -75,9 +75,9 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound,.alert,.badge]) { (granted, error) in
             if granted {
-                TTLog.debug("Notification Enabled Successfully")
+                log.debug("Notification Enabled Successfully")
             } else if error != nil {
-                TTLog.error("Some Error Occured, \(error!.localizedDescription)")
+                log.error("Some Error Occured, \(error!.localizedDescription)")
             }
         }
         NBSocket.shared.setup()

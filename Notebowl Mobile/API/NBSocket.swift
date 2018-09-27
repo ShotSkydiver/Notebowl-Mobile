@@ -26,8 +26,11 @@ class NBSocket {
     static let shared: NBSocket = {
         return NBSocket()
     }()
-    
+    #if DEBUG
     let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
+    #else
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false),.secure(true),.selfSigned(true),.forceNew(true)])
+    #endif
     var currentlyHandling: String? = nil
     private init() { }
     
@@ -43,14 +46,13 @@ class NBSocket {
     
     func registerHandlers() {
         manager.defaultSocket.on(clientEvent: .connect) { (data, ackEmitter) in
-            TTLog.socket("connected")
             self.registerForUser()
         }
         manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, emitter) in
             guard let message = data[0] as? String else { return }
             guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
             let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
-            self.updateHandler(itemType: "\(ItemType.fromURL((JSON["updateUrl"] as! String)))", updateUrl: "\((JSON["updateUrl"] as! String))", action: "\((JSON["action"] as! String))", updatedAt: "\((JSON["updatedAt"] as! String))")
+            _ = self.updateHandler(itemType: "\(ItemType.fromURL((JSON["updateUrl"] as! String)))", updateUrl: "\((JSON["updateUrl"] as! String))", action: "\((JSON["action"] as! String))", updatedAt: "\((JSON["updatedAt"] as! String))")
         }
     }
     

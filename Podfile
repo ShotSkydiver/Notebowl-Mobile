@@ -30,6 +30,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Siren'
         pod 'SwiftDate'
         pod 'GSKStretchyHeaderView'
+        pod 'SwiftyBeaver'
     end
 
     target 'NotebowlMobileUITests' do

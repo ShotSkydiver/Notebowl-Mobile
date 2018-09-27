@@ -1221,7 +1221,7 @@ extension CellActionsVC {
 
             HUD.flash(.progress, delay: 0.5)
             NBClient.shared.delay(0.4) {
-                currentPost.save(withCustomPayload: custom)
+                _ = currentPost.save(withCustomPayload: custom)
             }
         }
         pin.image = isPinned ? UIImage(named: "not_pinned-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal) : UIImage(named: "pinned-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
@@ -1285,7 +1285,7 @@ extension CellActionsVC {
         
         let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
             let abuse = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
-            abuse.save()
+            _ = abuse.save()
             alert.dismiss(animated: true, completion: nil)
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
             PKHUD.sharedHUD.show()
@@ -1294,7 +1294,7 @@ extension CellActionsVC {
         
         let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
             let abuse = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
-            abuse.save()
+            _ = abuse.save()
             alert.dismiss(animated: true, completion: nil)
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
             PKHUD.sharedHUD.show()
@@ -1331,7 +1331,7 @@ class ObjectTransform<T: NBModel>: TransformType {
         
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
             if self.actionType == .elapsed {
-                TTLog.debug("action: elapsed!")
+                log.debug("action: elapsed!")
                 return objectExists as? T
             }
             else if self.actionType == .deleted {
@@ -1339,7 +1339,7 @@ class ObjectTransform<T: NBModel>: TransformType {
             }
             else {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
-                    TTLog.debug("new object is more recent than existing object!")
+                    log.debug("new object is more recent than existing object!")
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
                     
                     return mapReq?.first

@@ -14,6 +14,9 @@ import Tamamushi
 import ObjectMapper
 import SocketIO
 import Siren
+import SwiftyBeaver
+
+let log = SwiftyBeaver.self
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,7 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        if Config.isDebug { TTLog.testing("uuid: ", "\(UIDevice().uuid)") }
+        setupLog()
+        if Config.isDebug { log.info("uuid: \(UIDevice().uuid)") }
         
         UNUserNotificationCenter.current().delegate = self
         application.registerForRemoteNotifications()
@@ -30,6 +34,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupLibraries()
         
         return true
+    }
+
+    func setupLog() {
+        let console = ConsoleDestination()
+        #if DEBUG
+        console.asynchronously = false
+        console.minLevel = .debug
+        #else
+        console.asynchronously = true
+        console.minLevel = .warning
+        #endif
+        log.addDestination(console)
     }
     
     func setupUserDefaults() {
@@ -59,17 +75,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()
-        TTLog.debug("Device Token: \(token)")
+        log.debug("Device Token: \(token)")
         _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token, "uuid": UIDevice().uuid])
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        TTLog.debug("fail ", error.localizedDescription)
+        log.debug(error.localizedDescription)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let aps = userInfo["aps"] as! [String: AnyObject]
-        TTLog.debug("aps fg: ", aps)
+        _ = userInfo["aps"] as! [String: AnyObject]
     }
     
     
@@ -159,7 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
                     if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
                         if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
-                            TTLog.debug("ignore")
+                            log.debug("ignore")
                             continue
                         }
                     }
@@ -193,14 +208,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        TTLog.debug("will terminate!")
+        log.debug("will terminate!")
     }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        let userInfo = notification.request.content.userInfo
-        TTLog.debug("willpresent ", userInfo)
+        let _ = notification.request.content.userInfo
         completionHandler([.alert])
     }
     
@@ -208,7 +222,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         _ = response.notification.request.content.userInfo
         
         if response.actionIdentifier == "viewActionIdentifier" {
-            TTLog.debug("view action")
+            log.debug("view action")
         }
         completionHandler()
     }
