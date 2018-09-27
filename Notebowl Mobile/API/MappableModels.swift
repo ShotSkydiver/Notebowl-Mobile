@@ -325,13 +325,15 @@ public protocol AssignmentAssessment {
     var category: Category! { get }
     var dueDate: Date! { get }
     var availableDate: Date! { get }
-    var status: String { get }
+    var status: String! { get }
+    var sortOrder: Int! { get }
     var userGrade: Grade! { get }
     var gradeScheme: GradeType! { get }
     var gradeString: String! { get }
     var points: Int! { get }
     func getUserGrade() -> String
     func getGradeString()
+    func getStatus()
 }
 
 extension AssignmentAssessment {
@@ -346,8 +348,8 @@ extension AssignmentAssessment {
     }
 
     public func getUserGrade() -> String {
-        if userGrade == nil { return "-" }
-        guard let gradePoints = userGrade.grade else { return "-" }
+        if userGrade == nil { return "Not Graded" }
+        guard let gradePoints = userGrade.grade else { return "Not Graded" }
 
         if self.gradeScheme == .completion {
             return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
@@ -602,32 +604,52 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var userGrade: Grade!
     public var gradeString: String!
 
-    public var status: String {
-        if let grade = self.userGrade, grade.grade != nil {
-            return "Graded"
+    public var status: String!
+    public var sortOrder: Int!
+
+    public func getStatus() {
+        if self.parent?.enrollmentForUser?.role == .professor || self.parent?.enrollmentForUser?.role == .admin {
+            if dueDate == nil {
+                self.status = "Not Published"
+                return
+            }
+            else if availableDate.isInFuture {
+                self.status = "Not Available Yet"
+                return
+            }
         }
 
-        else if let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: {$0.parent == self}) as? Submission {
-            if submission.submittedLate {
-                return "Submitted Late"
-            }
-            else {
-                return "Submitted"
-            }
-        }
-            
         else {
-            if isPastDue && allowLateSubmission {
-                return "Past Due"
+            if let grade = self.userGrade, grade.grade != nil {
+                self.status = "Graded"
+                self.sortOrder = 1
+                return
             }
-            else if !isPastDue && isAvailable {
-                return "Open"
-            }
-            else if isPastDue && !allowLateSubmission {
-                return "Closed"
+            else if let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: {$0.parent == self}) as? Submission {
+                if submission.submittedLate {
+                    self.status = "Submitted Late"
+                }
+                else {
+                    self.status = "Submitted"
+                }
+                self.sortOrder = 2
+                return
             }
         }
-        return "--"
+
+        if isPastDue && allowLateSubmission {
+            self.status = "Past Due"
+            self.sortOrder = 4
+        }
+        else if !isPastDue && isAvailable {
+            self.status = "Open"
+            self.sortOrder = 3
+        }
+        else if isPastDue && !allowLateSubmission {
+            self.status = "Closed"
+            self.sortOrder = 5
+        }
+        return
     }
     
     override class var routeType: ItemType { return .assignment }
@@ -669,6 +691,7 @@ public class Assignment: NBModel, AssignmentAssessment {
 
     override public func refresh() {
         getGradeString()
+        getStatus()
     }
 }
 
@@ -742,27 +765,49 @@ public class Assessment: NBModel, AssignmentAssessment {
     public var userGrade: Grade!
     public var gradeString: String!
 
-    public var status: String {
-        if let grade = self.userGrade, grade.grade != nil {
-            return "Graded"
+    public var status: String!
+    public var sortOrder: Int!
+
+    public func getStatus() {
+
+        if self.parent?.enrollmentForUser?.role == .professor || self.parent?.enrollmentForUser?.role == .admin {
+            if dueDate == nil {
+                self.status = "Not Published"
+                return
+            }
+            else if availableDate.isInFuture {
+                self.status = "Not Available Yet"
+                return
+            }
         }
 
-        else if let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: {$0.parent == self}) as? AssessmentSubmission {
-            if let end = submission.endDate {
-                return "Submitted"
+        else {
+            if let grade = self.userGrade, grade.grade != nil {
+                self.status = "Graded"
+                self.sortOrder = 1
+                return
             }
-            else {
-                return "In Progress"
+            else if let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: {$0.parent == self}) as? AssessmentSubmission {
+                if let end = submission.endDate {
+                    self.status = "Submitted"
+                    self.sortOrder = 2
+                }
+                else {
+                    self.status = "In Progress"
+                    self.sortOrder = 0
+                }
+                return
             }
+        }
+        if isPastDue {
+            self.status = "Closed"
+            self.sortOrder = 5
         }
         else {
-            if isPastDue {
-                return "Closed"
-            }
-            else {
-                return "Open"
-            }
+            self.status = "Open"
+            self.sortOrder = 3
         }
+        return
     }
 
     override class var routeType: ItemType { return .assessment }
@@ -794,6 +839,7 @@ public class Assessment: NBModel, AssignmentAssessment {
 
     override public func refresh() {
         getGradeString()
+        getStatus()
     }
 }
 

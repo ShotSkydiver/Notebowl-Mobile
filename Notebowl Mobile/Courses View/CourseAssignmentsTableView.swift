@@ -14,13 +14,13 @@ import GSKStretchyHeaderView
 import PKHUD
 
 
-enum AssignmentStatus: String {
-    case InProgress = "In Progress"
-    case Graded = "Graded"
-    case Submitted = "Submitted"
-    case Open = "Open"
-    case PastDue = "Past Due"
-    case Closed = "Closed"
+enum AssignmentStatus: Int {
+    case InProgress = 0
+    case Graded = 1
+    case Submitted = 2
+    case Open = 3
+    case PastDue = 4
+    case Closed = 5
 }
 
 enum AssignmentProfStatus: String {
@@ -45,7 +45,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         self.title = selectedCourse.courseCode
 
         gradientColors = selectedCourse.hexValuesFromGradientHeader()
-        gradientImage = TMGradientNavigationBar().generateGradientImage(direction: .horizontal, startColor: gradientColors[0], endColor:  gradientColors[1], startPoint: CGPoint(x: 0.0, y: 0.0), endPoint: CGPoint(x: 0.6, y: 0.9), height: 500.0)
+        gradientImage = TMGradientNavigationBar().generateGradientImage(direction: .horizontal, startColor: gradientColors[0], endColor:  gradientColors[1], startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7), height: 500.0)
 
         stretchyHeaderView = AssignmentsHeaderView(frame: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width, height: 160))
         stretchyHeaderView.label.text = selectedCourse.name
@@ -61,7 +61,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: self.tableView.frame.width, height: (self.stretchyHeaderView.maximumContentHeight-self.stretchyHeaderView.minimumContentHeight)+14))
 
         CourseDetailViewCell.register(in: tableView)
-
         reloadTable()
     }
 
@@ -102,9 +101,19 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
             }
 
             self.assignments = self.selectedCourse.courseAssignments
+            self.sortAssignments()
             self.tableView.reloadData()
             HUD.hide(animated: true)
         }
+    }
+
+    func sortAssignments() {
+        var hasDueDate = self.assignments.filter({$0.dueDate != nil})
+        hasDueDate.sort() { $0.dueDate > $1.dueDate }
+        var nilDueDate = self.assignments.filter({$0.dueDate == nil})
+        nilDueDate.sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt }
+        hasDueDate.append(contentsOf: nilDueDate)
+        self.assignments = hasDueDate
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -127,26 +136,26 @@ extension CourseAssignmentsTableView {
     
     func handleUpdated(newObject: NBModel) {
         if let newAssignment = newObject as? AssignmentAssessment {
+            let indexBefore = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject})
 
-            var combined: [AssignmentAssessment] {
-                var mutableArray: [AssignmentAssessment] = []
-                if let assignsCached = NBClient.shared.storedTypes[Assignment.classIdentifier] {
-                    mutableArray.append(contentsOf: (assignsCached as! [AssignmentAssessment]))
-                }
-                if let assessCached = NBClient.shared.storedTypes[Assessment.classIdentifier] {
-                    mutableArray.append(contentsOf: (assessCached as! [AssignmentAssessment]))
-                }
-                return mutableArray
-            }
+            newAssignment.getGradeString()
+            newAssignment.getStatus()
+            self.selectedCourse.refresh()
+            self.assignments = self.selectedCourse.courseAssignments
+            self.sortAssignments()
 
-            self.assignments = combined
             guard let indexOfAssignment = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject}) else { fatalError() }
             let existingAssignment = tableView.numberOfRows(inSection: 0) < self.assignments.count ? false : true
 
-            self.assignments[indexOfAssignment].getGradeString()
-            self.selectedCourse.refresh()
-
-            existingAssignment == false ? tableView.insertRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left) : tableView.reloadRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .fade)
+            if !existingAssignment {
+                tableView.insertRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
+            }
+            else if existingAssignment {
+                if indexBefore != nil && indexBefore != indexOfAssignment {
+                    tableView.moveRow(at: IndexPath(row: indexBefore!, section: 0), to: IndexPath(row: indexOfAssignment, section: 0))
+                }
+                tableView.reloadRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .fade)
+            }
         }
 
         else if let newSubmission = newObject as? Submission {
@@ -155,6 +164,14 @@ extension CourseAssignmentsTableView {
                     return
                 }
                 if let indexOfAssignment = self.assignments.index(where: {($0 as! NBModel) == newSubmission.parent}) {
+                    self.assignments[indexOfAssignment].getGradeString()
+                    self.assignments[indexOfAssignment].getStatus()
+                    self.selectedCourse.refresh()
+                    self.assignments = self.selectedCourse.courseAssignments
+                    self.sortAssignments()
+
+                    guard let newIndex = self.assignments.index(where: {($0 as! NBModel) == newSubmission.parent!}) else { fatalError() }
+                    tableView.moveRow(at: IndexPath(row: indexOfAssignment, section: 0), to: IndexPath(row: newIndex, section: 0))
                     tableView.reloadRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .fade)
                 }
             }
@@ -166,8 +183,16 @@ extension CourseAssignmentsTableView {
                     return
                 }
                 if let indexOfAssignment = self.assignments.index(where: {($0 as! NBModel) == newGrade.owner!}) {
+
                     self.assignments[indexOfAssignment].getGradeString()
-                    tableView.reloadRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .fade)
+                    self.assignments[indexOfAssignment].getStatus()
+                    self.selectedCourse.refresh()
+                    self.assignments = self.selectedCourse.courseAssignments
+                    self.sortAssignments()
+
+                    guard let newIndex = self.assignments.index(where: {($0 as! NBModel) == newGrade.owner!}) else { fatalError() }
+                    tableView.moveRow(at: IndexPath(row: indexOfAssignment, section: 0), to: IndexPath(row: newIndex, section: 0))
+                    tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
                 }
             }
         }
@@ -181,6 +206,7 @@ extension CourseAssignmentsTableView {
             guard let indexOfAssignment = self.assignments.firstIndex(where: {($0 as! NBModel) == deletedObject}) else { fatalError() }
             self.selectedCourse.refresh()
             self.assignments = self.selectedCourse.courseAssignments
+            self.sortAssignments()
 
             tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
         }
@@ -202,16 +228,19 @@ class AssignmentsHeaderView: GSKStretchyHeaderView {
     let minFontSize: CGFloat = 17
 
     lazy var label: UILabel = {
-        let label = UILabel(frame: CGRect(x: 0, y: 40, width: self.contentView.frame.size.width, height: self.contentView.frame.size.height - 40))
+        let label = UILabel(frame: CGRect(x: 20, y: 40, width: self.contentView.frame.size.width-40, height: self.contentView.frame.size.height - 40))
         label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         label.font = UIFont.systemFont(ofSize: self.maxFontSize, weight: UIFont.Weight.semibold)
         label.textColor = UIColor.groupTableViewBackground
         label.text = "Course Name"
         label.textAlignment = .center
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.8
         return label
     }()
     lazy var detailLabel: UILabel = {
-        let label = UILabel(frame: CGRect(x: 0, y: 90, width: self.contentView.frame.size.width, height: self.contentView.frame.size.height - 90))
+        let label = UILabel(frame: CGRect(x: 0, y: 95, width: self.contentView.frame.size.width, height: self.contentView.frame.size.height - 95))
         label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         label.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium)
         label.textColor = UIColor.groupTableViewBackground

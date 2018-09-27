@@ -98,7 +98,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         postTextView.delegate = self
         if editingExisting {
             postTextView.text = existingObjectToEdit.text
-            postButton.title = "Edit"
+            postButton.title = "Save"
             for attachment in existingObjectToEdit.attachments {
                 if attachment.type.contains("image") {
                     self.attachmentIDs.append(attachment.url.absoluteString)
@@ -235,8 +235,8 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
 
-        if existingObjectToEdit is Comment {
-            bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace,anonymousButton], forStack: .left, animated: viewIsLoaded)
+        if editingExisting {
+            bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace], forStack: .left, animated: viewIsLoaded)
         }
         else {
             bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)

@@ -485,7 +485,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1000;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Notebowl;
 				TargetAttributes = {
 					8522D04720FE7B2C00BCBD88 = {
@@ -640,7 +640,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AutoMate-AppBuddy/AutoMate_AppBuddy.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/Cache/Cache.framework",
 				"${BUILT_PRODUCTS_DIR}/DeckTransition/DeckTransition.framework",
@@ -671,7 +670,6 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoMate_AppBuddy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeckTransition.framework",
@@ -836,7 +834,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E5579BB75D3C7250924C139 /* Pods-NotebowlMobileUITests.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -864,7 +861,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A269D2501F5E28E05ECA06BE /* Pods-NotebowlMobileUITests.prod.xcconfig */;
 			buildSettings = {
-				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -892,7 +888,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F960C56ACB19ECD18F767786 /* Pods-NotebowlMobileUITests.staging.xcconfig */;
 			buildSettings = {
-				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -920,7 +915,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9E2481BA85725F1AA813F18C /* Pods-NotebowlMobileUITests.release.xcconfig */;
 			buildSettings = {
-				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -948,7 +942,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 88E9B2CEB79AC0B662B12815 /* Pods-NotebowlMobileUITests.testflight.xcconfig */;
 			buildSettings = {
-				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1076,7 +1069,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1121,7 +1113,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = "";
 				VALIDATE_PRODUCT = YES;
@@ -1134,13 +1125,12 @@
 			baseConfigurationReference = 4BD64539E8C35D15042B5A30 /* Pods-Notebowl Mobile.testflight.xcconfig */;
 			buildSettings = {
 				API_BASE_URL_ENDPOINT = platform.notebowl.com;
-				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720007;
+				CURRENT_PROJECT_VERSION = 1720013;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1170,7 +1160,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1234,13 +1223,12 @@
 			baseConfigurationReference = EDFC7837F5A700769C68A0C2 /* Pods-Notebowl Mobile.staging.xcconfig */;
 			buildSettings = {
 				API_BASE_URL_ENDPOINT = demo.nbstage.com;
-				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720007;
+				CURRENT_PROJECT_VERSION = 1720013;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1270,7 +1258,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1334,13 +1321,12 @@
 			baseConfigurationReference = 3E8127B27DA8552A052240A6 /* Pods-Notebowl Mobile.prod.xcconfig */;
 			buildSettings = {
 				API_BASE_URL_ENDPOINT = platform.notebowl.com;
-				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720007;
+				CURRENT_PROJECT_VERSION = 1720013;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1370,7 +1356,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1420,7 +1405,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1433,7 +1418,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1478,7 +1462,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = "";
 				VALIDATE_PRODUCT = YES;
@@ -1491,13 +1474,12 @@
 			baseConfigurationReference = 54079A7139C34E172088EEF6 /* Pods-Notebowl Mobile.debug.xcconfig */;
 			buildSettings = {
 				API_BASE_URL_ENDPOINT = demo.nbstage.com;
-				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720007;
+				CURRENT_PROJECT_VERSION = 1720013;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;
@@ -1528,13 +1510,12 @@
 			baseConfigurationReference = 410A296A3E39BFA455BC0756 /* Pods-Notebowl Mobile.release.xcconfig */;
 			buildSettings = {
 				API_BASE_URL_ENDPOINT = platform.notebowl.com;
-				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Notebowl Mobile/Support Files/Notebowl Mobile.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1720007;
+				CURRENT_PROJECT_VERSION = 1720013;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 8M84348K8B;
 				ENABLE_BITCODE = NO;

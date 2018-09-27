@@ -37,11 +37,13 @@ class NotificationsTableViewCell: UITableViewCell {
     func configure(notification: Notification) {
         notificationContent.text = notification.text
         notificationDate.text = notification.createdAt.relativeFormat
-        
-        userAvatar.kf.setImage(with: notification.userProfilePicURL,
+
+        let userProfile = notification.userProfilePicURL
+
+        userAvatar.kf.setImage(with: userProfile,
                                     options: [
                                         .transition(ImageTransition.fade(0.3)),
-                                        .fromMemoryCacheOrRefresh,
+                                         .forceTransition,
                                         .keepCurrentImageWhileLoading
             ]
         )

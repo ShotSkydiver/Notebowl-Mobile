@@ -12,7 +12,6 @@ import Photos
 import DeckTransition
 import Kingfisher
 import MMUploadImage
-import FaceAware
 import YPImagePicker
 
 protocol ContainerToMaster {
@@ -44,7 +43,7 @@ class AccountModalTableViewController: UITableViewController {
     var progress: Float = 0.0
     var selectedImage: UIImage!
     
-    var updatedUser: [String: AnyObject]!
+    var updatedUser: Any!
     
     @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
@@ -67,14 +66,13 @@ class AccountModalTableViewController: UITableViewController {
     
     @IBAction func doneButtonTapped(_ sender: Any) {
         
-        if let keyPath = self.updatedUser {
-            let fileID = keyPath["fileId"] as! String
-            let json: [String: Any] = ["fileId": fileID]
+        if let keyPath = self.updatedUser as? [String: AnyObject], let fileID = keyPath["fileId"] as? String {
             let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
-                                                      json: (json as Any))
+                                                      json: ["fileId": fileID])
 
-            let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
-            NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL((newKeys["url"] as! String)))", updateUrl: (newKeys["url"] as! String), action: "updated", updatedAt: (newKeys["updatedAt"] as! String))
+            if let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = newKeys["url"] as? String, let updatedAt = newKeys["updatedAt"] as? String {
+                _ = NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(url))", updateUrl: url, action: "updated", updatedAt: updatedAt)
+            }
         }
         self.dismiss(animated: true, completion: nil)
     }
@@ -110,11 +108,11 @@ class AccountModalTableViewController: UITableViewController {
                                                  loadImmediately: false,
                                                  asyncProgressHandler: { p in
                                                     DispatchQueue.main.async(execute: {
-                                                        TTLog.debug("prgoress: ", p.percentageUpload)
+                                                        log.debug("prgoress: \(p.percentageUpload)")
                                                         self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
                                                     })
         }, asyncCompletionHandler: { r in
-            self.updatedUser = (r.json as AnyObject).value(forKeyPath: "result")! as! [String : AnyObject]
+            self.updatedUser = (r.json as AnyObject).value(forKeyPath: "result")
             DispatchQueue.main.async(execute: {
                 self.profilePicture.uploadCompleted()
             })
@@ -142,7 +140,7 @@ class AccountModalTableViewController: UITableViewController {
 
         picker.didFinishPicking(completion: { (items, cancelled) in
             if cancelled {
-                TTLog.debug("cancelled")
+                log.debug("cancelled")
                 picker.dismiss(animated: true, completion: nil)
             }
             else if !cancelled {

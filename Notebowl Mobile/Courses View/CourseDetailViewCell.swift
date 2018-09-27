@@ -28,26 +28,22 @@ class CourseDetailViewCell: UITableViewCell {
 
     func configure(assignment: AssignmentAssessment, color: UIColor) {
         assignmentName.text = assignment.title
-        assignmentCategory.text = assignment.category.title
+        assignmentCategory.text = assignment.category.title.uppercased()
 
-        if assignment.dueDate == nil {
-            dueDateNumber.text = "--"
-            dueDateText.text = ""
-            submittedText.text = "Not Published"
+        if (assignment as! NBModel).parent?.enrollmentForUser?.role == .professor || (assignment as! NBModel).parent?.enrollmentForUser?.role == .admin {
+            userGradeText.text = ""
         }
-        else if assignment.availableDate.isInFuture {
-            dueDateNumber.text = "--"
-            dueDateText.text = ""
-            submittedText.text = "Not Available Yet"
-        }
-
         else {
             userGradeText.text = assignment.getUserGrade()
-            submittedText.text = assignment.status
+        }
+        submittedText.text = assignment.status
 
+        if assignment.dueDate != nil {
             let parsedDateString = assignment.dueDate.literalFormat
             var dateStringComponents = parsedDateString.components(separatedBy: " ")
-            if dateStringComponents[0] == "in" { dateStringComponents.remove(at: 0) }
+            if CharacterSet.letters.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
+                dateStringComponents.remove(at: 0)
+            }
             if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
                 dueDateNumber.text = dateStringComponents[0]
                 if assignment.isAvailable && !assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " left") }
@@ -58,9 +54,11 @@ class CourseDetailViewCell: UITableViewCell {
                 dueDateText.text = " "
             }
         }
+
         totalPointsNumber.text = ("\(assignment.points ?? 0)")
         totalPointsText.text = "pts"
 
+        assignmentCategory.textColor = UIColor.groupTableViewBackground
         assignmentCategory.backgroundColor = color
         userGradeText.textColor = color
         submittedText.textColor = color
