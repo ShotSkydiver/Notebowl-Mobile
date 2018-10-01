@@ -103,7 +103,7 @@ public extension Date {
     }
     var literalFormat: String {
         let newStyle = RelativeFormatter.Style(flavours: [.long], gradation: .convenient())
-        return self.toRelative(style: newStyle)
+        return self.toRelative(style: newStyle, locale: Locales.english)
     }
 }
 

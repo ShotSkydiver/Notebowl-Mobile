@@ -70,8 +70,8 @@ class AccountModalTableViewController: UITableViewController {
             let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
                                                       json: ["fileId": fileID])
 
-            if let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = newKeys["url"] as? String, let updatedAt = newKeys["updatedAt"] as? String {
-                _ = NBSocket.shared.updateHandler(itemType: "\(ItemType.fromURL(url))", updateUrl: url, action: "updated", updatedAt: updatedAt)
+            if let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = newKeys["url"] as? String, let updatedAt = newKeys["updatedAt"] as? String, let itemType = ItemType.fromURL(url) {
+                _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: url, action: "updated", updatedAt: updatedAt)
             }
         }
         self.dismiss(animated: true, completion: nil)

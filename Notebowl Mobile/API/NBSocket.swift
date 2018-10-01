@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SocketIO
 import ObjectMapper
+import Bugsnag
 
 struct SendData : SocketData {
     let action: String
@@ -52,7 +53,10 @@ class NBSocket {
             guard let message = data[0] as? String else { return }
             guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
             let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
-            _ = self.updateHandler(itemType: "\(ItemType.fromURL((JSON["updateUrl"] as! String)))", updateUrl: "\((JSON["updateUrl"] as! String))", action: "\((JSON["action"] as! String))", updatedAt: "\((JSON["updatedAt"] as! String))")
+            guard let updateUrl = JSON["updateUrl"] as? String else { fatalError() }
+            if let itemType = ItemType.fromURL(updateUrl) {
+                _ = self.updateHandler(itemType: "\(itemType)", updateUrl: "\(updateUrl)", action: "\((JSON["action"] as! String))", updatedAt: "\((JSON["updatedAt"] as! String))")
+            }
         }
     }
     

@@ -162,7 +162,7 @@ CHECKOUT OPTIONS:
     :commit: 84099c5fbdb340d744d467b955642ebd9f2b41da
     :git: https://github.com/shinydevelopment/SimulatorStatusMagic.git
   Socket.IO-Client-Swift:
-    :commit: c3032579c031aa3bdc3c4c38e539a76047022607
+    :commit: 3bf28cd4277d1ca5b6247a30c628f95ce23a61ed
     :git: https://github.com/socketio/socket.io-client-swift.git
   SwipeCellKit:
     :commit: 9c69084b9b331c3c9f4767add20afe72112adee8

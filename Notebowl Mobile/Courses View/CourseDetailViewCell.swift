@@ -36,29 +36,45 @@ class CourseDetailViewCell: UITableViewCell {
         else {
             userGradeText.text = assignment.getUserGrade()
         }
-        submittedText.text = assignment.status
+        submittedText.text = assignment.status.rawValue
 
         if assignment.dueDate != nil {
             let parsedDateString = assignment.dueDate.literalFormat
-            var dateStringComponents = parsedDateString.components(separatedBy: " ")
-            if CharacterSet.letters.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
-                dateStringComponents.remove(at: 0)
-            }
-            if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
-                dueDateNumber.text = dateStringComponents[0]
-                if assignment.isAvailable && !assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " left") }
-                else if assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " ago") }
-            }
-            else {
-                dueDateNumber.text = "Due now"
+            if assignment.status == .NotAvailableYet {
+                dueDateNumber.text = "starts \(parsedDateString)"
                 dueDateText.text = " "
             }
+            else {
+                var dateStringComponents = parsedDateString.components(separatedBy: " ")
+                if CharacterSet.letters.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
+                    dateStringComponents.remove(at: 0)
+                }
+                if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
+                    dueDateNumber.text = dateStringComponents[0]
+                    if assignment.isAvailable && !assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " left") }
+                    else if assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " ago") }
+                }
+                else {
+                    dueDateNumber.text = "Due now"
+                    dueDateText.text = " "
+                }
+            }
+        }
+        else {
+            dueDateNumber.text = ""
+            dueDateText.text = " "
         }
 
-        totalPointsNumber.text = ("\(assignment.points ?? 0)")
+        if assignment.points.isInt {
+            totalPointsNumber.text = ("\(Int(assignment.points!))")
+        }
+        else {
+            totalPointsNumber.text = ("\(assignment.points!)")
+        }
+        
         totalPointsText.text = "pts"
 
-        assignmentCategory.textColor = UIColor.groupTableViewBackground
+        assignmentCategory.textColor = UIColor(hexString: "#f5f5f5")
         assignmentCategory.backgroundColor = color
         userGradeText.textColor = color
         submittedText.textColor = color

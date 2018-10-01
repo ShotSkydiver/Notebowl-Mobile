@@ -13,22 +13,6 @@ import Tamamushi
 import GSKStretchyHeaderView
 import PKHUD
 
-
-enum AssignmentStatus: Int {
-    case InProgress = 0
-    case Graded = 1
-    case Submitted = 2
-    case Open = 3
-    case PastDue = 4
-    case Closed = 5
-}
-
-enum AssignmentProfStatus: String {
-    case NotPublished = "Not Published"
-    case NotAvailable = "Not Available Yet"
-    case Grading = "Grading"
-}
-
 class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     var assignments: [AssignmentAssessment]!
     var selectedCourse: Course!
@@ -106,14 +90,25 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
             HUD.hide(animated: true)
         }
     }
-
+    
     func sortAssignments() {
-        var hasDueDate = self.assignments.filter({$0.dueDate != nil})
-        hasDueDate.sort() { $0.dueDate > $1.dueDate }
-        var nilDueDate = self.assignments.filter({$0.dueDate == nil})
-        nilDueDate.sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt }
-        hasDueDate.append(contentsOf: nilDueDate)
-        self.assignments = hasDueDate
+        self.assignments.sort() {
+            if $0.status.sortValue != $1.status.sortValue {
+                return $0.status.sortValue < $1.status.sortValue
+            }
+            else if $0.status == .NotPublished {
+                return ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt
+            }
+            else if $0.status == .Graded {
+                return $0.userGrade.updatedAt > $1.userGrade.updatedAt
+            }
+            else if $0.status == .Open || $0.status == .NotAvailableYet {
+                return $0.availableDate > $1.availableDate
+            }
+            else {
+                return $0.dueDate > $1.dueDate
+            }
+        }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -138,8 +133,7 @@ extension CourseAssignmentsTableView {
         if let newAssignment = newObject as? AssignmentAssessment {
             let indexBefore = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject})
 
-            newAssignment.getGradeString()
-            newAssignment.getStatus()
+            newObject.refresh()
             self.selectedCourse.refresh()
             self.assignments = self.selectedCourse.courseAssignments
             self.sortAssignments()
@@ -158,14 +152,23 @@ extension CourseAssignmentsTableView {
             }
         }
 
+        else if let newQuestion = newObject as? AssessmentQuestion {
+            if newQuestion.parent is Assessment {
+                if let indexOfAssessment = self.assignments.index(where: {($0 as! NBModel) == newQuestion.parent }) {
+                    (self.assignments[indexOfAssessment] as! Assessment).calculatePoints()
+                    tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
+                }
+            }
+        }
+
         else if let newSubmission = newObject as? Submission {
             if newSubmission.parent is Assignment {
                 if newSubmission.parent!.parent?.enrollmentForUser?.role == .professor || newSubmission.parent!.parent?.enrollmentForUser?.role == .admin {
                     return
                 }
                 if let indexOfAssignment = self.assignments.index(where: {($0 as! NBModel) == newSubmission.parent}) {
-                    self.assignments[indexOfAssignment].getGradeString()
-                    self.assignments[indexOfAssignment].getStatus()
+                    self.assignments[indexOfAssignment].setGradeString()
+                    self.assignments[indexOfAssignment].setStatus()
                     self.selectedCourse.refresh()
                     self.assignments = self.selectedCourse.courseAssignments
                     self.sortAssignments()
@@ -184,8 +187,8 @@ extension CourseAssignmentsTableView {
                 }
                 if let indexOfAssignment = self.assignments.index(where: {($0 as! NBModel) == newGrade.owner!}) {
 
-                    self.assignments[indexOfAssignment].getGradeString()
-                    self.assignments[indexOfAssignment].getStatus()
+                    self.assignments[indexOfAssignment].setGradeString()
+                    self.assignments[indexOfAssignment].setStatus()
                     self.selectedCourse.refresh()
                     self.assignments = self.selectedCourse.courseAssignments
                     self.sortAssignments()

@@ -75,11 +75,11 @@ class NBClient {
         
         guard let keyPaths = nestedJson as? [[String: Any]] else { return "" }
         for key in keyPaths {
-            let urlString = (key["_parent"] as! String)
-            let objectType = ItemType.fromURL(urlString)
-            let resKey = URL(string: urlString)!.lastPathComponent
-            objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : log.debug("neither course nor group!"))
-            combinedUrlsFilter = (combinedUrlsFilter + urlString + ",")
+            if let urlString = key["_parent"] as? String, let objectType = ItemType.fromURL(urlString) {
+                let resKey = URL(string: urlString)!.lastPathComponent
+                objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : log.debug("neither course nor group!"))
+                combinedUrlsFilter = (combinedUrlsFilter + urlString + ",")
+            }
         }
         _ = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(coursesFilter)\"]")
         _ = NBClient.shared.getMappable(Group.self, filters: "[\"resourceKey:IN:\(groupsFilter)\"]")

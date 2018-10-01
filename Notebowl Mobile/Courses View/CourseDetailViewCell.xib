@@ -27,10 +27,10 @@
                                 <rect key="frame" x="12" y="14" width="362" height="60"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="cty-cF-mBp">
-                                        <rect key="frame" x="0.0" y="0.0" width="362" height="15.333333333333334"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="362" height="16.666666666666668"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" text="PROJECT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eom-Eg-3l1" customClass="PillUILabel" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="56.333333333333336" height="15.333333333333334"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="56.333333333333336" height="16.666666666666668"/>
                                                 <color key="backgroundColor" red="0.87293781729999997" green="0.42542532799999999" blue="0.42849003889999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                                 <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -45,7 +45,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Incomplete" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Jt-nv-mEM">
-                                                <rect key="frame" x="58.333333333333343" y="0.0" width="303.66666666666663" height="15.333333333333334"/>
+                                                <rect key="frame" x="58.333333333333343" y="0.0" width="303.66666666666663" height="16.666666666666668"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                                 <color key="textColor" red="0.87293781729999997" green="0.42542532799999999" blue="0.42849003889999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <nil key="highlightedColor"/>
@@ -53,8 +53,8 @@
                                         </subviews>
                                     </stackView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Assignment Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iun-dc-3XC" customClass="KerningLabel" customModule="Notebowl_Mobile" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="18.333333333333336" width="322" height="23"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                        <rect key="frame" x="0.0" y="19.666666666666664" width="322" height="21.666666666666664"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                         <color key="textColor" red="0.30196078431372547" green="0.30196078431372547" blue="0.30196078431372547" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
