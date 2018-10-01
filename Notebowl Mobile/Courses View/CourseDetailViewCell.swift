@@ -42,28 +42,15 @@ class CourseDetailViewCell: UITableViewCell {
             let parsedDateString = assignment.dueDate.literalFormat
             if assignment.status == .NotAvailableYet {
                 dueDateNumber.text = "starts \(parsedDateString)"
-                dueDateText.text = " "
             }
             else {
-                var dateStringComponents = parsedDateString.components(separatedBy: " ")
-                if CharacterSet.letters.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
-                    dateStringComponents.remove(at: 0)
-                }
-                if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: dateStringComponents[0])) {
-                    dueDateNumber.text = dateStringComponents[0]
-                    if assignment.isAvailable && !assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " left") }
-                    else if assignment.isPastDue { dueDateText.text = (dateStringComponents[1] + " ago") }
-                }
-                else {
-                    dueDateNumber.text = "Due now"
-                    dueDateText.text = " "
-                }
+                dueDateNumber.text = parsedDateString
             }
         }
         else {
             dueDateNumber.text = ""
-            dueDateText.text = " "
         }
+        dueDateText.text = " "
 
         if assignment.points.isInt {
             totalPointsNumber.text = ("\(Int(assignment.points!))")
