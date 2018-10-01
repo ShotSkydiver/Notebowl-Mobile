@@ -10,12 +10,16 @@ import Foundation
 import UIKit
 import Bugsnag
 import SocketIO
+import Siren
 
 class RootViewController: UIViewController {
+
+    var shouldLoad: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
+        Siren.shared.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -25,14 +29,18 @@ class RootViewController: UIViewController {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
         else if UserDefaults.hasUserLoggedIn {
-            let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
-            if gotUserSuccess {
-                self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
-            }
-            else if !gotUserSuccess {
-                UserDefaults.set(hasUserLoggedIn: false)
-                self.performSegue(withIdentifier: "presentLoginView", sender: nil)
-            }
+            Siren.shared.checkVersion(checkType: .immediately)
+        }
+    }
+
+    func loadLoggedIn() {
+        let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
+        if gotUserSuccess {
+            self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
+        }
+        else if !gotUserSuccess {
+            UserDefaults.set(hasUserLoggedIn: false)
+            self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
     }
     
@@ -67,5 +75,15 @@ extension RootViewController: ProgressWebViewControllerDelegate {
             UserDefaults.set(hasUserLoggedIn: true)
             controller.dismiss(animated: true, completion: nil)
         }
+    }
+}
+
+extension RootViewController: SirenDelegate {
+    func sirenDidDetectNewVersionWithoutAlert(title: String, message: String, updateType: UpdateType) {
+        loadLoggedIn()
+    }
+
+    func sirenLatestVersionInstalled() {
+        loadLoggedIn()
     }
 }

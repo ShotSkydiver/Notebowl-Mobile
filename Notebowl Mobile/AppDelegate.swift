@@ -56,17 +56,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func setupLibraries() {
-        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
-        
         let siren = Siren.shared
         if Config.appConfiguration == .Debug { siren.debugEnabled = true }
         siren.alertType = .force
         siren.majorUpdateAlertType = .force
         siren.minorUpdateAlertType = .force
-        siren.patchUpdateAlertType = .option
-        siren.revisionUpdateAlertType = .option
+        siren.patchUpdateAlertType = .none
+        siren.revisionUpdateAlertType = .none
         siren.forceLanguageLocalization = .english
-        
+
+        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
+
         if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
     }
     
@@ -87,9 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = userInfo["aps"] as! [String: AnyObject]
     }
     
-    
     func applicationDidBecomeActive(_ application: UIApplication) {
-        Siren.shared.checkVersion(checkType: .daily)
     }
     
     func applicationWillResignActive(_ application: UIApplication) { }
