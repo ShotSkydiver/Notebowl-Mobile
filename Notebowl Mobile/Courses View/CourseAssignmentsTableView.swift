@@ -165,7 +165,7 @@ extension CourseAssignmentsTableView {
         else if newObject is AssessmentQuestion {
             if newObject.parent is Assessment {
                 if let indexOfAssessment = self.assignments.index(where: {($0 as! NBModel) == newObject.parent }) {
-                    (self.assignments[indexOfAssessment] as! Assessment).calculatePoints()
+                    (self.assignments[indexOfAssessment] as! Assessment).refreshCachedPoints()
                     tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
                 }
             }
