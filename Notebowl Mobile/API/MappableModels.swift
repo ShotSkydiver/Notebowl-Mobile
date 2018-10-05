@@ -1192,23 +1192,75 @@ public class Post: NBModel, PostsComments {
         let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
         self.postComments = (comments == nil ? [] : comments!)
  
-        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self }) as? [Attachment]
+        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
         updateLikes()
     }
 }
 
+public enum AttachmentScheme: String {
+    case Book = "Book"
+    case Conference = "Conference"
+    case External = "External"
+    case S3 = "S3"
+    case YouTube = "YouTube"
+    case Zoom = "Zoom"
+}
+
+public enum AttachmentTypes: String {
+    case audio, image, website, video, document, unsupported
+
+    enum Images: String {
+        case gif = "image/gif"
+        case jpeg = "image/jpeg"
+        case png = "image/png"
+        case svg = "image/svg+xml"
+        case tiff = "image/tiff"
+    }
+
+    public init?(typeValue: String!) {
+        if typeValue == nil { self.init(rawValue: "unsupported") }
+        else {
+            let slash = CharacterSet.init(charactersIn: "/")
+            let parts = typeValue.components(separatedBy: slash)
+            self.init(rawValue: parts[0])
+        }
+    }
+}
+
 public class Attachment: NBModel {
-    var fileExt: String!
-    var downloadUrl: URL!
-    var locationUrl: URL!
-    var thumbnailUrl: String?
+    var embeddable: Bool!
+    var location: String!
+    var previewUrls: [String: [String]]!
+    var thumbnailUrl: String!
     var attachmentName: String!
-    var attachmentType: String!
+    var attachmentScheme: AttachmentScheme!
+    var availableDate: Date!
     var fileName: String!
     var size: Int!
-    var type: String!
-    
+    var status: String!
+    var mimeType: AttachmentTypes!
+
+    var ext: String!
+    var downloadUrl: String!
+    var fileId: String!
+
+    var title: String!
+    var desc: String!
+    var domain: String!
+
+    var authors: String!
+    var isRequired: Bool!
+    var pageCount: Int!
+    var amazonLink: String!
+    var recommendAmazon: Bool!
+    var appleLink: String!
+    var recommendApple: Bool!
+
+    var duration: Int!
+    var ytThumbnail: String!
+    var paths: [String: [String]]!
+
     public var fileID: String!
     
     override class var routeType: ItemType { return .attachment }
@@ -1232,17 +1284,26 @@ public class Attachment: NBModel {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
-        fileExt <- map["extension"]
-        downloadUrl <- (map["downloadUrl"], URLTransform())
-        locationUrl <- (map["location"], URLTransform())
+
+        embeddable  <- map["embeddable"]
+        location <- (map["location"])
+        previewUrls <- map["previewUrls"]
         thumbnailUrl <- map["thumbnailUrl"]
         attachmentName <- map["attachmentName"]
-        attachmentType <- map["attachmentType"]
-        type <- map["type"]
+        attachmentScheme <- (map["attachmentScheme"], TransformOf<AttachmentScheme, String>(fromJSON: { AttachmentScheme(rawValue: $0!) }, toJSON: { $0!.rawValue }))
+        availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         fileName <- map["fileName"]
         size <- map["size"]
+        status <- map["status"]
+        mimeType <- (map["type"], TransformOf<AttachmentTypes, String>(fromJSON: { AttachmentTypes(typeValue: $0) }, toJSON: { $0!.rawValue }))
 
+        ext <- map["extension"]
+        downloadUrl <- map["downloadUrl"]
+        fileId <- map["fileId"]
+
+        title <- map["title"]
+        desc <- map["description"]
+        domain <- map["domain"]
     }
     
     func getUrlForAvatar() -> URL? {
@@ -1324,7 +1385,7 @@ public class Comment: NBModel, PostsComments {
     }
     
     public func getAttachments() {
-        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ ($0 as! Attachment).parent! == self }) as? [Attachment]
+        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
     }
     public func updateLikes() {

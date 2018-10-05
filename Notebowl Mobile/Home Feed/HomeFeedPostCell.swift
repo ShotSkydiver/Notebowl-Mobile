@@ -214,11 +214,9 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                 self.lightboxPhotos.append(lightboxPhoto)
             }
         }
-        
-        if (!post.attachments.isEmpty) && (post.attachments.first!.type != nil) {
-            if (post.attachments.first!.type.contains("image")) {
-                collectionViewHeight.constant = 100.0
-            }
+
+        if let firstAtt = post.attachments.first, firstAtt.mimeType == .image {
+            collectionViewHeight.constant = 100.0
         }
         else {
             collectionViewHeight.constant = 0.0
@@ -298,8 +296,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel"
         
         let attachmentForCell = self.postForCell.attachments[indexPath.item]
-        
-        if attachmentForCell.type.contains("image") {
+
+        if attachmentForCell.mimeType == .image {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })

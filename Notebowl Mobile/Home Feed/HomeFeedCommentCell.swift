@@ -155,10 +155,8 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             }
         }
         
-        if (!comment.attachments.isEmpty) && (comment.attachments.first!.type != nil) {
-            if (comment.attachments.first!.type.contains("image")) {
-                collectionViewHeight.constant = 100.0
-            }
+        if let firstAtt = comment.attachments.first, firstAtt.mimeType == .image {
+            collectionViewHeight.constant = 100.0
         }
         else {
             collectionViewHeight.constant = 0.0
@@ -237,7 +235,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         
         let attachmentForCell = self.commentForCell.attachments[indexPath.item]
         
-        if attachmentForCell.type.contains("image") {
+        if attachmentForCell.mimeType == .image {
             cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 self.setNeedsLayout()
             })

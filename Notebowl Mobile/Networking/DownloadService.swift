@@ -53,7 +53,7 @@ struct NBSessionDefaults {
         multipartBoundary: String = "Ju5tH77P15Aw350m3",
         credentialPersistence: URLCredential.Persistence = .forSession,
         encoding: String.Encoding = String.Encoding.utf8,
-        cachePolicy: NSURLRequest.CachePolicy = .reloadIgnoringLocalCacheData)
+        cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy)
     {
         self.startRequestImmediately = startRequestImmediately
         self.JSONReadingOptions = JSONReadingOptions
@@ -172,7 +172,6 @@ extension NBNetworking {
 
             if let URL = urlComponents.url {
                 var request = URLRequest(url: URL)
-   
                 request.cachePolicy = sessionDefaults.cachePolicy
                 request.httpBody = body
                 request.httpMethod = finalMethod.rawValue
@@ -299,8 +298,13 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
             result.encoding = self.sessionDefaults.encoding
             handler(result)
         }
-        
+
         requestConfigs.removeValue(forKey: task.taskIdentifier)
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        log.debug("redirect, \(request.description)")
+        
     }
 }
 extension URLSessionConfiguration {

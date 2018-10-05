@@ -6,24 +6,23 @@ PODS:
   - FaveButton (2.0.3)
   - FeedbackSlack (0.1.2)
   - GSKStretchyHeaderView (1.0.4)
-  - Haptica (2.1.1)
+  - Haptica (2.2.1)
   - HGPlaceholders (0.3.0)
   - HTTPStatusCodes (3.2.0)
   - Hue (3.0.1)
   - Imaginary (4.2.0):
     - Cache (~> 5.0)
-  - InputBarAccessoryView (4.0.1)
+  - InputBarAccessoryView (4.0.3)
   - Kingfisher (4.10.0)
-  - Lightbox (2.2.0):
-    - Hue (~> 3.0)
+  - Lightbox (2.3.0):
     - Imaginary (~> 4.0)
   - MMUploadImage (2.0.8)
-  - ObjectMapper (3.3.0)
-  - PKHUD (5.1.0)
+  - ObjectMapper (3.2.0)
+  - PKHUD (5.2.0)
   - PryntTrimmerView (3.0.0)
-  - SimulatorStatusMagic (2.2)
-  - Siren (3.6.0)
-  - Socket.IO-Client-Swift (13.3.0):
+  - SimulatorStatusMagic (2.3)
+  - Siren (3.7.2)
+  - Socket.IO-Client-Swift (13.3.1):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.5)
   - SteviaLayout (4.4.0)
@@ -31,50 +30,54 @@ PODS:
   - SwiftyBeaver (1.6.1)
   - SwipeCellKit (2.5.0)
   - Tamamushi (0.1.3)
-  - YPImagePicker (3.5.0):
-    - PryntTrimmerView (>= 2.0)
-    - SteviaLayout (>= 4.2.0)
+  - YPImagePicker (3.5.1):
+    - PryntTrimmerView (~> 3.0.0)
+    - SteviaLayout (~> 4.4.0)
 
 DEPENDENCIES:
   - AutoMate
   - Bugsnag
-  - Cache (from `https://github.com/hyperoslo/Cache.git`)
+  - Cache
   - DeckTransition (~> 2.0)
   - FaveButton (from `https://github.com/ShotSkydiver/fave-button`, branch `swift-4.2`)
   - FeedbackSlack (from `https://github.com/ShotSkydiver/SlackFeedback`)
   - GSKStretchyHeaderView
-  - Haptica (from `https://github.com/efremidze/Haptica`, branch `swift-4.2`)
+  - Haptica
   - HGPlaceholders (from `https://github.com/ShotSkydiver/HGPlaceholders`, branch `swift-4.2`)
   - HTTPStatusCodes (~> 3.2.0)
   - Hue (from `https://github.com/hyperoslo/Hue.git`)
-  - Imaginary (from `https://github.com/hyperoslo/Imaginary.git`)
+  - Imaginary
   - InputBarAccessoryView
   - Kingfisher
-  - Lightbox (from `https://github.com/ShotSkydiver/Lightbox.git`)
+  - Lightbox
   - MMUploadImage (from `https://github.com/ShotSkydiver/UploadImage`, branch `swift-4.2`)
-  - ObjectMapper
-  - PKHUD (from `https://github.com/ShotSkydiver/PKHUD.git`)
-  - PryntTrimmerView (from `https://github.com/HHK1/PryntTrimmerView`, tag `3.0.0-beta.1`)
-  - SimulatorStatusMagic (from `https://github.com/shinydevelopment/SimulatorStatusMagic.git`, commit `84099c5fbdb340d744d467b955642ebd9f2b41da`)
+  - ObjectMapper (from `https://github.com/kajensen/ObjectMapper`)
+  - PKHUD
+  - SimulatorStatusMagic
   - Siren
   - Socket.IO-Client-Swift (from `https://github.com/socketio/socket.io-client-swift.git`, branch `development`)
-  - SteviaLayout (~> 4.4.0)
   - SwiftDate
   - SwiftyBeaver
   - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
   - Tamamushi (from `https://github.com/ShotSkydiver/Tamamushi`)
-  - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`, branch `Swift42`)
+  - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AutoMate
     - Bugsnag
+    - Cache
     - DeckTransition
     - GSKStretchyHeaderView
+    - Haptica
     - HTTPStatusCodes
+    - Imaginary
     - InputBarAccessoryView
     - Kingfisher
-    - ObjectMapper
+    - Lightbox
+    - PKHUD
+    - PryntTrimmerView
+    - SimulatorStatusMagic
     - Siren
     - Starscream
     - SteviaLayout
@@ -82,36 +85,21 @@ SPEC REPOS:
     - SwiftyBeaver
 
 EXTERNAL SOURCES:
-  Cache:
-    :git: https://github.com/hyperoslo/Cache.git
   FaveButton:
     :branch: swift-4.2
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :git: https://github.com/ShotSkydiver/SlackFeedback
-  Haptica:
-    :branch: swift-4.2
-    :git: https://github.com/efremidze/Haptica
   HGPlaceholders:
     :branch: swift-4.2
     :git: https://github.com/ShotSkydiver/HGPlaceholders
   Hue:
     :git: https://github.com/hyperoslo/Hue.git
-  Imaginary:
-    :git: https://github.com/hyperoslo/Imaginary.git
-  Lightbox:
-    :git: https://github.com/ShotSkydiver/Lightbox.git
   MMUploadImage:
     :branch: swift-4.2
     :git: https://github.com/ShotSkydiver/UploadImage
-  PKHUD:
-    :git: https://github.com/ShotSkydiver/PKHUD.git
-  PryntTrimmerView:
-    :git: https://github.com/HHK1/PryntTrimmerView
-    :tag: 3.0.0-beta.1
-  SimulatorStatusMagic:
-    :commit: 84099c5fbdb340d744d467b955642ebd9f2b41da
-    :git: https://github.com/shinydevelopment/SimulatorStatusMagic.git
+  ObjectMapper:
+    :git: https://github.com/kajensen/ObjectMapper
   Socket.IO-Client-Swift:
     :branch: development
     :git: https://github.com/socketio/socket.io-client-swift.git
@@ -121,48 +109,29 @@ EXTERNAL SOURCES:
   Tamamushi:
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
-    :branch: Swift42
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 CHECKOUT OPTIONS:
-  Cache:
-    :commit: 8c42c575cf28b2ff0e780c9728721e9a8891c92e
-    :git: https://github.com/hyperoslo/Cache.git
   FaveButton:
     :commit: f49e83bdb9bd348ebd47e4ddd8b67687ff68d575
     :git: https://github.com/ShotSkydiver/fave-button
   FeedbackSlack:
     :commit: 05c94aef1667696db3a4c2c64e9d0ca01fe0d637
     :git: https://github.com/ShotSkydiver/SlackFeedback
-  Haptica:
-    :commit: c823179035d08a999e06341c428a73ec648be14a
-    :git: https://github.com/efremidze/Haptica
   HGPlaceholders:
     :commit: 14ea75685d680c269641c6a2bf1aedffefc0652c
     :git: https://github.com/ShotSkydiver/HGPlaceholders
   Hue:
     :commit: d2250b593d903c892b47659c1c2d95755c8c4bfe
     :git: https://github.com/hyperoslo/Hue.git
-  Imaginary:
-    :commit: e595d343f475ada6b22849e901bd56aec5f6e663
-    :git: https://github.com/hyperoslo/Imaginary.git
-  Lightbox:
-    :commit: 62d0f7449b6d978a9fb1a8893017d861cdf53847
-    :git: https://github.com/ShotSkydiver/Lightbox.git
   MMUploadImage:
     :commit: 89b694751073688fc887b5799c702c22e782cbff
     :git: https://github.com/ShotSkydiver/UploadImage
-  PKHUD:
-    :commit: 9ce134aaba19b41609fadea6129e63b511cd1a9f
-    :git: https://github.com/ShotSkydiver/PKHUD.git
-  PryntTrimmerView:
-    :git: https://github.com/HHK1/PryntTrimmerView
-    :tag: 3.0.0-beta.1
-  SimulatorStatusMagic:
-    :commit: 84099c5fbdb340d744d467b955642ebd9f2b41da
-    :git: https://github.com/shinydevelopment/SimulatorStatusMagic.git
+  ObjectMapper:
+    :commit: ec6015e41293580f1e20ce2aac595ae0271c5bbc
+    :git: https://github.com/kajensen/ObjectMapper
   Socket.IO-Client-Swift:
-    :commit: 3bf28cd4277d1ca5b6247a30c628f95ce23a61ed
+    :commit: e5f3fb13aef469a2e282f91b9c4bc180b2f7c03f
     :git: https://github.com/socketio/socket.io-client-swift.git
   SwipeCellKit:
     :commit: 9c69084b9b331c3c9f4767add20afe72112adee8
@@ -171,7 +140,7 @@ CHECKOUT OPTIONS:
     :commit: c306cb0c0ca1810e760542dfd0c0ffedfcee79a0
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
-    :commit: 2fd3556d06916606aaace21cb6e8394bdb5cfdf6
+    :commit: 6bf6212c92fbd5df464e49b5682d8a5271fcf16c
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
@@ -182,29 +151,29 @@ SPEC CHECKSUMS:
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
   FeedbackSlack: e2e2cb134d5812a33a58cd99087872640a982b3b
   GSKStretchyHeaderView: 9743704c12bdc9cf7c7947bad3af8bf24f7061e3
-  Haptica: e9220bdd6652f4d237147f6eba0f8509f6ceb370
+  Haptica: 754e5879991be64bd8d47b21cb1862d052624ec4
   HGPlaceholders: ff5ccd1ebc6cd4e8d10f25ba0f2f904e5a43a7a4
   HTTPStatusCodes: 69f50d229c4b5d6dcb48fad9c86e32ded975bcd3
   Hue: 7ee65b3bf787c84990edd6877339a8d280b67427
   Imaginary: dae33d06dbc2ada22f98afef5eb45cc061311a2c
-  InputBarAccessoryView: 610c4d327edfb52e23d30ed7150fc34fa7c13973
+  InputBarAccessoryView: 7865f5e682a0d241b3bab28b568a01df25bf4cdb
   Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
-  Lightbox: ada8328d87524f95f7c3d77a8c4ccc5e0125a93f
+  Lightbox: d317750e4132bfb871a5307cfe0a2c7d6a583c65
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
-  PKHUD: 62ea46a1e88c4def1da784878d199bb54c841e3c
-  PryntTrimmerView: 697a0b30e534eb3f56e7b2d5a0e09be7ec8db4f0
-  SimulatorStatusMagic: fc2bc444e0d0eb3330b2dae6eb2facd8cf8f59da
-  Siren: 1cc00ecb985ec9864b96e7a88d23b84af7820201
-  Socket.IO-Client-Swift: 0afb192a562db90d50e3f7f7421c06925a3f0179
+  ObjectMapper: bdfb7bd74be419c0b71f49d1e380e958d31cade4
+  PKHUD: dd5357ac65f26115c35c4a68e9b328053326c5fe
+  PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
+  SimulatorStatusMagic: 631fe6e4195a8a8d587ad8744af9015126526cc2
+  Siren: d3e10df09c07d37a7f13d29ec78d760975c6da0b
+  Socket.IO-Client-Swift: 79f8f85fa44881838175a20f9bd2c32bef2c9d37
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SteviaLayout: dd74d1abd127bbf0ce346ac9430441684fe427d0
   SwiftDate: 52b718d32ec006861a2be2756cbfa482d438e781
   SwiftyBeaver: ccfcdf85a04d429f1633f668650b0ce8020bda3a
   SwipeCellKit: d8f2617538ce3021cb0a11d1b93856a06a2f2e20
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
-  YPImagePicker: a886534aee6ab6eeabb1ded1f6cdce70da59beb1
+  YPImagePicker: 63571f23673d54f743522fdf9d7765ab55e4be60
 
-PODFILE CHECKSUM: 157ab3d4e7f460c46020ba03f05daa7c363fedbb
+PODFILE CHECKSUM: de98aa346119dd8ac9ad0c191078c596b33d5dc4
 
 COCOAPODS: 1.6.0.beta.1
