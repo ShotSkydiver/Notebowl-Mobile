@@ -310,6 +310,9 @@ extension HomeFeedPostViewController {
     
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
+            if newPost.parent is Assignment {
+                return
+            }
             if newPost == self.post {
                 self.post = newPost
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
@@ -317,6 +320,9 @@ extension HomeFeedPostViewController {
         }
             
         else if let newComment = newObject as? Comment {
+            if newComment.related is Assignment {
+                return
+            }
             let indexOfComment = self.post.postComments.index(of: newComment)
             let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
             
@@ -335,7 +341,7 @@ extension HomeFeedPostViewController {
         }
 
         else if ["Like","AttachmentS3"].contains(newObject.itemType) {
-            if newObject.parent is Comment {
+            if newObject.parent is Comment, !(newObject.parent!.related is Assignment) {
                 if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
                     self.post.postComments[indexOfComment].refresh()
                     tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
@@ -360,12 +366,12 @@ extension HomeFeedPostViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post {
+        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment) {
             if deletePost == self.post {
                 self.navigationController?.popViewController(animated: true)
             }
         }
-        else if let deleteComment = deletedObject as? Comment {
+        else if let deleteComment = deletedObject as? Comment, !(deleteComment.related is Assignment) {
             guard let indexOfComment = self.post.postComments.index(of: deleteComment) else {
                 self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
@@ -381,7 +387,7 @@ extension HomeFeedPostViewController {
         }
         else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
             var indexOfComment: Int?
-            if deletedObject.parent is Comment {
+            if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment) {
                 indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment)
                 if indexOfComment != nil { self.post.postComments[indexOfComment!].refresh() }
             }

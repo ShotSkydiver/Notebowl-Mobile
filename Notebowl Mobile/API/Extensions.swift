@@ -45,6 +45,14 @@ public extension String {
         let trimmed = mutatingSelf[..<rangeIndex]
         return String(trimmed)
     }
+
+    var wordCount: Int {
+        let mutatedSelf = self
+        let chararacterSet = CharacterSet.whitespacesAndNewlines.union(.punctuationCharacters)
+        let components = mutatedSelf.components(separatedBy: chararacterSet)
+        let words = components.filter { !$0.isEmpty }
+        return words.count
+    }
 }
 
 public extension Character {

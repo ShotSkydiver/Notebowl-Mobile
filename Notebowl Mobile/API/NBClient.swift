@@ -90,12 +90,12 @@ class NBClient {
         return combinedUrlsFilter
     }
 
-    public func buildFilterArray(from items: [NBModel]) -> [String] {
-        var filterArray = [String]()
+    public func buildFilterString(from items: [NBModel]) -> String {
+        var filterString: String = ""
         for item in items {
-            filterArray.append(item.url.absoluteString)
+            filterString = (filterString + item.url.absoluteString + ",")
         }
-        return filterArray
+        return filterString
     }
     
     public func reinitCache() {

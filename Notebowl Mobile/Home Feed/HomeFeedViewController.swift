@@ -118,6 +118,9 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
 extension HomeFeedViewController {
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
+            if newPost.parent is Assignment {
+                return
+            }
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             let indexOfPost = self.posts.index(of: newPost)
             let existingPost = bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
@@ -134,7 +137,10 @@ extension HomeFeedViewController {
             }
         }
         else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
-            if newObject.parent is Post {
+            if newObject.related is Assignment {
+                return
+            }
+            else if newObject.parent is Post {
                 if let indexOfPost = self.posts.index(of: newObject.parent! as! Post) {
                     self.posts[indexOfPost].refresh()
                     self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
@@ -201,7 +207,7 @@ extension HomeFeedViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post {
+        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment) {
             let indexOfPost = self.posts.index(of: deletePost)
             self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
             if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
@@ -209,7 +215,7 @@ extension HomeFeedViewController {
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if deletedObject.parent is Post {
+            if !(deletedObject.parent is Assignment) {
                 if let indexOfPost = self.posts.index(of: deletedObject.parent! as! Post) {
                     if self.navigationController?.topViewController is HomeFeedViewController || !(deletedObject is Comment) {
                         self.posts[indexOfPost].refresh()

@@ -51,6 +51,13 @@ public enum ItemType: String {
         return item
     }
 }
+extension ItemType {
+    func returnRoute() -> String {
+        let route = self.rawValue
+        return ("https://\(baseUrl)/api/v1.0/" + route)
+    }
+}
+
 
 public enum ActionType: String {
     case updated = "updated"
@@ -65,18 +72,21 @@ public enum NotificationType: String {
     case deleted = "deleted"
 }
 
-extension ItemType {
-    func returnRoute() -> String {
-        let route = self.rawValue
-        return ("https://\(baseUrl)/api/v1.0/" + route)
-    }
-}
-
 public enum GradeType: String {
     case points = "Points"
     case completion = "(In)complete"
     case percent = "Percentage"
     case letter = "Letter Grade"
+}
+
+public enum SubmissionType: String {
+    case none = "No Submission"
+    case fileSubmission = "File Submission"
+    case discussionBoard = "Discussion Board"
+}
+public enum GroupType: String {
+    case individual = "Individual"
+    case group = "Group"
 }
 
 public enum UserRole: String {
@@ -87,7 +97,7 @@ public enum UserRole: String {
 }
 
 public enum AssignmentStatus: String {
-    case NotPublished = "Not Published"
+    case NotPublished = "Unpublished"
     case NotAvailableYet = "Not Available Yet"
 
     case InProgress = "In Progress"
@@ -97,6 +107,23 @@ public enum AssignmentStatus: String {
     case Open = "Open"
     case PastDue = "Past Due"
     case Closed = "Closed"
+
+    var sortValueProfessor: Int {
+        switch self {
+        case .NotPublished:
+            return 2
+        case .Graded:
+            return 4
+        case .Open:
+            return 1
+        case .NotAvailableYet:
+            return 3
+        case .Closed:
+            return 0
+        default:
+            return 5
+        }
+    }
 
     var sortValue: Int {
         switch self {
@@ -119,7 +146,6 @@ public enum AssignmentStatus: String {
         }
     }
 }
-
 
 public struct DefaultValues {
     var DEFAULT_CURVE_AMOUNT = 0
@@ -233,6 +259,7 @@ public class NBModel: Mappable {
     var resourceKey: String!
     var parent: NBModel?
     var owner: NBModel?
+    var related: NBModel?
     
     class var routeType: ItemType { return .user }
     
@@ -330,6 +357,10 @@ public class NBModel: Mappable {
             let ownerMap = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(ownerString)"])
             owner = ownerMap?.genericObject
         }
+        if let relatedString = (map.JSON["_related"] as? String), let itemType = ItemType.fromURL(relatedString) {
+            let relatedMap = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(relatedString)"])
+            related = relatedMap?.genericObject
+        }
     }
 }
 extension NBModel: Hashable {
@@ -382,7 +413,6 @@ public protocol AssignmentAssessment {
 }
 
 extension AssignmentAssessment {
-
     var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
     var isPastDue: Bool { return dueDate.isInPast }
 
@@ -407,26 +437,37 @@ extension AssignmentAssessment {
                 return AssignmentStatus.Graded
             }
 
-            else if (self as! NBModel) is Assignment, let submission = NBClient.shared.storedTypes[Submission.classIdentifier]?.first(where: {$0.parent == (self as! NBModel)}) as? Submission {
-                if submission.submittedLate {
-                    return AssignmentStatus.LateSubmission
+            if let selfAssignment = self as? Assignment {
+                if selfAssignment.submissionScheme == .fileSubmission {
+                    selfAssignment.getFileSubmissions()
+                    if !selfAssignment.fileSubmissions.isEmpty {
+                        return AssignmentStatus.Submitted
+                    }
                 }
-                else {
-                    return AssignmentStatus.Submitted
+                else if selfAssignment.submissionScheme == .discussionBoard {
+                    if selfAssignment.isUserSubmissionStarted {
+                        if self.isPastDue || selfAssignment.hasRequirements && selfAssignment.isUserSubmissionComplete {
+                            return AssignmentStatus.Submitted
+                        }
+                        else if selfAssignment.hasRequirements {
+                            return AssignmentStatus.InProgress
+                        }
+                    }
+                }
+
+                if isPastDue && selfAssignment.allowLateSubmission {
+                    return AssignmentStatus.PastDue
                 }
             }
 
-            else if (self as! NBModel) is Assessment, let submission = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.first(where: {$0.parent == (self as! NBModel)}) as? AssessmentSubmission {
-                if submission.endDate != nil {
-                    return AssignmentStatus.Submitted
+            else if let selfAssessment = self as? Assessment {
+                selfAssessment.getSubmissions()
+                if selfAssessment.submissions != nil, let userSubmission = selfAssessment.submissions.first {
+                    if userSubmission.isInProgress {
+                        return AssignmentStatus.InProgress
+                    }
+                    else { return AssignmentStatus.Submitted }
                 }
-                else {
-                    return AssignmentStatus.InProgress
-                }
-            }
-
-            if isPastDue, (self as! NBModel) is Assignment, (self as! Assignment).allowLateSubmission {
-                return AssignmentStatus.PastDue
             }
         }
 
@@ -436,6 +477,7 @@ extension AssignmentAssessment {
         else if isPastDue {
             return AssignmentStatus.Closed
         }
+
         return AssignmentStatus.NotAvailableYet
     }
 
@@ -664,10 +706,10 @@ class Course: NBModel, WithName {
     }
 
     func updateChildren() {
-        var assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent! == self }) as? [AssignmentAssessment]
+        var assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
         assignments = (assignments == nil ? [] : assignments!)
 
-        let assessments = NBClient.shared.storedTypes[Assessment.classIdentifier]?.filter({ $0.parent! == self }) as? [AssignmentAssessment]
+        let assessments = NBClient.shared.storedTypes[Assessment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
         if assessments != nil { assignments! += assessments! }
         self.courseAssignments = assignments!
         
@@ -688,14 +730,53 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var availableDate: Date!
     public var desc: String!
     var gradeOnly: Bool!
+
     public var gradeScheme: GradeType!
-    var type: String!
+    var type: GroupType!
     var gradesPublished: Bool!
     var allowLateSubmission: Bool!
     public var category: Category!
+    public var submissionScheme: SubmissionType!
+
+    public var minComments: Int!
+    public var minPosts: Int!
+    public var wordCountPosts: Int!
+    public var wordCountComments: Int!
+    public var postsWordCountRequired: String!
+    public var commentsWordCountRequired: String!
+
+    public var submissionPosts: [Post]!
+    public var submissionComments: [Comment]!
+    public var fileSubmissions: [Submission]!
+
+    public var hasRequirements: Bool { return minPosts > 0 || minComments > 0 }
+
+    public func postsMatchingWordCount() -> [Post] {
+        var userPosts = [Post]()
+        for post in submissionPosts { if post.satisfiesWordCount { userPosts.append(post) }}
+        return userPosts
+    }
+    public func commentsMatchingWordCount() -> [Comment] {
+        var userComments = [Comment]()
+        for comment in submissionComments { if comment.satisfiesWordCount { userComments.append(comment) }}
+        return userComments
+    }
+
+    public var isUserSubmissionComplete: Bool {
+        getSubmissions()
+        let userPostsCompleted = self.postsMatchingWordCount()
+        let userCommentsCompleted = self.commentsMatchingWordCount()
+        return userPostsCompleted.count >= self.minPosts && userCommentsCompleted.count >= self.minComments
+    }
+
+    public var isUserSubmissionStarted: Bool {
+        getSubmissions()
+        if !submissionPosts.isEmpty || !submissionComments.isEmpty { return true }
+        return false
+    }
+
     public var userGrade: Grade!
     public var gradeString: String!
-
     public var status: AssignmentStatus!
 
     override class var routeType: ItemType { return .assignment }
@@ -719,12 +800,27 @@ public class Assignment: NBModel, AssignmentAssessment {
             desc <- map["description"]
         }
         gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
-        type <- map["type"]
+        type <- (map["type"], TransformOf<GroupType, String>(fromJSON: { GroupType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         gradesPublished <- map["gradesPublished"]
         allowLateSubmission <- map["lateSubmissionPermitted"]
+        minComments <- map["minNumComments"]
+        minPosts <- map["minNumPosts"]
+        wordCountPosts <- map["wordCountPosts"]
+        wordCountComments <- map["wordCountComments"]
+        postsWordCountRequired <- map["postsRequired"]
+        commentsWordCountRequired <- map["commentsRequired"]
+        submissionScheme <- (map["submissionScheme"], TransformOf<SubmissionType, String>(fromJSON: { SubmissionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
 
         category <- (map["_category"], ObjectTransform<Category>())
         userGrade = nil
+    }
+
+    func getSubmissions() {
+        self.submissionPosts = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({ ($0.related == self) && (($0 as! Post).creator == NBClient.shared.getCurrentUser()) }) as? [Post]
+        self.submissionComments = NBClient.shared.storedTypes[Comment.classIdentifier]!.filter({ ($0.related == self) && (($0 as! Comment).creator == NBClient.shared.getCurrentUser()) }) as? [Comment]
+    }
+    func getFileSubmissions() {
+        self.fileSubmissions = NBClient.shared.storedTypes[Submission.classIdentifier]!.filter({ ($0.parent == self) && (($0 as! Submission).creator == NBClient.shared.getCurrentUser()) }) as? [Submission]
     }
 
     public func setGradeString() {
@@ -762,9 +858,9 @@ class AssignmentGroup: NBModel {
     }
 }
 
-class Submission: NBModel {
+public class Submission: NBModel {
     var text: String?
-
+    public var creator: User!
     public var submittedLate: Bool { return createdAt.isAfterDate((self.parent as! Assignment).dueDate, orEqual: false, granularity: .second) }
 
     override class var routeType: ItemType { return .submission }
@@ -773,10 +869,11 @@ class Submission: NBModel {
         super.init(map: map)
     }
 
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
 
         text <- map["text"]
+        creator <- (map["_creator"], ObjectTransform<User>())
     }
 }
 
@@ -799,13 +896,12 @@ public class Assessment: NBModel, AssignmentAssessment {
     var timeLimit: Int!
     public var title: String!
     public var category: Category!
-
     public var points: Double!
-
     public var userGrade: Grade!
     public var gradeString: String!
-
     public var status: AssignmentStatus!
+
+    public var submissions: [AssessmentSubmission]!
 
     override class var routeType: ItemType { return .assessment }
 
@@ -825,6 +921,10 @@ public class Assessment: NBModel, AssignmentAssessment {
 
         category <- (map["_category"], ObjectTransform<Category>())
         userGrade = nil
+    }
+
+    func getSubmissions() {
+        self.submissions = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.filter({ ($0.parent == self) && ($0.owner == NBClient.shared.getCurrentUser()) }) as? [AssessmentSubmission]
     }
 
     public func calculatePoints() {
@@ -880,9 +980,11 @@ class AssessmentQuestion: NBModel {
     }
 }
 
-class AssessmentSubmission: NBModel {
+public class AssessmentSubmission: NBModel {
     var startDate: Date!
-    var endDate: Date?
+    var endDate: Date!
+
+    public var isInProgress: Bool { return endDate == nil }
 
     override class var routeType: ItemType { return .assessmentSubmission }
 
@@ -890,7 +992,7 @@ class AssessmentSubmission: NBModel {
         super.init(map: map)
     }
 
-    override func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
 
         startDate <- (map["startDate"], ISO8601FixedDateTransform())
@@ -1100,22 +1202,27 @@ class Event: NBModel {
 
 
 public class Post: NBModel, PostsComments {
-
     public var text: String!
     public var creator: User!
     public var editedAt: Date!
     public var isAnonymous: Bool!
-
     public var attachments: [Attachment]!
-
     var pinned: Bool!
     var availableDate: Date?
-    
     public var postLikes: [Like]!
     public var postComments: [Comment]!
-
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
+
+    public var satisfiesWordCount: Bool {
+        guard let parentDiscussionBoard = self.related as? Assignment else { return false }
+        if parentDiscussionBoard.postsWordCountRequired == "Required" {
+            if self.text.wordCount >= parentDiscussionBoard.wordCountPosts {
+                return true
+            }
+        }
+        return false
+    }
     
     override class var routeType: ItemType { return .post }
     
@@ -1149,12 +1256,10 @@ public class Post: NBModel, PostsComments {
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
-
         text <- map["text"]
         if text == nil {
             text = ""
         }
-
         creator <- (map["_creator"], ObjectTransform<User>())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         
@@ -1332,20 +1437,28 @@ class Folder: NBModel {
 }
 
 public class Comment: NBModel, PostsComments {
-    
     public var text: String!
     public var creator: User!
     public var editedAt: Date!
     public var isAnonymous: Bool!
-
     public var attachments: [Attachment]!
-
     public var commentLikes: [Like]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
-    
-    public var updatedOnce: Bool = false
-    
+
+    public var satisfiesWordCount: Bool {
+        guard let parentDiscussionBoard = self.related as? Assignment else { return false }
+        if parentDiscussionBoard.commentsWordCountRequired == "Required" {
+            if self.text.wordCount >= parentDiscussionBoard.wordCountComments {
+                return true
+            }
+        }
+        else if parentDiscussionBoard.commentsWordCountRequired == "Recommended" {
+            return true
+        }
+        return false
+    }
+
     override class var routeType: ItemType { return .comment }
     
     required public init?(map: Map) {
@@ -1370,14 +1483,11 @@ public class Comment: NBModel, PostsComments {
         
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
-
         text <- map["text"]
         if text == nil {
             text = ""
         }
-        
         creator <- (map["_creator"], ObjectTransform<User>())
-        
         attachments = []
         commentLikes = []
         likedByCurrentUser = false
@@ -1410,7 +1520,6 @@ public class Comment: NBModel, PostsComments {
     }
     
     override public func refresh() {
-        updatedOnce = true
         self.creator = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User) == self.creator }) as? User
         updateLikes()
         getAttachments()
@@ -1418,7 +1527,6 @@ public class Comment: NBModel, PostsComments {
 }
 
 public class Like: NBModel {
-    
     public var currentUserLiked: Bool { return owner! == NBClient.shared.getCurrentUser() ? true : false}
     
     override class var routeType: ItemType { return .like }
@@ -1438,10 +1546,6 @@ public class Like: NBModel {
     
     override public func mapping(map: Map) {
         super.mapping(map: map)
-    }
-    
-    override public func refresh() {
-        self.owner = NBClient.shared.storedTypes[User.classIdentifier]?.first(where: { ($0 as! User) == self.owner! })// as! User
     }
 }
 

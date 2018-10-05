@@ -23,8 +23,23 @@ class CourseDetailViewCell: UITableViewCell {
 
     var assignmentForCell: AssignmentAssessment!
 
-    override func awakeFromNib() { super.awakeFromNib() }
-    override func prepareForReuse() { super.prepareForReuse() }
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        initSetup()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        initSetup()
+    }
+
+    func initSetup() {
+        assignmentCategory.textColor = UIColor(hexString: "#f5f5f5")
+    }
 
     func configure(assignment: AssignmentAssessment, color: UIColor) {
         assignmentName.text = assignment.title
@@ -41,7 +56,7 @@ class CourseDetailViewCell: UITableViewCell {
         if assignment.dueDate != nil {
             let parsedDateString = assignment.dueDate.literalFormat
             if assignment.status == .NotAvailableYet {
-                dueDateNumber.text = "starts \(parsedDateString)"
+                dueDateNumber.text = "opens \(parsedDateString)"
             }
             else {
                 dueDateNumber.text = parsedDateString
@@ -61,7 +76,6 @@ class CourseDetailViewCell: UITableViewCell {
         
         totalPointsText.text = "pts"
 
-        assignmentCategory.textColor = UIColor(hexString: "#f5f5f5")
         assignmentCategory.backgroundColor = color
         userGradeText.textColor = color
         submittedText.textColor = color
