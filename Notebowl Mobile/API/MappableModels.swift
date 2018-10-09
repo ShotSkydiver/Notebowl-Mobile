@@ -94,6 +94,7 @@ public enum UserRole: String {
     case professor = "Professor"
     case student = "Student"
     case member = "Member"
+    case TA = "TA"
 }
 
 public enum AssignmentStatus: String {
@@ -283,8 +284,14 @@ public class NBModel: Mappable {
     
     public var firstTimeLoading: Bool!
     public var shouldMapParent: Bool!
-    
-    public var enrollmentForUser: Enrollment?
+
+
+    public var enrollmentForUser: Enrollment! {
+        if let enroll = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { $0.parent == self && ($0 as! Enrollment).user == NBClient.shared.getCurrentUser()}) as? Enrollment {
+            return enroll
+        }
+        return nil
+    }
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
@@ -423,59 +430,55 @@ extension AssignmentAssessment {
     }
 
     public func getStatus() -> AssignmentStatus {
-        if (self as! NBModel).parent?.enrollmentForUser?.role == .professor || (self as! NBModel).parent?.enrollmentForUser?.role == .admin {
-            if dueDate == nil {
-                return AssignmentStatus.NotPublished
-            }
-            else if availableDate.isInFuture {
-                return AssignmentStatus.NotAvailableYet
-            }
-        }
-
-        else if (self as! NBModel).parent?.enrollmentForUser?.role == .student {
-            if let grade = self.userGrade, grade.grade != nil {
-                return AssignmentStatus.Graded
+        if let userRole = (self as! NBModel).parent?.enrollmentForUser.role {
+            if userRole == .professor || userRole == .admin || userRole == .TA {
+                if dueDate == nil { return AssignmentStatus.NotPublished }
+                if availableDate.isInFuture { return AssignmentStatus.NotAvailableYet }
             }
 
-            if let selfAssignment = self as? Assignment {
-                if selfAssignment.submissionScheme == .fileSubmission {
-                    if !selfAssignment.fileSubmissions.isEmpty {
-                        return AssignmentStatus.Submitted
-                    }
+            else if userRole == .student {
+                if let grade = userGrade, grade.grade != nil {
+                    return AssignmentStatus.Graded
                 }
-                else if selfAssignment.submissionScheme == .discussionBoard {
-                    if selfAssignment.isUserSubmissionStarted {
-                        if self.isPastDue || selfAssignment.hasRequirements && selfAssignment.isUserSubmissionComplete {
+
+                if let selfAssignment = self as? Assignment {
+                    if selfAssignment.submissionScheme == .fileSubmission {
+                        if !selfAssignment.fileSubmissions.isEmpty {
                             return AssignmentStatus.Submitted
                         }
-                        else if selfAssignment.hasRequirements {
-                            return AssignmentStatus.InProgress
+                    }
+                    else if selfAssignment.submissionScheme == .discussionBoard {
+                        if selfAssignment.isUserSubmissionStarted {
+                            if self.isPastDue || selfAssignment.hasRequirements && selfAssignment.isUserSubmissionComplete {
+                                return AssignmentStatus.Submitted
+                            }
+                            else if selfAssignment.hasRequirements {
+                                return AssignmentStatus.InProgress
+                            }
                         }
                     }
-                }
-
-                if isPastDue && selfAssignment.allowLateSubmission {
-                    return AssignmentStatus.PastDue
-                }
-            }
-
-            else if let selfAssessment = self as? Assessment {
-                if selfAssessment.submissions != nil, let userSubmission = selfAssessment.submissions.first {
-                    if userSubmission.isInProgress {
-                        return AssignmentStatus.InProgress
+                    if isPastDue && selfAssignment.allowLateSubmission {
+                        return AssignmentStatus.PastDue
                     }
-                    else { return AssignmentStatus.Submitted }
+                }
+
+                else if let selfAssessment = self as? Assessment {
+                    if selfAssessment.submissions != nil, let userSubmission = selfAssessment.submissions.first {
+                        if userSubmission.isInProgress {
+                            return AssignmentStatus.InProgress
+                        }
+                        else { return AssignmentStatus.Submitted }
+                    }
                 }
             }
-        }
 
-        if !isPastDue && isAvailable {
-            return AssignmentStatus.Open
+            if !isPastDue && isAvailable {
+                return AssignmentStatus.Open
+            }
+            else if isPastDue {
+                return AssignmentStatus.Closed
+            }
         }
-        else if isPastDue {
-            return AssignmentStatus.Closed
-        }
-
         return AssignmentStatus.NotAvailableYet
     }
 
@@ -706,6 +709,9 @@ class Course: NBModel, WithName {
     func refreshCachedAssignments() {
         var assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
         assignments = (assignments == nil ? [] : assignments!)
+        if self.enrollmentForUser.role == .TA {
+            assignments = assignments!.filter({($0 as! Assignment).gradeOnly == false})
+        }
         let assessments = NBClient.shared.storedTypes[Assessment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
         if assessments != nil { assignments! += assessments! }
         self.courseAssignments = assignments!
@@ -714,7 +720,6 @@ class Course: NBModel, WithName {
     }
     
     override public func refresh() {
-        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent == self) && (($0 as! Enrollment).user == NBClient.shared.getCurrentUser()) }) as? Enrollment
         refreshCachedAssignments()
     }
 }
@@ -810,7 +815,7 @@ public class Assignment: NBModel, AssignmentAssessment {
     func refreshCachedSubmissions() {
         self.submissionPosts = NBClient.shared.storedTypes[Post.classIdentifier]!.filter({ ($0.related == self) && (($0 as! Post).creator == NBClient.shared.getCurrentUser()) }) as? [Post]
         self.submissionComments = NBClient.shared.storedTypes[Comment.classIdentifier]!.filter({ ($0.related == self) && (($0 as! Comment).creator == NBClient.shared.getCurrentUser()) }) as? [Comment]
-        self.fileSubmissions = NBClient.shared.storedTypes[Submission.classIdentifier]!.filter({ ($0.parent == self) && (($0 as! Submission).creator == NBClient.shared.getCurrentUser()) }) as? [Submission]
+        self.fileSubmissions = NBClient.shared.storedTypes[Submission.classIdentifier]?.filter({ ($0.parent == self) && (($0 as! Submission).creator == NBClient.shared.getCurrentUser()) }) as? [Submission]
     }
 
     public func refreshCachedGradeString() {
@@ -1076,14 +1081,10 @@ public class Enrollment: NBModel {
     var role: UserRole!
     var status: String!
     var user: User!
-    var lastAccessAt: Date?
+    var lastAccessAt: Date!
     
     public var statusIsAccepted: Bool {
         if status.contains("Accepted") { return true }
-        else { return false }
-    }
-    public var userRoleIsImportant: Bool {
-        if role == .professor || role == .admin { return true }
         else { return false }
     }
     
@@ -1092,14 +1093,12 @@ public class Enrollment: NBModel {
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
         role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
         user <- (map["_user"], ObjectTransform<User>())
-
-        lastAccessAt <- (map["lastAccessAt"], ISO8601FixedDateTransform())
     }
 }
 
@@ -1154,7 +1153,6 @@ class Group: NBModel, WithName {
     }
 
     override public func refresh() {
-        enrollmentForUser = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { (($0 as! Enrollment).parent == self) && (($0 as! Enrollment).user == NBClient.shared.getCurrentUser()) }) as? Enrollment
     }
 }
 

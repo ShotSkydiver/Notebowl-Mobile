@@ -44,8 +44,7 @@ class CourseDetailViewCell: UITableViewCell {
     func configure(assignment: AssignmentAssessment, color: UIColor) {
         assignmentName.text = assignment.title
         assignmentCategory.text = assignment.category.title.uppercased()
-
-        if (assignment as! NBModel).parent?.enrollmentForUser?.role == .professor || (assignment as! NBModel).parent?.enrollmentForUser?.role == .admin {
+        if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
             userGradeText.text = ""
         }
         else {

@@ -66,7 +66,11 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         DispatchQueue.main.async {
 
             if self.selectedCourse.courseAssignments.isEmpty {
+
                 var assigns = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)
+                if let userRole = (assigns.first)?.parent?.enrollmentForUser.role, userRole == .TA {
+                    assigns = assigns.filter({$0.gradeOnly == false})
+                }
                 _ = NBClient.shared.requireByReferences(Submission.self, property: "_parent", values: assigns)
 
                 var assess = NBClient.shared.requireByReference(Assessment.self, property: "parent", value: self.selectedCourse)
@@ -95,7 +99,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     
     func sortAssignments() {
         self.assignments.sort() {
-            if let userRole = ($0 as! NBModel).parent?.enrollmentForUser?.role, userRole == .professor || userRole == .admin, $0.status.sortValueProfessor != $1.status.sortValueProfessor {
+            if let userRole = ($0 as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA, $0.status.sortValueProfessor != $1.status.sortValueProfessor {
                 return $0.status.sortValueProfessor < $1.status.sortValueProfessor
             }
             else if $0.status.sortValue != $1.status.sortValue {
