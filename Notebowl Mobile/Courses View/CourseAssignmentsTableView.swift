@@ -34,6 +34,8 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         stretchyHeaderView = AssignmentsHeaderView(frame: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width, height: 160))
         stretchyHeaderView.label.text = selectedCourse.name
         stretchyHeaderView.detailLabel.text = selectedCourse.term.title
+        stretchyHeaderView.label.accessibilityIdentifier = "courseAssignmentsHeaderName"
+        stretchyHeaderView.detailLabel.accessibilityIdentifier = "courseAssignmentsHeaderTerm"
         stretchyHeaderView.backgroundColor = UIColor(patternImage: gradientImage)
         stretchyHeaderView.expansionMode = GSKStretchyHeaderViewExpansionMode.topOnly
         stretchyHeaderView.manageScrollViewInsets = false
@@ -71,12 +73,12 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
                 if let userRole = (assigns.first)?.parent?.enrollmentForUser.role, userRole == .TA {
                     assigns = assigns.filter({$0.gradeOnly == false})
                 }
+                var assignmentFilter = NBClient.shared.buildFilterString(from: assigns)
                 _ = NBClient.shared.requireByReferences(Submission.self, property: "_parent", values: assigns)
 
                 var assess = NBClient.shared.requireByReference(Assessment.self, property: "parent", value: self.selectedCourse)
                 let assessSubs = NBClient.shared.requireByReferences(AssessmentSubmission.self, property: "_parent", values: assess)
                 let assessQs = NBClient.shared.requireByReferences(AssessmentQuestion.self, property: "_parent", values: assess)
-                var assignmentFilter = NBClient.shared.buildFilterString(from: assigns)
 
                 let posts = NBClient.shared.getMappable(Post.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_related:IN:\(assignmentFilter)\"]")
                 let comments = NBClient.shared.getMappable(Comment.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_related:IN:\(assignmentFilter)\"]")
@@ -152,7 +154,7 @@ extension CourseAssignmentsTableView {
             let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject} )
             self.updateSorting(newObject: newObject)
 
-            guard let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject}) else { fatalError() }
+            guard let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject}) else { return }
             let existingAssignment = tableView.numberOfRows(inSection: 0) < self.assignments.count ? false : true
 
             if !existingAssignment {
@@ -230,7 +232,7 @@ extension CourseAssignmentsTableView {
     
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject is AssignmentAssessment {
-            guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject} ) else { fatalError() }
+            guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject} ) else { return }
             tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
 
             self.updateSorting(newObject: nil)

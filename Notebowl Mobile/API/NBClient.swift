@@ -83,7 +83,7 @@ class NBClient {
         }
         _ = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(coursesFilter)\"]")
         _ = NBClient.shared.getMappable(Group.self, filters: "[\"resourceKey:IN:\(groupsFilter)\"]")
-        
+
         let mappy = Mapper<Enrollment>().mapArray(JSONArray: keyPaths)
         _ = NBClient.shared.storeObjectsInCache(mappy)
 

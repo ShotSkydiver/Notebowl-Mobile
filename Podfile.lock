@@ -24,13 +24,13 @@ PODS:
   - Siren (3.7.2)
   - Socket.IO-Client-Swift (13.3.1):
     - Starscream (~> 3.0.2)
-  - Starscream (3.0.5)
+  - Starscream (3.0.6)
   - SteviaLayout (4.4.0)
   - SwiftDate (5.0.9)
   - SwiftyBeaver (1.6.1)
   - SwipeCellKit (2.5.0)
   - Tamamushi (0.1.3)
-  - YPImagePicker (3.5.1):
+  - YPImagePicker (3.5.2):
     - PryntTrimmerView (~> 3.0.0)
     - SteviaLayout (~> 4.4.0)
 
@@ -140,7 +140,7 @@ CHECKOUT OPTIONS:
     :commit: c306cb0c0ca1810e760542dfd0c0ffedfcee79a0
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
-    :commit: 6bf6212c92fbd5df464e49b5682d8a5271fcf16c
+    :commit: ad0b506cf337c8618c34c49214dab7c86510fc2e
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
@@ -166,13 +166,13 @@ SPEC CHECKSUMS:
   SimulatorStatusMagic: 631fe6e4195a8a8d587ad8744af9015126526cc2
   Siren: d3e10df09c07d37a7f13d29ec78d760975c6da0b
   Socket.IO-Client-Swift: 79f8f85fa44881838175a20f9bd2c32bef2c9d37
-  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SteviaLayout: dd74d1abd127bbf0ce346ac9430441684fe427d0
   SwiftDate: 52b718d32ec006861a2be2756cbfa482d438e781
   SwiftyBeaver: ccfcdf85a04d429f1633f668650b0ce8020bda3a
   SwipeCellKit: d8f2617538ce3021cb0a11d1b93856a06a2f2e20
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
-  YPImagePicker: 63571f23673d54f743522fdf9d7765ab55e4be60
+  YPImagePicker: 26d5bf7bfe1cffd1c5eedea3ac60422b314e2a42
 
 PODFILE CHECKSUM: de98aa346119dd8ac9ad0c191078c596b33d5dc4
 

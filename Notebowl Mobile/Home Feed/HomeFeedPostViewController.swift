@@ -240,8 +240,12 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 _ = self.existingCommentToEdit.save()
             }
             else {
-                let newComment = Comment(text: text, parent: self.post, isAnonymous: self.anonymousToggle)
+                let newComment = Comment(text: text, owner: self.post.parent, parent: self.post, related: self.post.parent, isAnonymous: self.anonymousToggle)
                 let finalComment = newComment.save()
+                if finalComment == nil {
+                    HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
+                    return
+                }
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     log.debug("attachment count: \(self.attachmentIDs.count)")
                     for file in self.attachmentIDs {

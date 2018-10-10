@@ -67,10 +67,20 @@ class CourseDetailViewCell: UITableViewCell {
         dueDateText.text = " "
 
         if assignment.points.isInt {
-            totalPointsNumber.text = ("\(Int(assignment.points!))")
+            if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
+                totalPointsNumber.text = ("\(Int(assignment.points!))")
+            }
+            else {
+            totalPointsNumber.text = ("/ \(Int(assignment.points!))")
+            }
         }
         else {
-            totalPointsNumber.text = ("\(assignment.points!)")
+            if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
+                totalPointsNumber.text = ("\(assignment.points!)")
+            }
+            else {
+            totalPointsNumber.text = ("/ \(assignment.points!)")
+            }
         }
         
         totalPointsText.text = "pts"

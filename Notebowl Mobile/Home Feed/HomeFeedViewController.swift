@@ -215,7 +215,10 @@ extension HomeFeedViewController {
         }
         
         else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
-            if !(deletedObject.parent is Assignment) {
+            if deletedObject.related is Assignment {
+                return
+            }
+            else if deletedObject.parent is Post {
                 if let indexOfPost = self.posts.index(of: deletedObject.parent! as! Post) {
                     if self.navigationController?.topViewController is HomeFeedViewController || !(deletedObject is Comment) {
                         self.posts[indexOfPost].refresh()

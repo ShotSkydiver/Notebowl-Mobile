@@ -45,10 +45,9 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last updated 20 minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JVM-eO-vC0">
-                                            <rect key="frame" x="20" y="87" width="174" height="22"/>
+                                            <rect key="frame" x="20" y="87" width="348" height="22"/>
                                             <accessibility key="accessibilityConfiguration" identifier="courseLastUpdated"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="174" id="Xex-KI-8AT"/>
                                                 <constraint firstAttribute="height" constant="22" id="umm-kE-V2i"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
@@ -56,11 +55,8 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNI 123" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6o-pc-MXg">
-                                            <rect key="frame" x="20" y="10.999999999999998" width="126" height="24.333333333333329"/>
+                                            <rect key="frame" x="20" y="10.999999999999998" width="348" height="24.333333333333329"/>
                                             <accessibility key="accessibilityConfiguration" identifier="courseNumber"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="126" id="8yd-Ha-wOX"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
@@ -70,17 +66,19 @@
                                         <constraint firstItem="JVM-eO-vC0" firstAttribute="bottom" secondItem="Ps4-PC-bv9" secondAttribute="bottomMargin" id="3Ug-Ut-ZAZ"/>
                                         <constraint firstItem="JVM-eO-vC0" firstAttribute="top" secondItem="6ey-pg-wYE" secondAttribute="bottom" constant="10" id="Cv9-j5-pED"/>
                                         <constraint firstItem="6ey-pg-wYE" firstAttribute="leading" secondItem="JVM-eO-vC0" secondAttribute="leading" id="DaH-G4-9eM"/>
+                                        <constraint firstItem="f6o-pc-MXg" firstAttribute="trailing" secondItem="Ps4-PC-bv9" secondAttribute="trailingMargin" id="Ejq-YE-gKJ"/>
                                         <constraint firstItem="6ey-pg-wYE" firstAttribute="centerY" secondItem="Ps4-PC-bv9" secondAttribute="centerY" id="Jqt-Nk-T9l"/>
                                         <constraint firstItem="f6o-pc-MXg" firstAttribute="leading" secondItem="Ps4-PC-bv9" secondAttribute="leadingMargin" id="Kl5-wN-fVo"/>
                                         <constraint firstItem="f6o-pc-MXg" firstAttribute="leading" secondItem="6ey-pg-wYE" secondAttribute="leading" id="XL0-Br-XnY"/>
                                         <constraint firstItem="6ey-pg-wYE" firstAttribute="top" secondItem="f6o-pc-MXg" secondAttribute="bottom" constant="7.3333333333333286" id="ZdD-Kq-nag"/>
                                         <constraint firstItem="f6o-pc-MXg" firstAttribute="top" secondItem="Ps4-PC-bv9" secondAttribute="topMargin" id="fME-Wy-wKq"/>
+                                        <constraint firstItem="JVM-eO-vC0" firstAttribute="trailing" secondItem="Ps4-PC-bv9" secondAttribute="trailingMargin" id="xMn-f1-Lca"/>
                                         <constraint firstItem="6ey-pg-wYE" firstAttribute="trailing" secondItem="Ps4-PC-bv9" secondAttribute="trailingMargin" id="yuh-xQ-vAm"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <accessibility key="accessibilityConfiguration" identifier="courseCell">
-                                    <bool key="isElement" value="YES"/>
+                                    <bool key="isElement" value="NO"/>
                                 </accessibility>
                                 <connections>
                                     <outlet property="courseNumber" destination="f6o-pc-MXg" id="H5E-ES-Ubo"/>
@@ -122,6 +120,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="courseAssignmentsTableView"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="PvP-kZ-gVx" id="ot6-pC-iV9"/>
                             <outlet property="delegate" destination="PvP-kZ-gVx" id="ua0-zA-glQ"/>
@@ -320,6 +321,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Posting to a course or group" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJG-yt-kbl">
                                         <rect key="frame" x="0.0" y="0.0" width="319" height="14.333333333333334"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="pickedCourseLabel"/>
                                         <fontDescription key="fontDescription" type="italicSystem" pointSize="12"/>
                                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -730,6 +732,9 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="oYZ-wD-P4s" customClass="NotebowlLogoNavigationItem" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <barButtonItem key="rightBarButtonItem" title="Profile" image="happy-vector" id="YSv-Aa-2vd">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="homeProfileButton"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="userProfileButton:" destination="XYy-Qd-okh" id="ipX-KB-WIA"/>
                             </connections>
@@ -882,7 +887,7 @@
         </namedColor>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Ffz-FF-4VI"/>
+        <segue reference="Uya-LO-O6p"/>
         <segue reference="Ssj-YJ-Jbk"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
