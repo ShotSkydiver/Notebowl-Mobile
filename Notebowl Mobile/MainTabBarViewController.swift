@@ -102,7 +102,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         var combinedFilter = (retrievedPosts as [NBModel])
         combinedFilter.append(contentsOf: (postComments as [NBModel]))
         _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        let attach = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
         NBClient.shared.reinitCache()
     }
     

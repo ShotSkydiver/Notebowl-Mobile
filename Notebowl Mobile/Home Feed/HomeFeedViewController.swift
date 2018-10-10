@@ -136,7 +136,7 @@ extension HomeFeedViewController {
                 self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
             }
         }
-        else if ["Comment","Like","AttachmentS3"].contains(newObject.itemType) {
+        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
             if newObject.related is Assignment {
                 return
             }
@@ -214,7 +214,7 @@ extension HomeFeedViewController {
             if self.bulletinTableView.numberOfRows(inSection: 0) == 0 { self.bulletinTableView.showNoResultsPlaceholder() }
         }
         
-        else if ["Comment","Like","AttachmentS3"].contains(deletedObject.itemType) {
+        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
             if deletedObject.related is Assignment {
                 return
             }

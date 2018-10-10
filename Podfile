@@ -18,8 +18,6 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'FeedbackSlack', :git => 'https://github.com/ShotSkydiver/SlackFeedback'
         pod 'Tamamushi', :git => 'https://github.com/ShotSkydiver/Tamamushi'
         pod 'Socket.IO-Client-Swift', :git => 'https://github.com/socketio/socket.io-client-swift.git', :branch => 'development'
-        #pod 'SteviaLayout', '~> 4.4.0'
-        #pod 'PryntTrimmerView', :git => 'https://github.com/HHK1/PryntTrimmerView', :tag => '3.0.0-
         pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
         pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
         pod 'Hue', :git => 'https://github.com/hyperoslo/Hue.git'

@@ -137,22 +137,16 @@ class AccountModalTableViewController: UITableViewController {
         config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         let picker = YPImagePicker(configuration: config)
-
-        picker.didFinishPicking(completion: { (items, cancelled) in
+        picker.didFinishPicking(completion: { [unowned picker] items, cancelled in
             if cancelled {
-                log.debug("cancelled")
                 picker.dismiss(animated: true, completion: nil)
             }
             else if !cancelled {
-                let item = items.first!
-                switch item {
-                case .photo(let photo):
+                if let photo = items.singlePhoto {
                     self.startUpload(image: photo.image)
                     picker.dismiss(animated: true, completion: {
                         self.uploadingImage()
                     })
-                default:
-                    picker.dismiss(animated: true, completion: nil)
                 }
             }
         })

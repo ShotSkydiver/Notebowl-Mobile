@@ -43,7 +43,7 @@ class NotificationsTableViewCell: UITableViewCell {
         userAvatar.kf.setImage(with: userProfile,
                                     options: [
                                         .transition(ImageTransition.fade(0.3)),
-                                         .forceTransition,
+                                        .onlyLoadFirstFrame,
                                         .keepCurrentImageWhileLoading
             ]
         )

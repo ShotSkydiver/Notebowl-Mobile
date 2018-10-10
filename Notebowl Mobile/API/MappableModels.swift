@@ -1229,6 +1229,7 @@ public class Post: NBModel, PostsComments {
     public var editedAt: Date!
     public var isAnonymous: Bool!
     public var attachments: [Attachment]!
+    public var externalAttachments: [Attachment]!
     var pinned: Bool!
     var availableDate: Date?
     public var postLikes: [Like]!
@@ -1291,6 +1292,7 @@ public class Post: NBModel, PostsComments {
         postLikes = []
         postComments = []
         attachments = []
+        externalAttachments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
     }
@@ -1321,6 +1323,8 @@ public class Post: NBModel, PostsComments {
 
         let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
+        let attachExt = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).attachmentScheme == .External }) as? [Attachment]
+        self.externalAttachments = (attachExt == nil ? [] : attachExt!)
     }
 
     override public func refresh() {
