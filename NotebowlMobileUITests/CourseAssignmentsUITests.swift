@@ -16,43 +16,68 @@ class CourseAssignmentsUITests: NBUITests {
         app.navigateToCourses()
         API.createCourse()
         let newCourse = Courses.waitUntilCourseExists(atIndex: 0)
+        newCourse.assertSelf()
         newCourse.navigateToDetailView()
     }
     override func tearDown() { super.tearDown() }
 
     
     func testCreateNewAssignment() {
-        API.createAssignment(title: Lorem.title)
+        API.createBasicAssignment()
         let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
-        newAssignment.assertSelf()
+        newAssignment.assertSelf(title: "Test Assignment")
+    }
+    func testCreateFileSubAssignment() {
+        API.createFileSubmissionAssignment()
+        let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
+        newAssignment.assertSelf(title: "File Submission Assignment")
+    }
+
+    func testCreateDiscussionBoardAssignmentNoReqs() {
+        API.createDiscussionBoardAssignment()
+        let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
+        newAssignment.assertSelf(title: "Discussion Board Assignment")
+    }
+    func testCreateDiscussionBoardAssignmentMinPost() {
+        API.createDiscussionBoardAssignment(minPosts: 2)
+        let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
+        newAssignment.assertSelf(title: "Discussion Board Assignment")
+    }
+    func testCreateNewDiscussionPost() {
+        testCreateDiscussionBoardAssignmentNoReqs()
+        API.createPostFromUser(discussionBoardPost: true)
+        let existingAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
+        existingAssignment.assertStatusChange(expected: "Submitted")
+    }
+    func testCreateNewDiscussionPostWithMin() {
+        testCreateDiscussionBoardAssignmentMinPost()
+        API.createPostFromUser(discussionBoardPost: true)
+        let existingAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
+        existingAssignment.assertStatusChange(expected: "In Progress")
     }
 
     func testDeleteAssignment() {
         testCreateNewAssignment()
         API.deleteAssignment()
-        Courses.waitUntilPlaceholderVisible()
     }
 
     func testNewGrade() {
-        API.createAssignment(title: Lorem.title)
+        testCreateNewAssignment()
         let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
-        newAssignment.assertSelf()
         API.createGrade()
         newAssignment.assertCreatedGrade()
     }
 
     func testDeleteGrade() {
-        API.createAssignment(title: Lorem.title)
+        testNewGrade()
         let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
-        newAssignment.assertSelf()
         API.deleteGrade()
         newAssignment.assertDeletedGrade()
     }
 
     func testUpdateGrade() {
-        API.createAssignment(title: Lorem.title)
+        testNewGrade()
         let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)
-        newAssignment.assertSelf()
         API.updateGrade()
         newAssignment.assertUpdatedGrade()
     }

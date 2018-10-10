@@ -38,21 +38,18 @@ class Courses: XCTestHelpers {
             XCTAssert(app.tables.cells.staticTexts[title].exists)
         }
     }
-    
-    class func waitUntilPlaceholderVisible() {
-        XCTAssert(app.noAssignments.exists)
-    }
-    
-    
-    
-}
 
+}
 extension XCUIApplication {
-    var deletedCourse: XCUIElement { return self.tables.cells.staticTexts["Honors English"] }
-    var newCourse: XCUIElement { return self.tables.cells.staticTexts["Test Course"] }
-    func navigateToCourses() { self.tabBars.buttons["Courses"].tap() }
-    
-    var noAssignments: XCUIElement { return self.tables.staticTexts["This course has no assignments!"] }
+    var deletedCourse: XCUIElement { return self.tables["courseTableView"].cells.staticTexts["Honors English"] }
+    var newCourse: XCUIElement { return self.tables["courseTableView"].cells.staticTexts["Test Course"] }
+    func navigateToCourses() {
+        XCTestHelpers.waitForElementToExist(self.tabBars.buttons["Courses"])
+        self.tabBars.buttons["Courses"].tap() }
+
+    var newAssignment: XCUIElement { return self.tables["courseAssignmentsTableView"].cells.staticTexts["Test Assignment"] }
+    var newDiscussionBoardAssignment: XCUIElement { return self.tables["courseAssignmentsTableView"].cells.staticTexts["Discussion Board Assignment"] }
+    var newFileSubmissionAssignment: XCUIElement { return self.tables["courseAssignmentsTableView"].cells.staticTexts["File Submission Assignment"] }
 }
 
 class CourseObject: NSObject {
@@ -74,7 +71,7 @@ class CourseObject: NSObject {
     }
     
     func navigateToDetailView() {
-        element.tap(force: true)
+        courseTitle.tap()
     }
     
     func assertSelf() {
@@ -89,14 +86,15 @@ class AssignmentObject: NSObject {
     var element: XCUIElement { return XCUIApplication().tables.children(matching: .cell).element(boundBy: indexForAssignment) }
     
     var assignmentName: XCUIElement { return element.staticTexts["assignmentName"] }
-    var assignmentDescription: XCUIElement { return element.staticTexts["assignmentDescription"] }
-    var assignmentTotalPoints: XCUIElement { return element.staticTexts["assignmentTotalPoints"] }
-    var assignmentUserGrade: XCUIElement { return element.staticTexts["assignmentUserGrade"] }
-    var assignmentStatus: XCUIElement { return element.staticTexts["assignmentStatus"] }
-    var assignmentDueDate: XCUIElement { return element.staticTexts["assignmentDueDate"] }
-    
-    func assertCreatedGrade() { XCTestHelpers.waitForCondition(element: assignmentUserGrade, predicate: NSPredicate(format: "label like %@", "60"), timeout: 5.0) }
-    func assertUpdatedGrade() { XCTestHelpers.waitForCondition(element: assignmentUserGrade, predicate: NSPredicate(format: "label like %@", "65"), timeout: 5.0) }
+    var assignmentCategory: XCUIElement { return element.staticTexts["assignmentCategory"] }
+    var statusText: XCUIElement { return element.staticTexts["statusText"] }
+    var dueDateNumber: XCUIElement { return element.staticTexts["dueDateNumber"] }
+    var dueDateText: XCUIElement { return element.staticTexts["dueDateText"] }
+    var totalPointsNumber: XCUIElement { return element.staticTexts["totalPointsNumber"] }
+    var userGrade: XCUIElement { return element.staticTexts["userGrade"] }
+
+    func assertCreatedGrade() { XCTestHelpers.waitForCondition(element: userGrade, predicate: NSPredicate(format: "label like %@", "60"), timeout: 5.0) }
+    func assertUpdatedGrade() { XCTestHelpers.waitForCondition(element: userGrade, predicate: NSPredicate(format: "label like %@", "65"), timeout: 5.0) }
     
     required init(index: Int) {
         app = XCUIApplication()
@@ -107,11 +105,16 @@ class AssignmentObject: NSObject {
         self.init(index: 0)
     }
     
-    func assertSelf() {
-        XCTAssertFalse(app.noAssignments.exists)
+    func assertSelf(title: String) {
+        XCTAssertEqual(assignmentName.label, "\(title)")
+        XCTestHelpers.assertCourseCount(count: 1)
+    }
+
+    func assertStatusChange(expected: String) {
+        XCTAssertEqual(statusText.label, "\(expected)")
     }
     
     func assertDeletedGrade() {
-        XCTAssertFalse(assignmentUserGrade.exists)
+        XCTAssertFalse(userGrade.exists)
     }
 }

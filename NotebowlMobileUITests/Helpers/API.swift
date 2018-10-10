@@ -47,8 +47,8 @@ class API {
         return
     }
 
-    static func createNew(_ objectType: String, parent: String? = nil, payload: Any? = nil, user: String = "alexs@notebowl.com") -> String {
-        let jsonPayload: Any =  (payload != nil ? payload! : ["text": Lorem.sentences(2), "_owner": "\(parent!)", "_parent": "\(parent!)", "_related": "\(parent!)", "isAnonymous": false, "availableDate": true])
+    static func createNew(_ objectType: String, parent: String! = "", owner: String! = "", related: String! = "", payload: Any? = nil, user: String = "alexs@notebowl.com") -> String {
+        let jsonPayload: Any =  (payload != nil ? payload! : ["text": Lorem.sentences(2), "_owner": "\(owner!)", "_parent": "\(parent!)", "_related": "\(related!)", "isAnonymous": false, "availableDate": true])
         let reqUrl = URL(string: ("https://\(baseUrl)/api/v1.0/\(objectType)"))!.appendToken(user: user)
         var request = URLRequest(url: reqUrl)
         request.addHeadersJSON()
@@ -78,20 +78,30 @@ class API {
         return responseUrl
     }
 
-
-
-    static func createPostFromUser(user: String = "alexs@notebowl.com") {
+    static func createPostFromUser(user: String = "alexs@notebowl.com", discussionBoardPost: Bool = false) {
         let courseUrl = getFirst("courses")
-        let createdPost = createNew("posts", parent: courseUrl, user: user)
+        if discussionBoardPost {
+            let assignmentUrl = getFirst("assignments")
+            _ = createNew("posts", parent: assignmentUrl, owner: courseUrl, related: assignmentUrl, user: user)
+        }
+        else if !discussionBoardPost {
+            _ = createNew("posts", parent: courseUrl, owner: courseUrl, related: courseUrl, user: user)
+        }
     }
 
-    static func createCommentForPost(user: String = "alexs@notebowl.com") {
-        let postUrl = API.getFirst("posts")
-        _ = API.createNew("comments", parent: postUrl, user: user)
+    static func createCommentForPost(user: String = "alexs@notebowl.com", discussionBoardComment: Bool = false) {
+        let postUrl = getFirst("posts")
+        let courseUrl = getFirst("courses")
+        if discussionBoardComment {
+            let assignmentUrl = getFirst("assignments")
+            _ = API.createNew("comments", parent: postUrl, owner: courseUrl, related: assignmentUrl, user: user)
+        }
+        else if !discussionBoardComment {
+            _ = API.createNew("comments", parent: postUrl, owner: courseUrl, related: courseUrl, user: user)
+        }
     }
 
-
-    static func createCourse() {
+    static func createCourse(currentUserAsTA: Bool = false) {
         let uniUrl = getFirst("universities")
         let payload: Any = ["name":"Test Course","subject":"SOCK","number":"101","units":3,"usesWeightedGrades":false,"published":true,"_university":"\(uniUrl)"]
         let courseUrl = createNew("courses", payload: payload, user: "admin@notebowl.com")
@@ -101,8 +111,14 @@ class API {
         _ = createNew("enrollments", payload: profEnrollPayload, user: "admin@notebowl.com")
 
         let userUrl = getFirst("credentials")
-        let enrollPayload: Any = ["role":"Student","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
-        _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
+        if currentUserAsTA {
+            let enrollPayload: Any = ["role":"TA","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
+            _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
+        }
+        else if !currentUserAsTA {
+            let enrollPayload: Any = ["role":"Student","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
+            _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
+        }
     }
 
     static func deleteEnrollment() {
@@ -111,10 +127,24 @@ class API {
     }
 
 
-    static func createAssignment(title: String) {
+    static func createBasicAssignment() {
         let courseUrl = getFirst("courses", mostRecent: true)
         let catUrl = getFirst("categories", mostRecent: true)
-        let payload: Any = ["title":"\(title)","points":80,"gradeOnly":false,"description":"\(Lorem.sentences(2))","submissionScheme":"File Submission","lateSubmissionPermitted":true,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        let payload: Any = ["title":"Test Assignment","points":60,"gradeOnly":false,"description":"\(Lorem.sentences(2))","submissionScheme":"No Submission","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
+    }
+
+    static func createFileSubmissionAssignment() {
+        let courseUrl = getFirst("courses", mostRecent: true)
+        let catUrl = getFirst("categories", mostRecent: true)
+        let payload: Any = ["title":"File Submission Assignment","points":80,"gradeOnly":false,"description":"\(Lorem.sentences(2))","submissionScheme":"File Submission","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
+    }
+
+    static func createDiscussionBoardAssignment(minComments: Int = 0, minPosts: Int = 0, wordCount: Int = 0, wordCountRequired: String = "Recommended") {
+        let courseUrl = getFirst("courses", mostRecent: true)
+        let catUrl = getFirst("categories", mostRecent: true)
+        let payload: Any = ["title":"Discussion Board Assignment","type":"Individual","points":50,"gradeOnly":false,"gradeScheme":"Percentage","description":"\(Lorem.sentences(2))","submissionScheme":"Discussion Board","minNumComments":minComments,"minNumPosts":minPosts,"wordCountComments":wordCount,"wordCountPosts":wordCount,"commentsRequired":"\(wordCountRequired)","postsRequired":"\(wordCountRequired)","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
         _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
     }
 

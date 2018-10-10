@@ -1485,10 +1485,6 @@ public class Comment: NBModel, PostsComments {
         return false
     }
 
-    //public func satisfiesWordCount(count: Int, required: String) -> Bool {
-
-    //}
-
     override class var routeType: ItemType { return .comment }
     
     required public init?(map: Map) {

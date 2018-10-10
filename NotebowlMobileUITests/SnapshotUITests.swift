@@ -34,7 +34,7 @@ class SnapshotUITests: NBUITests {
     }
 
     func testUserSettingsScreenshot() {
-        app.navigationBars["Profile Nav Controller"].buttons["Profile"].tap()
+        app.navigationBars["Profile Nav Controller"].buttons["homeProfileButton"].tap()
         snapshot("03UserSettingsView")
     }
 
@@ -45,7 +45,8 @@ class SnapshotUITests: NBUITests {
 
     func testAssignmentsScreenshot() {
         app.tabBars.buttons["Courses"].tap()
-        app.tables.children(matching: .cell).element(boundBy: 0).tap()
+        let table = app.tables["courseTableView"]
+        table.cells.matching(identifier: "courseCell").staticTexts["Honors English"].tap()
         XCTestHelpers.waitForElementToDisappear(app.HUD)
         snapshot("05AssignmentsView")
     }

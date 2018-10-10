@@ -25,7 +25,7 @@ class MiscAppUITests: XCTestCase {
 
     func testChangeSetting() {
         self.waitForLoadingViewToDisappear()
-        app.navigationBars["Profile Nav Controller"].buttons["Profile"].tap()
+        app.navigationBars["Profile Nav Controller"].buttons["homeProfileButton"].tap()
         app.tables.element(boundBy: 0).cells["pushSettingsCell"].staticTexts["pushSettingsLabel"].tap()
         let cell = app.tables["pushTable"].cells["Comment on My Post"]
         let cellSwitch = cell.switches.element(boundBy: 0)

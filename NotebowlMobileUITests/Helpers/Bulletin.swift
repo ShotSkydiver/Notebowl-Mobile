@@ -203,7 +203,7 @@ class BulletinPost: NSObject {
 
 @objcMembers
 class XCTestHelpers: NSObject {
-    static func waitForCondition(element: XCUIElement, predicate: NSPredicate, timeout: TimeInterval = 5.5) {
+    static func waitForCondition(element: XCUIElement, predicate: NSPredicate, timeout: TimeInterval = 7.5) {
         let expression = XCTNSPredicateExpectation(predicate: predicate, object: element)
         _ = XCTWaiter.wait(for: [expression], timeout: timeout)
     }
