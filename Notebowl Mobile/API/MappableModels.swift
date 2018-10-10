@@ -1472,6 +1472,7 @@ public class Comment: NBModel, PostsComments {
     public var editedAt: Date!
     public var isAnonymous: Bool!
     public var attachments: [Attachment]!
+    public var externalAttachments: [Attachment]!
     public var commentLikes: [Like]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
@@ -1523,6 +1524,7 @@ public class Comment: NBModel, PostsComments {
         }
         creator <- (map["_creator"], ObjectTransform<User>())
         attachments = []
+        externalAttachments = []
         commentLikes = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
@@ -1531,6 +1533,8 @@ public class Comment: NBModel, PostsComments {
     public func refreshCachedAttachments() {
         let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
+        let attachExt = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).attachmentScheme == .External }) as? [Attachment]
+        self.externalAttachments = (attachExt == nil ? [] : attachExt!)
     }
     public func refreshCachedLikes() {
         let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]

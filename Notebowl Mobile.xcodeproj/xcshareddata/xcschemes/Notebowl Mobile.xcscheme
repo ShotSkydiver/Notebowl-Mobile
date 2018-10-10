@@ -88,7 +88,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "CFNETWORK_DIAGNOSTICS"
-            value = "1"
+            value = "3"
             isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>

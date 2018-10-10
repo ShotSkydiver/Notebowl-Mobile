@@ -344,7 +344,7 @@ extension HomeFeedPostViewController {
             tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .none, animated: true)
         }
 
-        else if ["Like","AttachmentS3"].contains(newObject.itemType) {
+        else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
             if newObject.parent is Comment, !(newObject.parent!.related is Assignment) {
                 if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
                     self.post.postComments[indexOfComment].refresh()
@@ -389,7 +389,7 @@ extension HomeFeedPostViewController {
             self.tableView.endUpdates()
             (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
         }
-        else if ["Like","AttachmentS3"].contains(deletedObject.itemType) {
+        else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
             var indexOfComment: Int?
             if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment) {
                 indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment)

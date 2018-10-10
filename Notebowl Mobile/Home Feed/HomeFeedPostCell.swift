@@ -85,6 +85,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var linkPreviewHeight: NSLayoutConstraint!
     @IBOutlet weak var linkPreviewTitle: UILabel!
     @IBOutlet weak var linkPreviewDescription: UILabel!
+    @IBOutlet weak var linkPreviewUrl: UILabel!
     @IBOutlet weak var linkPreviewThumbnail: ProfileImageView!
     
     var images = [UIImage]()
@@ -222,12 +223,15 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         }
 
         if let linkPreview = post.externalAttachments.first(where: {$0.attachmentScheme == .External }) {
-            linkPreviewHeight.constant = 60.0
+            linkPreviewHeight.constant = 80.0
             linkPreviewTitle.isHidden = false
             linkPreviewThumbnail.isHidden = false
             linkPreviewDescription.isHidden = false
             linkPreviewTitle.text = linkPreview.title
-            linkPreviewDescription.text = linkPreview.desc ?? linkPreview.location
+            linkPreviewDescription.text = linkPreview.desc ?? ""
+            let hostUrl = URL(string: linkPreview.location ?? "")?.host
+            linkPreviewUrl.text = hostUrl ?? ""
+
             if let linkUrl = linkPreview.thumbnailUrl {
                 linkPreviewThumbnail.kf.setImage(with: URL(string: linkUrl)!, placeholder: nil,
                                                  options: [

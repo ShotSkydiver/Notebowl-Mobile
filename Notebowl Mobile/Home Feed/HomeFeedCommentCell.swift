@@ -74,6 +74,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     @IBOutlet weak var collectionFlowLayout: CommentCollectionViewFlowLayout!
     @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
     @IBOutlet weak var likeActionStackView: UIStackView!
+    @IBOutlet weak var linkPreviewView: DesignableView!
+    @IBOutlet weak var linkPreviewHeight: NSLayoutConstraint!
+    @IBOutlet weak var linkPreviewTitle: UILabel!
+    @IBOutlet weak var linkPreviewDescription: UILabel!
+    @IBOutlet weak var linkPreviewUrl: UILabel!
+    @IBOutlet weak var linkPreviewThumbnail: ProfileImageView!
 
     var lightboxPhotos = [LightboxImage]()
     var commentForCell: Comment!
@@ -106,6 +112,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionView.register(UINib(nibName: "IndexedCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: IndexedCollectionViewCell.identifier)
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
+        linkPreviewHeight.constant = 0.0
         
         commentContent.wrapToContent()
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
@@ -154,6 +161,37 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
                 self.lightboxPhotos.append(lightboxPhoto)
             }
         }
+
+        if let linkPreview = comment.externalAttachments.first(where: {$0.attachmentScheme == .External }) {
+            linkPreviewHeight.constant = 70.0
+            linkPreviewTitle.isHidden = false
+            linkPreviewThumbnail.isHidden = false
+            linkPreviewDescription.isHidden = false
+            linkPreviewTitle.text = linkPreview.title
+            linkPreviewDescription.text = linkPreview.desc ?? ""
+            let hostUrl = URL(string: linkPreview.location ?? "")?.host
+            linkPreviewUrl.text = hostUrl ?? ""
+            
+            if let linkUrl = linkPreview.thumbnailUrl {
+                linkPreviewThumbnail.kf.setImage(with: URL(string: linkUrl)!, placeholder: nil,
+                                                 options: [
+                                                    .transition(ImageTransition.fade(0.3))
+                    ])
+            }
+            else {
+                linkPreviewThumbnail.isHidden = true
+            }
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(linkPreviewTapped(_:)))
+            tapGesture.numberOfTapsRequired = 1
+            tapGesture.numberOfTouchesRequired = 1
+            linkPreviewView.addGestureRecognizer(tapGesture)
+        }
+        else {
+            linkPreviewHeight.constant = 0.0
+            linkPreviewTitle.isHidden = true
+            linkPreviewThumbnail.isHidden = true
+            linkPreviewDescription.isHidden = true
+        }
         
         if let firstAtt = comment.attachments.first, firstAtt.mimeType == .image {
             collectionViewHeight.constant = 100.0
@@ -170,6 +208,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionFlowLayout.paginatedScroll = collectionViewPaginatedScroll
         if collectionViewPaginatedScroll == true {
             collectionView.isPagingEnabled = false
+        }
+    }
+
+    @objc func linkPreviewTapped(_ sender: Any) {
+        if let url = URL(string: commentForCell.externalAttachments.first?.location ?? ""), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
     
