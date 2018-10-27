@@ -42,11 +42,11 @@ class SettingsTableViewController: UITableViewController {
             self.settings = (NBClient.shared.storedTypes.has(key: Setting.classIdentifier) ? NBClient.shared.storedTypes[Setting.classIdentifier]! as! [Setting] : [])
             
             let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
-            let nestedData = try? JSONSerialization.data(withJSONObject: (result.json as AnyObject).value(forKeyPath: "result")!)
-            let mappedResult = Mapper<SettingDefaults>().map(JSONString: String(data: nestedData!, encoding: .utf8)!)
-            
-            self.settingsArray = mappedResult?.settingsArray
-   
+
+            if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
+                let mappedResult = Mapper<SettingDefaults>().map(JSONString: nestedString)
+                self.settingsArray = mappedResult?.settingsArray
+            }
             self.tableView.reloadData()
             self.bgView.alpha = 0.0
         }

@@ -7,7 +7,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
 
     target 'Notebowl Mobile' do
         pod 'Kingfisher'
-        pod 'ObjectMapper', :git => 'https://github.com/kajensen/ObjectMapper'
+        pod 'ObjectMapper'
         pod 'FaveButton', :git => 'https://github.com/ShotSkydiver/fave-button', :branch => 'swift-4.2'
         pod 'HGPlaceholders', :git => 'https://github.com/ShotSkydiver/HGPlaceholders', :branch => 'swift-4.2'
         pod 'Bugsnag'
@@ -29,6 +29,8 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'SwiftDate'
         pod 'GSKStretchyHeaderView'
         pod 'SwiftyBeaver'
+        pod 'Branch'
+        pod 'URLPatterns'
     end
 
     target 'NotebowlMobileUITests' do

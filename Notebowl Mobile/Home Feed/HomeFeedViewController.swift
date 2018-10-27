@@ -72,6 +72,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     }
     
     func afterFullyLoaded() {
+        UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound,.alert,.badge]) { (granted, error) in
             if granted {
@@ -118,10 +119,10 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
 extension HomeFeedViewController {
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
-            if newPost.parent is Assignment {
+            if newPost.parent is Assignment || newPost.parent is Submission {
                 return
             }
-            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
             let indexOfPost = self.posts.index(of: newPost)
             let existingPost = bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
             
@@ -137,7 +138,7 @@ extension HomeFeedViewController {
             }
         }
         else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
-            if newObject.related is Assignment {
+            if newObject.related is Assignment || newObject.related is Submission {
                 return
             }
             else if newObject.parent is Post {
@@ -184,9 +185,9 @@ extension HomeFeedViewController {
                     NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
                     NBClient.shared.resolveCurrentUser(true)
                     _ = NBClient.shared.getMappable(Setting.self)!
-                    _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")!
+                    _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
                     let filter = NBClient.shared.doEnrollmentRequests()
-                    let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+                    let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
                     let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
                     var combinedFilter = (retrievedPosts as [NBModel])
                     combinedFilter.append(contentsOf: (postComments as [NBModel]))
@@ -207,15 +208,15 @@ extension HomeFeedViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment) {
+        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment), !(deletePost.parent is Submission) {
             let indexOfPost = self.posts.index(of: deletePost)
-            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post]
+            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
             if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
             if self.bulletinTableView.numberOfRows(inSection: 0) == 0 { self.bulletinTableView.showNoResultsPlaceholder() }
         }
         
         else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
-            if deletedObject.related is Assignment {
+            if deletedObject.related is Assignment || deletedObject.related is Submission {
                 return
             }
             else if deletedObject.parent is Post {
@@ -243,9 +244,9 @@ extension HomeFeedViewController {
                 NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
                 NBClient.shared.resolveCurrentUser(true)
                 _ = NBClient.shared.getMappable(Setting.self)
-                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", limit: "110")
+                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
                 let filter = NBClient.shared.doEnrollmentRequests()
-                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
+                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
                 let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
                 let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
                 _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)

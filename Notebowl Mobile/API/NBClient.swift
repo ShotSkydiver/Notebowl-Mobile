@@ -65,9 +65,9 @@ class NBClient {
         rootViewController.dismiss(animated: true, completion: nil)
     }
     
-    public func doEnrollmentRequests() -> String? {
+    public func doEnrollmentRequests() -> String {
         let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
-        let nestedJson = (reqEnroll.json as AnyObject).value(forKeyPath: "result")!
+        let nestedJson = (reqEnroll.json as AnyObject).value(forKeyPath: "result")
 
         var coursesFilter: String = ""
         var groupsFilter: String = ""
@@ -139,7 +139,6 @@ class NBClient {
         if let limits: String = limit { payload += ["limit": limits] }
 
         let result: NBResult = NBNetworking.shared.request(url: requestUrl, params: payload)
-
         if let resultStatus = result.statusCode, let resultUrl = result.url, resultStatus.isSuccess {
             log.debug("URL Request: \(resultStatus) - \(resultUrl.absoluteString)")
 
@@ -150,12 +149,10 @@ class NBClient {
                 return storedObjects
             }
         }
-
         else {
             NBClient.shared.sendBugsnagException(fromResult: result)
-            return nil
+            return []
         }
-
         return nil
     }
     

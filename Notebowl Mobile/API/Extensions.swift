@@ -1101,7 +1101,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "hg-empty-posts")
         emptyStyle.title = "It's lonely in here!"
-        emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here. If you're already enrolled in a course or group, be the first to say something! You can create a new post above."
+        emptyStyle.subtitle = "If you're a member of any currently active courses or groups, you'll see the most recent posts from them here. If you expected something to be here, check your internet connection and try again."
         emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
@@ -1109,7 +1109,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "hg-empty-courses")
         emptyStyle.title = "Enroll in some courses!"
-        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments. Courses are sorted by their most recently updated assignment or grade."
+        emptyStyle.subtitle = "If you're enrolled in any courses for the current semester, you'll see them here, as well as your latest grades and assignments. If you expected something to be here, check your internet connection and try again."
         emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
@@ -1117,7 +1117,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "hg-empty-courses")
         emptyStyle.title = "This course has no assignments!"
-        emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here. If you have notifications enabled, you'll also be notified about any new or updated assignments."
+        emptyStyle.subtitle = "If the professor of this course creates a new assignment, it'll show up here. If you have notifications enabled, you'll also be notified about any new or updated assignments. If you expected something to be here, check your internet connection and try again."
         emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
@@ -1125,7 +1125,7 @@ extension PlaceholderData {
         var emptyStyle = PlaceholderData()
         emptyStyle.image = UIImage(named: "hg-empty-notifications")
         emptyStyle.title = "Nothing noteworthy has happened!"
-        emptyStyle.subtitle = "Notifications for different users' actions will appear here. You can control what kinds of notifications you do or don't want to see via the User Settings page. Just tap the face at the top!"
+        emptyStyle.subtitle = "Notifications for different users' actions will appear here. You can control what kinds of notifications you do or don't want to see via the User Settings page. If you expected something to be here, check your internet connection and try again."
         emptyStyle.action = "CHECK AGAIN"
         return emptyStyle
     }
@@ -1352,7 +1352,6 @@ class ObjectTransform<T: NBModel>: TransformType {
                     
                     return mapReq?.first
                 }
-                
                 return objectExists as? T
             }
         }

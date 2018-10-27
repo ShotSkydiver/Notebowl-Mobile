@@ -115,16 +115,13 @@ extension NBNetworking {
             let queryString = query(params)
     
             var finalMethod = method
-            var finalHeaders = headers
-            finalHeaders["X-Notebowl-Method-Override"] = finalMethod.rawValue
-            
+            var finalHeaders = headers            
             var jsonFromQuery: [String: Any]?
             
-            if queryString.count > 0 && queryString.count < 2000 {
+            if queryString.count > 0 && queryString.count < 20000 {
                 urlComponents.percentEncodedQuery = queryString
             }
-            else if queryString.count >= 2000 {
-                log.verbose("url length too long!")
+            else if queryString.count >= 20000 {
                 finalMethod = .post
                 finalHeaders["X-Notebowl-Method-Override"] = "GET"
                 jsonFromQuery = params
@@ -232,7 +229,6 @@ extension NBNetworking {
             }
             if isSynchronous {
                 requestResult = result
-                log.verbose("should we not implement semaphore???")
                 semaphore.signal()
             }
         }
@@ -242,7 +238,6 @@ extension NBNetworking {
                 task.resume()
             }
             else {
-                log.warning("delayed start babbyyyy")
                 return NBResult(data: nil, response: nil, error: taskNeverStarted, task: task)
             }
         }
@@ -258,12 +253,8 @@ extension NBNetworking {
     }
 }
 
-
-
-
 extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        
         if let handler = requestConfigs[task.taskIdentifier]?.progressHandler {
             handler(
                 RequestProgress(
@@ -298,19 +289,43 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
             result.encoding = self.sessionDefaults.encoding
             handler(result)
         }
-
         requestConfigs.removeValue(forKey: task.taskIdentifier)
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        log.debug("redirect, \(request.description)")
-        
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+            if let serverTrust = challenge.protectionSpace.serverTrust {
+                var secresult = SecTrustResultType.invalid
+                let status = SecTrustEvaluate(serverTrust, &secresult)
+
+                if(errSecSuccess == status) {
+                    if let serverCertificate = SecTrustGetCertificateAtIndex(serverTrust, 0) {
+                        let serverCertificateData = SecCertificateCopyData(serverCertificate)
+                        let data = CFDataGetBytePtr(serverCertificateData)
+                        let size = CFDataGetLength(serverCertificateData)
+                        let cert1 = NSData(bytes: data, length: size)
+                        let file_der = Bundle.main.path(forResource: "notebowl-xyz", ofType: "der")
+
+                        if let file = file_der {
+                            if let cert2 = NSData(contentsOfFile: file) {
+                                if cert1.isEqual(to: cert2 as Data) {
+                                    completionHandler(URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust:serverTrust))
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        completionHandler(URLSession.AuthChallengeDisposition.cancelAuthenticationChallenge, nil)
     }
 }
 extension URLSessionConfiguration {
     static var withHeaders: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["uuid": UIDevice().uuid, "X-Notebowl-Method-Override": "GET"]
+        config.waitsForConnectivity = true
+        config.httpAdditionalHeaders = ["uuid": UIDevice().uuid]
         return config
     }
 }

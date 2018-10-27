@@ -13,6 +13,7 @@ import DeckTransition
 import Kingfisher
 import MMUploadImage
 import YPImagePicker
+import Branch
 
 protocol ContainerToMaster {
     func startUpload(image:UIImage)

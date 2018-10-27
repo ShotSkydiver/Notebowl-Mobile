@@ -34,12 +34,16 @@
 		<true/>
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<false/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>demo.notebowl.xyz</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
+				<false/>
 				<key>NSExceptionMinimumTLSVersion</key>
 				<string>TLSv1.0</string>
 				<key>NSIncludesSubdomains</key>
@@ -61,6 +65,7 @@
 	<string>Post photos as attachments to your posts and comments!</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
@@ -86,5 +91,23 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+    <key>branch_app_domain</key>
+    <string>notebowl.app.link</string>
+    <key>branch_key</key>
+    <dict>
+        <key>live</key>
+        <string>key_live_dpScaDTg4YBW8K2iqeO6BaantDp4N0zr</string>
+        <key>test</key>
+        <string>key_test_bmNnauJiX3CX3H3nzc8iLkeeBCc3K3vK</string>
+    </dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>notebowl</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

@@ -12,6 +12,7 @@ import QuartzCore
 import ObjectMapper
 import SocketIO
 import PKHUD
+import Branch
 
 class LoadingViewController: UIViewController {
     var loadingView: NBLoadingView!
@@ -94,15 +95,16 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     func getData() {
-        _ = NBClient.shared.getMappable(Setting.self)!
-        _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "updatedAt:desc", limit: "110")!
+        let setting = NBClient.shared.getMappable(Setting.self)
+        let notifs = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")
         let filter = NBClient.shared.doEnrollmentRequests()
-        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter!)\"]", sortBy: "createdAt:desc", limit: "10")!
-        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-        var combinedFilter = (retrievedPosts as [NBModel])
-        combinedFilter.append(contentsOf: (postComments as [NBModel]))
-        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-        let attach = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        if let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10"), !retrievedPosts.isEmpty {
+            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+            var combinedFilter = (retrievedPosts as [NBModel])
+            combinedFilter.append(contentsOf: (postComments as [NBModel]))
+            let likes = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+            let attachments = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        }
         NBClient.shared.reinitCache()
     }
     

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.30.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y7H-BV-ySK">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.19.1"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,7 +14,7 @@
         <!--Courses TableView Controller-->
         <scene sceneID="dnM-jb-jrb">
             <objects>
-                <tableViewController storyboardIdentifier="coursesTableViewController" title="Courses TableView Controller" id="JtQ-y2-5t3" customClass="CoursesTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="coursesTableViewController" title="Courses TableView Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JtQ-y2-5t3" customClass="CoursesTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="Go3-NF-LpD" customClass="CourseTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -105,17 +105,17 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueCourseDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Tmb-rL-p4e"/>
+                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Tmb-rL-p4e"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vbn-dK-6Fe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1903" y="1048"/>
         </scene>
-        <!--Course Assignments Table View-->
+        <!--Title-->
         <scene sceneID="c8K-gR-B7u">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="PvP-kZ-gVx" customClass="CourseAssignmentsTableView" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="courseAssignmentsTableView" hidesBottomBarWhenPushed="YES" id="PvP-kZ-gVx" customClass="CourseAssignmentsTableView" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="110" estimatedRowHeight="-1" sectionHeaderHeight="1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="1" estimatedSectionFooterHeight="-1" id="yj4-ih-S5N">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -128,15 +128,16 @@
                             <outlet property="delegate" destination="PvP-kZ-gVx" id="ua0-zA-glQ"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Title" id="Vkj-PL-yoQ"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MmX-2f-TQ8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2790" y="1015"/>
+            <point key="canvasLocation" x="2828" y="962"/>
         </scene>
         <!--Notifications TableView Controller-->
         <scene sceneID="4Di-eU-D8S">
             <objects>
-                <tableViewController title="Notifications TableView Controller" id="Jd2-FC-big" customClass="NotificationsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="notificationsTableViewController" title="Notifications TableView Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Jd2-FC-big" customClass="NotificationsTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="-1" id="uBG-Nm-imb" customClass="NotificationTableView" customModule="Notebowl_Mobile" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -220,7 +221,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueNotifDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Uyy-HA-l3J"/>
+                        <segue destination="Sd7-mb-2BW" kind="custom" identifier="segueDeck" customClass="DeckNoSwipeSegue" customModule="Notebowl_Mobile" customModuleProvider="target" id="Uyy-HA-l3J"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uJc-eQ-wD0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -230,7 +231,7 @@
         <!--User Settings Modal-->
         <scene sceneID="Z6J-bn-wbB">
             <objects>
-                <viewController title="User Settings Modal" id="Sd7-mb-2BW" customClass="AccountModalViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="accountViewController" title="User Settings Modal" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Sd7-mb-2BW" customClass="AccountModalViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wb6-PP-gt4">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -262,7 +263,7 @@
         <!--Create New Post View Controller-->
         <scene sceneID="Jmm-C8-2Cm">
             <objects>
-                <viewController id="HMo-CO-fYR" customClass="CreateNewPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="createPostViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HMo-CO-fYR" customClass="CreateNewPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1sn-Lb-ABr">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -378,7 +379,7 @@
         <!--Account Modal Table View Controller-->
         <scene sceneID="wL2-0R-fO4">
             <objects>
-                <tableViewController id="Uj0-lf-bbg" customClass="AccountModalTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="accountTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Uj0-lf-bbg" customClass="AccountModalTableViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="oVn-mr-N6M">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="711"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -702,7 +703,7 @@
         <!--Latest-->
         <scene sceneID="h3d-lu-Lpk">
             <objects>
-                <viewController title="Latest" id="XYy-Qd-okh" customClass="HomeFeedViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="homeFeedViewController" title="Latest" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XYy-Qd-okh" customClass="HomeFeedViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="b3w-2R-CKG">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -754,7 +755,7 @@
         <!--Post Detail-->
         <scene sceneID="LWz-jU-F1G">
             <objects>
-                <tableViewController title="Post Detail" hidesBottomBarWhenPushed="YES" id="kph-Ic-KZb" customClass="HomeFeedPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="postViewController" title="Post Detail" hidesBottomBarWhenPushed="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="kph-Ic-KZb" customClass="HomeFeedPostViewController" customModule="Notebowl_Mobile" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="10" estimatedSectionFooterHeight="-1" contentViewInsetsToSafeArea="NO" id="gWs-Cs-Laa">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -768,13 +769,14 @@
                             <outlet property="delegate" destination="kph-Ic-KZb" id="vrO-O6-V2b"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Post Detail" id="j1O-jK-x1d"/>
                     <connections>
                         <segue destination="HMo-CO-fYR" kind="presentation" identifier="createPostDetailSegue" id="Uya-LO-O6p"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aBT-R8-zhj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3338" y="1732"/>
+            <point key="canvasLocation" x="3448" y="1712"/>
         </scene>
         <!--Root View-->
         <scene sceneID="UZy-wh-fI0">
@@ -888,7 +890,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Uya-LO-O6p"/>
-        <segue reference="Ssj-YJ-Jbk"/>
+        <segue reference="Uyy-HA-l3J"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.23111045359999999" green="0.65090513230000002" blue="0.88813096280000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

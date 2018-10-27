@@ -9,6 +9,81 @@
 import Foundation
 import ObjectMapper
 import Bugsnag
+import URLPatterns
+import DeckTransition
+
+
+enum DeepLink {
+    case home, bulletin, courses, notifications, groups, clubs, settings
+    case bulletinPost(post: String)
+    case course(permalink: String)
+}
+
+extension DeepLink {
+    init?(url: URL) {
+        let counted = url.countedPathComponents()
+        switch counted {
+            case .n0, .n1(""), .n1("bulletin"): self = .bulletin
+            case .n2("bulletin", let post): self = .bulletinPost(post: post)
+            case .n1("notifications"): self = .notifications
+            case .n2("settings", _): self = .settings
+            case .n1("groups"): self = .groups
+            case .n4("groups", _, "bulletin", let post):   self = .bulletinPost(post: post)
+            case .n1("courses"): self = .courses
+            case .n2("courses", let permalink): self = .course(permalink: permalink)
+            case .n3("courses", let permalink, _):   self = .course(permalink: permalink)
+            case .n4("courses", _, "bulletin", let post):   self = .bulletinPost(post: post)
+            case .n4("courses", let permalink, _, _):   self = .course(permalink: permalink)
+            default: return nil
+        }
+    }
+}
+
+struct DeepLinker {
+    static func open(link: DeepLink, animated: Bool = true) -> Bool {
+        if let rootVC = UIApplication.shared.keyWindow?.rootViewController as? RootViewController, let tabVC = rootVC.presentedViewController as? MainTabBarViewController {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+            if tabVC.topestViewController is HomeFeedPostViewController || tabVC.topestViewController is CourseAssignmentsTableView {
+                (tabVC.selectedViewController as! RootNavigationBarVC).popViewController(animated: false)
+            }
+            else if tabVC.topestViewController is AccountModalViewController || tabVC.topestViewController is CreateNewPostViewController {
+                tabVC.topestViewController!.dismiss(animated: true, completion: nil)
+            }
+            switch link {
+            case .home, .bulletin:
+                tabVC.selectedIndex = 0
+            case .bulletinPost(post: let post):
+                tabVC.selectedIndex = 0
+                if let postNav = NBClient.shared.storedTypes[Post.classIdentifier]!.first(where: { $0.resourceKey == post }) as? Post {
+                    let postDetailVC = storyboard.instantiateViewController(withIdentifier: "postViewController") as! HomeFeedPostViewController
+                    postDetailVC.post = postNav
+                    (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(postDetailVC, animated: false)
+                }
+            case .courses:
+                tabVC.selectedIndex = 1
+            case .course(permalink: let course):
+                tabVC.selectedIndex = 1
+                if let courseNav = NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: { ($0 as! Course).permalink == course }) as? Course {
+                    let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "courseAssignmentsTableView") as! CourseAssignmentsTableView
+                    courseDetailVC.selectedCourse = courseNav
+                    (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(courseDetailVC, animated: true)
+                }
+            case .notifications:
+                tabVC.selectedIndex = 2
+            case .settings:
+                NBClient.shared.delay(0.5) {
+                    tabVC.topestViewController!.performSegue(withIdentifier: "segueDeck", sender: nil)
+                }
+            default:
+                return false
+            }
+            return true
+        }
+        return false
+    }
+}
+
 
 public enum ItemType: String {
     case user = "credentials"
@@ -634,6 +709,7 @@ class Course: NBModel, WithName {
     var name: String!
     var number: String!
     var subject: String!
+    var permalink: String!
     var units: Int?
     var location: String?
     var desc: String?
@@ -671,6 +747,7 @@ class Course: NBModel, WithName {
         name <- map["name"]
         number <- map["number"]
         subject <- map["subject"]
+        permalink <- map["permalink"]
         units <- map["units"]
         location <- map["location"]
         desc <- map["description"]
@@ -1588,10 +1665,9 @@ public class Like: NBModel {
 
 class Notification: NBModel {
 
-    var status: String?
-    var text: String?
+    var status: String!
+    var text: String!
     var type: String!
-    var name: String!
     
     public var unseenBool: Bool { return status == nil ? true : false }
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
@@ -1603,12 +1679,18 @@ class Notification: NBModel {
     required public init?(map: Map) {
         super.init(map: map)
     }
+
+    init(status: String, text: String, type: String) {
+        super.init()
+        self.status = status
+        self.text = text
+        self.type = type
+    }
     
     override func mapping(map: Map) {
         shouldMapParent = false
         super.mapping(map: map)
-        
-        name <- map["name"]
+
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]

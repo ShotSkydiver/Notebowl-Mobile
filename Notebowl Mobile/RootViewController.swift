@@ -11,9 +11,9 @@ import UIKit
 import Bugsnag
 import SocketIO
 import Siren
+import Branch
 
 class RootViewController: UIViewController {
-
     var shouldLoad: Bool = true
     
     override func viewDidLoad() {
@@ -30,6 +30,7 @@ class RootViewController: UIViewController {
         }
         else if UserDefaults.hasUserLoggedIn {
             Siren.shared.checkVersion(checkType: .immediately)
+            loadLoggedIn()
         }
     }
 
@@ -54,7 +55,7 @@ class RootViewController: UIViewController {
             progressWebVC.url = URL(string: ("https://\(baseUrl)/bulletin?returnUrl=" + UIDevice().deviceQuery))
             progressWebVC.userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3514.2 Safari/537.36"
             progressWebVC.websiteTitleInNavigationBar = false
-            progressWebVC.bypassedSSLHosts = ["demo.notebowl.xyz"]
+            progressWebVC.bypassedSSLHosts = trustedHosts
             progressWebVC.navigationItem.title = "Notebowl Login"
             progressWebVC.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
             progressWebVC.doneBarButtonItemPosition = .none

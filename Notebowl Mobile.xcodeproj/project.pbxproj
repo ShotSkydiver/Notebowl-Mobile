@@ -37,6 +37,7 @@
 		85595B9D213F4D1A003FAF80 /* Courses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85595B9C213F4D1A003FAF80 /* Courses.swift */; };
 		85689C502077F154003FF721 /* CreateNewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */; };
 		856E9A03209D82A300D167B4 /* PickerViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856E9A02209D82A300D167B4 /* PickerViewViewController.swift */; };
+		8583176D217F7ED80064D4FC /* notebowl-xyz.der in Resources */ = {isa = PBXBuildFile; fileRef = 8583176C217F7ED80064D4FC /* notebowl-xyz.der */; };
 		8583F6C62034AFEA00313C9D /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */; };
 		8583F6C82034B00F00313C9D /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */; };
 		8587DE612107EBFD00B41DB6 /* PostUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE602107EBFD00B41DB6 /* PostUITests.swift */; };
@@ -136,6 +137,7 @@
 		85689C4F2077F153003FF721 /* CreateNewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewPostViewController.swift; sourceTree = "<group>"; };
 		856E9A02209D82A300D167B4 /* PickerViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewViewController.swift; sourceTree = "<group>"; };
 		856EE668202524DF00D8089D /* Notebowl Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Notebowl Mobile.entitlements"; sourceTree = "<group>"; };
+		8583176C217F7ED80064D4FC /* notebowl-xyz.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "notebowl-xyz.der"; sourceTree = "<group>"; };
 		8583F6C52034AFEA00313C9D /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
 		8583F6C72034B00F00313C9D /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
 		8587DE602107EBFD00B41DB6 /* PostUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostUITests.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 		85CC9BF5202B8E68001CABB0 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				8583176C217F7ED80064D4FC /* notebowl-xyz.der */,
 				85E6133E2148B0B200F6F432 /* default_gradients.json */,
 				85551B1620E6F94900E88BA6 /* Pods-Notebowl Mobile-acknowledgements.plist */,
 				85E291991F5F619300172C46 /* LaunchScreen.storyboard */,
@@ -500,6 +503,9 @@
 						LastSwiftMigration = 0940;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.AutoFillCredentialProvider = {
+								enabled = 0;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -507,6 +513,9 @@
 								enabled = 0;
 							};
 							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.SafariKeychain = {
 								enabled = 1;
 							};
 						};
@@ -562,6 +571,7 @@
 				85250A0F202A1B730003A416 /* DefaultPreferences.plist in Resources */,
 				85E6133F2148B0B300F6F432 /* default_gradients.json in Resources */,
 				85250A11202A1BE90003A416 /* Login.storyboard in Resources */,
+				8583176D217F7ED80064D4FC /* notebowl-xyz.der in Resources */,
 				85DD1740214D9FB2004A3DC2 /* CourseDetailViewCell.xib in Resources */,
 				85E291981F5F619300172C46 /* Assets.xcassets in Resources */,
 				85E291961F5F619300172C46 /* Main.storyboard in Resources */,
@@ -637,6 +647,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Notebowl Mobile/Pods-Notebowl Mobile-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Branch/Branch.framework",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/Cache/Cache.framework",
 				"${BUILT_PRODUCTS_DIR}/DeckTransition/DeckTransition.framework",
@@ -663,10 +674,12 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftyBeaver/SwiftyBeaver.framework",
 				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Tamamushi/Tamamushi.framework",
+				"${BUILT_PRODUCTS_DIR}/URLPatterns/URLPatterns.framework",
 				"${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Branch.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeckTransition.framework",
@@ -693,6 +706,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyBeaver.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tamamushi.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/URLPatterns.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YPImagePicker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,14 +13,10 @@ import ObjectMapper
 import Bugsnag
 
 struct SendData : SocketData {
-    let action: String
+    let itemType: ItemType
     let updateUrl: String
-    let itemType: String
+    let action: String
     let updatedAt: String
-    
-    func socketRepresentation() -> SocketData {
-        return ["action": action, "updateUrl": updateUrl, "itemType": itemType, "updatedAt": updatedAt]
-    }
 }
 
 class NBSocket {
@@ -28,23 +24,23 @@ class NBSocket {
         return NBSocket()
     }()
     #if DEBUG
-    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true)])
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true),.sessionDelegate(NBNetworking.shared)])
     #else
     let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false),.secure(true),.selfSigned(true),.forceNew(true)])
     #endif
-    var currentlyHandling: String? = nil
+
     private init() { }
     
     func setup() {
         NBSocket.shared.registerHandlers()
         NBSocket.shared.manager.connect()
     }
-    
+
     func registerForUser() {
         manager.defaultSocket.emit("register", "platform:status")
         manager.defaultSocket.emit("register", NBClient.shared.getCurrentUser().resourceKey)
     }
-    
+
     func registerHandlers() {
         manager.defaultSocket.on(clientEvent: .connect) { (data, ackEmitter) in
             self.registerForUser()
@@ -53,9 +49,10 @@ class NBSocket {
             guard let message = data[0] as? String else { return }
             guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
             let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
-            guard let updateUrl = JSON["updateUrl"] as? String else { fatalError() }
-            if let itemType = ItemType.fromURL(updateUrl) {
-                _ = self.updateHandler(itemType: "\(itemType)", updateUrl: "\(updateUrl)", action: "\((JSON["action"] as! String))", updatedAt: "\((JSON["updatedAt"] as! String))")
+
+            if let updateUrl = JSON["updateUrl"] as? String, let itemType = ItemType.fromURL(updateUrl), let action = JSON["action"] as? String, let updatedAt = JSON["updatedAt"] as? String {
+                let newResponse = SendData(itemType: itemType, updateUrl: updateUrl, action: action, updatedAt: updatedAt)
+                _ = self.updateHandler(itemType: "\(newResponse.itemType)", updateUrl: "\(newResponse.updateUrl)", action: "\(newResponse.action)", updatedAt: "\(newResponse.updatedAt)")
             }
         }
     }

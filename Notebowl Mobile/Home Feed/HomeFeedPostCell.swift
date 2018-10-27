@@ -135,7 +135,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
-        
         LightboxConfig.loadImage = {
             imageView, URL, completion in
             imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in

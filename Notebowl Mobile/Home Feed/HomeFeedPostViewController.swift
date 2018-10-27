@@ -18,24 +18,15 @@ import PKHUD
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
     var viewIsLoaded = false
     var post: Post!
-    var staticComments: [Comment]!
-    
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var showingPhotoPicker: Bool = false
-    
-    var editingExistingComment = false
-    var existingCommentToEdit: Comment!
-    var existingCell: HomeFeedCommentCell!
-    
-    var reloadSection = false
     
     lazy var inputBar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
         bar.delegate = self
         return bar
     }()
-
     lazy var attachmentManager: AttachmentMan = { [weak self] in
         let manager = AttachmentMan()
         manager.delegate = self
@@ -46,12 +37,8 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var photoLibraryButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
 
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-    override var inputAccessoryView: UIView? {
-        return inputBar
-    }
+    override var canBecomeFirstResponder: Bool { return true }
+    override var inputAccessoryView: UIView? { return inputBar }
     
     override func loadView() {
         super.loadView()
@@ -69,18 +56,14 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.inputPlugins = [attachmentManager]
         setupInputBar()
 
-        refreshAllComments()
         tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 0, right: 0)
+        refreshAllComments()
         viewIsLoaded = true
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -94,7 +77,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createPostDetailSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
-
             if sender is HomeFeedPostCell {
                 var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
                 courseForPicker.sort() { $0.fullName < $1.fullName }
@@ -178,7 +160,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         anonymousButton = makeButton(named: "visibility_on-vector")
             .configure {
                 $0.accessibilityIdentifier = "anonymousButton"
-                $0.isEnabled = !self.editingExistingComment
                 $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             }
             .onSelected { anonButton in
@@ -235,24 +216,18 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
-            if self.editingExistingComment {
-                self.existingCommentToEdit.text = text
-                _ = self.existingCommentToEdit.save()
+            let newComment = Comment(text: text, owner: self.post.parent, parent: self.post, related: self.post.parent, isAnonymous: self.anonymousToggle)
+            let finalComment = newComment.save()
+            if finalComment == nil {
+                HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
+                return
             }
-            else {
-                let newComment = Comment(text: text, owner: self.post.parent, parent: self.post, related: self.post.parent, isAnonymous: self.anonymousToggle)
-                let finalComment = newComment.save()
-                if finalComment == nil {
-                    HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
-                    return
-                }
-                if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                    log.debug("attachment count: \(self.attachmentIDs.count)")
-                    for file in self.attachmentIDs {
-                        log.debug("uploading attachment: \(file)")
-                        let newAttach = Attachment(file: file, parent: finalComment)
-                        _ = newAttach.save()
-                    }
+            if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
+                log.debug("attachment count: \(self.attachmentIDs.count)")
+                for file in self.attachmentIDs {
+                    log.debug("uploading attachment: \(file)")
+                    let newAttach = Attachment(file: file, parent: finalComment)
+                    _ = newAttach.save()
                 }
             }
             inputBar.inputTextView.text = String()
@@ -314,7 +289,7 @@ extension HomeFeedPostViewController {
     
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
-            if newPost.parent is Assignment {
+            if newPost.parent is Assignment || newPost.parent is Submission {
                 return
             }
             if newPost == self.post {
@@ -324,7 +299,7 @@ extension HomeFeedPostViewController {
         }
             
         else if let newComment = newObject as? Comment {
-            if newComment.related is Assignment {
+            if newComment.related is Assignment || newComment.related is Submission {
                 return
             }
             let indexOfComment = self.post.postComments.index(of: newComment)
@@ -345,7 +320,7 @@ extension HomeFeedPostViewController {
         }
 
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
-            if newObject.parent is Comment, !(newObject.parent!.related is Assignment) {
+            if newObject.parent is Comment, !(newObject.parent!.related is Assignment), !(newObject.parent!.related is Submission) {
                 if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
                     self.post.postComments[indexOfComment].refresh()
                     tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
@@ -370,12 +345,12 @@ extension HomeFeedPostViewController {
     }
     
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment) {
+        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment), !(deletePost.parent is Submission) {
             if deletePost == self.post {
                 self.navigationController?.popViewController(animated: true)
             }
         }
-        else if let deleteComment = deletedObject as? Comment, !(deleteComment.related is Assignment) {
+        else if let deleteComment = deletedObject as? Comment, !(deleteComment.related is Assignment), !(deleteComment.related is Submission) {
             guard let indexOfComment = self.post.postComments.index(of: deleteComment) else {
                 self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
                 (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
@@ -391,7 +366,7 @@ extension HomeFeedPostViewController {
         }
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
             var indexOfComment: Int?
-            if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment) {
+            if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment), !(deletedObject.parent!.related is Submission) {
                 indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment)
                 if indexOfComment != nil { self.post.postComments[indexOfComment!].refresh() }
             }

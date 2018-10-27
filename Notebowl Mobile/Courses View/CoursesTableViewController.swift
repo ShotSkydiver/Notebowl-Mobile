@@ -66,7 +66,7 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
         return cell
     }
     @IBAction func profileButtonTapped(_ sender: Any) {
-        self.performSegue(withIdentifier: "segueCourseDeck", sender: nil)
+        self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

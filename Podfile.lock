@@ -1,5 +1,8 @@
 PODS:
   - AutoMate (1.5.0)
+  - Branch (0.25.8):
+    - Branch/Core (= 0.25.8)
+  - Branch/Core (0.25.8)
   - Bugsnag (5.17.0)
   - Cache (5.2.0)
   - DeckTransition (2.1.0)
@@ -17,25 +20,27 @@ PODS:
   - Lightbox (2.3.0):
     - Imaginary (~> 4.0)
   - MMUploadImage (2.0.8)
-  - ObjectMapper (3.2.0)
+  - ObjectMapper (3.3.0)
   - PKHUD (5.2.0)
   - PryntTrimmerView (3.0.0)
-  - SimulatorStatusMagic (2.3)
-  - Siren (3.7.2)
+  - SimulatorStatusMagic (2.3.2)
+  - Siren (3.8.0)
   - Socket.IO-Client-Swift (13.3.1):
     - Starscream (~> 3.0.2)
   - Starscream (3.0.6)
   - SteviaLayout (4.4.0)
-  - SwiftDate (5.0.9)
+  - SwiftDate (5.0.12)
   - SwiftyBeaver (1.6.1)
   - SwipeCellKit (2.5.0)
   - Tamamushi (0.1.3)
+  - URLPatterns (0.2.0)
   - YPImagePicker (3.5.2):
     - PryntTrimmerView (~> 3.0.0)
     - SteviaLayout (~> 4.4.0)
 
 DEPENDENCIES:
   - AutoMate
+  - Branch
   - Bugsnag
   - Cache
   - DeckTransition (~> 2.0)
@@ -51,7 +56,7 @@ DEPENDENCIES:
   - Kingfisher
   - Lightbox
   - MMUploadImage (from `https://github.com/ShotSkydiver/UploadImage`, branch `swift-4.2`)
-  - ObjectMapper (from `https://github.com/kajensen/ObjectMapper`)
+  - ObjectMapper
   - PKHUD
   - SimulatorStatusMagic
   - Siren
@@ -60,11 +65,13 @@ DEPENDENCIES:
   - SwiftyBeaver
   - SwipeCellKit (from `https://github.com/SwipeCellKit/SwipeCellKit.git`, branch `develop`)
   - Tamamushi (from `https://github.com/ShotSkydiver/Tamamushi`)
+  - URLPatterns
   - YPImagePicker (from `https://github.com/ShotSkydiver/YPImagePicker`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AutoMate
+    - Branch
     - Bugsnag
     - Cache
     - DeckTransition
@@ -75,6 +82,7 @@ SPEC REPOS:
     - InputBarAccessoryView
     - Kingfisher
     - Lightbox
+    - ObjectMapper
     - PKHUD
     - PryntTrimmerView
     - SimulatorStatusMagic
@@ -83,6 +91,7 @@ SPEC REPOS:
     - SteviaLayout
     - SwiftDate
     - SwiftyBeaver
+    - URLPatterns
 
 EXTERNAL SOURCES:
   FaveButton:
@@ -98,8 +107,6 @@ EXTERNAL SOURCES:
   MMUploadImage:
     :branch: swift-4.2
     :git: https://github.com/ShotSkydiver/UploadImage
-  ObjectMapper:
-    :git: https://github.com/kajensen/ObjectMapper
   Socket.IO-Client-Swift:
     :branch: development
     :git: https://github.com/socketio/socket.io-client-swift.git
@@ -127,11 +134,8 @@ CHECKOUT OPTIONS:
   MMUploadImage:
     :commit: 89b694751073688fc887b5799c702c22e782cbff
     :git: https://github.com/ShotSkydiver/UploadImage
-  ObjectMapper:
-    :commit: ec6015e41293580f1e20ce2aac595ae0271c5bbc
-    :git: https://github.com/kajensen/ObjectMapper
   Socket.IO-Client-Swift:
-    :commit: e5f3fb13aef469a2e282f91b9c4bc180b2f7c03f
+    :commit: 9708019adc38d161d9fdc925d0992c79329afb1e
     :git: https://github.com/socketio/socket.io-client-swift.git
   SwipeCellKit:
     :commit: 9c69084b9b331c3c9f4767add20afe72112adee8
@@ -145,6 +149,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AutoMate: 6519edb25b2b03f3d26d002c753d25c12d344816
+  Branch: bef2918a62f57ce284f4fa1917f5de1fb31295fe
   Bugsnag: 9c904fdb98c8f4af3ee0c5235bb3b19cd23fa19b
   Cache: 807c5d86d01a177f06ede9865add3aea269bbfd4
   DeckTransition: ca707456e3d83928c895fed6f458cbf68c5cac84
@@ -160,20 +165,21 @@ SPEC CHECKSUMS:
   Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
   Lightbox: d317750e4132bfb871a5307cfe0a2c7d6a583c65
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  ObjectMapper: bdfb7bd74be419c0b71f49d1e380e958d31cade4
+  ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
   PKHUD: dd5357ac65f26115c35c4a68e9b328053326c5fe
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
-  SimulatorStatusMagic: 631fe6e4195a8a8d587ad8744af9015126526cc2
-  Siren: d3e10df09c07d37a7f13d29ec78d760975c6da0b
+  SimulatorStatusMagic: 0c0e711acef6e70dd8a0710962347635a9cdef24
+  Siren: a815ad8d6ae7e62148ffc0b9859fd65d34890e3a
   Socket.IO-Client-Swift: 79f8f85fa44881838175a20f9bd2c32bef2c9d37
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SteviaLayout: dd74d1abd127bbf0ce346ac9430441684fe427d0
-  SwiftDate: 52b718d32ec006861a2be2756cbfa482d438e781
+  SwiftDate: 4622d4ff136b123d11559d93955898c51ee21ed1
   SwiftyBeaver: ccfcdf85a04d429f1633f668650b0ce8020bda3a
   SwipeCellKit: d8f2617538ce3021cb0a11d1b93856a06a2f2e20
   Tamamushi: 312ef74e6836aa9d5114db74cfc2f4054e7151af
+  URLPatterns: c0ada8af2e6ee6aa3c5a0dc3f6f9c13144cdb635
   YPImagePicker: 26d5bf7bfe1cffd1c5eedea3ac60422b314e2a42
 
-PODFILE CHECKSUM: 8762a2650a3cd4dd4a5844284f0d0f1544da92b3
+PODFILE CHECKSUM: af99a4e081dea4c380d61b4a20547ca4fc8cb0fa
 
-COCOAPODS: 1.6.0.beta.1
+COCOAPODS: 1.6.0.beta.2

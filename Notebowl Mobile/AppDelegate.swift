@@ -6,6 +6,7 @@
 //  Copyright © 2017 NoteBowl. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import UserNotifications
 import Bugsnag
@@ -15,6 +16,8 @@ import ObjectMapper
 import SocketIO
 import Siren
 import SwiftyBeaver
+import Kingfisher
+import Branch
 
 let log = SwiftyBeaver.self
 
@@ -24,15 +27,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var disconnectDate: Date!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        setupLog()
-        if Config.isDebug { log.info("uuid: \(UIDevice().uuid)") }
-        
         UNUserNotificationCenter.current().delegate = self
-        application.registerForRemoteNotifications()
-        
+        setupLog()
         setupUserDefaults()
         setupLibraries()
-        
+
+        if let branch = Branch.getInstance() {
+            #if DEBUG
+            branch.setDebug()
+            #endif
+
+            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false) { params, error in
+                defer {
+                    let notificationName = Foundation.Notification.Name("BranchCallbackCompleted")
+                    NotificationCenter.default.post(name: notificationName, object: nil)
+                }
+
+                guard let paramsDictionary = (params as? Dictionary<String, Any>) else { return }
+                
+                let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
+                if let canonicalString = paramsDictionary["$canonical_url"] as! String?, let canonicalUrl = URL(string: canonicalString), let deepLink = DeepLink(url: canonicalUrl), let clickedBranch = clickedBranchLink, clickedBranch {
+                    DeepLinker.open(link: deepLink)
+                }
+            }
+        }
         return true
     }
 
@@ -68,6 +86,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
 
         if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
+
+        KingfisherManager.shared.cache.maxMemoryCost = 30*1024
+        ImageDownloader.default.trustedHosts = Set(trustedHosts)
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -75,7 +96,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()
-        log.debug("Device Token: \(token)")
         _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token, "uuid": UIDevice().uuid])
     }
     
@@ -84,12 +104,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        _ = userInfo["aps"] as! [String: AnyObject]
+        Branch.getInstance().handlePushNotification(userInfo)
     }
-    
-    func applicationDidBecomeActive(_ application: UIApplication) {
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        let branchHandled = Branch.getInstance().application(app, open: url, options: options)
+        if !branchHandled { }
+        return true
     }
-    
+
+    func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
+        return true
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+
+        let continueBranch = Branch.getInstance().continue(userActivity)
+        if !continueBranch, userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingUrl = userActivity.webpageURL {
+            let lp: BranchLinkProperties = BranchLinkProperties()
+            let uo = BranchUniversalObject()
+            lp.addControlParam("$desktop_url", withValue: incomingUrl.absoluteString)
+            lp.addControlParam("$ios_url", withValue: incomingUrl.absoluteString)
+            if !incomingUrl.pathComponents.isEmpty {
+                var path = incomingUrl.path
+                path = String(path.dropFirst())
+                lp.addControlParam("$deeplink_path", withValue: path)
+                uo.canonicalIdentifier = path
+                uo.canonicalUrl = "https://notebowl.app.link/\(path)"
+            }
+            uo.getShortUrl(with: lp) { url, error in
+                if error == nil {
+                    Branch.getInstance().handleDeepLink(withNewSession: URL(string: url!)!)
+                }
+            }
+        }
+        return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) { }
     func applicationWillResignActive(_ application: UIApplication) { }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -103,7 +155,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Siren.shared.checkVersion(checkType: .immediately)
 
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return }
-        
         if NBSocket.shared.manager.status == .disconnected {
             NBSocket.shared.manager.connect()
             let formatter = DateFormatter.iso8061
@@ -149,7 +200,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                         let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
                         guard let object = mapped!.genericObject else { return }
-                        
                         objectsToUpdate.append(object)
                     }
                     if !objectsToUpdate.contains(where: { ($0 as! Enrollment).user == NBClient.shared.getCurrentUser() }) {
@@ -170,14 +220,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
                     let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
                     guard let object = mapped!.genericObject else { return }
- 
                     if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
                         if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
-                            log.debug("ignore")
                             continue
                         }
                     }
-                    
                     if let viewControllers = tabbarVC.viewControllers {
                         for viewController in viewControllers {
                             let rootNavController = viewController as! UINavigationController
@@ -202,7 +249,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             catch let error {
                 print("Error parsing json: \(error)")
             }
-        
         }
     }
 
