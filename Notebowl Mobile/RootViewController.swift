@@ -11,7 +11,6 @@ import UIKit
 import Bugsnag
 import SocketIO
 import Siren
-import Branch
 
 class RootViewController: UIViewController {
     var shouldLoad: Bool = true

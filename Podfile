@@ -29,7 +29,6 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'SwiftDate'
         pod 'GSKStretchyHeaderView'
         pod 'SwiftyBeaver'
-        pod 'Branch'
         pod 'URLPatterns'
     end
 

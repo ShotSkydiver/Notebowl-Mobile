@@ -17,7 +17,6 @@ import SocketIO
 import Siren
 import SwiftyBeaver
 import Kingfisher
-import Branch
 
 let log = SwiftyBeaver.self
 
@@ -32,25 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupUserDefaults()
         setupLibraries()
 
-        if let branch = Branch.getInstance() {
-            #if DEBUG
-            branch.setDebug()
-            #endif
-
-            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false) { params, error in
-                defer {
-                    let notificationName = Foundation.Notification.Name("BranchCallbackCompleted")
-                    NotificationCenter.default.post(name: notificationName, object: nil)
-                }
-
-                guard let paramsDictionary = (params as? Dictionary<String, Any>) else { return }
-                
-                let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
-                if let canonicalString = paramsDictionary["$canonical_url"] as! String?, let canonicalUrl = URL(string: canonicalString), let deepLink = DeepLink(url: canonicalUrl), let clickedBranch = clickedBranchLink, clickedBranch {
-                    DeepLinker.open(link: deepLink)
-                }
-            }
-        }
         return true
     }
 
@@ -103,13 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         log.debug(error.localizedDescription)
     }
 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        Branch.getInstance().handlePushNotification(userInfo)
-    }
-
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        let branchHandled = Branch.getInstance().application(app, open: url, options: options)
-        if !branchHandled { }
         return true
     }
 
@@ -118,26 +92,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-
-        let continueBranch = Branch.getInstance().continue(userActivity)
-        if !continueBranch, userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingUrl = userActivity.webpageURL {
-            let lp: BranchLinkProperties = BranchLinkProperties()
-            let uo = BranchUniversalObject()
-            lp.addControlParam("$desktop_url", withValue: incomingUrl.absoluteString)
-            lp.addControlParam("$ios_url", withValue: incomingUrl.absoluteString)
-            if !incomingUrl.pathComponents.isEmpty {
-                var path = incomingUrl.path
-                path = String(path.dropFirst())
-                lp.addControlParam("$deeplink_path", withValue: path)
-                uo.canonicalIdentifier = path
-                uo.canonicalUrl = "https://notebowl.app.link/\(path)"
-            }
-            uo.getShortUrl(with: lp) { url, error in
-                if error == nil {
-                    Branch.getInstance().handleDeepLink(withNewSession: URL(string: url!)!)
-                }
-            }
-        }
         return true
     }
 

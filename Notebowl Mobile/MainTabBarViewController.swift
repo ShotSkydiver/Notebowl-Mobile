@@ -12,7 +12,6 @@ import QuartzCore
 import ObjectMapper
 import SocketIO
 import PKHUD
-import Branch
 
 class LoadingViewController: UIViewController {
     var loadingView: NBLoadingView!
