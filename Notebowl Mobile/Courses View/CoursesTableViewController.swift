@@ -81,7 +81,7 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
 extension CoursesTableViewController {
     func handleUpdated(newObject: NBModel) {
         if let newCourse = newObject as? Course {
-            self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+            self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as? [Course]
             var indexOfCourse = self.courses.index(of: newCourse)
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             placeholderTableView?.showDefault()
@@ -100,7 +100,7 @@ extension CoursesTableViewController {
             if deleteCourse.parent is Course {
                 let indexOfCourse = self.courses.index(where: { $0 == (deletedObject.parent as! Course) })
                 NBClient.shared.storedTypes[Course.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[Course.classIdentifier]?.index(of: deletedObject.parent!))!)
-                self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]
+                self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as? [Course]
                 if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
                 if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.reloadData() }
             }

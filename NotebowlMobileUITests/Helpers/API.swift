@@ -101,6 +101,13 @@ class API {
         }
     }
 
+    static func createCommentReply(user: String = "alexs@notebowl.com") {
+        let postUrl = getFirst("posts")
+        let commentUrl = getFirst("comments")
+        let courseUrl = getFirst("courses")
+        _ = API.createNew("comments", parent: commentUrl, owner: postUrl, related: courseUrl, user: user)
+    }
+
     static func createCourse(currentUserAsTA: Bool = false) {
         let uniUrl = getFirst("universities")
         let payload: Any = ["name":"Test Course","subject":"SOCK","number":"101","units":3,"usesWeightedGrades":false,"published":true,"_university":"\(uniUrl)"]

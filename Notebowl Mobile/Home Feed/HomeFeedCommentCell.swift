@@ -63,14 +63,25 @@ class CommentCollectionView: UICollectionView {
 class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var designableView: DesignableView!
+    @IBOutlet weak var dummyTextField: AutoSizeTextField!
+    @IBOutlet weak var dummyStack: UIStackView!
+    @IBOutlet weak var indentationConstraint: NSLayoutConstraint!
+    @IBOutlet weak var indentationLine: UIView!
+    @IBOutlet weak var indentationWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var indentationTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var indentationBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var userAvatar: ProfileImageView!
+    @IBOutlet weak var userAvatarWidth: NSLayoutConstraint!
+    @IBOutlet weak var userAvatarHeight: NSLayoutConstraint!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var commentContent: UITextView!
     @IBOutlet weak var commentLikes: UILabel!
+    @IBOutlet weak var commentReplies: UILabel!
     @IBOutlet weak var commentLikeButton: FaveButton!
     @IBOutlet weak var postedDate: UILabel!
     @IBOutlet weak var collectionView: CommentCollectionView!
     @IBOutlet weak var moreButton: UIButton!
+    @IBOutlet weak var commentReplyButton: UIButton!
     @IBOutlet weak var collectionFlowLayout: CommentCollectionViewFlowLayout!
     @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
     @IBOutlet weak var likeActionStackView: UIStackView!
@@ -113,25 +124,59 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         collectionViewPaginatedScroll = true
         collectionViewHeight.constant = 0.0
         linkPreviewHeight.constant = 0.0
+
+        userAvatarHeight.constant = 34.0
+        userAvatarWidth.constant = 34.0
+        indentationConstraint.constant = 0.0
+        indentationWidthConstraint.constant = 1.5
+
+        dummyTextField.borderStyle = .roundedRect
+        dummyTextField.backgroundColor = UIColor(hexString: "#F6F6F8")
+        dummyTextField.layer.borderColor = UIColor(hexString: "#CCD0D4").cgColor
+        dummyTextField.layer.borderWidth = 1.5
+        dummyTextField.layer.cornerRadius = 17.0
+        dummyTextField.layer.masksToBounds = true
         
         commentContent.wrapToContent()
-        moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
-        
+
         commentLikeButton.isHaptic = true
         commentLikeButton.hapticType = .impact(.light)
     }
     
     func configure(comment: Comment) {
         commentLikeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControl.Event.touchUpInside)
-        
         commentLikeButton.setSelected(selected: comment.likedByCurrentUser, animated: false)
-        
-        commentLikes.text = comment.commentLikes.isEmpty ? " " : "\(comment.commentLikes.count)"
+
+        dummyTextField.isHidden = true
+
+        indentationConstraint.constant = (comment.isCommentReply ? 40.0 : 0.0)
+        userAvatarHeight.constant = (comment.isCommentReply ? 32.0 : 34.0)
+        userAvatarWidth.constant = (comment.isCommentReply ? 32.0 : 34.0)
+        indentationLine.backgroundColor = (comment.isCommentReply ? UIColor(hexString: "#DBDBDB") : UIColor.clear)
+        if (comment.isCommentReply) {
+            indentationTopConstraint.constant = (comment.parent! as! Comment).comments.first! == comment ? 0 : -8
+            indentationBottomConstraint.constant = (comment.parent! as! Comment).comments.last! == comment ? 0 : 8
+        }
+
+        if !comment.commentLikes.isEmpty {
+            commentLikes.text = comment.commentLikes.count == 1 ? "\(comment.commentLikes.count) Like" : "\(comment.commentLikes.count) Likes"
+        }
+        else {
+            commentLikes.text = "Like"
+        }
+
+        if (!comment.comments.isEmpty && comment.comments != nil) {
+            commentReplies.text = comment.comments.count == 1 ? "\(comment.comments.count) Reply" : "\(comment.comments.count) Replies"
+        }
+        else {
+            commentReplies.text = " "
+        }
+
         if comment.text == nil { commentContent.isHidden = true }
         else { commentContent.text = comment.text! }
-        
-        if comment.editedAt != nil { (postedDate.text = comment.createdAt.relativeFormat + " (edited)") }
-        else { (postedDate.text = comment.createdAt.relativeFormat) }
+
+        if comment.editedAt != nil { (postedDate.text = "• " + comment.createdAt.relativeShortFormat + " (edited)") }
+        else { (postedDate.text = "• " + comment.createdAt.relativeShortFormat) }
         
         if comment.isAnonymous {
             userName.text = "Anonymous"
@@ -216,6 +261,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             UIApplication.shared.open(url)
         }
     }
+
+    @objc func replyTapped(_ sender: Any) {
+        if let parentVC = parentViewController as? HomeFeedPostViewController {
+            parentVC.setReplyToComment(comment: self.commentForCell)
+        }
+    }
     
     func updateLike() {
         HUD.show(.progress)
@@ -241,6 +292,12 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
 
     @IBAction func moreButtonAction(_ sender: Any) {
         self.showSwipe(orientation: .right, animated: true, completion: nil)
+    }
+
+    @IBAction func replyButtonPressed(_ sender: UIButton) {
+        if let parentVC = parentViewController as? HomeFeedPostViewController {
+            parentVC.setReplyToComment(comment: self.commentForCell)
+        }
     }
     
 

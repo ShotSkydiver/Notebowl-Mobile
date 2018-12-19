@@ -17,10 +17,12 @@ import PKHUD
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
     var viewIsLoaded = false
-    var post: Post!
+    var postComment: PostsComments!
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var showingPhotoPicker: Bool = false
+
+    var postCommentToReplyTo: PostsComments!
     
     lazy var inputBar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -36,6 +38,27 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     
     var photoLibraryButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
+    var cancelReplyButton: InputBarButtonItem!
+
+    let replyUserNameString: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.textColor = UIColor(hexString: "#9197A1")
+        label.font = UIFont.systemFont(ofSize: 12.0)
+        label.accessibilityIdentifier = "replyingToUserText"
+        label.backgroundColor = .clear
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    lazy var replyUserStackView: UIStackView = {
+        let userStackView = UIStackView()
+        userStackView.axis = .horizontal
+        userStackView.alignment = .fill
+        userStackView.distribution = .fill
+        return userStackView
+    }()
+
 
     override var canBecomeFirstResponder: Bool { return true }
     override var inputAccessoryView: UIView? { return inputBar }
@@ -58,6 +81,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
         tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 0, right: 0)
         refreshAllComments()
+
+        self.postCommentToReplyTo = self.postComment
+
         viewIsLoaded = true
     }
 
@@ -71,7 +97,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
     
     func refreshAllComments() {
-        for comment in self.post.postComments { comment.refresh() }
+        for comment in self.postComment.comments { comment.refresh() }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -102,11 +128,34 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             self.navigationController?.popViewController(animated: true)
         }
         else if (objectToDelete is Comment) {
-            self.post.postComments.removeAll(objectToDelete as! Comment)
+            if (objectToDelete as! Comment).isCommentReply {
+                let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment), refresh: false)
+                self.postComment.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
+            }
+            else {
+                self.postComment.comments.removeAll(objectToDelete as! Comment)
+            }
         }
     }
 
     func setupInputBar() {
+        inputBar.isTranslucent = true
+        inputBar.inputTextView.keyboardType = .twitter
+        inputBar.inputTextView.isImagePasteEnabled = true
+        inputBar.inputTextView.accessibilityIdentifier = "newCommentTextView"
+        inputBar.inputTextView.placeholder = "Write a comment..."
+        inputBar.inputTextView.backgroundColor = UIColor(hexString: "#F6F6F8")
+        inputBar.inputTextView.placeholderTextColor = UIColor(hexString: "#60666F")
+        inputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 36)
+        inputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 11.5, left: 16, bottom: 11.5, right: 36)
+        inputBar.inputTextView.placeholderLabel.font = UIFont.systemFont(ofSize: 14.0)
+        inputBar.inputTextView.layer.borderColor = UIColor(hexString: "#CCD0D4").cgColor
+        inputBar.inputTextView.layer.borderWidth = 1.5
+        inputBar.inputTextView.layer.cornerRadius = 20.0
+        inputBar.inputTextView.layer.masksToBounds = true
+        inputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        inputBar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
+
         photoLibraryButton = makeButton(named: "add_photo-vector")
             .configure {
                 $0.accessibilityIdentifier = "photoLibraryButton"
@@ -154,69 +203,125 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     popoverController.permittedArrowDirections = []
                 }
                 self.present(picker, animated: true, completion: nil)
-                
+            }
+            .onKeyboardEditingBegins { item in
+                item.inputBarAccessoryView?.setLeftStackViewWidthConstant(to: 42, animated: true)
+            }
+            .onKeyboardEditingEnds { item in
+                item.inputBarAccessoryView?.setLeftStackViewWidthConstant(to: 0, animated: true)
         }
+
         
         anonymousButton = makeButton(named: "visibility_on-vector")
             .configure {
                 $0.accessibilityIdentifier = "anonymousButton"
-                $0.image = $0.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
             }
             .onSelected { anonButton in
                 self.anonymousToggle.toggleValue()
-                if self.anonymousToggle {
-                    self.inputBar.sendButton.setSize(CGSize(width: 184, height: 36), animated: false)
-                    self.inputBar.sendButton.setTitle("Reply as Anonymous", for: .normal)
-                }
-                else if !self.anonymousToggle {
-                    self.inputBar.sendButton.setSize(CGSize(width: 52, height: 36), animated: false)
-                    self.inputBar.sendButton.setTitle("Reply", for: .normal)
-                }
-                anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
+                anonButton.image = self.anonymousToggle ? anonButton.image!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal) : anonButton.image!.filled(withColor: UIColor(hexString: "#91949C")).withRenderingMode(.alwaysOriginal)
         }
-        
-        let items = [
-            photoLibraryButton,
-            anonymousButton,
-            InputBarButtonItem.flexibleSpace,
-            inputBar.sendButton.configure {
-                $0.accessibilityIdentifier = "postButton"
-                $0.title = "Reply"
-                $0.titleLabel?.textAlignment = .left
-                $0.titleLabel?.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
-                $0.setTitleColor(#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), for: .normal)
-                $0.setSize(CGSize(width: 52, height: 36), animated: false)
-                }.onTouchUpInside {
-                    self.anonymousButton.image = self.anonymousButton.image!.filled(withColor: .darkGray).withRenderingMode(.alwaysOriginal)
-                    $0.setSize(CGSize(width: 52, height: 36), animated: false)
-                    $0.setTitle("Reply", for: .normal)
-                    $0.isEnabled = false
-                    $0.inputBarAccessoryView?.didSelectSendButton()
+
+        cancelReplyButton = makeButton(named: "dismiss-vector")
+            .configure {
+                $0.accessibilityIdentifier = "removeReplyButton"
+                $0.setSize(CGSize(width: 36, height: 36), animated: false)
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
-        ]
-        inputBar.inputTextView.accessibilityIdentifier = "newCommentTextView"
-        inputBar.inputTextView.placeholder = "Write a comment..."
-        inputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        inputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
-        inputBar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
-        inputBar.setStackViewItems(items as! [InputItem], forStack: .bottom, animated: false)
+            .onSelected { cancelButton in
+                self.replyUserNameString.attributedText = nil
+                cancelButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+                cancelButton.setSize(CGSize(width: 0, height: 0), animated: true)
+                self.setUserReplyStatus(makeVisible: false)
+
+                self.inputBar.inputTextView.placeholder = "Write a comment..."
+                self.postCommentToReplyTo = self.postComment
+        }
+
+        inputBar.sendButton.configure {
+            $0.accessibilityIdentifier = "postButton"
+            $0.title = "Reply"
+            $0.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: .semibold)
+            $0.setTitleColor(#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), for: .normal)
+            $0.setSize(CGSize(width: 52, height: 40), animated: false)
+            }.onTouchUpInside {
+                self.anonymousButton.image = self.anonymousButton.image!.filled(withColor: UIColor(hexString: "#91949C")).withRenderingMode(.alwaysOriginal)
+                $0.isEnabled = false
+                $0.inputBarAccessoryView?.didSelectSendButton()
+        }
+
+        inputBar.setStackViewItems([photoLibraryButton,InputBarButtonItem.fixedSpace(4)], forStack: .left, animated: false)
+        inputBar.setLeftStackViewWidthConstant(to: 0, animated: false)
+
+        inputBar.setRightStackViewWidthConstant(to: 98, animated: false)
+        inputBar.setStackViewItems([anonymousButton,InputBarButtonItem.fixedSpace(4),inputBar.sendButton], forStack: .right, animated: false)
+
+        inputBar.middleContentViewPadding.right = -42
+        inputBar.topStackViewPadding = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+
+        replyUserStackView.addArrangedSubview(replyUserNameString)
+        replyUserStackView.addArrangedSubview(InputBarButtonItem.flexibleSpace)
+        replyUserStackView.addArrangedSubview(cancelReplyButton)
+    }
+
+    func setUserReplyStatus(makeVisible: Bool) {
+        let topStackView = inputBar.topStackView
+        if makeVisible && !topStackView.arrangedSubviews.contains(replyUserStackView) {
+            topStackView.insertArrangedSubview(replyUserStackView, at: 0)
+            inputBar.layoutStackViews([.top])
+
+        } else if !makeVisible && topStackView.arrangedSubviews.contains(replyUserStackView) {
+            topStackView.removeArrangedSubview(replyUserStackView)
+            inputBar.layoutStackViews([.top])
+        }
+        inputBar.invalidateIntrinsicContentSize()
+    }
+
+    func setReplyToComment(comment: Comment) {
+        if !inputBar.inputTextView.isFirstResponder {
+            inputBar.inputTextView.becomeFirstResponder()
+        }
+
+        inputBar.inputTextView.placeholder = "Write a reply..."
+
+        let userNameString = comment.isAnonymous ? "Anonymous" : comment.creator!.fullName
+        replyUserNameString.attributedText = attributedText(withString: "Replying to \(userNameString)", boldString: userNameString, font: replyUserNameString.font)
+        cancelReplyButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        cancelReplyButton.setSize(CGSize(width: 36, height: 36), animated: true)
+
+        self.postCommentToReplyTo = comment.isCommentReply ? (comment.parent! as! Comment) : comment
+        
+        setUserReplyStatus(makeVisible: true)
+
+        tableView.scrollToRow(at: getIndexOfComment(comment: comment), at: .bottom, animated: true)
+    }
+
+    func attributedText(withString string: String, boldString: String, font: UIFont) -> NSAttributedString {
+        let attributedString = NSMutableAttributedString(string: string,
+                                                         attributes: [NSAttributedString.Key.font: font])
+        let boldFontAttribute: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: font.pointSize)]
+        let range = (string as NSString).range(of: boldString)
+        attributedString.addAttributes(boldFontAttribute, range: range)
+        return attributedString
     }
     
     func makeButton(named: String) -> InputBarButtonItem {
         return InputBarButtonItem()
             .configure {
-                $0.spacing = .fixed(4)
-                $0.image = UIImage(named: named)!.filled(withColor: (UIImage().createGradientImage(size: 40).gradientColor)).withRenderingMode(.alwaysOriginal)
-                $0.setSize(CGSize(width: 30, height: 36), animated: false)
+                $0.image = UIImage(named: named)!.filled(withColor: UIColor(hexString: "#91949C")).withRenderingMode(.alwaysOriginal)
+                $0.setSize(CGSize(width: 40, height: 40), animated: false)
         }
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        inputBar.inputTextView.resignFirstResponder()
-        
-        HUD.show(.progress)
+        inputBar.inputTextView.text = String()
+        inputBar.invalidatePlugins()
+
+        inputBar.sendButton.startAnimating()
+        inputBar.inputTextView.placeholder = "Sending..."
+        inputBar.inputTextView.isUserInteractionEnabled = false
+
         NBClient.shared.delay(1.0) {
-            let newComment = Comment(text: text, owner: self.post.parent, parent: self.post, related: self.post.parent, isAnonymous: self.anonymousToggle)
+            let newComment = Comment(text: text, owner: (self.postCommentToReplyTo as! NBModel).parent, parent: (self.postCommentToReplyTo as! NBModel), related: (self.postCommentToReplyTo as! NBModel).owner, isAnonymous: self.anonymousToggle)
             let finalComment = newComment.save()
             if finalComment == nil {
                 HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
@@ -230,12 +335,27 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     _ = newAttach.save()
                 }
             }
-            inputBar.inputTextView.text = String()
-            inputBar.invalidatePlugins()
+
             self.attachmentIDs = []
             self.anonymousToggle = false
-            HUD.flash(.success, delay: 0.5)
+            self.postCommentToReplyTo = self.postComment
+            self.cancelReplyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            self.cancelReplyButton.setSize(CGSize(width: 0, height: 0), animated: true)
+            self.replyUserNameString.attributedText = nil
+            self.setUserReplyStatus(makeVisible: false)
+            inputBar.sendButton.stopAnimating()
+            inputBar.inputTextView.placeholder = "Write a comment..."
+            inputBar.inputTextView.isUserInteractionEnabled = true
         }
+    }
+
+    func getIndexOfComment(comment: Comment, refresh: Bool = true) -> IndexPath! {
+        let section = comment.isCommentReply ? self.postComment.comments.index(of: comment.parent! as! Comment) : self.postComment.comments.index(of: comment)
+        if section == nil { return nil }
+        if comment.parent is Comment && refresh { self.postComment.comments[section!].refresh() }
+        let row = comment.isCommentReply ? self.postComment.comments[section!].comments.index(of: comment) : 0
+        if row == nil { return nil }
+        return comment.isCommentReply ? IndexPath(row: row!+1, section: section!+1) : IndexPath(row: row!, section: section!+1)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -243,25 +363,24 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return (self.postComment.comments.count + 1)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : self.post.postComments.count
+        return section == 0 ? 1 : (self.postComment.comments[section-1].comments.count+1)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = HomeFeedPostCell.dequeue(from: tableView)!
-            
             cell.isAccessibilityElement = false
             cell.accessibilityIdentifier = String(format: "HomeFeedPostCell-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.accessibilityLabel = cell.accessibilityIdentifier
             cell.contentView.isAccessibilityElement = false
             cell.contentView.accessibilityIdentifier = String(format: "PostCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
-            
-            cell.configure(post: self.post)
+
+            cell.configure(post: (self.postComment as! Post))
             cell.delegate = self
             return cell
         }
@@ -269,13 +388,18 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
             
             cell.isAccessibilityElement = false
-            cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-DetailView-%d-%d", indexPath.section, indexPath.row)
+            if indexPath.row > 0 {
+                cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-Reply-DetailView-%d-%d", indexPath.section, indexPath.row)
+            }
+            else {
+                cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-DetailView-%d-%d", indexPath.section, indexPath.row)
+            }
             cell.accessibilityLabel = cell.accessibilityIdentifier
             cell.contentView.isAccessibilityElement = false
             cell.contentView.accessibilityIdentifier = String(format: "CommentCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
             
-            let comment = self.post.postComments[indexPath.row]
+            let comment = indexPath.row > 0 ? self.postComment.comments[indexPath.section-1].comments[indexPath.row-1] : self.postComment.comments[indexPath.section-1]
             cell.configure(comment: comment)
             cell.selectionStyle = .none
             cell.delegate = self
@@ -292,8 +416,9 @@ extension HomeFeedPostViewController {
             if newPost.parent is Assignment || newPost.parent is Submission {
                 return
             }
-            if newPost == self.post {
-                self.post = newPost
+
+            if newPost == (self.postComment as! NBModel) {
+                self.postComment = (newPost as PostsComments)
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
             }
         }
@@ -302,43 +427,73 @@ extension HomeFeedPostViewController {
             if newComment.related is Assignment || newComment.related is Submission {
                 return
             }
-            let indexOfComment = self.post.postComments.index(of: newComment)
-            let existingComment = tableView.numberOfRows(inSection: 1) < self.post.postComments.count ? false : true
-            
-            tableView.beginUpdates()
-            if indexOfComment != nil {
+
+            let indexOfComment = self.getIndexOfComment(comment: newComment)
+
+            if (newComment.parent is Comment) {
+                let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) < self.postComment.comments[indexOfComment!.section-1].comments.count+1 ? false : true
+
+                tableView.beginUpdates()
                 if existingComment {
-                    self.post.postComments[indexOfComment!].refresh()
-                    tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .fade)
+                    self.postComment.comments[indexOfComment!.section-1].comments[indexOfComment!.row-1].refresh()
+                    tableView.reloadRows(at: [indexOfComment!], with: .fade)
                 }
-                else { tableView.insertRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .automatic) }
+                else {
+                    tableView.insertRows(at: [indexOfComment!], with: .automatic)
+                }
+                tableView.endUpdates()
             }
-            else { tableView.reloadSections(IndexSet(integer: 1), with: .automatic) }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            tableView.endUpdates()
-            tableView.scrollToRow(at: IndexPath(row: indexOfComment!, section: 1), at: .none, animated: true)
+
+            else if (newComment.parent is Post) {
+                let existingComment = (tableView.numberOfSections+1 <= self.postComment.comments.count+1) ? false : true
+
+                tableView.beginUpdates()
+                if existingComment {
+                    self.postComment.comments[indexOfComment!.section-1].refresh()
+                    tableView.reloadRows(at: [indexOfComment!], with: .fade)
+                }
+                else {
+                    tableView.insertSections(IndexSet(integer: indexOfComment!.section), with: .automatic)
+                    tableView.insertRows(at: [indexOfComment!], with: .automatic)
+                }
+                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                tableView.endUpdates()
+            }
+
+            tableView.scrollToRow(at: indexOfComment!, at: .none, animated: true)
         }
 
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
             if newObject.parent is Comment, !(newObject.parent!.related is Assignment), !(newObject.parent!.related is Submission) {
-                if let indexOfComment = self.post.postComments.index(of: newObject.parent! as! Comment) {
-                    self.post.postComments[indexOfComment].refresh()
-                    tableView.reloadRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
-                    tableView.scrollToRow(at: IndexPath(row: indexOfComment, section: 1), at: .none, animated: true)
+                let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
+
+                if (newObject.parent as! Comment).isCommentReply {
+                    self.postComment.comments[indexOfComment!.section-1].comments[indexOfComment!.row-1].refresh()
                 }
+                else {
+                    self.postComment.comments[indexOfComment!.section-1].refresh()
+                }
+
+                tableView.reloadRows(at: [indexOfComment!], with: .fade)
             }
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
+
         else if let newUser = newObject as? User {
             if newUser == NBClient.shared.getCurrentUser() {
                 tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                let commentsForUser = self.post.postComments.filter({ $0.creator! == newUser })
+
+                let commentsForUser = self.postComment.comments.filter({ $0.creator! == newUser })
                 var indexPaths = [IndexPath]()
+
                 for comment in commentsForUser {
-                    if let index = self.post.postComments.index(of: comment) {
-                        indexPaths.append(IndexPath(row: index, section: 1))
+                    indexPaths.append(self.getIndexOfComment(comment: comment))
+
+                    for reply in comment.comments {
+                        indexPaths.append(self.getIndexOfComment(comment: reply))
                     }
                 }
+
                 tableView.reloadRows(at: indexPaths, with: .fade)
             }
         }
@@ -346,35 +501,68 @@ extension HomeFeedPostViewController {
     
     func handleDeleted(deletedObject: NBModel) {
         if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment), !(deletePost.parent is Submission) {
-            if deletePost == self.post {
+            if deletePost == (self.postComment as! NBModel) {
                 self.navigationController?.popViewController(animated: true)
             }
         }
+
         else if let deleteComment = deletedObject as? Comment, !(deleteComment.related is Assignment), !(deleteComment.related is Submission) {
-            guard let indexOfComment = self.post.postComments.index(of: deleteComment) else {
-                self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
+            guard let indexOfComment = self.getIndexOfComment(comment: deleteComment, refresh: false) else {
+                if deleteComment.parent! is Comment {
+                    if let indexOfParent = self.getIndexOfComment(comment: (deleteComment.parent! as! Comment)) {
+                        self.tableView.reloadRows(at: [indexOfParent], with: .fade)
+                    }
+
+                }
+                else if deleteComment.parent! is Post {
+                    self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+                    (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
+                }
                 return
             }
-            let deleted = self.post.postComments.remove(at: indexOfComment)
+
+            let deleted = deleteComment.isCommentReply ? self.postComment.comments[indexOfComment.section-1].comments.remove(at: indexOfComment.row-1) : self.postComment.comments.remove(at: indexOfComment.section-1)
+
             self.tableView.beginUpdates()
-            self.tableView.deleteRows(at: [IndexPath(row: indexOfComment, section: 1)], with: .fade)
-            self.post.refresh()
-            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            self.tableView.deleteRows(at: [indexOfComment], with: .fade)
+
+            if deleteComment.isCommentReply {
+                self.postComment.comments[indexOfComment.section-1].refresh()
+                tableView.reloadRows(at: [IndexPath(row: 0, section: indexOfComment.section)], with: .fade)
+            }
+            else {
+                self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
+                (self.postComment as! NBModel).refresh()
+                self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            }
+
             self.tableView.endUpdates()
             (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
         }
+
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
-            var indexOfComment: Int?
+            var indexOfComment: IndexPath!
+
             if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment), !(deletedObject.parent!.related is Submission) {
-                indexOfComment = self.post.postComments.index(of: deletedObject.parent! as! Comment)
-                if indexOfComment != nil { self.post.postComments[indexOfComment!].refresh() }
+                indexOfComment = self.getIndexOfComment(comment: (deletedObject.parent! as! Comment))
+
+                if indexOfComment != nil {
+                    if (deletedObject.parent as! Comment).isCommentReply {
+                        self.postComment.comments[indexOfComment.section-1].comments[indexOfComment.row-1].refresh()
+                    }
+                    else {
+                        self.postComment.comments[indexOfComment.section-1].refresh()
+                    }
+                }
             }
+
             UIView.setAnimationsEnabled(false)
+
             tableView.beginUpdates()
-            if indexOfComment != nil { tableView.reloadRows(at: [IndexPath(row: indexOfComment!, section: 1)], with: .none) }
+            if indexOfComment != nil { tableView.reloadRows(at: [indexOfComment], with: .none) }
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
             tableView.endUpdates()
+
             UIView.setAnimationsEnabled(true)
         }
     }
@@ -387,7 +575,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         if indexPath.section == 0 {
-            return self.cellActions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+            return self.cellActions(isPost: (self.postComment is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
         else {
             return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
@@ -396,14 +584,12 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         if indexPath.section == 0 {
-            return self.cellActionOptions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+            return self.cellActionOptions(isPost: (self.postComment is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
         else {
             return self.cellActionOptions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
     }
-    
-    
 }
 
 class AttachmentMan: AttachmentManager {
@@ -411,8 +597,7 @@ class AttachmentMan: AttachmentManager {
 }
 
 extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
-    
-    
+
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
@@ -471,12 +656,13 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
         let topStackView = inputBar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
-            topStackView.layoutIfNeeded()
+            inputBar.layoutStackViews([.top])
             
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
-            topStackView.layoutIfNeeded()
+            inputBar.layoutStackViews([.top])
         }
+        inputBar.invalidateIntrinsicContentSize()
     }
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
     }

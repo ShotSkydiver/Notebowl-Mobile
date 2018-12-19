@@ -99,8 +99,10 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         let filter = NBClient.shared.doEnrollmentRequests()
         if let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10"), !retrievedPosts.isEmpty {
             let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
             var combinedFilter = (retrievedPosts as [NBModel])
             combinedFilter.append(contentsOf: (postComments as [NBModel]))
+            combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
             let likes = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
             let attachments = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
         }

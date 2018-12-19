@@ -13,7 +13,7 @@ PODS:
   - Imaginary (4.2.0):
     - Cache (~> 5.0)
   - InputBarAccessoryView (4.2.0)
-  - Kingfisher (5.0.0)
+  - Kingfisher (5.0.1)
   - Lightbox (2.3.0):
     - Imaginary (~> 4.0)
   - MMUploadImage (2.0.8)
@@ -139,7 +139,7 @@ CHECKOUT OPTIONS:
     :commit: c306cb0c0ca1810e760542dfd0c0ffedfcee79a0
     :git: https://github.com/ShotSkydiver/Tamamushi
   YPImagePicker:
-    :commit: ad0b506cf337c8618c34c49214dab7c86510fc2e
+    :commit: fd8eb0566775508ab1385166aeb1c0274a7870f4
     :git: https://github.com/ShotSkydiver/YPImagePicker
 
 SPEC CHECKSUMS:
@@ -156,7 +156,7 @@ SPEC CHECKSUMS:
   Hue: 7ee65b3bf787c84990edd6877339a8d280b67427
   Imaginary: dae33d06dbc2ada22f98afef5eb45cc061311a2c
   InputBarAccessoryView: 2f6adae6699d2fd7769678d9b4287f481ae18ebb
-  Kingfisher: 2b0dd651e4fe5a07305b8242fde56f8e2d410f58
+  Kingfisher: 4f771421b9208185217550528a06fd48756cb7c2
   Lightbox: d317750e4132bfb871a5307cfe0a2c7d6a583c65
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
   ObjectMapper: 5311bd50ca732930959e7ca1a2de43ab823a5ced

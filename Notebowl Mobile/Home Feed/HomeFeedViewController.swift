@@ -88,7 +88,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
             if let sourceCell = sender as? HomeFeedPostCell {
-                destVC.post = sourceCell.postForCell
+                destVC.postComment = sourceCell.postForCell
             }
         }
         else if segue.identifier == "createPostSegue" {
@@ -189,8 +189,10 @@ extension HomeFeedViewController {
                     let filter = NBClient.shared.doEnrollmentRequests()
                     let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
                     let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+                    let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
                     var combinedFilter = (retrievedPosts as [NBModel])
                     combinedFilter.append(contentsOf: (postComments as [NBModel]))
+                    combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
                     _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
                     _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
                     NBClient.shared.reinitCache()
@@ -248,7 +250,10 @@ extension HomeFeedViewController {
                 let filter = NBClient.shared.doEnrollmentRequests()
                 let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
                 let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-                let combinedFilter = Array(Set((retrievedPosts as [NBModel]) + (postComments as [NBModel])))
+                let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+                var combinedFilter = (retrievedPosts as [NBModel])
+                combinedFilter.append(contentsOf: (postComments as [NBModel]))
+                combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
                 _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
                 _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
                 NBClient.shared.reinitCache()

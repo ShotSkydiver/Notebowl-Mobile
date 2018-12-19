@@ -175,7 +175,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
-        postComments.text = (post.postComments.isEmpty || post.postComments == nil) ? " " : "\(post.postComments.count)"
+        postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.comments.count)"
         
         if post.text == nil { postContentTextView.isHidden = true }
         else { postContentTextView.text = post.text! }
@@ -341,9 +341,15 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         let attachmentForCell = self.postForCell.attachments[indexPath.item]
 
         if attachmentForCell.mimeType == .image {
-            cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-                self.setNeedsLayout()
-            })
+            cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [
+                KingfisherOptionsInfoItem.processor(DownsamplingImageProcessor(size: cell.attachment!.intrinsicContentSize)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .transition(ImageTransition.fade(0.3))
+                ]) { result in
+                    self.setNeedsLayout()
+            }
+
             if indexPath.item == 2 && indexPath.item < self.postForCell.attachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.postForCell.attachments.count-2)", forceUpdate: false)
             }

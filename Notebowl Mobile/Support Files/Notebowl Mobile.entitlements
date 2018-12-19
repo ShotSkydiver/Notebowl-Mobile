@@ -10,7 +10,7 @@
 		<string>applinks:chdowen.notebowl.xyz</string>
 		<string>webcredentials:*.notebowl.com</string>
 		<string>activitycontinuation:*.notebowl.com</string>
-		<string>webcredentials:*chdowen.notebowl.xyz</string>
+		<string>webcredentials:chdowen.notebowl.xyz</string>
 		<string>activitycontinuation:chdowen.notebowl.xyz</string>
 	</array>
 </dict>

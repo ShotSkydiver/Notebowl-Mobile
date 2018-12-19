@@ -57,7 +57,7 @@ struct DeepLinker {
                 tabVC.selectedIndex = 0
                 if let postNav = NBClient.shared.storedTypes[Post.classIdentifier]!.first(where: { $0.resourceKey == post }) as? Post {
                     let postDetailVC = storyboard.instantiateViewController(withIdentifier: "postViewController") as! HomeFeedPostViewController
-                    postDetailVC.post = postNav
+                    postDetailVC.postComment = postNav
                     (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(postDetailVC, animated: false)
                 }
             case .courses:
@@ -468,6 +468,7 @@ public protocol PostsComments {
     var creator: User! { get }
 
     var attachments: [Attachment]! { get set }
+    var comments: [Comment]! { get set }
     mutating func saveEditedObjectWithText(newText: String)
 }
 extension PostsComments {
@@ -1310,7 +1311,7 @@ public class Post: NBModel, PostsComments {
     var pinned: Bool!
     var availableDate: Date?
     public var postLikes: [Like]!
-    public var postComments: [Comment]!
+    public var comments: [Comment]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
 
@@ -1367,7 +1368,7 @@ public class Post: NBModel, PostsComments {
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         
         postLikes = []
-        postComments = []
+        comments = []
         attachments = []
         externalAttachments = []
         likedByCurrentUser = false
@@ -1396,7 +1397,7 @@ public class Post: NBModel, PostsComments {
     }
     func refreshCachedCommentsAttachments() {
         let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
-        self.postComments = (comments == nil ? [] : comments!)
+        self.comments = (comments == nil ? [] : comments!)
 
         let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
@@ -1551,8 +1552,10 @@ public class Comment: NBModel, PostsComments {
     public var attachments: [Attachment]!
     public var externalAttachments: [Attachment]!
     public var commentLikes: [Like]!
+    public var comments: [Comment]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
+    public var isCommentReply: Bool { return (self.parent is Comment) }
 
     public var satisfiesWordCount: Bool {
         guard let parentDiscussionBoard = self.related as? Assignment else { return false }
@@ -1603,11 +1606,15 @@ public class Comment: NBModel, PostsComments {
         attachments = []
         externalAttachments = []
         commentLikes = []
+        comments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
     }
     
     public func refreshCachedAttachments() {
+        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
+        self.comments = (comments == nil ? [] : comments!)
+
         let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
         self.attachments = (attach == nil ? [] : attach!)
         let attachExt = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).attachmentScheme == .External }) as? [Attachment]

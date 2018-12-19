@@ -109,6 +109,10 @@ public extension Date {
         let newStyle = RelativeFormatter.Style(flavours: [.longConvenient, .long], gradation: .convenient())
         return self.toRelative(style: newStyle)
     }
+    var relativeShortFormat: String {
+        let newStyle = RelativeFormatter.Style(flavours: [.tiny, .short], gradation: .convenient())
+        return self.toRelative(style: newStyle)
+    }
     var literalFormat: String {
         let newStyle = RelativeFormatter.Style(flavours: [.long], gradation: .convenient())
         return self.toRelative(style: newStyle, locale: Locales.english)
@@ -809,7 +813,7 @@ class KerningLabel: UILabel {
 
 extension UITextView {
     public func wrapToContent() {
-        textContainerInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: 0.0, right: 0.0)
+        textContainerInset = UIEdgeInsets(top: 4.0, left: 0.0, bottom: 0.0, right: 0.0)
         textContainer.lineFragmentPadding = 0
     }
 }
@@ -1174,7 +1178,7 @@ extension CellActionsVC {
         var selectedCell: UITableViewCell!
         selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
         if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator)) != nil) {
-            if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : ((vc as! HomeFeedPostViewController).post.owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : ((vc as! HomeFeedPostViewController).post.owner))!.enrollmentForUser?.role == .admin) {
+            if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner))!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }
@@ -1257,7 +1261,7 @@ extension CellActionsVC {
             if ((selectedCell as! HomeFeedCommentCell).commentForCell.creator != nil) && ((selectedCell as! HomeFeedCommentCell).commentForCell.creator == NBClient.shared.getCurrentUser()) {
                 return [delete, edit]
             }
-            else if ((vc as! HomeFeedPostViewController).post.owner!.enrollmentForUser?.role == .professor) || ((vc as! HomeFeedPostViewController).post.owner!.enrollmentForUser?.role == .admin) {
+            else if (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner!.enrollmentForUser?.role == .professor) || (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner!.enrollmentForUser?.role == .admin) {
                 return [delete, report]
             }
             else {
@@ -1275,7 +1279,9 @@ extension CellActionsVC {
         let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
             (vc as! CellActionsVC).handleDeleteAction(objectToDelete: objectToDelete)
             if vc.navigationController?.topViewController is HomeFeedViewController && vc is HomeFeedPostViewController { }
-            else { action.fulfill(with: .delete) }
+            else {
+                action.fulfill(with: .delete)
+            }
         
             HUD.show(.progress)
             NBClient.shared.delay(0.4) {

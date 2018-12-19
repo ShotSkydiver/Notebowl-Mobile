@@ -27,8 +27,18 @@ class CommentUITests: NBUITests {
         newComment.assertSelf()
     }
 
+    func testCreateCommentReply() {
+        API.createCommentForPost()
+        let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
+        Bulletin.startCreatingNewComment()
+        newComment.postReplyToSelf()
+        Bulletin.finishCreatingAndSubmit()
+        let newCommentReply = Bulletin.waitUntilCommentExists(atIndex: 2)
+        newCommentReply.assertSelf()
+    }
+
     func testCreateAnonymousComment() {
-        Bulletin.startCreatingNewComment(asAnonymousUser: true)
+        Bulletin.startCreatingNewComment(asAnon: true)
         Bulletin.finishCreatingAndSubmit()
         let newComment = Bulletin.waitUntilCommentExists(atIndex: 1)
         newComment.assertSelf(expectPostedAnonymously: true)

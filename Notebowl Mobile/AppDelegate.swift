@@ -67,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
 
-        KingfisherManager.shared.cache.maxMemoryCost = 30*1024
         ImageDownloader.default.trustedHosts = Set(trustedHosts)
     }
     

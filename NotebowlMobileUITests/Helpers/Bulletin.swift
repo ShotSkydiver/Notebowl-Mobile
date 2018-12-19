@@ -46,11 +46,11 @@ class Bulletin: XCTestHelpers {
         if anon { app.anonymousButton.tap() }
     }
     
-    class func startCreatingNewComment(asAnonymousUser anon: Bool = false) {
+    class func startCreatingNewComment(asAnon: Bool = false) {
         waitForElementToExist(app.inputTextView)
         app.inputTextView.staticTexts.element.tap(force: true)
         app.inputTextView.typeText(Lorem.sentences(3))
-        if anon { app.anonymousButton.tap() }
+        if asAnon { app.anonymousButton.tap() }
     }
     
     class func addAttachmentsToNewPost() {
@@ -62,8 +62,6 @@ class Bulletin: XCTestHelpers {
     
     class func finishCreatingAndSubmit() {
         app.submitNewPostButton.tap()
-        app.HUD.isVisible()
-        XCTestHelpers.waitForElementToDisappear(app.HUD)
     }
 }
 
@@ -78,11 +76,16 @@ extension XCUIApplication {
     var firstCourseInPicker: String { return (coursePickerWheel.value as! String) }
     var anonymousButton: XCUIElement { return self.buttons["anonymousButton"] }
     var submitNewPostButton: XCUIElement { return self.buttons["postButton"] }
+
+    var replyToUserLabel: XCUIElement { return self.staticTexts["replyingToUserText"] }
+    var cancelUserReplyButton: XCUIElement { return self.buttons["removeReplyButton"] }
 }
 
 
 class BulletinComment: BulletinPost {
     var deleteCommentAction: XCUIElement { return app.alerts["Delete Comment"].buttons["Delete"] }
+
+    var replyButton: XCUIElement { return element.children(matching: .button)["replyButton"] }
     
     override func deleteSelf() {
         moreButton.tap()
@@ -99,6 +102,12 @@ class BulletinComment: BulletinPost {
     
     override func assertSelf(expectPostedAnonymously anon: Bool = false) {
         XCTAssertEqual(userNameLabel.label, (anon ? "Anonymous" : "Alex Slaughter"))
+    }
+
+    func postReplyToSelf(asAnon: Bool = false) {
+        replyButton.tap()
+        XCTAssertEqual(app.replyToUserLabel.label, (asAnon ? "Replying to Anonymous" : "Replying to Alex Slaughter"))
+        
     }
 }
 
