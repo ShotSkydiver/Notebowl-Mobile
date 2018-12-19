@@ -410,164 +410,211 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 }
 
 extension HomeFeedPostViewController {
-    
+
     func handleUpdated(newObject: NBModel) {
         if let newPost = newObject as? Post {
-            if newPost.parent is Assignment || newPost.parent is Submission {
-                return
-            }
-
-            if newPost == (self.postComment as! NBModel) {
-                self.postComment = (newPost as PostsComments)
-                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            }
+            handleUpdatedPost(newPost: newPost)
         }
             
         else if let newComment = newObject as? Comment {
-            if newComment.related is Assignment || newComment.related is Submission {
-                return
-            }
-
-            let indexOfComment = self.getIndexOfComment(comment: newComment)
-
-            if (newComment.parent is Comment) {
-                let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) < self.postComment.comments[indexOfComment!.section-1].comments.count+1 ? false : true
-
-                tableView.beginUpdates()
-                if existingComment {
-                    self.postComment.comments[indexOfComment!.section-1].comments[indexOfComment!.row-1].refresh()
-                    tableView.reloadRows(at: [indexOfComment!], with: .fade)
-                }
-                else {
-                    tableView.insertRows(at: [indexOfComment!], with: .automatic)
-                }
-                tableView.endUpdates()
-            }
-
-            else if (newComment.parent is Post) {
-                let existingComment = (tableView.numberOfSections+1 <= self.postComment.comments.count+1) ? false : true
-
-                tableView.beginUpdates()
-                if existingComment {
-                    self.postComment.comments[indexOfComment!.section-1].refresh()
-                    tableView.reloadRows(at: [indexOfComment!], with: .fade)
-                }
-                else {
-                    tableView.insertSections(IndexSet(integer: indexOfComment!.section), with: .automatic)
-                    tableView.insertRows(at: [indexOfComment!], with: .automatic)
-                }
-                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                tableView.endUpdates()
-            }
-
-            tableView.scrollToRow(at: indexOfComment!, at: .none, animated: true)
+            handleUpdatedComment(newComment: newComment)
         }
 
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
-            if newObject.parent is Comment, !(newObject.parent!.related is Assignment), !(newObject.parent!.related is Submission) {
-                let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
-
-                if (newObject.parent as! Comment).isCommentReply {
-                    self.postComment.comments[indexOfComment!.section-1].comments[indexOfComment!.row-1].refresh()
-                }
-                else {
-                    self.postComment.comments[indexOfComment!.section-1].refresh()
-                }
-
-                tableView.reloadRows(at: [indexOfComment!], with: .fade)
-            }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            handleUpdatedAttachLike(newObject: newObject)
         }
 
         else if let newUser = newObject as? User {
-            if newUser == NBClient.shared.getCurrentUser() {
-                tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-
-                let commentsForUser = self.postComment.comments.filter({ $0.creator! == newUser })
-                var indexPaths = [IndexPath]()
-
-                for comment in commentsForUser {
-                    indexPaths.append(self.getIndexOfComment(comment: comment))
-
-                    for reply in comment.comments {
-                        indexPaths.append(self.getIndexOfComment(comment: reply))
-                    }
-                }
-
-                tableView.reloadRows(at: indexPaths, with: .fade)
-            }
+            handleUpdatedUser(newUser: newUser)
         }
     }
-    
+
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment), !(deletePost.parent is Submission) {
-            if deletePost == (self.postComment as! NBModel) {
-                self.navigationController?.popViewController(animated: true)
-            }
+        if let deletePost = deletedObject as? Post {
+            handleDeletedPost(deletePost: deletePost)
         }
 
-        else if let deleteComment = deletedObject as? Comment, !(deleteComment.related is Assignment), !(deleteComment.related is Submission) {
-            guard let indexOfComment = self.getIndexOfComment(comment: deleteComment, refresh: false) else {
-                if deleteComment.parent! is Comment {
-                    if let indexOfParent = self.getIndexOfComment(comment: (deleteComment.parent! as! Comment)) {
-                        self.tableView.reloadRows(at: [indexOfParent], with: .fade)
-                    }
-
-                }
-                else if deleteComment.parent! is Post {
-                    self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-                    (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleteComment)
-                }
-                return
-            }
-
-            let deleted = deleteComment.isCommentReply ? self.postComment.comments[indexOfComment.section-1].comments.remove(at: indexOfComment.row-1) : self.postComment.comments.remove(at: indexOfComment.section-1)
-
-            self.tableView.beginUpdates()
-            self.tableView.deleteRows(at: [indexOfComment], with: .fade)
-
-            if deleteComment.isCommentReply {
-                self.postComment.comments[indexOfComment.section-1].refresh()
-                tableView.reloadRows(at: [IndexPath(row: 0, section: indexOfComment.section)], with: .fade)
-            }
-            else {
-                self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
-                (self.postComment as! NBModel).refresh()
-                self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            }
-
-            self.tableView.endUpdates()
-            (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
+        else if let deleteComment = deletedObject as? Comment {
+            handleDeletedComment(deleteComment: deleteComment)
         }
 
         else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
-            var indexOfComment: IndexPath!
-
-            if deletedObject.parent is Comment, !(deletedObject.parent!.related is Assignment), !(deletedObject.parent!.related is Submission) {
-                indexOfComment = self.getIndexOfComment(comment: (deletedObject.parent! as! Comment))
-
-                if indexOfComment != nil {
-                    if (deletedObject.parent as! Comment).isCommentReply {
-                        self.postComment.comments[indexOfComment.section-1].comments[indexOfComment.row-1].refresh()
-                    }
-                    else {
-                        self.postComment.comments[indexOfComment.section-1].refresh()
-                    }
-                }
-            }
-
-            UIView.setAnimationsEnabled(false)
-
-            tableView.beginUpdates()
-            if indexOfComment != nil { tableView.reloadRows(at: [indexOfComment], with: .none) }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-            tableView.endUpdates()
-
-            UIView.setAnimationsEnabled(true)
+            handleDeletedAttachLike(deleteObject: deletedObject)
         }
     }
     
     func handleElapsed(elapsedObject: NBModel) {}
+
+    func handleUpdatedPost(newPost: Post) {
+        if (newPost.parent is Assignment) || (newPost.parent is Submission) {
+            return
+        }
+
+        if newPost == (self.postComment as! NBModel) {
+            self.postComment = (newPost as PostsComments)
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        }
+    }
+
+    func getCommentAtIndexPath(indexPath: IndexPath) -> Comment {
+        return self.postComment.comments[indexPath.section-1]
+    }
+
+    func getCommentReplyAtIndexPath(indexPath: IndexPath) -> Comment {
+        return getCommentAtIndexPath(indexPath: indexPath).comments[indexPath.row-1]
+    }
+
+    func handleUpdatedComment(newComment: Comment) {
+        if newComment.related is Assignment || newComment.related is Submission {
+            return
+        }
+
+        let indexOfComment = self.getIndexOfComment(comment: newComment)
+
+        if (newComment.parent is Comment) {
+            let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) >= getCommentAtIndexPath(indexPath: indexOfComment!).comments.count+1 ? true : false
+
+            tableView.beginUpdates()
+            if existingComment {
+                getCommentReplyAtIndexPath(indexPath: indexOfComment!).refresh()
+                tableView.reloadRows(at: [indexOfComment!], with: .fade)
+            }
+            else {
+                tableView.insertRows(at: [indexOfComment!], with: .automatic)
+            }
+            tableView.endUpdates()
+        }
+
+        else if (newComment.parent is Post) {
+            let existingComment = (tableView.numberOfSections+1 > self.postComment.comments.count+1) ? true : false
+
+            tableView.beginUpdates()
+            if existingComment {
+                getCommentAtIndexPath(indexPath: indexOfComment!).refresh()
+                tableView.reloadRows(at: [indexOfComment!], with: .fade)
+            }
+            else {
+                tableView.insertSections(IndexSet(integer: indexOfComment!.section), with: .automatic)
+                tableView.insertRows(at: [indexOfComment!], with: .automatic)
+            }
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            tableView.endUpdates()
+        }
+
+        tableView.scrollToRow(at: indexOfComment!, at: .none, animated: true)
+    }
+
+    func handleUpdatedAttachLike(newObject: NBModel) {
+        if newObject.parent!.related is Assignment || newObject.parent!.related is Submission {
+            return
+        }
+
+        if newObject.parent is Comment {
+            let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
+
+            if (newObject.parent as! Comment).isCommentReply {
+                getCommentReplyAtIndexPath(indexPath: indexOfComment!).refresh()
+            }
+            else {
+                getCommentAtIndexPath(indexPath: indexOfComment!).refresh()
+            }
+
+            tableView.reloadRows(at: [indexOfComment!], with: .fade)
+        }
+        else if newObject.parent is Post {
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        }
+    }
+
+    func handleUpdatedUser(newUser: User) {
+        if newUser != NBClient.shared.getCurrentUser() {
+            return
+        }
+
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+
+        let commentsForUser = self.postComment.comments.filter({ $0.creator! == newUser })
+        var indexPaths = [IndexPath]()
+
+        for comment in commentsForUser {
+            indexPaths.append(self.getIndexOfComment(comment: comment))
+
+            for reply in comment.comments {
+                indexPaths.append(self.getIndexOfComment(comment: reply))
+            }
+        }
+        tableView.reloadRows(at: indexPaths, with: .fade)
+    }
+
+    func handleDeletedPost(deletePost: Post) {
+        if (deletePost.parent is Assignment) || (deletePost.parent is Submission) {
+            return
+        }
+
+        if deletePost == (self.postComment as! NBModel) {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    func handleDeletedComment(deleteComment: Comment) {
+        if (deleteComment.related is Assignment) || (deleteComment.related is Submission) {
+            return
+        }
+
+        guard let indexOfComment = self.getIndexOfComment(comment: deleteComment, refresh: false) else {
+            return
+        }
+
+        let deleted = deleteComment.isCommentReply ? getCommentAtIndexPath(indexPath: indexOfComment).comments.remove(at: indexOfComment.row-1) : self.postComment.comments.remove(at: indexOfComment.section-1)
+
+        self.tableView.beginUpdates()
+
+        if deleteComment.isCommentReply {
+            self.tableView.deleteRows(at: [indexOfComment], with: .fade)
+            getCommentAtIndexPath(indexPath: indexOfComment).refresh()
+        }
+        else {
+            self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
+            (self.postComment as! NBModel).refresh()
+            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        }
+
+        self.tableView.endUpdates()
+        (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
+    }
+
+    func handleDeletedAttachLike(deleteObject: NBModel) {
+        if (deleteObject.parent!.related is Assignment) || (deleteObject.parent!.related is Submission) {
+            return
+        }
+
+        if deleteObject.parent is Comment {
+            guard let indexOfComment = self.getIndexOfComment(comment: (deleteObject.parent! as! Comment)) else {
+                return
+            }
+
+            if (deleteObject.parent as! Comment).isCommentReply {
+                getCommentReplyAtIndexPath(indexPath: indexOfComment).refresh()
+            }
+            else {
+                getCommentAtIndexPath(indexPath: indexOfComment).refresh()
+            }
+
+            UIView.setAnimationsEnabled(false)
+            tableView.beginUpdates()
+            tableView.reloadRows(at: [indexOfComment], with: .none)
+            tableView.endUpdates()
+            UIView.setAnimationsEnabled(true)
+        }
+
+        else if deleteObject.parent is Post {
+            UIView.setAnimationsEnabled(false)
+            tableView.beginUpdates()
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+            tableView.endUpdates()
+            UIView.setAnimationsEnabled(true)
+        }
+    }
 }
 
 
