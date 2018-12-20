@@ -1178,7 +1178,7 @@ extension CellActionsVC {
         var selectedCell: UITableViewCell!
         selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
         if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator)) != nil) {
-            if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner))!.enrollmentForUser?.role == .admin) {
+            if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
         }
@@ -1261,7 +1261,7 @@ extension CellActionsVC {
             if ((selectedCell as! HomeFeedCommentCell).commentForCell.creator != nil) && ((selectedCell as! HomeFeedCommentCell).commentForCell.creator == NBClient.shared.getCurrentUser()) {
                 return [delete, edit]
             }
-            else if (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner!.enrollmentForUser?.role == .professor) || (((vc as! HomeFeedPostViewController).postComment as! NBModel).owner!.enrollmentForUser?.role == .admin) {
+            else if (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .professor) || (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .admin) {
                 return [delete, report]
             }
             else {

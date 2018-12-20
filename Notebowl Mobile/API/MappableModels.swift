@@ -57,7 +57,7 @@ struct DeepLinker {
                 tabVC.selectedIndex = 0
                 if let postNav = NBClient.shared.storedTypes[Post.classIdentifier]!.first(where: { $0.resourceKey == post }) as? Post {
                     let postDetailVC = storyboard.instantiateViewController(withIdentifier: "postViewController") as! HomeFeedPostViewController
-                    postDetailVC.postComment = postNav
+                    postDetailVC.displayedPost = postNav
                     (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(postDetailVC, animated: false)
                 }
             case .courses:

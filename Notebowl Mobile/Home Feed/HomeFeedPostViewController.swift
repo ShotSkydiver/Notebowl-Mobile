@@ -17,7 +17,7 @@ import PKHUD
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
     var viewIsLoaded = false
-    var postComment: PostsComments!
+    var displayedPost: PostsComments!
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
     var showingPhotoPicker: Bool = false
@@ -82,7 +82,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 0, right: 0)
         refreshAllComments()
 
-        self.postCommentToReplyTo = self.postComment
+        self.postCommentToReplyTo = self.displayedPost
 
         viewIsLoaded = true
     }
@@ -97,7 +97,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
     
     func refreshAllComments() {
-        for comment in self.postComment.comments { comment.refresh() }
+        for comment in self.displayedPost.comments { comment.refresh() }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -130,10 +130,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         else if (objectToDelete is Comment) {
             if (objectToDelete as! Comment).isCommentReply {
                 let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment), refresh: false)
-                self.postComment.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
+                self.displayedPost.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
             }
             else {
-                self.postComment.comments.removeAll(objectToDelete as! Comment)
+                self.displayedPost.comments.removeAll(objectToDelete as! Comment)
             }
         }
     }
@@ -234,7 +234,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 self.setUserReplyStatus(makeVisible: false)
 
                 self.inputBar.inputTextView.placeholder = "Write a comment..."
-                self.postCommentToReplyTo = self.postComment
+                self.postCommentToReplyTo = self.displayedPost
         }
 
         inputBar.sendButton.configure {
@@ -338,7 +338,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
             self.attachmentIDs = []
             self.anonymousToggle = false
-            self.postCommentToReplyTo = self.postComment
+            self.postCommentToReplyTo = self.displayedPost
             self.cancelReplyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             self.cancelReplyButton.setSize(CGSize(width: 0, height: 0), animated: true)
             self.replyUserNameString.attributedText = nil
@@ -350,10 +350,10 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func getIndexOfComment(comment: Comment, refresh: Bool = true) -> IndexPath! {
-        let section = comment.isCommentReply ? self.postComment.comments.index(of: comment.parent! as! Comment) : self.postComment.comments.index(of: comment)
+        let section = comment.isCommentReply ? self.displayedPost.comments.index(of: comment.parent! as! Comment) : self.displayedPost.comments.index(of: comment)
         if section == nil { return nil }
-        if comment.parent is Comment && refresh { self.postComment.comments[section!].refresh() }
-        let row = comment.isCommentReply ? self.postComment.comments[section!].comments.index(of: comment) : 0
+        if comment.parent is Comment && refresh { self.displayedPost.comments[section!].refresh() }
+        let row = comment.isCommentReply ? self.displayedPost.comments[section!].comments.index(of: comment) : 0
         if row == nil { return nil }
         return comment.isCommentReply ? IndexPath(row: row!+1, section: section!+1) : IndexPath(row: row!, section: section!+1)
     }
@@ -363,11 +363,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return (self.postComment.comments.count + 1)
+        return (self.displayedPost.comments.count + 1)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : (self.postComment.comments[section-1].comments.count+1)
+        return section == 0 ? 1 : (self.displayedPost.comments[section-1].comments.count+1)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -380,7 +380,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             cell.contentView.accessibilityIdentifier = String(format: "PostCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
 
-            cell.configure(post: (self.postComment as! Post))
+            cell.configure(post: (self.displayedPost as! Post))
             cell.delegate = self
             return cell
         }
@@ -399,7 +399,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             cell.contentView.accessibilityIdentifier = String(format: "CommentCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
             
-            let comment = indexPath.row > 0 ? self.postComment.comments[indexPath.section-1].comments[indexPath.row-1] : self.postComment.comments[indexPath.section-1]
+            let comment = indexPath.row > 0 ? self.displayedPost.comments[indexPath.section-1].comments[indexPath.row-1] : self.displayedPost.comments[indexPath.section-1]
             cell.configure(comment: comment)
             cell.selectionStyle = .none
             cell.delegate = self
@@ -413,7 +413,7 @@ extension HomeFeedPostViewController {
 
     func isDisplayedPost(object: NBModel) -> Bool {
         if let postParent = object.getParentByType(Post.self, withSelf: true) {
-            if (postParent.parent is Assignment) || (postParent.parent is Submission) || (postParent != (self.postComment as! NBModel)) {
+            if (postParent.parent is Assignment) || (postParent.parent is Submission) || (postParent != (self.displayedPost as! NBModel)) {
                 return false
             }
         }
@@ -421,7 +421,7 @@ extension HomeFeedPostViewController {
     }
 
     func getCommentAtIndexPath(indexPath: IndexPath) -> Comment {
-        return self.postComment.comments[indexPath.section-1]
+        return self.displayedPost.comments[indexPath.section-1]
     }
 
     func getCommentReplyAtIndexPath(indexPath: IndexPath) -> Comment {
@@ -471,7 +471,7 @@ extension HomeFeedPostViewController {
     func handleElapsed(elapsedObject: NBModel) {}
 
     func handleUpdatedPost(newPost: Post) {
-        self.postComment = (newPost as PostsComments)
+        self.displayedPost = (newPost as PostsComments)
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
     }
 
@@ -493,7 +493,7 @@ extension HomeFeedPostViewController {
         }
 
         else if (newComment.parent is Post) {
-            let existingComment = (tableView.numberOfSections+1 > self.postComment.comments.count+1)
+            let existingComment = (tableView.numberOfSections+1 > self.displayedPost.comments.count+1)
 
             tableView.beginUpdates()
             if existingComment {
@@ -536,7 +536,7 @@ extension HomeFeedPostViewController {
 
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
 
-        let commentsForUser = self.postComment.comments.filter({ $0.creator! == newUser })
+        let commentsForUser = self.displayedPost.comments.filter({ $0.creator! == newUser })
         var indexPaths = [IndexPath]()
 
         for comment in commentsForUser {
@@ -558,7 +558,7 @@ extension HomeFeedPostViewController {
             return
         }
 
-        let deleted = deleteComment.isCommentReply ? getCommentAtIndexPath(indexPath: indexOfComment).comments.remove(at: indexOfComment.row-1) : self.postComment.comments.remove(at: indexOfComment.section-1)
+        let deleted = deleteComment.isCommentReply ? getCommentAtIndexPath(indexPath: indexOfComment).comments.remove(at: indexOfComment.row-1) : self.displayedPost.comments.remove(at: indexOfComment.section-1)
 
         self.tableView.beginUpdates()
 
@@ -568,7 +568,7 @@ extension HomeFeedPostViewController {
         }
         else {
             self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
-            (self.postComment as! NBModel).refresh()
+            (self.displayedPost as! NBModel).refresh()
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
 
@@ -611,7 +611,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         if indexPath.section == 0 {
-            return self.cellActions(isPost: (self.postComment is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+            return self.cellActions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
         else {
             return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
@@ -620,7 +620,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         if indexPath.section == 0 {
-            return self.cellActionOptions(isPost: (self.postComment is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
+            return self.cellActionOptions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
         else {
             return self.cellActionOptions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)

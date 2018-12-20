@@ -88,7 +88,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         if segue.identifier == "postDetailSegue" {
             let destVC = segue.destination as! HomeFeedPostViewController
             if let sourceCell = sender as? HomeFeedPostCell {
-                destVC.postComment = sourceCell.postForCell
+                destVC.displayedPost = sourceCell.postForCell
             }
         }
         else if segue.identifier == "createPostSegue" {
