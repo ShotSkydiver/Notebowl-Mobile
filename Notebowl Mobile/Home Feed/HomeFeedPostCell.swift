@@ -175,7 +175,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
-        postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.comments.count)"
+        postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.totalCommentsCount())"
         
         if post.text == nil { postContentTextView.isHidden = true }
         else { postContentTextView.text = post.text! }

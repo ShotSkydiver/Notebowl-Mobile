@@ -1426,6 +1426,15 @@ public class Post: NBModel, PostsComments {
         likedByCurrentUser = false
         likeFromCurrentUser = nil
     }
+
+    func totalCommentsCount() -> Int {
+        var count = self.comments.count
+        for comment in self.comments {
+            count += comment.comments.count
+        }
+
+        return count
+    }
     
     func refreshCachedLikes() {
         let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]

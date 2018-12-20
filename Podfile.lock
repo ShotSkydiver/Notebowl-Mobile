@@ -1,6 +1,6 @@
 PODS:
   - AutoMate (1.6.0)
-  - Bugsnag (5.17.2)
+  - Bugsnag (5.17.3)
   - Cache (5.2.0)
   - DeckTransition (2.1.0)
   - FaveButton (2.0.3)
@@ -17,7 +17,7 @@ PODS:
   - Lightbox (2.3.0):
     - Imaginary (~> 4.0)
   - MMUploadImage (2.0.8)
-  - ObjectMapper (3.4.1)
+  - ObjectMapper (3.4.2)
   - PKHUD (5.2.0)
   - PryntTrimmerView (3.0.0)
   - SimulatorStatusMagic (2.3.2)
@@ -133,7 +133,7 @@ CHECKOUT OPTIONS:
     :commit: fa81fc222ff7ad2239e3df7ff8a9823e6f0aac8e
     :git: https://github.com/socketio/socket.io-client-swift.git
   SwipeCellKit:
-    :commit: 9fd5239e8a839344ef75e0ac5ed3cc34a91306d4
+    :commit: e5e29ede0eb99774e7d67dbdc7de35ff0ec5e9ab
     :git: https://github.com/SwipeCellKit/SwipeCellKit.git
   Tamamushi:
     :commit: c306cb0c0ca1810e760542dfd0c0ffedfcee79a0
@@ -144,7 +144,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AutoMate: ba69b045c8960ffa3963ad4d05ba8c46b5b2f976
-  Bugsnag: f44353744bf11b23118efba6e695dd453c63c1b2
+  Bugsnag: a56a5204ebd35e44e56c1f703824705b1d4b5b97
   Cache: 807c5d86d01a177f06ede9865add3aea269bbfd4
   DeckTransition: ca707456e3d83928c895fed6f458cbf68c5cac84
   FaveButton: 5286042e6c19911b21dfc65c6885b79080b5d66c
@@ -159,7 +159,7 @@ SPEC CHECKSUMS:
   Kingfisher: 4f771421b9208185217550528a06fd48756cb7c2
   Lightbox: d317750e4132bfb871a5307cfe0a2c7d6a583c65
   MMUploadImage: 4f6908431ddfd7c27b2df4cb189517d5d9cefc82
-  ObjectMapper: 5311bd50ca732930959e7ca1a2de43ab823a5ced
+  ObjectMapper: 0d4402610f4e468903ae64629eec4784531e5c51
   PKHUD: dd5357ac65f26115c35c4a68e9b328053326c5fe
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
   SimulatorStatusMagic: 0c0e711acef6e70dd8a0710962347635a9cdef24
