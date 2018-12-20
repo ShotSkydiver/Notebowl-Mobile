@@ -117,135 +117,136 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
 }
 
 extension HomeFeedViewController {
+
+    func shouldHandleResponse(object: NBModel) -> Bool {
+        if let postParent = object.getParentByType(Post.self, withSelf: true) {
+            if (postParent.parent is Assignment) || (postParent.parent is Submission) {
+                return false
+            }
+        }
+        return true
+    }
+
+    func updatePostsFromCache() {
+        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
+    }
+
     func handleUpdated(newObject: NBModel) {
+        if let newUser = newObject as? User {
+            handleUpdatedUser(newUser: newUser)
+        }
+
+        if !shouldHandleResponse(object: newObject) {
+            return
+        }
+
         if let newPost = newObject as? Post {
-            if newPost.parent is Assignment || newPost.parent is Submission {
-                return
-            }
-            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
-            let indexOfPost = self.posts.index(of: newPost)
-            let existingPost = bulletinTableView.numberOfRows(inSection: 0) < self.posts.count ? false : true
-            
-            if self.bulletinTableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
-                self.bulletinTableView.showDefault()
-            }
-            else if existingPost == false {
-                self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .left)
-            }
-            else {
-                self.posts[indexOfPost!].refresh()
-                self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
-            }
+            handleUpdatedPost(newPost: newPost)
         }
+
         else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
-            if newObject.related is Assignment || newObject.related is Submission {
-                return
-            }
-            else if newObject.parent is Post {
-                if let indexOfPost = self.posts.index(of: newObject.parent! as! Post) {
-                    self.posts[indexOfPost].refresh()
-                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
-                }
-            }
+            handleUpdatedPostChild(newObject: newObject)
         }
-        else if let newUser = newObject as? User {
-            if newUser == NBClient.shared.getCurrentUser() {
-                NBClient.shared.setCurrentUser(user: (newObject as! User))
-                let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator == newUser) })
-                var indexPaths = [IndexPath]()
-                for post in postsForUser {
-                    if let index = self.posts.index(of: post) {
-                        indexPaths.append(IndexPath(row: index, section: 0))
-                    }
-                }
-                self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
-                (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
-            }
-        }
-        else if ["CourseUser","GroupUser"].contains(newObject.itemType.className) {
-            if (newObject as! Enrollment).parent!.firstTimeLoading == nil {
-                ((newObject as! Enrollment).parent as! WithName).firstTimeLoaded()
-            }
-            if !(newObject as! Enrollment).parent!.firstTimeLoading {
-                (newObject as! Enrollment).parent!.refresh()
-            }
-            
-            else if (newObject as! Enrollment).parent!.firstTimeLoading {
-                guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-                
-                let loadingViewController = LoadingViewController()
-                if tabbarVC.presentedViewController == nil {
-                    tabbarVC.present(loadingViewController, animated: true, completion: nil)
-                }
-                else if tabbarVC.presentedViewController is LoadingViewController {
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
-                    NBClient.shared.resolveCurrentUser(true)
-                    _ = NBClient.shared.getMappable(Setting.self)!
-                    _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-                    let filter = NBClient.shared.doEnrollmentRequests()
-                    let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
-                    let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-                    let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
-                    var combinedFilter = (retrievedPosts as [NBModel])
-                    combinedFilter.append(contentsOf: (postComments as [NBModel]))
-                    combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-                    _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-                    _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-                    NBClient.shared.reinitCache()
-                    
-                    let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-                    let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
-                    let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
-                    self.reloadTable()
-                    courseVC.reloadTable()
-                    notifsVC.reloadTable()
-                    loadingViewController.dismiss(animated: true, completion: nil)
-                }
-            }
+
+        else if let newEnrollment = newObject as? Enrollment {
+            handleUpdatedEnrollment(newEnrollment: newEnrollment)
         }
     }
-    
+
     func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post, !(deletePost.parent is Assignment), !(deletePost.parent is Submission) {
-            let indexOfPost = self.posts.index(of: deletePost)
-            self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
-            if indexOfPost != nil { self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .right) }
-            if self.bulletinTableView.numberOfRows(inSection: 0) == 0 { self.bulletinTableView.showNoResultsPlaceholder() }
+        if !shouldHandleResponse(object: deletedObject) {
+            return
         }
-        
+
+        if let deletePost = deletedObject as? Post {
+            handleDeletedPost(deletedPost: deletePost)
+        }
+
         else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
-            if deletedObject.related is Assignment || deletedObject.related is Submission {
-                return
-            }
-            else if deletedObject.parent is Post {
-                if let indexOfPost = self.posts.index(of: deletedObject.parent! as! Post) {
-                    if self.navigationController?.topViewController is HomeFeedViewController || !(deletedObject is Comment) {
-                        self.posts[indexOfPost].refresh()
-                    }
-                    self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
-                }
+            handleDeletedPostChild(deletedObject: deletedObject)
+        }
+
+        else if let deleteEnrollment = deletedObject as? Enrollment {
+            handleDeletedEnrollment(deletedEnrollment: deleteEnrollment)
+        }
+    }
+
+
+    func handleUpdatedPost(newPost: Post) {
+        updatePostsFromCache()
+
+        guard let indexOfPost = self.posts.index(of: newPost) else {
+            return
+        }
+
+        let existingPost = bulletinTableView.numberOfRows(inSection: 0) >= self.posts.count
+
+        if self.bulletinTableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
+            self.bulletinTableView.showDefault()
+            return
+        }
+
+        if existingPost {
+            self.posts[indexOfPost].refresh()
+            self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
+        }
+        else {
+            self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .left)
+        }
+    }
+
+    func handleUpdatedPostChild(newObject: NBModel) {
+        guard let indexOfPost = self.posts.index(of: newObject.getParentByType(Post.self)) else {
+            return
+        }
+
+        self.posts[indexOfPost].refresh()
+        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
+    }
+
+    func handleUpdatedUser(newUser: User) {
+        if newUser != NBClient.shared.getCurrentUser() {
+            return
+        }
+
+        NBClient.shared.setCurrentUser(user: newUser)
+
+        let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator == newUser) })
+        var indexPaths = [IndexPath]()
+
+        for post in postsForUser {
+            if let index = self.posts.index(of: post) {
+                indexPaths.append(IndexPath(row: index, section: 0))
             }
         }
 
-        else if ["CourseUser","GroupUser"].contains(deletedObject.itemType.className) {
+        self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
+        (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
+    }
+
+    func handleUpdatedEnrollment(newEnrollment: Enrollment) {
+        if newEnrollment.parent!.firstTimeLoading == nil {
+            (newEnrollment.parent as! WithName).firstTimeLoaded()
+        }
+        if !newEnrollment.parent!.firstTimeLoading {
+            newEnrollment.parent!.refresh()
+        }
+
+        else if newEnrollment.parent!.firstTimeLoading {
             guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+
             let loadingViewController = LoadingViewController()
-            
             if tabbarVC.presentedViewController == nil {
                 tabbarVC.present(loadingViewController, animated: true, completion: nil)
             }
             else if tabbarVC.presentedViewController is LoadingViewController {
                 return
             }
- 
+
             DispatchQueue.main.async {
                 NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
                 NBClient.shared.resolveCurrentUser(true)
-                _ = NBClient.shared.getMappable(Setting.self)
+                _ = NBClient.shared.getMappable(Setting.self)!
                 _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
                 let filter = NBClient.shared.doEnrollmentRequests()
                 let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
@@ -257,7 +258,7 @@ extension HomeFeedViewController {
                 _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
                 _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
                 NBClient.shared.reinitCache()
-                
+
                 let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
                 let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
                 let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
@@ -266,6 +267,73 @@ extension HomeFeedViewController {
                 notifsVC.reloadTable()
                 loadingViewController.dismiss(animated: true, completion: nil)
             }
+        }
+    }
+
+
+    func handleDeletedPost(deletedPost: Post) {
+        guard let indexOfPost = self.posts.index(of: deletedPost) else {
+            return
+        }
+        updatePostsFromCache()
+
+        self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .right)
+
+        if self.bulletinTableView.numberOfRows(inSection: 0) == 0 {
+            self.bulletinTableView.showNoResultsPlaceholder()
+        }
+    }
+
+    func handleDeletedPostChild(deletedObject: NBModel) {
+        if !(deletedObject is Comment || deletedObject.parent is Post) {
+            return
+        }
+
+        guard let indexOfPost = self.posts.index(of: deletedObject.getParentByType(Post.self)) else {
+            return
+        }
+
+        if self.navigationController?.topViewController is HomeFeedViewController || !(deletedObject is Comment) {
+            self.posts[indexOfPost].refresh()
+        }
+
+        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
+    }
+
+    func handleDeletedEnrollment(deletedEnrollment: Enrollment) {
+        guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+        let loadingViewController = LoadingViewController()
+
+        if tabbarVC.presentedViewController == nil {
+            tabbarVC.present(loadingViewController, animated: true, completion: nil)
+        }
+        else if tabbarVC.presentedViewController is LoadingViewController {
+            return
+        }
+
+        DispatchQueue.main.async {
+            NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+            NBClient.shared.resolveCurrentUser(true)
+            _ = NBClient.shared.getMappable(Setting.self)
+            _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
+            let filter = NBClient.shared.doEnrollmentRequests()
+            let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
+            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+            var combinedFilter = (retrievedPosts as [NBModel])
+            combinedFilter.append(contentsOf: (postComments as [NBModel]))
+            combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
+            _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+            _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+            NBClient.shared.reinitCache()
+
+            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+            let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
+            let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
+            self.reloadTable()
+            courseVC.reloadTable()
+            notifsVC.reloadTable()
+            loadingViewController.dismiss(animated: true, completion: nil)
         }
     }
     

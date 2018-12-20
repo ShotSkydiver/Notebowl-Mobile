@@ -479,7 +479,7 @@ extension HomeFeedPostViewController {
         let indexOfComment = self.getIndexOfComment(comment: newComment)
 
         if (newComment.parent is Comment) {
-            let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) >= getCommentAtIndexPath(indexPath: indexOfComment!).comments.count+1 ? true : false
+            let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) >= getCommentAtIndexPath(indexPath: indexOfComment!).comments.count+1
 
             tableView.beginUpdates()
             if existingComment {
@@ -493,7 +493,7 @@ extension HomeFeedPostViewController {
         }
 
         else if (newComment.parent is Post) {
-            let existingComment = (tableView.numberOfSections+1 > self.postComment.comments.count+1) ? true : false
+            let existingComment = (tableView.numberOfSections+1 > self.postComment.comments.count+1)
 
             tableView.beginUpdates()
             if existingComment {
