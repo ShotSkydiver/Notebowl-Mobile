@@ -66,7 +66,10 @@ class NBSocket {
                 return nil
             }
         }
-        
+
+        let objectChangedNotification = NSNotification.Name("\(object.itemType.className)ObjectChanged")
+        NotificationCenter.default.post(name: objectChangedNotification, object:object)
+
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return nil }
         if let viewControllers = tabbarVC.viewControllers {
             for viewController in viewControllers {

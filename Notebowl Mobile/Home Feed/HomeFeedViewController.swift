@@ -199,7 +199,6 @@ extension HomeFeedViewController {
         guard let indexOfPost = self.posts.index(of: newObject.getParentByType(Post.self)) else {
             return
         }
-
         self.posts[indexOfPost].refresh()
         self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
     }

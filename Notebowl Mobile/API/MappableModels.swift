@@ -1425,6 +1425,22 @@ public class Post: NBModel, PostsComments {
         externalAttachments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
+
+        setupObserver()
+    }
+
+    func setupObserver() {
+        let notificationName = NSNotification.Name("LikeObjectChanged")
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(Post.likeObjectChanged(_:)),
+                                               name: notificationName,
+                                               object: nil)
+    }
+
+    @objc func likeObjectChanged(_ notification: Foundation.Notification) {
+        if let object = notification.object as? Like, object.parent == self {
+            self.refreshCachedLikes()
+        }
     }
 
     func totalCommentsCount() -> Int {
