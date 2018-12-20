@@ -411,49 +411,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
 extension HomeFeedPostViewController {
 
-    func handleUpdated(newObject: NBModel) {
-        if let newPost = newObject as? Post {
-            handleUpdatedPost(newPost: newPost)
+    func isDisplayedPost(object: NBModel) -> Bool {
+        if let postParent = object.getParentByType(Post.self, withSelf: true) {
+            if (postParent.parent is Assignment) || (postParent.parent is Submission) || (postParent != (self.postComment as! NBModel)) {
+                return false
+            }
         }
-            
-        else if let newComment = newObject as? Comment {
-            handleUpdatedComment(newComment: newComment)
-        }
-
-        else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
-            handleUpdatedAttachLike(newObject: newObject)
-        }
-
-        else if let newUser = newObject as? User {
-            handleUpdatedUser(newUser: newUser)
-        }
-    }
-
-    func handleDeleted(deletedObject: NBModel) {
-        if let deletePost = deletedObject as? Post {
-            handleDeletedPost(deletePost: deletePost)
-        }
-
-        else if let deleteComment = deletedObject as? Comment {
-            handleDeletedComment(deleteComment: deleteComment)
-        }
-
-        else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
-            handleDeletedAttachLike(deleteObject: deletedObject)
-        }
-    }
-    
-    func handleElapsed(elapsedObject: NBModel) {}
-
-    func handleUpdatedPost(newPost: Post) {
-        if (newPost.parent is Assignment) || (newPost.parent is Submission) {
-            return
-        }
-
-        if newPost == (self.postComment as! NBModel) {
-            self.postComment = (newPost as PostsComments)
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-        }
+        return true
     }
 
     func getCommentAtIndexPath(indexPath: IndexPath) -> Comment {
@@ -464,11 +428,54 @@ extension HomeFeedPostViewController {
         return getCommentAtIndexPath(indexPath: indexPath).comments[indexPath.row-1]
     }
 
-    func handleUpdatedComment(newComment: Comment) {
-        if newComment.related is Assignment || newComment.related is Submission {
+    func handleUpdated(newObject: NBModel) {
+        if let newUser = newObject as? User {
+            handleUpdatedUser(newUser: newUser)
+        }
+
+        if !isDisplayedPost(object: newObject) {
             return
         }
 
+        if let newPost = newObject as? Post {
+            handleUpdatedPost(newPost: newPost)
+        }
+            
+        else if let newComment = newObject as? Comment {
+            handleUpdatedComment(newComment: newComment)
+        }
+
+        else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
+            handleUpdatedAttachLike(newObject: newObject)
+        }
+    }
+
+    func handleDeleted(deletedObject: NBModel) {
+        if !isDisplayedPost(object: deletedObject) {
+            return
+        }
+
+        if let deletePost = deletedObject as? Post {
+            handleDeletedPost(deletePost: deletePost)
+        }
+
+        else if let deleteComment = deletedObject as? Comment {
+            handleDeletedComment(deleteComment: deleteComment)
+        }
+
+        else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
+            handleDeletedAttachLike(deleteObject: deletedObject)
+        }
+    }
+    
+    func handleElapsed(elapsedObject: NBModel) {}
+
+    func handleUpdatedPost(newPost: Post) {
+        self.postComment = (newPost as PostsComments)
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+    }
+
+    func handleUpdatedComment(newComment: Comment) {
         let indexOfComment = self.getIndexOfComment(comment: newComment)
 
         if (newComment.parent is Comment) {
@@ -505,10 +512,6 @@ extension HomeFeedPostViewController {
     }
 
     func handleUpdatedAttachLike(newObject: NBModel) {
-        if newObject.parent!.related is Assignment || newObject.parent!.related is Submission {
-            return
-        }
-
         if newObject.parent is Comment {
             let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
 
@@ -547,20 +550,10 @@ extension HomeFeedPostViewController {
     }
 
     func handleDeletedPost(deletePost: Post) {
-        if (deletePost.parent is Assignment) || (deletePost.parent is Submission) {
-            return
-        }
-
-        if deletePost == (self.postComment as! NBModel) {
-            self.navigationController?.popViewController(animated: true)
-        }
+        self.navigationController?.popViewController(animated: true)
     }
 
     func handleDeletedComment(deleteComment: Comment) {
-        if (deleteComment.related is Assignment) || (deleteComment.related is Submission) {
-            return
-        }
-
         guard let indexOfComment = self.getIndexOfComment(comment: deleteComment, refresh: false) else {
             return
         }
@@ -584,10 +577,6 @@ extension HomeFeedPostViewController {
     }
 
     func handleDeletedAttachLike(deleteObject: NBModel) {
-        if (deleteObject.parent!.related is Assignment) || (deleteObject.parent!.related is Submission) {
-            return
-        }
-
         if deleteObject.parent is Comment {
             guard let indexOfComment = self.getIndexOfComment(comment: (deleteObject.parent! as! Comment)) else {
                 return

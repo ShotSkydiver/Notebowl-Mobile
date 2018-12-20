@@ -61,7 +61,7 @@ class NBSocket {
         let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrl)", "action":"\(action)", "updatedAt":"\(updatedAt)"])
         guard let object = mapped!.genericObject else { return nil }
         
-        if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
+        if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.className) {
             if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
                 return nil
             }

@@ -125,11 +125,44 @@ public enum ItemType: String {
         }
         return item
     }
+
+    var className: String {
+        switch self {
+        case .user:
+            return "User"
+        case .category:
+            return "Category"
+        case .university:
+            return "University"
+        default:
+            return String(self.rawValue.capitalised.dropLast())
+        }
+    }
 }
 extension ItemType {
     func returnRoute() -> String {
         let route = self.rawValue
         return ("https://\(baseUrl)/api/v1.0/" + route)
+    }
+
+    init?(_ item: String) {
+        let countedString: Counted<String> = Counted(arrayLiteral: item)
+        switch countedString {
+        case .n1("User"):
+            self = .user
+        case .n1("Category"):
+            self = .category
+        case .n1("University"):
+            self = .university
+        case .n1("CourseUser"), .n1("GroupUser"):
+            self = .enrollment
+        case .n1(Regex("Attachment.*")):
+            self = .attachment
+        case .n1(Regex("AssignmentSubType.*")):
+            self = .assignment
+        default:
+            self = ItemType(rawValue: "\(item.lowercased())s")!
+        }
     }
 }
 
@@ -334,7 +367,7 @@ class Response<T>: Generic where T: NBModel {
 public class NBModel: Mappable {
     var createdAt: Date!
     var updatedAt: Date!
-    var itemType: String!
+    var itemType: ItemType!
     var url: URL!
     var resourceKey: String!
     var parent: NBModel?
@@ -347,6 +380,25 @@ public class NBModel: Mappable {
     
     class var classIdentifier: ObjectIdentifier {
         return ObjectIdentifier(self)
+    }
+
+    func getParentByType<T>(_ parentType: T.Type, withSelf: Bool = false) -> T! where T: NBModel {
+        if withSelf {
+            if self.itemType == parentType.routeType {
+                return self as? T
+            }
+        }
+
+        var thisParent = self.parent
+
+        while thisParent != nil {
+            if thisParent!.itemType == parentType.routeType {
+                return thisParent! as? T
+            }
+
+            thisParent = thisParent!.parent
+        }
+        return nil
     }
     
     func deleteSelf() {
@@ -431,7 +483,7 @@ public class NBModel: Mappable {
         if createdAt == nil { createdAt = Date.distantPast }
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
         if updatedAt == nil { updatedAt = Date.distantPast }
-        itemType <- map["itemType"]
+        itemType <- (map["itemType"], TransformOf<ItemType, String>(fromJSON: { ItemType($0!) }, toJSON: { $0!.rawValue }))
         url <- (map["url"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
         resourceKey <- map["resourceKey"]
 

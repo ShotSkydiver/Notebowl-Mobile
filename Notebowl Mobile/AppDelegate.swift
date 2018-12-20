@@ -173,7 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
                     let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
                     guard let object = mapped!.genericObject else { return }
-                    if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.capitalised) {
+                    if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.className) {
                         if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
                             continue
                         }

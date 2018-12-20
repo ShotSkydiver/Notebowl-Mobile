@@ -137,7 +137,7 @@ extension HomeFeedViewController {
                 self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost!, section: 0)], with: .fade)
             }
         }
-        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType) {
+        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
             if newObject.related is Assignment || newObject.related is Submission {
                 return
             }
@@ -162,7 +162,7 @@ extension HomeFeedViewController {
                 (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
             }
         }
-        else if ["CourseUser","GroupUser"].contains(newObject.itemType) {
+        else if ["CourseUser","GroupUser"].contains(newObject.itemType.className) {
             if (newObject as! Enrollment).parent!.firstTimeLoading == nil {
                 ((newObject as! Enrollment).parent as! WithName).firstTimeLoaded()
             }
@@ -217,7 +217,7 @@ extension HomeFeedViewController {
             if self.bulletinTableView.numberOfRows(inSection: 0) == 0 { self.bulletinTableView.showNoResultsPlaceholder() }
         }
         
-        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType) {
+        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
             if deletedObject.related is Assignment || deletedObject.related is Submission {
                 return
             }
@@ -231,7 +231,7 @@ extension HomeFeedViewController {
             }
         }
 
-        else if ["CourseUser","GroupUser"].contains(deletedObject.itemType) {
+        else if ["CourseUser","GroupUser"].contains(deletedObject.itemType.className) {
             guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
             let loadingViewController = LoadingViewController()
             
