@@ -502,15 +502,20 @@ public class NBModel: Mappable {
             related = relatedMap?.genericObject
         }
     }
+
+    func equal(to: NBModel) -> Bool {
+        return resourceKey == to.resourceKey
+    }
+
 }
 extension NBModel: Hashable {
     public var hashValue: Int {
         return ObjectIdentifier(self).hashValue
     }
-    
-    public static func == (lhs: NBModel, rhs: NBModel) -> Bool {
-        return lhs.resourceKey == rhs.resourceKey
-    }
+}
+
+public func == (lhs: NBModel, rhs: NBModel) -> Bool {
+    return lhs.equal(to: rhs)
 }
 
 public protocol PostsComments {
@@ -1426,20 +1431,78 @@ public class Post: NBModel, PostsComments {
         likedByCurrentUser = false
         likeFromCurrentUser = nil
 
-        setupObserver()
+        setupObservers()
     }
 
-    func setupObserver() {
-        let notificationName = NSNotification.Name("LikeObjectChanged")
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(Post.likeObjectChanged(_:)),
-                                               name: notificationName,
-                                               object: nil)
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedPost(_:)), name: .SocketDidReceiveUpdatedPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedComment(_:)), name: .SocketDidReceiveUpdatedComment, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedLike(_:)), name: .SocketDidReceiveUpdatedLike, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedAttachment(_:)), name: .SocketDidReceiveUpdatedAttachment, object: nil)
     }
 
-    @objc func likeObjectChanged(_ notification: Foundation.Notification) {
-        if let object = notification.object as? Like, object.parent == self {
-            self.refreshCachedLikes()
+    @objc func handleUpdatedPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newPost = dict["object"] as? Post, newPost == self else {
+            return
+        }
+
+        if newPost.updatedAt > self.updatedAt {
+            self.text = newPost.text
+            self.editedAt = newPost.editedAt
+            self.availableDate = newPost.availableDate
+            self.pinned = newPost.pinned
+            self.updatedAt = newPost.updatedAt
+        }
+    }
+
+    @objc func handleUpdatedComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+        guard newComment.parent == self else {
+            return
+        }
+
+        if newComment.isCommentReply {
+            return
+        }
+        if !self.comments.contains(newComment) {
+            self.comments.append(newComment)
+        }
+    }
+
+    @objc func handleUpdatedLike(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
+            return
+        }
+        guard newLike.parent == self else {
+            return
+        }
+
+        if self.postLikes.contains(newLike) {
+            return
+        }
+
+        self.postLikes.append(newLike)
+        if newLike.owner == NBClient.shared.getCurrentUser() {
+            self.likedByCurrentUser = true
+            self.likeFromCurrentUser = newLike
+        }
+    }
+
+    @objc func handleUpdatedAttachment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
+            return
+        }
+        guard newAttachment.parent == self else {
+            return
+        }
+
+        if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
+            self.attachments.append(newAttachment)
+        }
+        else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+            self.externalAttachments.append(newAttachment)
         }
     }
 
@@ -1686,6 +1749,64 @@ public class Comment: NBModel, PostsComments {
         comments = []
         likedByCurrentUser = false
         likeFromCurrentUser = nil
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedComment(_:)), name: .SocketDidReceiveUpdatedComment, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedLike(_:)), name: .SocketDidReceiveUpdatedLike, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedAttachment(_:)), name: .SocketDidReceiveUpdatedAttachment, object: nil)
+    }
+
+    @objc func handleUpdatedComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if newComment == self, newComment.updatedAt > self.updatedAt  {
+            self.text = newComment.text
+            self.editedAt = newComment.editedAt
+            self.updatedAt = newComment.updatedAt
+        }
+        else if newComment.parent == self, !self.comments.contains(newComment) {
+            self.comments.append(newComment)
+        }
+    }
+
+    @objc func handleUpdatedLike(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
+            return
+        }
+        guard newLike.parent == self else {
+            return
+        }
+
+        if self.commentLikes.contains(newLike) {
+            return
+        }
+
+        self.commentLikes.append(newLike)
+        if newLike.owner == NBClient.shared.getCurrentUser() {
+            self.likedByCurrentUser = true
+            self.likeFromCurrentUser = newLike
+        }
+    }
+
+    @objc func handleUpdatedAttachment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
+            return
+        }
+        guard newAttachment.parent == self else {
+            return
+        }
+
+        if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
+            self.attachments.append(newAttachment)
+        }
+        else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+            self.externalAttachments.append(newAttachment)
+        }
     }
     
     public func refreshCachedAttachments() {

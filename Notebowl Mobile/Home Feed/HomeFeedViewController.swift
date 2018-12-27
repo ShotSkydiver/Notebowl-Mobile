@@ -173,8 +173,6 @@ extension HomeFeedViewController {
 
 
     func handleUpdatedPost(newPost: Post) {
-        updatePostsFromCache()
-
         guard let indexOfPost = self.posts.index(of: newPost) else {
             return
         }
@@ -187,7 +185,6 @@ extension HomeFeedViewController {
         }
 
         if existingPost {
-            self.posts[indexOfPost].refresh()
             self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
         }
         else {
@@ -199,7 +196,6 @@ extension HomeFeedViewController {
         guard let indexOfPost = self.posts.index(of: newObject.getParentByType(Post.self)) else {
             return
         }
-        self.posts[indexOfPost].refresh()
         self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
     }
 

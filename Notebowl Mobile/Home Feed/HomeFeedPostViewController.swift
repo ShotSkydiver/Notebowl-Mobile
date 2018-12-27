@@ -352,7 +352,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     func getIndexOfComment(comment: Comment, refresh: Bool = true) -> IndexPath! {
         let section = comment.isCommentReply ? self.displayedPost.comments.index(of: comment.parent! as! Comment) : self.displayedPost.comments.index(of: comment)
         if section == nil { return nil }
-        if comment.parent is Comment && refresh { self.displayedPost.comments[section!].refresh() }
         let row = comment.isCommentReply ? self.displayedPost.comments[section!].comments.index(of: comment) : 0
         if row == nil { return nil }
         return comment.isCommentReply ? IndexPath(row: row!+1, section: section!+1) : IndexPath(row: row!, section: section!+1)
@@ -483,7 +482,6 @@ extension HomeFeedPostViewController {
 
             tableView.beginUpdates()
             if existingComment {
-                getCommentReplyAtIndexPath(indexPath: indexOfComment!).refresh()
                 tableView.reloadRows(at: [indexOfComment!], with: .fade)
             }
             else {
@@ -497,7 +495,6 @@ extension HomeFeedPostViewController {
 
             tableView.beginUpdates()
             if existingComment {
-                getCommentAtIndexPath(indexPath: indexOfComment!).refresh()
                 tableView.reloadRows(at: [indexOfComment!], with: .fade)
             }
             else {
@@ -514,13 +511,6 @@ extension HomeFeedPostViewController {
     func handleUpdatedAttachLike(newObject: NBModel) {
         if newObject.parent is Comment {
             let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
-
-            if (newObject.parent as! Comment).isCommentReply {
-                getCommentReplyAtIndexPath(indexPath: indexOfComment!).refresh()
-            }
-            else {
-                getCommentAtIndexPath(indexPath: indexOfComment!).refresh()
-            }
 
             tableView.reloadRows(at: [indexOfComment!], with: .fade)
         }
