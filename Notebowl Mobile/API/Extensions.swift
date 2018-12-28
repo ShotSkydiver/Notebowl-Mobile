@@ -1176,7 +1176,8 @@ extension CellActionsVC {
         var options = SwipeTableOptions()
         var selectedCell: UITableViewCell!
         selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
-        if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator)) != nil) {
+        let canDelete = ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator)) != nil)
+        if canDelete {
             if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }

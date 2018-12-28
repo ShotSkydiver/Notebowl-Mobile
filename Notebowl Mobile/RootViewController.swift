@@ -66,7 +66,7 @@ extension RootViewController: ProgressWebViewControllerDelegate {
     func progressWebViewController(_ controller: ProgressWebViewController, didFinish url: URL) {
         var components = URLComponents(url: controller.url!.absoluteURL, resolvingAgainstBaseURL: false)
         let pathComponents = components!.path
-        if (pathComponents == "/gateway/services/mobile/register") {
+        if pathComponents == "/gateway/services/mobile/register" {
             UserDefaults.set(hasUserLoggedIn: true)
             controller.dismiss(animated: true, completion: nil)
         }

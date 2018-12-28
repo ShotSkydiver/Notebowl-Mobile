@@ -138,7 +138,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         LightboxConfig.loadImage = {
             imageView, URL, completion in
             imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-                if (error != nil) {
+                if error != nil {
                     completion?(nil)
                 } else {
                     log.debug("lightbox loaded!")

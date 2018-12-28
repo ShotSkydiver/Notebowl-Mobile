@@ -647,7 +647,7 @@ extension AssignmentAssessment {
                 medians.append(Double(parts[2])!)
             }
 
-            if (percentGrade < 0) {
+            if percentGrade < 0 {
                 return titles[0].uppercased()
             } else {
                 for value in values {

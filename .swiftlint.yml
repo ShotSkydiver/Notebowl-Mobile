@@ -29,11 +29,14 @@
 #    - vertical_whitespace_closing_braces
 #    - vertical_whitespace_opening_braces
 whitelist_rules:
-     - colon
-     - comma
+    #- opening_brace
+    #- closing_brace
+    - control_statement
+    - colon
+    - comma
     #- closure_parameter_position
-     - vertical_whitespace
-     - statement_position
+    - vertical_whitespace
+    - statement_position
 included:
     - "Notebowl Mobile"
     - "NotebowlMobileUITests"

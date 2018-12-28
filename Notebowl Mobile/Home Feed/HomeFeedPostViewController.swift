@@ -122,9 +122,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func handleDeleteAction(objectToDelete: NBModel) {
-        if (objectToDelete is Post) {
+        if objectToDelete is Post {
             self.navigationController?.popViewController(animated: true)
-        } else if (objectToDelete is Comment) {
+        } else if objectToDelete is Comment {
             if (objectToDelete as! Comment).isCommentReply {
                 let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment), refresh: false)
                 self.displayedPost.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
@@ -461,7 +461,7 @@ extension HomeFeedPostViewController {
     func handleUpdatedComment(newComment: Comment) {
         let indexOfComment = self.getIndexOfComment(comment: newComment)
 
-        if (newComment.parent is Comment) {
+        if newComment.parent is Comment {
             let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) >= getCommentAtIndexPath(indexPath: indexOfComment!).comments.count+1
 
             tableView.beginUpdates()
@@ -471,7 +471,7 @@ extension HomeFeedPostViewController {
                 tableView.insertRows(at: [indexOfComment!], with: .automatic)
             }
             tableView.endUpdates()
-        } else if (newComment.parent is Post) {
+        } else if newComment.parent is Post {
             let existingComment = (tableView.numberOfSections+1 > self.displayedPost.comments.count+1)
 
             tableView.beginUpdates()

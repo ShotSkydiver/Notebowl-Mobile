@@ -48,10 +48,10 @@ class NotificationSettingCell: UITableViewCell {
     func changeSetting() {
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
-            if (self.settingSwitch.isOn == self.settingForCell.defaultValue) {
+            if self.settingSwitch.isOn == self.settingForCell.defaultValue {
                 self.settingForCell.userSetting!.deleteSelf()
                 self.settingForCell.userSetting = nil
-            } else if (self.settingSwitch.isOn != self.settingForCell.defaultValue) {
+            } else if self.settingSwitch.isOn != self.settingForCell.defaultValue {
                 let newSetting = Setting(key: self.settingForCell.key, value: self.settingSwitch.isOn)
                 let finalSetting = newSetting.save()
                 if finalSetting == nil {

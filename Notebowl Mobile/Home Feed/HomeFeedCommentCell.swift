@@ -153,7 +153,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         userAvatarHeight.constant = (comment.isCommentReply ? 32.0 : 34.0)
         userAvatarWidth.constant = (comment.isCommentReply ? 32.0 : 34.0)
         indentationLine.backgroundColor = (comment.isCommentReply ? UIColor(hexString: "#DBDBDB") : UIColor.clear)
-        if (comment.isCommentReply) {
+        if comment.isCommentReply {
             indentationTopConstraint.constant = (comment.parent! as! Comment).comments.first! == comment ? 0 : -8
             indentationBottomConstraint.constant = (comment.parent! as! Comment).comments.last! == comment ? 0 : 8
         }
@@ -164,7 +164,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             commentLikes.text = "Like"
         }
 
-        if (!comment.comments.isEmpty && comment.comments != nil) {
+        if !comment.comments.isEmpty && comment.comments != nil {
             commentReplies.text = comment.comments.count == 1 ? "\(comment.comments.count) Reply" : "\(comment.comments.count) Replies"
         } else {
             commentReplies.text = " "

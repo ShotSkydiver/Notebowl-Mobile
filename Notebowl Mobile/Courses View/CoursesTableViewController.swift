@@ -48,7 +48,7 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (self.courses != nil) {
+        if self.courses != nil {
            return self.courses.count
         }
         return 0
