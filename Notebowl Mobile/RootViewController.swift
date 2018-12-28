@@ -14,7 +14,7 @@ import Siren
 
 class RootViewController: UIViewController {
     var shouldLoad: Bool = true
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -23,7 +23,7 @@ class RootViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         if !(UserDefaults.hasUserLoggedIn) {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
@@ -43,7 +43,7 @@ class RootViewController: UIViewController {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }

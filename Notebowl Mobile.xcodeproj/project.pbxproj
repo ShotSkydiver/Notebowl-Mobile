@@ -467,6 +467,7 @@
 				85E2918A1F5F619300172C46 /* Frameworks */,
 				85E2918B1F5F619300172C46 /* Resources */,
 				BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */,
+				85DB059321CB76C40082468D /* Run Linter */,
 				D7E5A89FA1E972E397CE5793 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
@@ -639,6 +640,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NotebowlMobileUITests/Pods-NotebowlMobileUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		85DB059321CB76C40082468D /* Run Linter */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Linter";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		BF85F58EBA86BFF308FA1D39 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

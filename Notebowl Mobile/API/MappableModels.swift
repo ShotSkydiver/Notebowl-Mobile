@@ -111,7 +111,7 @@ public enum ItemType: String {
     case notification = "notifications"
     case abuse = "abuses"
     case setting = "settings"
-    
+
     static func fromURL(_ urlString: String) -> ItemType! {
         let urlComponents = URL(string: urlString)!.deletingLastPathComponent()
         let endpoint = urlComponents.lastPathComponent
@@ -270,7 +270,7 @@ class Generic: StaticMappable {
     var action: ActionType = .unknown
     var itemType: String!
     var updatedAt: Date!
-    
+
     public var genericObject: NBModel?
     public var isManual: Bool = false
 
@@ -336,9 +336,9 @@ class Generic: StaticMappable {
         return nil
     }
     init(){
-        
+
     }
-    
+
     func mapping(map: Map) {
         action <- (map["action"], TransformOf<ActionType, String>(fromJSON: { ActionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         itemType <- map["itemType"]
@@ -352,7 +352,7 @@ class Response<T>: Generic where T: NBModel {
 
     public override init() {}
     public required init?(map: Map) { }
-    
+
     public override func mapping(map: Map) {
         super.mapping(map: map)
 
@@ -373,11 +373,11 @@ public class NBModel: Mappable {
     var parent: NBModel?
     var owner: NBModel?
     var related: NBModel?
-    
+
     class var routeType: ItemType { return .user }
-    
+
     class var endpoint: String { return self.routeType.returnRoute() }
-    
+
     class var classIdentifier: ObjectIdentifier {
         return ObjectIdentifier(self)
     }
@@ -400,7 +400,7 @@ public class NBModel: Mappable {
         }
         return nil
     }
-    
+
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
         if deleteReq.statusCode!.rawValue == 410, let itemType = ItemType.fromURL(self.url.absoluteString) {
@@ -412,7 +412,7 @@ public class NBModel: Mappable {
             }
         }
     }
-    
+
     public var firstTimeLoading: Bool!
     public var shouldMapParent: Bool!
 
@@ -426,7 +426,7 @@ public class NBModel: Mappable {
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
-    
+
     func setPayload() -> [String: Any] { return [:] }
     func save(withCustomPayload: [String: Any]? = nil) -> NBModel? {
 
@@ -458,7 +458,7 @@ public class NBModel: Mappable {
         else {
             result = NBNetworking.shared.request(.post, url: type(of: self).endpoint, json: (json as Any))
         }
-        
+
         if result.statusCode!.rawValue == 422 {
             let exception = NSException(name:NSExceptionName(rawValue: "URLRequestException"), reason:"Status code 422: \(result.error.debugDescription) ", userInfo: nil )
             Bugsnag.notify(exception)
@@ -470,13 +470,13 @@ public class NBModel: Mappable {
         }
         return nil
     }
-    
+
     public func refresh() { }
-    
+
     public required init?(map: Map) { }
-    
+
     init() { }
-    
+
     public func mapping(map: Map) {
         if shouldMapParent == nil { shouldMapParent = true }
         createdAt <- (map["createdAt"], ISO8601FixedDateTransform())
@@ -717,18 +717,18 @@ public class User: NBModel {
     var gradMonth: Int?
     var gradYear: Int?
     var university: University?
-    
+
     var fullName: String { return (firstName + " " + lastName) }
     var fullGradDate: String { return (DateComponentsFormatter.monthYear.string(from: (DateComponents(year: gradYear, month: gradMonth))))! }
-    
+
     override class var routeType: ItemType { return .user }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override public func mapping(map: Map) {
-        
+
         super.mapping(map: map)
         firstName <- map["firstName"]
         lastName <- map["lastName"]
@@ -740,22 +740,22 @@ public class User: NBModel {
 }
 
 class Term: NBModel {
-    
+
     var title: String?
     var termStart: Date!
     var termEnd: Date!
     var termAvailable: Date!
     var university: University?
-    
+
     override class var routeType: ItemType { return .term }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         title <- map["title"]
         termStart <- (map["termStart"], ISO8601FixedDateTransform())
         termEnd <- (map["termEnd"], ISO8601FixedDateTransform())
@@ -792,16 +792,16 @@ class Course: NBModel, WithName {
     public var refreshedOnce: Bool = false
     public var courseAssignments: [AssignmentAssessment]!
     public var courseCategories: [Category]!
-        
+
     override class var routeType: ItemType { return .course }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         name <- map["name"]
         number <- map["number"]
         subject <- map["subject"]
@@ -822,7 +822,7 @@ class Course: NBModel, WithName {
         profileUrl <- (map["profileUrl"], URLTransform())
 
         term <- (map["_term"], ObjectTransform<Term>())
-        
+
         fullName = (courseCode + ": " + name)
 
         courseAssignments = []
@@ -852,7 +852,7 @@ class Course: NBModel, WithName {
         }
         return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
     }
-    
+
     func firstTimeLoaded() {
         if firstTimeLoading != nil {
             if firstTimeLoading { firstTimeLoading = false }
@@ -871,7 +871,7 @@ class Course: NBModel, WithName {
         let categories = NBClient.shared.storedTypes[Category.classIdentifier]?.filter({ $0.parent! == self }) as? [Category]
         self.courseCategories = (categories == nil ? [] : categories!)
     }
-    
+
     override public func refresh() {
         refreshCachedAssignments()
     }
@@ -937,14 +937,14 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var status: AssignmentStatus!
 
     override class var routeType: ItemType { return .assignment }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         title <- map["title"]
         points <- map["points"]
         dueDate <- (map["dueDate"], ISO8601FixedDateTransform())
@@ -1006,16 +1006,16 @@ public class Assignment: NBModel, AssignmentAssessment {
 class AssignmentGroup: NBModel {
     var name: String!
     var locked: Bool!
-    
+
     override class var routeType: ItemType { return .assignmentGroup }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         name <- map["name"]
         locked <- map["locked"]
     }
@@ -1190,14 +1190,14 @@ public class Category: NBModel {
     var dropLowest: Int!
 
     override class var routeType: ItemType { return .category }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         title <- map["title"]
         weight <- map["weight"]
         isExtraCredit <- map["isExtraCredit"]
@@ -1207,13 +1207,13 @@ public class Category: NBModel {
 
 public class Grade: NBModel {
     var grade: Double?
-    
+
     override class var routeType: ItemType { return .grade }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
         grade <- map["grade"]
@@ -1221,22 +1221,22 @@ public class Grade: NBModel {
 }
 
 class University: NBModel {
-    
+
     var profileLogo: String?
     var defaultLogo: String?
     var domain: String?
     var location: String?
     var name: String?
-    
+
     override class var routeType: ItemType { return .university }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         name <- map["name"]
         profileLogo <- map["profileLogo"]
         defaultLogo <- map["defaultLogo"]
@@ -1246,19 +1246,19 @@ class University: NBModel {
 }
 
 public class Enrollment: NBModel {
-    
+
     var role: UserRole!
     var status: String!
     var user: User!
     var lastAccessAt: Date!
-    
+
     public var statusIsAccepted: Bool {
         if status.contains("Accepted") { return true }
         else { return false }
     }
-    
+
     override class var routeType: ItemType { return .enrollment }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1289,7 +1289,7 @@ class Group: NBModel, WithName {
     var starred: Bool?
 
     var fullName: String!
-    
+
     override class var routeType: ItemType { return .group }
 
     required public init?(map: Map) {
@@ -1314,7 +1314,7 @@ class Group: NBModel, WithName {
         website <- map["website"]
         starred <- map["starred"]
     }
-    
+
     func firstTimeLoaded() {
         if firstTimeLoading != nil {
             if firstTimeLoading { firstTimeLoading = false }
@@ -1326,7 +1326,7 @@ class Group: NBModel, WithName {
 }
 
 class Event: NBModel {
-    
+
     var title: String!
     var desc: String?
     var location: String?
@@ -1336,16 +1336,16 @@ class Event: NBModel {
     var allDay: Bool?
     var startDate: Date!
     var endDate: Date!
-    
+
     override class var routeType: ItemType { return .event }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         title <- map["title"]
         desc <- map["description"]
         location <- map["location"]
@@ -1354,7 +1354,7 @@ class Event: NBModel {
         startDate <- (map["startDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
     }
-    
+
 }
 
 
@@ -1384,13 +1384,13 @@ public class Post: NBModel, PostsComments {
         }
         return false
     }
-    
+
     override class var routeType: ItemType { return .post }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     init(text: String, owner: NBModel?, parent: NBModel?, isAnonymous: Bool, pinned: Bool) {
         super.init()
         self.text = text
@@ -1410,10 +1410,10 @@ public class Post: NBModel, PostsComments {
         payload["pinned"] = self.pinned
         return payload
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         pinned <- map["pinned"]
@@ -1423,7 +1423,7 @@ public class Post: NBModel, PostsComments {
         }
         creator <- (map["_creator"], ObjectTransform<User>())
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
-        
+
         postLikes = []
         comments = []
         attachments = []
@@ -1514,7 +1514,7 @@ public class Post: NBModel, PostsComments {
 
         return count
     }
-    
+
     func refreshCachedLikes() {
         let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]
         self.postLikes = (likes == nil ? [] : likes!)
@@ -1524,7 +1524,7 @@ public class Post: NBModel, PostsComments {
         }
         else if postLikes.count > 0 {
             let like = postLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
-            
+
             if like != nil {
                 likedByCurrentUser = true
                 likeFromCurrentUser = like
@@ -1615,9 +1615,9 @@ public class Attachment: NBModel {
     var paths: [String: [String]]!
 
     public var fileID: String!
-    
+
     override class var routeType: ItemType { return .attachment }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1634,7 +1634,7 @@ public class Attachment: NBModel {
         payload["attachmentName"] = "\(self.fileID ?? "attachment").jpg"
         return payload
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
 
@@ -1658,7 +1658,7 @@ public class Attachment: NBModel {
         desc <- map["description"]
         domain <- map["domain"]
     }
-    
+
     func getUrlForAvatar() -> URL? {
         let params = ["uuid": UIDevice().uuid]
         let sttt = ("https://\(baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
@@ -1711,7 +1711,7 @@ public class Comment: NBModel, PostsComments {
     }
 
     override class var routeType: ItemType { return .comment }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1735,7 +1735,7 @@ public class Comment: NBModel, PostsComments {
 
     override public func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         editedAt <- (map["editedAt"], ISO8601FixedDateTransform())
         isAnonymous <- map["isAnonymous"]
         text <- map["text"]
@@ -1808,7 +1808,7 @@ public class Comment: NBModel, PostsComments {
             self.externalAttachments.append(newAttachment)
         }
     }
-    
+
     public func refreshCachedAttachments() {
         let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
         self.comments = (comments == nil ? [] : comments!)
@@ -1827,7 +1827,7 @@ public class Comment: NBModel, PostsComments {
         }
         else if commentLikes.count > 0 {
             let like = commentLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
-            
+
             if like != nil {
                 likedByCurrentUser = true
                 likeFromCurrentUser = like
@@ -1838,7 +1838,7 @@ public class Comment: NBModel, PostsComments {
             }
         }
     }
-    
+
     override public func refresh() {
         refreshCachedLikes()
         refreshCachedAttachments()
@@ -1847,9 +1847,9 @@ public class Comment: NBModel, PostsComments {
 
 public class Like: NBModel {
     public var currentUserLiked: Bool { return owner! == NBClient.shared.getCurrentUser() ? true : false}
-    
+
     override class var routeType: ItemType { return .like }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1862,7 +1862,7 @@ public class Like: NBModel {
         payload["parent"] = self.parent!
         return payload
     }
-    
+
     override public func mapping(map: Map) {
         super.mapping(map: map)
     }
@@ -1873,14 +1873,14 @@ class Notification: NBModel {
     var status: String!
     var text: String!
     var type: String!
-    
+
     public var unseenBool: Bool { return status == nil ? true : false }
     public var unreadBool: Bool { return status == nil || status!.contains("seen") ? true : false }
     public var notificationType: NotificationType { return NotificationType.init(rawValue: type)! }
     public var userProfilePicURL: URL { return URL(string: RequestKind.rpc.requestUrl(url: "notifications/" + self.resourceKey + "/getProfilePicture"))!.appendingQueryParameters(["uuid": UIDevice().uuid]) }
-    
+
     override class var routeType: ItemType { return .notification }
-        
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1891,7 +1891,7 @@ class Notification: NBModel {
         self.text = text
         self.type = type
     }
-    
+
     override func mapping(map: Map) {
         shouldMapParent = false
         super.mapping(map: map)
@@ -1908,11 +1908,11 @@ class Abuse: NBModel {
     var reason: String!
 
     override class var routeType: ItemType { return .abuse }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
-    
+
     init(reason: String, parent: NBModel?) {
         super.init()
         self.reason = reason
@@ -1924,7 +1924,7 @@ class Abuse: NBModel {
         payload["parent"] = self.parent!
         return payload
     }
-    
+
     override func mapping(map: Map) {
         shouldMapParent = false
         super.mapping(map: map)
@@ -1935,11 +1935,11 @@ class Abuse: NBModel {
 class Setting: NBModel {
     var key: String!
     var value: Bool!
-    
+
     public var group: String { return key.untilFirstCapital }
-    
+
     override class var routeType: ItemType { return .setting }
-    
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1954,7 +1954,7 @@ class Setting: NBModel {
         payload["value"] = self.value
         return payload
     }
-    
+
     override func mapping(map: Map) {
         super.mapping(map: map)
         key <- map["key"]
@@ -1968,14 +1968,14 @@ class SettingsDefault: Mappable, Equatable {
     var rootId: String!
     var group: String!
     var type: String!
-    
+
     var key: String!
     var defaultValue: Bool!
-    
+
     var userSetting: Setting?
 
     public required init?(map: Map) { }
-    
+
     public func mapping(map: Map) {
         name <- map["name"]
         help <- map["help"]
@@ -1983,9 +1983,9 @@ class SettingsDefault: Mappable, Equatable {
         group <- map["group"]
         type <- map["type"]
     }
-    
+
     public func findSetting() { userSetting = NBClient.shared.storedTypes[Setting.classIdentifier]?.first(where: { ($0 as! Setting).key == self.key }) as? Setting }
-    
+
     static func == (lhs: SettingsDefault, rhs: SettingsDefault) -> Bool {
         return lhs.name == rhs.name
     }
@@ -1993,7 +1993,7 @@ class SettingsDefault: Mappable, Equatable {
 
 class MobileSettingsDefault: SettingsDefault {
     required public init?(map: Map) { super.init(map: map) }
-    
+
     public override func mapping(map: Map) {
         super.mapping(map: map)
         key <- map["mobile"]
@@ -2003,7 +2003,7 @@ class MobileSettingsDefault: SettingsDefault {
 }
 class EmailSettingsDefault: SettingsDefault {
     required public init?(map: Map) { super.init(map: map) }
-    
+
     public override func mapping(map: Map) {
         super.mapping(map: map)
         key <- map["email"]
@@ -2013,7 +2013,7 @@ class EmailSettingsDefault: SettingsDefault {
 }
 class WebSettingsDefault: SettingsDefault {
     required public init?(map: Map) { super.init(map: map) }
-    
+
     public override func mapping(map: Map) {
         super.mapping(map: map)
         key <- map["web"]
@@ -2034,16 +2034,16 @@ class SettingDefaults: Mappable {
     var settingsEmail: [String: [EmailSettingsDefault]]!
     var settingsWeb: [String: [WebSettingsDefault]]!
     var settingsArray = [SettingsGroup?](repeating: nil, count: 4)
-    
+
     var settingsPositions = ["courses", "groups", "clubs", "posts"]
-    
+
     public required init?(map: Map) { }
-    
+
     public func mapping(map: Map) {
         settingsMobile <- map["notifications"]
         settingsEmail <- map["notifications"]
         settingsWeb <- map["notifications"]
-        
+
         for (key,value) in settingsMobile {
             self.settingsArray[settingsPositions.index(of: key)!] = SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key], sectionWebSettings: settingsWeb[key])
         }

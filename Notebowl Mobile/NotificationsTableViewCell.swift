@@ -16,22 +16,22 @@ class NotificationsTableViewCell: UITableViewCell {
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var notificationContent: UILabel!
     @IBOutlet weak var notificationDate: UILabel!
-    
+
     var notificationForCell: Notification!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         initSetup()
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         initSetup()
     }
-    
+
     func initSetup() {
     }
-    
+
     func configure(notification: Notification) {
         notificationContent.text = notification.text
         notificationDate.text = notification.createdAt.relativeFormat
@@ -44,12 +44,12 @@ class NotificationsTableViewCell: UITableViewCell {
                                         .keepCurrentImageWhileLoading
             ]
         )
-        
+
         self.backgroundColor = (notification.unreadBool ? #colorLiteral(red: 0.9294117647, green: 0.9529411765, blue: 0.9803921569, alpha: 1) : UIColor.white)
         self.notificationForCell = notification
     }
-    
-    
+
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }

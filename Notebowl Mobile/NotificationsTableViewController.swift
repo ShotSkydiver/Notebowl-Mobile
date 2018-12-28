@@ -28,18 +28,18 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         self.navigationController?.view.backgroundColor = UIColor.white
         reloadTable()
     }
-    
+
     func reloadTable() {
         self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
         let unreadCount = self.notifications.filter({ $0.unseenBool == true })
         self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
         placeholderTableView?.reloadData()
     }
-    
+
     @IBAction func profileButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
-    
+
     func setupNavBar() {
         navigationController?.navigationBar.shadowImage = UIImage.init()
         navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
@@ -53,7 +53,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
          self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
@@ -62,7 +62,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         super.viewDidAppear(animated)
         if !notifications.isEmpty && notifications.contains(where: {$0.unseenBool == true }) { markAsSeen() }
     }
-    
+
     func updateBadgeCount() {
         if let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController {
             if (tabbarVC.selectedViewController as! UINavigationController).topViewController is NotificationsTableViewController {
@@ -83,7 +83,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
             }
         }
     }
-    
+
     func markAsSeen() {
         let markSeen = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"),
                                                    loadImmediately: false,
@@ -99,22 +99,22 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         })
         markSeen.task?.resume()
     }
-    
+
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
     }
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (self.notifications) != nil {
             return self.notifications.count
         }
         return 0
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = NotificationsTableViewCell.dequeue(from: tableView)!
         let notification = self.notifications[indexPath.row]
@@ -124,7 +124,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
 }
 
 extension NotificationsTableViewController {
-    
+
     func handleUpdated(newObject: NBModel) {
         if let newNotification = newObject as? Notification, NBClient.shared.storedTypes.has(key: Notification.classIdentifier) {
             self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
@@ -142,7 +142,7 @@ extension NotificationsTableViewController {
             }
         }
     }
-    
+
     func handleDeleted(deletedObject: NBModel) {
         if let deleteNotification = deletedObject as? Notification {
             let indexOfNotification = self.notifications.index(of: deleteNotification)
@@ -152,7 +152,7 @@ extension NotificationsTableViewController {
             updateBadgeCount()
         }
     }
-    
+
     func handleElapsed(elapsedObject: NBModel) { }
     func reloadTableViews() { }
 }

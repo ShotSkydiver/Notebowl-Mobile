@@ -24,15 +24,15 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
-    
+
     var cellHeights: [IndexPath : CGFloat] = [:]
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         bulletinTableView.alpha = 0.0
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = true
-        
+
         let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
         customView.initSetup()
         customView.reloadAvatar()
@@ -46,31 +46,31 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7))
         self.navigationController?.view.backgroundColor = UIColor.white
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     @IBAction func userProfileButton(_ sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
-    
+
     func reloadTable() {
         self.posts = (NBClient.shared.storedTypes.has(key: Post.classIdentifier) ? NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post] : [])
         bulletinTableView.reloadData()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.navigationBar.tintColor = UIColor.groupTableViewBackground
         _ = self.bulletinTableView.indexPathForSelectedRow
         super.viewWillAppear(animated)
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-    
+
     func afterFullyLoaded() {
         UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
@@ -110,7 +110,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
             }
         }
     }
-    
+
     func handleDeleteAction(objectToDelete: NBModel) {
         self.posts.removeAll(objectToDelete as! Post)
     }
@@ -331,7 +331,7 @@ extension HomeFeedViewController {
             loadingViewController.dismiss(animated: true, completion: nil)
         }
     }
-    
+
     func handleElapsed(elapsedObject: NBModel) { }
 }
 
@@ -341,7 +341,7 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 1
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -354,11 +354,11 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
             self.performSegue(withIdentifier: "postDetailSegue", sender: cell)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cellHeights[indexPath] = cell.frame.size.height
     }
-    
+
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let height = cellHeights[indexPath] else { return 260.0 }
         return height
@@ -366,14 +366,14 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = HomeFeedPostCell.dequeue(from: tableView)!
-       
+
         cell.isAccessibilityElement = false
         cell.accessibilityIdentifier = String(format: "HomeFeedPostCell-%d-%d", indexPath.section, indexPath.row)
         cell.accessibilityLabel = cell.accessibilityIdentifier
         cell.contentView.isAccessibilityElement = false
         cell.contentView.accessibilityIdentifier = String(format: "PostCellContentView-%d-%d", indexPath.section, indexPath.row)
         cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
-        
+
         let post = self.posts[indexPath.row]
         cell.parentController = self
         cell.configure(post: post)
@@ -384,11 +384,11 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
-    
+
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         return self.cellActions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
     }
-    
+
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         return self.cellActionOptions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
     }
@@ -404,7 +404,7 @@ class NotebowlLogoNavigationItem: UINavigationItem {
     let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
     private let nbLogo = UIImage(named: "nb-logo-vector-white2")!
     private let logoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 118, height: 44))
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         logoImageView.contentMode = .scaleAspectFit

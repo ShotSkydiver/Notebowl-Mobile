@@ -1,10 +1,19 @@
 update_fastlane
-fastlane_require 'fastlane/actions/scan'
-fastlane_require 'fastlane/actions/snapshot'
 default_platform(:ios)
 
 platform :ios do
     MY_XCODE_PROJECT_FILEPATH = File.absolute_path('../Notebowl Mobile.xcodeproj')
+
+
+    lane :linter do
+        swiftlint(
+                mode: :lint,
+                executable: "Pods/SwiftLint/swiftlint",
+                output_file: "swiftlint.result.json",
+                ignore_exit_status: true
+        )
+    end
+
 
     lane :screenshots do
         xcode_select("/Applications/Xcode.app")

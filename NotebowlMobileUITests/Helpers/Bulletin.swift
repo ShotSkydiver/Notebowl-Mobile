@@ -17,7 +17,7 @@ func setupBulletin(_ app: XCUIApplication, testCase: NBUITests) {
 class Bulletin: XCTestHelpers {
     static var app: XCUIApplication!
     static var currentTestCase: NBUITests!
-    
+
 
     class func setup(_ app: XCUIApplication, testCase: NBUITests) {
         Bulletin.app = app
@@ -34,7 +34,7 @@ class Bulletin: XCTestHelpers {
         waitForElementToExist(comment.element)
         return comment
     }
-    
+
     class func startCreatingNewPost(asAnonymousUser anon: Bool = false) {
         waitForElementToExist(app.createNewPostHeader)
         app.createNewPostHeader.tap()
@@ -45,21 +45,21 @@ class Bulletin: XCTestHelpers {
         app.buttons["Done"].tap()
         if anon { app.anonymousButton.tap() }
     }
-    
+
     class func startCreatingNewComment(asAnon: Bool = false) {
         waitForElementToExist(app.inputTextView)
         app.inputTextView.staticTexts.element.tap(force: true)
         app.inputTextView.typeText(Lorem.sentences(3))
         if asAnon { app.anonymousButton.tap() }
     }
-    
+
     class func addAttachmentsToNewPost() {
         BulletinPost().addAttachments()
     }
     class func addAttachmentsToNewComment() {
         BulletinComment().addAttachments()
     }
-    
+
     class func finishCreatingAndSubmit() {
         app.submitNewPostButton.tap()
     }
@@ -69,7 +69,7 @@ extension XCUIApplication {
     var createNewPostHeader: XCUIElement { return self.otherElements["bulletinTableViewHeader"] }
     var editablePostTextView: XCUIElement { return self.textViews["createPostText"] }
     var inputTextView: XCUIElement { return self.textViews["newCommentTextView"] }
-    
+
     var photoLibraryButton: XCUIElement { return self.buttons["photoLibraryButton"] }
     var coursePickerButton: XCUIElement { return self.buttons["coursePickerButton"] }
     var coursePickerWheel: XCUIElement { return self.pickerWheels.element }
@@ -86,20 +86,20 @@ class BulletinComment: BulletinPost {
     var deleteCommentAction: XCUIElement { return app.alerts["Delete Comment"].buttons["Delete"] }
 
     var replyButton: XCUIElement { return element.children(matching: .button)["replyButton"] }
-    
+
     override func deleteSelf() {
         moreButton.tap()
         deleteButton.tap()
         app.alerts["Delete Comment"].buttons["Delete"].tap()
         XCTestHelpers.waitForElementToDisappear(element)
     }
-    
+
     override func likeSelf() {
         likeButton.tap()
         XCTestHelpers.waitForElementToDisappear(app.HUD)
         XCTAssertEqual(likeText.label, "1")
     }
-    
+
     override func assertSelf(expectPostedAnonymously anon: Bool = false) {
         XCTAssertEqual(userNameLabel.label, (anon ? "Anonymous" : "Alex Slaughter"))
     }
@@ -107,7 +107,7 @@ class BulletinComment: BulletinPost {
     func postReplyToSelf(asAnon: Bool = false) {
         replyButton.tap()
         XCTAssertEqual(app.replyToUserLabel.label, (asAnon ? "Replying to Anonymous" : "Replying to Alex Slaughter"))
-        
+
     }
 }
 
@@ -116,7 +116,7 @@ class BulletinPost: NSObject {
     var app: XCUIApplication!
     var indexForPost: Int!
     var element: XCUIElement { return XCUIApplication().tables.children(matching: .cell).element(boundBy: indexForPost) }
-    
+
     var postTextContent: String { return (element.otherElements["postContent"].value as! String) }
     var dateLabel: XCUIElement { return element.staticTexts["dateLabel"] }
     var userNameLabel: XCUIElement { return element.staticTexts["userNameLabel"] }
@@ -132,15 +132,15 @@ class BulletinPost: NSObject {
         app = XCUIApplication()
         indexForPost = index
     }
-    
+
     convenience override init() {
         self.init(index: 0)
     }
-    
+
     func navigateToDetailView() {
         dateLabel.tap(force: true)
     }
-    
+
     func assertSelf(expectPostedAnonymously anon: Bool = false) {
         XCTAssertEqual(courseLabel.label, AvailableCourses.secondCourse)
         XCTAssertEqual(userNameLabel.label, (anon ? "Anonymous User" : "Alex Slaughter"))
@@ -170,13 +170,13 @@ class BulletinPost: NSObject {
         app.alerts["Delete Post"].buttons["Delete"].tap()
         XCTestHelpers.waitForElementToDisappear(element)
     }
-    
+
     func editText(textToAdd text: String = textToEditPostWith) {
         moreButton.tap()
         editButton.tap()
         app.editablePostTextView.typeText(text)
         app.submitNewPostButton.tap()
-        
+
         XCTAssert(postTextContent.contains(textToEditPostWith))
         XCTAssert(dateLabel.label.contains("edited"))
     }
@@ -187,23 +187,23 @@ class BulletinPost: NSObject {
             editButton.tap()
         }
         Bulletin.currentTestCase.handlePhotoLibraryPermissions()
-        
+
         let ypLibraryView = app.otherElements["YPLibraryView"]
         let ypCollectionView = ypLibraryView.collectionViews["YPLibraryCollectionView"]
         let ypMultipleSelection = ypLibraryView.buttons["ypMultipleSelectionButton"]
         ypMultipleSelection.tap(force: true)
-        
+
         let ypLibraryViewCell = ypCollectionView.cells["YPLibraryViewCell-0-0"]
         ypLibraryViewCell.otherElements["YPCellContentView-0-0"].tap()
         XCTAssert(ypMultipleSelection.isEnabled)
         ypCollectionView.otherElements["YPCellContentView-0-1"].tap()
-        
+
         app.navigationBars["YPImagePicker.YPPickerVC"].buttons["Next"].tap()
         let uploadedAttachmentCell = app.collectionViews["AttachmentsCollectionView"].cells["UploadImageAttachmentCell-0"]
         XCTestHelpers.waitForElementToExist(uploadedAttachmentCell)
         sleep(3)
     }
-    
+
     func assertAttachmentsExist() {
         let attachmentCells = element.otherElements.containing(NSPredicate(format: "identifier contains %@", "IndexedCollectionViewCell")).allElementsBoundByIndex
         XCTAssert(attachmentCells.count > 0)
@@ -257,7 +257,7 @@ extension XCUIElement {
         }
         XCTAssertEqual(window.frame.contains(self.frame), shouldBeVisible)
     }
-    
+
     func tap(force: Bool) {
         if isHittable {
             tap()

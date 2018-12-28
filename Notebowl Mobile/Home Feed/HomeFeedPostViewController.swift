@@ -23,7 +23,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var showingPhotoPicker: Bool = false
 
     var postCommentToReplyTo: PostsComments!
-    
+
     lazy var inputBar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
         bar.delegate = self
@@ -35,7 +35,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         manager.dataSource = self
         return manager
     }()
-    
+
     var photoLibraryButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
     var cancelReplyButton: InputBarButtonItem!
@@ -62,7 +62,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
     override var canBecomeFirstResponder: Bool { return true }
     override var inputAccessoryView: UIView? { return inputBar }
-    
+
     override func loadView() {
         super.loadView()
     }
@@ -71,11 +71,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         super.viewDidLoad()
         HomeFeedPostCell.register(in: self.tableView)
         HomeFeedCommentCell.register(in: self.tableView)
-        
+
         attachmentManager.isPersistent = false
         attachmentManager.showAddAttachmentCell = false
         attachmentManager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
-        
+
         inputBar.inputPlugins = [attachmentManager]
         setupInputBar()
 
@@ -95,11 +95,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     func refreshAllComments() {
         for comment in self.displayedPost.comments { comment.refresh() }
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createPostDetailSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
@@ -122,7 +122,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             destVC.editingExisting = true
         }
     }
-    
+
     func handleDeleteAction(objectToDelete: NBModel) {
         if (objectToDelete is Post) {
             self.navigationController?.popViewController(animated: true)
@@ -177,9 +177,9 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 config.icons.capturePhotoImage = UIImage(named: "open_camera-vector")!
                 config.colors.tintColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
                 config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-                
+
                 let picker = YPImagePicker(configuration: config)
-                
+
                 picker.didFinishPicking(completion: { (items, cancelled) in
                     if cancelled {
                         log.debug("cancelled")
@@ -196,7 +196,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                         })
                     }
                 })
-                
+
                 if let popoverController = picker.popoverPresentationController {
                     popoverController.sourceView = self.view
                     popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
@@ -211,7 +211,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 item.inputBarAccessoryView?.setLeftStackViewWidthConstant(to: 0, animated: true)
         }
 
-        
+
         anonymousButton = makeButton(named: "visibility_on-vector")
             .configure {
                 $0.accessibilityIdentifier = "anonymousButton"
@@ -289,7 +289,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         cancelReplyButton.setSize(CGSize(width: 36, height: 36), animated: true)
 
         self.postCommentToReplyTo = comment.isCommentReply ? (comment.parent! as! Comment) : comment
-        
+
         setUserReplyStatus(makeVisible: true)
 
         tableView.scrollToRow(at: getIndexOfComment(comment: comment), at: .bottom, animated: true)
@@ -303,7 +303,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         attributedString.addAttributes(boldFontAttribute, range: range)
         return attributedString
     }
-    
+
     func makeButton(named: String) -> InputBarButtonItem {
         return InputBarButtonItem()
             .configure {
@@ -311,7 +311,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 $0.setSize(CGSize(width: 40, height: 40), animated: false)
         }
     }
-    
+
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         inputBar.inputTextView.text = String()
         inputBar.invalidatePlugins()
@@ -356,15 +356,15 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if row == nil { return nil }
         return comment.isCommentReply ? IndexPath(row: row!+1, section: section!+1) : IndexPath(row: row!, section: section!+1)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return (self.displayedPost.comments.count + 1)
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 1 : (self.displayedPost.comments[section-1].comments.count+1)
     }
@@ -385,7 +385,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         }
         else {
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
-            
+
             cell.isAccessibilityElement = false
             if indexPath.row > 0 {
                 cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-Reply-DetailView-%d-%d", indexPath.section, indexPath.row)
@@ -397,7 +397,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             cell.contentView.isAccessibilityElement = false
             cell.contentView.accessibilityIdentifier = String(format: "CommentCellContentView-DetailView-%d-%d", indexPath.section, indexPath.row)
             cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
-            
+
             let comment = indexPath.row > 0 ? self.displayedPost.comments[indexPath.section-1].comments[indexPath.row-1] : self.displayedPost.comments[indexPath.section-1]
             cell.configure(comment: comment)
             cell.selectionStyle = .none
@@ -439,7 +439,7 @@ extension HomeFeedPostViewController {
         if let newPost = newObject as? Post {
             handleUpdatedPost(newPost: newPost)
         }
-            
+
         else if let newComment = newObject as? Comment {
             handleUpdatedComment(newComment: newComment)
         }
@@ -466,7 +466,7 @@ extension HomeFeedPostViewController {
             handleDeletedAttachLike(deleteObject: deletedObject)
         }
     }
-    
+
     func handleElapsed(elapsedObject: NBModel) {}
 
     func handleUpdatedPost(newPost: Post) {
@@ -598,7 +598,7 @@ extension HomeFeedPostViewController {
 
 
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
-    
+
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         if indexPath.section == 0 {
             return self.cellActions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
@@ -607,7 +607,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
             return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         if indexPath.section == 0 {
             return self.cellActionOptions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
@@ -627,7 +627,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
-        
+
         if case .image(let image) = attachment {
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
@@ -637,8 +637,8 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             cell.indexPath = indexPath
             cell.manager = self.attachmentManager
             cell.imageView.image = image
-            
-            
+
+
             if !cell.uploadStarted || cell.attachmentFileID == "" {
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
@@ -652,7 +652,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                                                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
-                    
+
                     cell.attachmentFileID = fileID
                     log.debug(cell.attachmentFileID)
 
@@ -662,7 +662,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                     else {
                         self.attachmentIDs[index] = cell.attachmentFileID
                     }
-                    
+
                     DispatchQueue.main.async(execute: {
                         cell.imageView.uploadCompleted()
                     })
@@ -670,20 +670,20 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                 upload.task?.resume()
             }
             return cell
-            
+
         }
-        
+
         else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
     }
-    
+
     func setAttachmentManager(active: Bool) {
         let topStackView = inputBar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             inputBar.layoutStackViews([.top])
-            
+
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             inputBar.layoutStackViews([.top])
@@ -702,7 +702,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
             inputBar.sendButton.isEnabled = true
         }
-        
+
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {

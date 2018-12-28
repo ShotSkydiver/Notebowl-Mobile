@@ -30,7 +30,7 @@ class NBSocket {
     #endif
 
     private init() { }
-    
+
     func setup() {
         NBSocket.shared.registerHandlers()
         NBSocket.shared.manager.connect()
@@ -56,11 +56,11 @@ class NBSocket {
             }
         }
     }
-    
+
     func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) -> NBModel? {
         let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrl)", "action":"\(action)", "updatedAt":"\(updatedAt)"])
         guard let object = mapped!.genericObject else { return nil }
-        
+
         if object is Enrollment {
             if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
                 return nil
@@ -101,7 +101,7 @@ class NBSocket {
                         default:
                             return nil
                         }
-                        
+
                     }
                 }
             }

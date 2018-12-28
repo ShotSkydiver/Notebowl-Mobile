@@ -45,14 +45,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         log.addDestination(console)
     }
-    
+
     func setupUserDefaults() {
         let defaults = UserDefaults.standard
         if defaults.object(forKey: UserDefaults.Keys.HasUserLoggedIn) == nil {
             UserDefaults.set(hasUserLoggedIn: false)
         }
     }
-    
+
     func setupLibraries() {
         let siren = Siren.shared
         if Config.appConfiguration == .Debug { siren.debugEnabled = true }
@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         ImageDownloader.default.trustedHosts = Set(trustedHosts)
     }
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data -> String in
             return String(format: "%02.2hhx", data)
@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         _ = NBNetworking.shared.request(url: RequestKind.mobile.requestUrl(url: "notifications/enable"), params: ["token": token, "uuid": UIDevice().uuid])
     }
-    
+
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         log.debug(error.localizedDescription)
     }
@@ -96,14 +96,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) { }
     func applicationWillResignActive(_ application: UIApplication) { }
-    
+
     func applicationDidEnterBackground(_ application: UIApplication) {
         if NBSocket.shared.manager.status == .connected {
             NBSocket.shared.manager.disconnect()
             disconnectDate = Date()
         }
     }
-    
+
     func applicationWillEnterForeground(_ application: UIApplication) {
         Siren.shared.checkVersion(checkType: .immediately)
 
@@ -113,10 +113,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let formatter = DateFormatter.iso8061
             let dateString = formatter.string(from: self.disconnectDate)
             let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
- 
+
             guard let keyPaths = (recReq.json as AnyObject).value(forKeyPath: "result")! as? [String] else { return }
             if keyPaths.isEmpty || keyPaths.count == 0 { return }
-            
+
             var doAppReset: Bool = false
             let enrollments = keyPaths.filter( {$0.contains("enrollment")} )
             if !enrollments.isEmpty || enrollments.count > 0 {
@@ -143,7 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 else {
                     doAppReset = true
                 }
-                
+
                 if !possibleNewEnrollments.isEmpty {
                     var objectsToUpdate: [NBModel] = []
                     for enrollment in possibleNewEnrollments {
@@ -159,13 +159,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         doAppReset = false
                     }
                 }
-                
+
                 if doAppReset {
                     NBClient.shared.resetApp(andLogoutUser: false)
                     return
                 }
             }
-            
+
             do {
                 for result in keyPaths {
                     guard let contentData = result.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
@@ -215,10 +215,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let _ = notification.request.content.userInfo
         completionHandler([.alert])
     }
-    
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         _ = response.notification.request.content.userInfo
-        
+
         if response.actionIdentifier == "viewActionIdentifier" {
             log.debug("view action")
         }

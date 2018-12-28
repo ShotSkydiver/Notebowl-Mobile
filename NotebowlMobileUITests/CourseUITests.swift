@@ -15,7 +15,7 @@ class CourseUITests: NBUITests {
         super.setUp()
         app.navigateToCourses()
     }
-    
+
     override func tearDown() { super.tearDown() }
 
     func testCreateNewCourse() {

@@ -115,7 +115,7 @@ GEM
     nanaimo (0.2.6)
     naturally (2.2.0)
     os (1.0.0)
-    plist (3.4.0)
+    plist (3.5.0)
     public_suffix (2.0.5)
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -145,7 +145,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.4.0)
+    unicode-display_width (1.4.1)
     word_wrap (1.0.0)
     xcodeproj (1.7.0)
       CFPropertyList (>= 2.3.3, < 4.0)

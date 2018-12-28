@@ -16,24 +16,24 @@ import PKHUD
 class LoadingViewController: UIViewController {
     var loadingView: NBLoadingView!
     var bgView: UIView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         addLoadingView()
         loadingView.accessibilityIdentifier = "loadingView"
     }
-    
+
     func addLoadingView() {
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
     }
-    
+
     func showLoading(show: Bool) {
         self.loadingView.showLoadView(show)
         self.bgView.showViewAnimated(show)
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
@@ -42,12 +42,12 @@ class LoadingViewController: UIViewController {
 class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
     var hasAppeared: Bool = false
     var loadingVC: LoadingViewController!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
         loadingVC = LoadingViewController()
-        
+
         self.tabBar.items![2].accessibilityIdentifier = "notificationsItem"
         HUD.dimsBackground = true
         HUD.allowsInteraction = false
@@ -55,16 +55,16 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         let gradColor = UIImage().createGradientImage(size: 40).gradientColor
         self.tabBar.items![0].selectedImage = self.tabBar.items![0].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![1].selectedImage = self.tabBar.items![1].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![2].selectedImage = self.tabBar.items![2].image!.filled(withColor: gradColor).withRenderingMode(.alwaysOriginal)
         self.tabBar.items![2].badgeColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
-        
+
         self.tabBar.tintColor = UIImage().createGradientImage(size: 50).gradientColor
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -72,7 +72,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
             loadAllTabs()
         }
     }
-    
+
     func loadAllTabs() {
         hasAppeared = true
         self.present(loadingVC, animated: false, completion: nil)
@@ -92,7 +92,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
             }
         }
     }
-    
+
     func getData() {
         let setting = NBClient.shared.getMappable(Setting.self)
         let notifs = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")
@@ -108,14 +108,14 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         }
         NBClient.shared.reinitCache()
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 }
 
 class RootNavigationBarVC: UINavigationController {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()

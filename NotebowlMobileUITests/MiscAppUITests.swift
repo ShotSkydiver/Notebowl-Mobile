@@ -12,13 +12,13 @@ import XCTest
 class MiscAppUITests: XCTestCase {
 
     let app = XCUIApplication()
-    
+
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
         app.launch()
     }
-    
+
     override func tearDown() {
         super.tearDown()
     }
@@ -31,7 +31,7 @@ class MiscAppUITests: XCTestCase {
         let cellSwitch = cell.switches.element(boundBy: 0)
         let cellSwitchEnabled = cellSwitch.value as! String
         app.tables["pushTable"].cells["Comment on My Post"].switches.element(boundBy: 0).tap()
-        
+
         let cellSwitchEnabled2 = app.tables["pushTable"].cells["Comment on My Post"].switches.element(boundBy: 0).value as! String
         XCTAssertNotEqual(cellSwitchEnabled, cellSwitchEnabled2)
     }

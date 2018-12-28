@@ -72,18 +72,18 @@ class NBNetworking: NSObject, URLSessionDelegate {
     var nbSession: URLSession!
     var sessionDefaults: NBSessionDefaults!
     var requestConfigs: [RequestTaskID: RequestConfiguration]=[:]
-    
+
     var invalidURL = NSError(domain: NSURLErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "URL is invalid!"])
     var improperAsyncAccess = NSError(domain: NSCocoaErrorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "You are accessing asynchronous result synchronously."])
     var taskNeverStarted = NSError(domain: "com.notebowl.NB", code: 2, userInfo: [NSLocalizedDescriptionKey: "DataTask for request hasn't been started yet!"])
-    
+
     static let shared: NBNetworking = {
         let instance = NBNetworking()
         instance.nbSession = URLSession(configuration: URLSessionConfiguration.withHeaders, delegate: instance, delegateQueue: nil)
         instance.sessionDefaults = NBSessionDefaults(JSONReadingOptions: .mutableContainers, JSONWritingOptions: .prettyPrinted, headers: ["uuid": UIDevice().uuid], encoding: String.Encoding.utf8)
         return instance
     }()
-    
+
     private override init() { }
 
     func makeTask(_ request: URLRequest, configuration: RequestConfiguration) -> URLSessionDataTask?
@@ -91,13 +91,13 @@ class NBNetworking: NSObject, URLSessionDelegate {
         let task = nbSession.dataTask(with: request)
         requestConfigs[task.taskIdentifier] = configuration
         return task
-        
+
     }
 
 }
 
 extension NBNetworking {
-    
+
     func synthesizeRequest(
         _ method: Method,
         url: URLComponentsMutable,
@@ -113,11 +113,11 @@ extension NBNetworking {
         ) -> URLRequest? {
         if var urlComponents = url.urlComponent {
             let queryString = query(params)
-    
+
             var finalMethod = method
-            var finalHeaders = headers            
+            var finalHeaders = headers
             var jsonFromQuery: [String: Any]?
-            
+
             if queryString.count > 0 && queryString.count < 20000 {
                 urlComponents.percentEncodedQuery = queryString
             }
@@ -126,7 +126,7 @@ extension NBNetworking {
                 finalHeaders["X-Notebowl-Method-Override"] = "GET"
                 jsonFromQuery = params
             }
-            
+
             var contentType: String? = nil
             var body: Data?
             if let requestData = requestBody {
@@ -145,7 +145,7 @@ extension NBNetworking {
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: requestJSON,
                                                        options: sessionDefaults.JSONWritingOptions)
-                    
+
                 } else {
                     if data.count > 0 {
                         if headers["content-type"]?.lowercased() == "application/json" {
@@ -175,11 +175,11 @@ extension NBNetworking {
                 if let requestTimeout = timeout {
                     request.timeoutInterval = requestTimeout
                 }
-                
+
                 for (k, v) in sessionDefaults.headers {
                     request.addValue(v, forHTTPHeaderField: k)
                 }
-                
+
                 for (k, v) in finalHeaders {
                     request.addValue(v, forHTTPHeaderField: k)
                 }
@@ -188,7 +188,7 @@ extension NBNetworking {
         }
         return nil
     }
-    
+
     func request(
         _ method: Method = .get,
         url: URLComponentsMutable,
@@ -207,21 +207,21 @@ extension NBNetworking {
         asyncProgressHandler: RequestProgressHandler? = nil,
         asyncCompletionHandler: ((NBResult) -> Void)? = nil
         ) -> NBResult {
-        
+
         let isSynchronous = asyncCompletionHandler == nil
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: NBResult = NBResult(data: nil, response: nil, error: improperAsyncAccess, task: nil)
-        
+
         let caseInsensitiveHeaders = LowercasedDictionary<String, String>(dictionary: headers)
         guard let synthesizedRequest = synthesizeRequest(method, url: url, params: params, data: data, json: json, headers: caseInsensitiveHeaders, files: files, auth: auth, timeout: timeout, urlQuery: urlQuery, requestBody: requestBody) else {
-            
+
             let resultWithError = NBResult(data: nil, response: nil, error: invalidURL, task: nil)
             if let handler = asyncCompletionHandler {
                 handler(resultWithError)
             }
             return resultWithError
         }
-        
+
         addCookies(synthesizedRequest.url!, newCookies: cookies)
         let config = RequestConfiguration(credential: auth, redirects: redirects, originalRequest: synthesizedRequest, data: Data(), progressHandler: asyncProgressHandler) { result in
             if let handler = asyncCompletionHandler {
@@ -232,7 +232,7 @@ extension NBNetworking {
                 semaphore.signal()
             }
         }
-        
+
         if let task = makeTask(synthesizedRequest, configuration: config) {
             if loadImmediately {
                 task.resume()
@@ -241,14 +241,14 @@ extension NBNetworking {
                 return NBResult(data: nil, response: nil, error: taskNeverStarted, task: task)
             }
         }
-        
+
         if isSynchronous {
             let timeout = timeout.flatMap { DispatchTime.now() + $0 }
                 ?? DispatchTime.distantFuture
             _ = semaphore.wait(timeout: timeout)
             return requestResult
         }
-        
+
         return requestResult
     }
 }
@@ -281,7 +281,7 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
             requestConfigs[dataTask.taskIdentifier]?.data.append(data)
         }
     }
-    
+
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let config = requestConfigs[task.taskIdentifier], let handler = config.completionHandler {
             let result = NBResult(data: config.data, response: task.response, error: error, task: task)

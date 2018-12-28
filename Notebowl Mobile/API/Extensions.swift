@@ -22,7 +22,7 @@ public extension String {
         characterSet.addCharacters(in: "-_.!~*'()")
         return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
     }
-    
+
     var capitalised: String {
         var firstCharacter = self.first!
         firstCharacter = String(firstCharacter).uppercased().first!
@@ -30,7 +30,7 @@ public extension String {
         let rest = String(self.dropFirst())
         return first + rest
     }
-    
+
     var untilFirstCapital: String {
         let mutatingSelf = self
         let index = mutatingSelf.index(where: { $0.isUppercased }) ?? mutatingSelf.endIndex
@@ -65,7 +65,7 @@ public extension URL {
     public func appendingQueryParameters(_ parameters: [String: String]) -> URL {
         var urlComponents = URLComponents(url: self, resolvingAgainstBaseURL: true)!
         var items = urlComponents.queryItems ?? []
-        
+
         items += parameters.map({ URLQueryItem(name: $0, value: $1) })
         urlComponents.queryItems = items
         return urlComponents.url!
@@ -132,12 +132,12 @@ extension UserDefaults {
         private init() {}
         static let HasUserLoggedIn = "hasUserLoggedIn"
     }
-    
+
     class var hasUserLoggedIn: Bool {
         let userDefaults = UserDefaults.standard
         return userDefaults.bool(forKey: UserDefaults.Keys.HasUserLoggedIn)
     }
-    
+
     class func set(hasUserLoggedIn: Bool) {
         let userDefaults = UserDefaults.standard
         userDefaults.set(hasUserLoggedIn, forKey: UserDefaults.Keys.HasUserLoggedIn)
@@ -158,7 +158,7 @@ public extension UIDevice {
     var uuid: String {
         return identifierForVendor!.uuidString
     }
-    
+
     var deviceQuery: String {
         var params = "?uuid=\(identifierForVendor!)&name=\(name)&os=\(systemVersion)&type=\(model)&model=\(modelName)"
         params = params.encodeURIComponent()!
@@ -174,30 +174,30 @@ public extension UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         color.setFill()
         guard let context = UIGraphicsGetCurrentContext() else { return self }
-        
+
         context.translateBy(x: 0, y: size.height)
         context.scaleBy(x: 1.0, y: -1.0)
         context.setBlendMode(CGBlendMode.normal)
-        
+
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         guard let mask = self.cgImage else { return self }
         context.clip(to: rect, mask: mask)
         context.fill(rect)
-        
+
         let newImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return newImage
     }
-    
+
     public func createGradientImage(size: Int) -> UIImage {
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [#colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1).cgColor, #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1).cgColor]
-        
+
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
         let frame = CGRect(x: 0, y: 0, width: size, height: size)
         gradientLayer.frame = frame
-        
+
         UIGraphicsBeginImageContext(gradientLayer.frame.size)
         gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
         let outputImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -208,7 +208,7 @@ public extension UIImage {
     public var gradientColor: UIColor {
         return UIColor(patternImage: self)
     }
-    
+
     public var base64EncodedString: String? {
         return self.compressed(quality: 1.0)?.base64EncodedString
     }
@@ -217,7 +217,7 @@ public extension UIImage {
         guard let data = compressedData(quality: quality) else { return nil }
         return UIImage(data: data)
     }
- 
+
     public func compressedData(quality: CGFloat = 0.5) -> Data? {
         return self.jpegData(compressionQuality:quality)
     }
@@ -234,7 +234,7 @@ public extension UIImage {
 class DesignableView: UIView {
 }
 extension DesignableView {
-    
+
     @IBInspectable
     var cornerRadius: CGFloat {
         get {
@@ -244,7 +244,7 @@ extension DesignableView {
             layer.cornerRadius = abs(CGFloat(Int(newValue * 100)) / 100)
         }
     }
-    
+
     @IBInspectable
     var borderWidth: CGFloat {
         get {
@@ -254,7 +254,7 @@ extension DesignableView {
             layer.borderWidth = newValue
         }
     }
-    
+
     @IBInspectable
     var borderColor: UIColor? {
         get {
@@ -280,7 +280,7 @@ extension DesignableView {
             layer.shadowRadius = newValue
         }
     }
-    
+
     @IBInspectable
     var shadowOpacity: Float {
         get {
@@ -290,7 +290,7 @@ extension DesignableView {
             layer.shadowOpacity = newValue
         }
     }
-    
+
     @IBInspectable
     var shadowOffset: CGSize {
         get {
@@ -300,7 +300,7 @@ extension DesignableView {
             layer.shadowOffset = newValue
         }
     }
-    
+
     @IBInspectable
     var shadowColor: UIColor? {
         get {
@@ -410,7 +410,7 @@ extension DesignableView {
             self.layer.addSublayer(border)
         }
     }
-    
+
     func addRightBorderWithColor(color: UIColor, width: CGFloat) {
         DispatchQueue.main.async {
             let border = CALayer()
@@ -421,7 +421,7 @@ extension DesignableView {
             self.layer.addSublayer(border)
         }
     }
-    
+
     func addBottomBorderWithColor(color: UIColor, width: CGFloat) {
         DispatchQueue.main.async {
             let border = CALayer()
@@ -432,7 +432,7 @@ extension DesignableView {
             self.layer.addSublayer(border)
         }
     }
-    
+
     func addLeftBorderWithColor(color: UIColor, width: CGFloat) {
         DispatchQueue.main.async {
             let border = CALayer()
@@ -508,7 +508,7 @@ extension DesignableView {
 }
 
 @IBDesignable class FilledButton: UIButton {
-    
+
     @IBInspectable var cornerRadius: CGFloat = 5 {
         didSet {
             self.setNeedsLayout()
@@ -519,7 +519,7 @@ extension DesignableView {
             self.setNeedsLayout()
         }
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layoutIfNeeded()
@@ -533,20 +533,20 @@ extension DesignableView {
         super.init(frame: frame)
         self.setNeedsDisplay()
     }
-    
+
     override func layoutSubviews() {
         self.applyProperties()
     }
-    
+
     func applyProperties() {
         self.layer.cornerRadius = cornerRadius
         self.layer.masksToBounds = masksToBounds
-        
+
     }
 }
 
 @IBDesignable class ProfileImageView: UIImageView {
-    
+
     @IBInspectable var dashedBorder: Bool = false {
         didSet {
             self.setNeedsLayout()
@@ -572,13 +572,13 @@ extension DesignableView {
             self.setNeedsLayout()
         }
     }
-    
+
     @IBInspectable var colorShadow: UIColor = UIColor.darkGray {
         didSet {
             self.setNeedsLayout()
         }
     }
-    
+
     @IBInspectable var offsetShadow: CGSize = .zero {
         didSet {
             self.setNeedsLayout()
@@ -590,25 +590,25 @@ extension DesignableView {
             self.setNeedsLayout()
         }
     }
-    
+
     @IBInspectable var radiusShadow: CGFloat = 0.0 {
         didSet {
             self.setNeedsLayout()
         }
     }
-    
+
     @IBInspectable var pathShadow: CGPath? = nil {
         didSet {
             self.setNeedsLayout()
         }
     }
-    
+
     @IBInspectable var masksToBounds: Bool = true {
         didSet {
             self.setNeedsLayout()
         }
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layoutIfNeeded()
@@ -618,12 +618,12 @@ extension DesignableView {
         super.init(coder: aDecoder)!
         self.setNeedsDisplay()
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setNeedsDisplay()
     }
-    
+
     override func layoutSubviews() {
         self.applyProperties()
     }
@@ -632,7 +632,7 @@ extension DesignableView {
         let shapeLayer:CAShapeLayer = CAShapeLayer()
         let frameSize = self.frame.size
         let shapeRect = CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height)
-        
+
         shapeLayer.bounds = shapeRect
         shapeLayer.position = CGPoint(x: frameSize.width/2, y: frameSize.height/2)
         shapeLayer.fillColor = UIColor.clear.cgColor
@@ -644,109 +644,109 @@ extension DesignableView {
         }
         shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious).cgPath
         self.layer.cornerRadius = isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious
-        
+
         self.layer.shadowColor = colorShadow.cgColor
         self.layer.shadowOffset = offsetShadow
         self.layer.shadowOpacity = opacityShadow
         self.layer.shadowRadius = radiusShadow
         self.layer.shadowPath = pathShadow
-        
+
         self.layer.masksToBounds = masksToBounds
         self.layer.addSublayer(shapeLayer)
     }
 }
 
 @IBDesignable class DottedLine: UIView {
-    
+
     @IBInspectable
     public var lineColor: UIColor = UIColor.black
-    
+
     @IBInspectable
     public var lineWidth: CGFloat = CGFloat(4)
-    
+
     @IBInspectable
     public var round: Bool = false
-    
+
     @IBInspectable
     public var horizontal: Bool = true
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
         initBackgroundColor()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initBackgroundColor()
     }
-    
+
     override public func prepareForInterfaceBuilder() {
         initBackgroundColor()
     }
-    
+
     override public func draw(_ rect: CGRect) {
-        
+
         let path = UIBezierPath()
         path.lineWidth = lineWidth
-        
+
         if round {
             configureRoundPath(path: path, rect: rect)
         } else {
             configurePath(path: path, rect: rect)
         }
-        
+
         lineColor.setStroke()
-        
+
         path.stroke()
     }
-    
+
     func initBackgroundColor() {
         if backgroundColor == nil {
             backgroundColor = UIColor.clear
         }
     }
-    
+
     private func configurePath(path: UIBezierPath, rect: CGRect) {
         if horizontal {
             let center = rect.height * 0.5
             let drawWidth = rect.size.width - (rect.size.width.truncatingRemainder(dividingBy: (lineWidth * 2))) + lineWidth
             let startPositionX = (rect.size.width - drawWidth) * 0.5 + lineWidth
-            
+
             path.move(to: CGPoint(x: startPositionX, y: center))
             path.addLine(to: CGPoint(x: drawWidth, y: center))
-            
+
         } else {
             let center = rect.width * 0.5
             let drawHeight = rect.size.height - (rect.size.height.truncatingRemainder(dividingBy: (lineWidth * 2))) + lineWidth
             let startPositionY = (rect.size.height - drawHeight) * 0.5 + lineWidth
-            
+
             path.move(to: CGPoint(x: center, y: startPositionY))
             path.addLine(to: CGPoint(x: center, y: drawHeight))
         }
-        
+
         let dashes: [CGFloat] = [lineWidth, lineWidth]
         path.setLineDash(dashes, count: dashes.count, phase: 0)
         path.lineCapStyle = CGLineCap.butt
     }
-    
+
     private func configureRoundPath(path: UIBezierPath, rect: CGRect) {
         if horizontal {
             let center = rect.height * 0.5
             let drawWidth = rect.size.width - (rect.size.width.truncatingRemainder(dividingBy: (lineWidth * 2)))
             let startPositionX = (rect.size.width - drawWidth) * 0.5 + lineWidth
-            
+
             path.move(to: CGPoint(x: startPositionX, y: center))
             path.addLine(to: CGPoint(x: drawWidth, y: center))
-            
+
         } else {
             let center = rect.width * 0.5
             let drawHeight = rect.size.height - (rect.size.height.truncatingRemainder(dividingBy: (lineWidth * 2)))
             let startPositionY = (rect.size.height - drawHeight) * 0.5 + lineWidth
-            
+
             path.move(to: CGPoint(x: center, y: startPositionY))
             path.addLine(to: CGPoint(x: center, y: drawHeight))
         }
-        
+
         let dashes: [CGFloat] = [0, lineWidth * 2]
         path.setLineDash(dashes, count: dashes.count, phase: 0)
         path.lineCapStyle = CGLineCap.round
@@ -790,11 +790,11 @@ extension DesignableView {
 
 @IBDesignable
 class KerningLabel: UILabel {
-    
+
     @IBInspectable var kerning: CGFloat = 0.0 {
         didSet {
             if attributedText?.length == nil { return }
-            
+
             let attrStr = NSMutableAttributedString(attributedString: attributedText!)
             let range = NSMakeRange(0, attributedText!.length)
             attrStr.addAttributes([NSAttributedString.Key.kern: kerning], range: range)
@@ -834,10 +834,10 @@ extension Double {
 extension UIView {
     convenience init(loadingView: NBLoadingView) {
         self.init(frame: UIScreen.main.bounds)
-        
+
         self.backgroundColor = UIColor.groupTableViewBackground
         self.translatesAutoresizingMaskIntoConstraints = false
-        
+
         self.addSubview(loadingView)
         loadingView.addUntitled2Animation()
     }
@@ -879,7 +879,7 @@ public extension UITableView {
     public func scrollToTop(animated: Bool = true) {
         setContentOffset(CGPoint.zero, animated: animated)
     }
-    
+
     var reachedBottom: Bool {
         get {
             return self.contentOffset.y >= (self.contentSize.height - self.bounds.size.height)
@@ -895,35 +895,35 @@ public extension UITableView {
             contentOffset = offset
         }
     }
-    
+
     public func reload(tableView: UITableView) {
-        
+
         let contentOffset = tableView.contentOffset
         tableView.reloadData()
         tableView.layoutIfNeeded()
         tableView.setContentOffset(contentOffset, animated: false)
-        
+
     }
-    
+
     /// Set table header view & add Auto layout.
     func setTableHeaderView(headerView: UIView) {
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         // Set first.
         self.tableHeaderView = headerView
-        
+
         // Then setup AutoLayout.
         headerView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         headerView.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
         headerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
     }
-    
+
     /// Update header view's frame.
     func updateHeaderViewFrame() {
         guard let headerView = self.tableHeaderView else { return }
         // Update the size of the header based on its internal content.
         headerView.layoutIfNeeded()
-        
+
         // ***Trigger table view to know that header should be updated.
         let header = self.tableHeaderView
         self.tableHeaderView = header
@@ -1011,23 +1011,23 @@ extension UIColor {
         }()
         return String(format: "#%02X%02X%02X", components[0], components[1], components[2])
     }
-    
+
     convenience init(hexString: String) {
-        
+
         let hexString: String       = (hexString as NSString).trimmingCharacters(in: .whitespacesAndNewlines)
         let scanner                 = Scanner(string: hexString as String)
-        
+
         if hexString.hasPrefix("#") {
             scanner.scanLocation = 1
         }
         var color: UInt32 = 0
         scanner.scanHexInt32(&color)
-        
+
         let mask = 0x000000FF
         let r = Int(color >> 16) & mask
         let g = Int(color >> 8) & mask
         let b = Int(color) & mask
-        
+
         let red   = CGFloat(r) / 255.0
         let green = CGFloat(g) / 255.0
         let blue  = CGFloat(b) / 255.0
@@ -1052,7 +1052,7 @@ extension Dictionary {
     public func has(key: Key) -> Bool {
         return index(forKey: key) != nil
     }
-    
+
     /// SwifterSwift: Count dictionary entries that where function returns true.
     ///
     /// - Parameter where: condition to evaluate each tuple entry against.
@@ -1066,7 +1066,7 @@ extension Dictionary {
         }
         return count
     }
-    
+
     /// SwifterSwift: Merge the keys/values of two dictionaries.
     ///
     ///        let dict : [String : String] = ["key1" : "value1"]
@@ -1084,7 +1084,7 @@ extension Dictionary {
         rhs.forEach { result[$0] = $1 }
         return result
     }
-    
+
     /// SwifterSwift: Append the keys and values from the second dictionary into the first one.
     ///
     ///        var dict : [String : String] = ["key1" : "value1"]
@@ -1149,12 +1149,12 @@ extension PlaceholdersProvider {
         nbStyle.titleFont = UIFont.systemFont(ofSize: 19.0, weight: .bold)
         nbStyle.subtitleFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         nbStyle.actionTitleFont = UIFont.systemFont(ofSize: 15.0, weight: .bold)
-        
+
         let noResultsPlaceholder = Placeholder(data: from, style: nbStyle, key: .noResultsKey)
         let loadingPlaceholder = Placeholder(data: .loading, style: nbStyle, key: .loadingKey)
         let errorPlaceholder = Placeholder(data: .error, style: nbStyle, key: .errorKey)
         let noConnectionPlaceholder = Placeholder(data: .noConnection, style: nbStyle, key: .noConnectionKey)
-        
+
         return PlaceholdersProvider(loading: loadingPlaceholder, error: errorPlaceholder, noResults: noResultsPlaceholder, noConnection: noConnectionPlaceholder)
     }
 }
@@ -1189,7 +1189,7 @@ extension CellActionsVC {
         options.buttonSpacing = 11
         return options
     }
-    
+
     func cellActions(isPost: Bool, vc: UIViewController, tableView: UITableView, indexPath: IndexPath, orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
         let fromPostDetails = (vc is HomeFeedPostViewController)
@@ -1209,14 +1209,14 @@ extension CellActionsVC {
         edit.backgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1)
         edit.hidesWhenSelected = true
         edit.fulfill(with: .reset)
-        
+
         let delete = SwipeAction(style: .destructive, title: "Delete") { (action, indexPath) in
             self.delete(isPost: isPost, action: action, indexPath: indexPath, selectedCell: selectedCell, vc: vc)
         }
         delete.image = UIImage(named: "trash-vector")!.filled(withColor: .groupTableViewBackground).withRenderingMode(.alwaysOriginal)
         delete.textColor = .groupTableViewBackground
         delete.backgroundColor = #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
-        
+
         let report = SwipeAction(style: .default, title: "Report") { (action, indexPath) in
             self.report(isPost: isPost, action: action, indexPath: indexPath, selectedCell: selectedCell, vc: vc)
         }
@@ -1240,7 +1240,7 @@ extension CellActionsVC {
         pin.textColor = .groupTableViewBackground
         pin.backgroundColor = #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
         pin.hidesWhenSelected = true
-        
+
         if isPost {
             if ((selectedCell as! HomeFeedPostCell).postForCell.creator != nil) && ((selectedCell as! HomeFeedPostCell).postForCell.creator == NBClient.shared.getCurrentUser()) {
                 if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
@@ -1269,7 +1269,7 @@ extension CellActionsVC {
             }
         }
     }
-    
+
     func delete(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
         let objectToDelete: NBModel = (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)
         let confirmation = isPost ? UIAlertController(title: "Delete Post", message: "Are you sure you want to delete this post?", preferredStyle: .alert) : UIAlertController(title: "Delete Comment", message: "Are you sure you want to delete this comment?", preferredStyle: .alert)
@@ -1282,7 +1282,7 @@ extension CellActionsVC {
             else {
                 action.fulfill(with: .delete)
             }
-        
+
             HUD.show(.progress)
             NBClient.shared.delay(0.4) {
                 objectToDelete.deleteSelf()
@@ -1293,10 +1293,10 @@ extension CellActionsVC {
         confirmation.addAction(confirm)
         vc.present(confirmation, animated: true, completion: nil)
     }
-    
+
     func report(isPost: Bool, action: SwipeAction, indexPath: IndexPath, selectedCell: UITableViewCell, vc: UIViewController) {
         let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
-        
+
         let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
             let abuse = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
             _ = abuse.save()
@@ -1305,7 +1305,7 @@ extension CellActionsVC {
             PKHUD.sharedHUD.show()
             PKHUD.sharedHUD.hide(afterDelay: 2.0)
         })
-        
+
         let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
             let abuse = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
             _ = abuse.save()
@@ -1320,7 +1320,7 @@ extension CellActionsVC {
         alert.addAction(inappropriate)
         alert.addAction(spam)
         alert.addAction(cancel)
-        
+
         vc.present(alert, animated: true, completion: nil)
     }
 }
@@ -1329,20 +1329,20 @@ extension CellActionsVC {
 class ObjectTransform<T: NBModel>: TransformType {
     public typealias Object = T
     public typealias JSON = String
-    
+
     private let actionType: ActionType?
     private let updateDate: Date?
-    
+
     public init(action: ActionType = .unknown, update: Date? = nil) {
         self.actionType = action
         self.updateDate = update
     }
-    
+
     func transformFromJSON(_ value: Any?) -> T? {
         if value == nil { return nil }
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
-        
+
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
             if self.actionType == .elapsed {
                 log.debug("action: elapsed!")
@@ -1355,7 +1355,7 @@ class ObjectTransform<T: NBModel>: TransformType {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
                     log.debug("new object is more recent than existing object!")
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-                    
+
                     return mapReq?.first
                 }
                 return objectExists as? T
@@ -1366,7 +1366,7 @@ class ObjectTransform<T: NBModel>: TransformType {
         }
 
         else {
-            
+
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
             guard let returnObject = mapReq?.first else {
                 return nil
@@ -1375,16 +1375,16 @@ class ObjectTransform<T: NBModel>: TransformType {
             return returnObject
         }
     }
-    
+
     func transformToJSON(_ value: T?) -> String? {
         return nil
     }
 }
 
 class ISO8601FixedDateTransform: DateFormatterTransform {
-    
+
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")
-    
+
     public init() {
         super.init(dateFormatter: ISO8601FixedDateTransform.reusableISODateFormatter)
     }
@@ -1404,7 +1404,7 @@ struct Paths {
         insertIndexPaths = [IndexPath]()
         deleteIndexPaths = [IndexPath]()
         reloadIndexPaths = [IndexPath]() }
-    
+
     var shouldReload: Bool {
         if insertSections.isEmpty && deleteSections.isEmpty && reloadSections.isEmpty && insertIndexPaths.isEmpty && deleteIndexPaths.isEmpty && reloadIndexPaths.isEmpty { return false }
         else { return true }
@@ -1426,7 +1426,7 @@ enum AppConfiguration {
 
 struct Config {
     private static let isTestFlight = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
-    
+
     static var isDebug: Bool {
         #if DEBUG
         return true
@@ -1434,7 +1434,7 @@ struct Config {
         return false
         #endif
     }
-    
+
     static var appConfiguration: AppConfiguration {
         if isDebug {
             return .Debug

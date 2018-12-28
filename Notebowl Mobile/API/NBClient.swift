@@ -15,7 +15,7 @@ import SwipeCellKit
 import HTTPStatusCodes
 
 class NBClient {
-    
+
     static let shared: NBClient = {
         return NBClient()
     }()
@@ -42,14 +42,14 @@ class NBClient {
 
         return false
     }
-    
+
     func getCurrentUser() -> User {
         return currentUser
     }
     func setCurrentUser(user: User) {
         currentUser = user
     }
- 
+
     public func resetApp(andLogoutUser logout: Bool) {
         if NBSocket.shared.manager.status == .connected {
             NBSocket.shared.manager.disconnect()
@@ -64,7 +64,7 @@ class NBClient {
         let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
         rootViewController.dismiss(animated: true, completion: nil)
     }
-    
+
     public func doEnrollmentRequests() -> String {
         let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
         let nestedJson = (reqEnroll.json as AnyObject).value(forKeyPath: "result")
@@ -72,7 +72,7 @@ class NBClient {
         var coursesFilter: String = ""
         var groupsFilter: String = ""
         var combinedUrlsFilter: String = ""
-        
+
         guard let keyPaths = nestedJson as? [[String: Any]] else { return "" }
         for key in keyPaths {
             if let urlString = key["_parent"] as? String, let objectType = ItemType.fromURL(urlString) {
@@ -97,7 +97,7 @@ class NBClient {
         }
         return filterString
     }
-    
+
     public func reinitCache() {
         for objectType in NBClient.shared.storedTypes {
             var newArray = objectType.value
@@ -114,7 +114,7 @@ class NBClient {
         let req = NBClient.shared.getMappable(object, filters: "[\"resourceKey:IN:\(filterString)\"]")
         return req
     }
-    
+
     public func requireByReferences<T>(_ object: T.Type, property: String, values: [NBModel]) -> [T] where T: NBModel {
         var filterString: String = ""
         for value in values {
@@ -155,7 +155,7 @@ class NBClient {
         }
         return nil
     }
-    
+
     func storeObjectsInCache<T>(_ objects: [T]) -> [T] where T: NBModel {
         var newObjectArray: [T] = [T]()
 
@@ -203,7 +203,7 @@ class NBClient {
 
         return newObjectArray
     }
-    
+
     func sendBugsnagException(fromResult: NBResult) {
         var exception: NSException!
         if fromResult.statusCode == nil, let resultError = fromResult.error as NSError? {
@@ -215,7 +215,7 @@ class NBClient {
         }
         Bugsnag.notify(exception)
     }
-    
+
     func delay(_ delay: Double, closure:@escaping () -> Void) {
         DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: closure)

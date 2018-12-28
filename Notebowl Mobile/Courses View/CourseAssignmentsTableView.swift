@@ -19,7 +19,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     var gradientColors: [UIColor]!
     var gradientImage: UIImage!
     var stretchyHeaderView: AssignmentsHeaderView!
-    
+
     var loadingView: NBLoadingView!
     var bgView: UIView!
 
@@ -98,7 +98,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
             HUD.hide(animated: true)
         }
     }
-    
+
     func sortAssignments() {
         self.assignments.sort() {
             if let userRole = ($0 as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA, $0.status.sortValueProfessor != $1.status.sortValueProfessor {
@@ -129,7 +129,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.assignments != nil ? self.assignments.count : 0
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CourseDetailViewCell.dequeue(from: tableView)!
         let assignment = self.assignments[indexPath.row]
@@ -148,7 +148,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
 }
 
 extension CourseAssignmentsTableView {
-    
+
     func handleUpdated(newObject: NBModel) {
         if newObject is AssignmentAssessment {
             let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject} )
@@ -229,7 +229,7 @@ extension CourseAssignmentsTableView {
             reloadTable()
         }
     }
-    
+
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject is AssignmentAssessment {
             guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject} ) else { return }
@@ -260,7 +260,7 @@ extension CourseAssignmentsTableView {
             }
         }
     }
-    
+
     func handleElapsed(elapsedObject: NBModel) {}
 }
 

@@ -82,7 +82,7 @@ class CourseDetailViewCell: UITableViewCell {
             totalPointsNumber.text = ("/ \(assignment.points!)")
             }
         }
-        
+
         totalPointsText.text = "pts"
 
         assignmentCategory.backgroundColor = color

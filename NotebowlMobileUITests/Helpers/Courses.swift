@@ -16,12 +16,12 @@ func setupCourses(_ app: XCUIApplication, testCase: NBUITests) {
 class Courses: XCTestHelpers {
     static var app: XCUIApplication!
     static var currentTestCase: NBUITests!
-    
+
     class func setup(_ app: XCUIApplication, testCase: NBUITests) {
         Courses.app = app
         Courses.currentTestCase = testCase
     }
-    
+
     class func waitUntilCourseExists(atIndex index: Int) -> CourseObject {
         let course = CourseObject(index: index)
         waitForElementToExist(course.element)
@@ -32,7 +32,7 @@ class Courses: XCTestHelpers {
         waitForElementToExist(assignment.element)
         return assignment
     }
-    
+
     class func assertCourseTitles(titles: [String]) {
         for title in titles {
             XCTAssert(app.tables.cells.staticTexts[title].exists)
@@ -56,24 +56,24 @@ class CourseObject: NSObject {
     var app: XCUIApplication!
     var indexForCourse: Int!
     var element: XCUIElement { return XCUIApplication().tables.children(matching: .cell).element(boundBy: indexForCourse) }
-    
+
     var courseTitle: XCUIElement { return element.staticTexts["courseTitle"] }
     var courseNumber: XCUIElement { return element.staticTexts["courseNumber"] }
     var courseLastUpdated: XCUIElement { return element.staticTexts["courseLastUpdated"] }
-    
+
     required init(index: Int) {
         app = XCUIApplication()
         indexForCourse = index
     }
-    
+
     convenience override init() {
         self.init(index: 0)
     }
-    
+
     func navigateToDetailView() {
         courseTitle.tap()
     }
-    
+
     func assertSelf() {
         XCTAssertEqual(courseTitle.label, "Test Course")
         XCTestHelpers.assertCourseCount(count: 3)
@@ -84,7 +84,7 @@ class AssignmentObject: NSObject {
     var app: XCUIApplication!
     var indexForAssignment: Int!
     var element: XCUIElement { return XCUIApplication().tables.children(matching: .cell).element(boundBy: indexForAssignment) }
-    
+
     var assignmentName: XCUIElement { return element.staticTexts["assignmentName"] }
     var assignmentCategory: XCUIElement { return element.staticTexts["assignmentCategory"] }
     var statusText: XCUIElement { return element.staticTexts["statusText"] }
@@ -95,16 +95,16 @@ class AssignmentObject: NSObject {
 
     func assertCreatedGrade() { XCTestHelpers.waitForCondition(element: userGrade, predicate: NSPredicate(format: "label like %@", "60"), timeout: 5.0) }
     func assertUpdatedGrade() { XCTestHelpers.waitForCondition(element: userGrade, predicate: NSPredicate(format: "label like %@", "65"), timeout: 5.0) }
-    
+
     required init(index: Int) {
         app = XCUIApplication()
         indexForAssignment = index
     }
-    
+
     convenience override init() {
         self.init(index: 0)
     }
-    
+
     func assertSelf(title: String) {
         XCTAssertEqual(assignmentName.label, "\(title)")
         XCTestHelpers.assertCourseCount(count: 1)
@@ -113,7 +113,7 @@ class AssignmentObject: NSObject {
     func assertStatusChange(expected: String) {
         XCTAssertEqual(statusText.label, "\(expected)")
     }
-    
+
     func assertDeletedGrade() {
         XCTAssertFalse(userGrade.exists)
     }

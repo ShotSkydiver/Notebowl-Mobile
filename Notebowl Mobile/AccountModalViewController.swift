@@ -27,11 +27,11 @@ class AccountModalViewController: UIViewController {
         modalPresentationCapturesStatusBarAppearance = true
         self.setNeedsStatusBarAppearanceUpdate()
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     @IBAction func done(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
@@ -42,30 +42,30 @@ class AccountModalTableViewController: UITableViewController {
     var dismissWithUpdate: Bool = false
     var progress: Float = 0.0
     var selectedImage: UIImage!
-    
+
     var updatedUser: Any!
-    
+
     @IBOutlet weak var profilePicture: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var userEmail: UILabel!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         updateInfo()
         profilePicture.style = .sector
-        
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(changeProfilePic(_:)))
         tapGesture.numberOfTapsRequired = 1
         tapGesture.numberOfTouchesRequired = 1
         profilePicture.addGestureRecognizer(tapGesture)
-        
+
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
         self.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
     }
-    
+
     @IBAction func doneButtonTapped(_ sender: Any) {
-        
+
         if let keyPath = self.updatedUser as? [String: AnyObject], let fileID = keyPath["fileId"] as? String {
             let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
                                                       json: ["fileId": fileID])
@@ -76,11 +76,11 @@ class AccountModalTableViewController: UITableViewController {
         }
         self.dismiss(animated: true, completion: nil)
     }
-    
+
     @objc func changeProfilePic(_ sender: Any) {
         setupMenuForAlert()
     }
-    
+
     func updateInfo() {
         profilePicture.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [
@@ -90,17 +90,17 @@ class AccountModalTableViewController: UITableViewController {
             ]
         )
         profilePicture.contentMode = .scaleAspectFill
-        
+
         userName.text = NBClient.shared.getCurrentUser().fullName
         userEmail.text = NBClient.shared.getCurrentUser().email
     }
-    
+
     func startUpload(image: UIImage) {
         self.progress = 0.1
         self.selectedImage = image
         self.profilePicture.uploadImage(image: selectedImage, progress: progress)
     }
-    
+
     public func uploadingImage() {
         let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                                                  params: ["uuid": UIDevice().uuid],
@@ -117,10 +117,10 @@ class AccountModalTableViewController: UITableViewController {
                 self.profilePicture.uploadCompleted()
             })
         })
-        
+
         upload.task?.resume()
     }
-    
+
     func setupMenuForAlert() {
         var config = YPImagePickerConfiguration()
         config.library.numberOfItemsInRow = 3
@@ -150,7 +150,7 @@ class AccountModalTableViewController: UITableViewController {
                 }
             }
         })
-        
+
         if let popoverController = picker.popoverPresentationController {
             popoverController.sourceView = self.view
             popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
@@ -158,8 +158,8 @@ class AccountModalTableViewController: UITableViewController {
         }
         self.present(picker, animated: true, completion: nil)
     }
-    
-    
+
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else {
             return

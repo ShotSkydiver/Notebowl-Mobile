@@ -9,7 +9,7 @@
 import XCTest
 
 class PostDetailViewUITests: NBUITests {
-    
+
     override func setUp() {
         super.setUp()
         setupBulletin(app, testCase: self)
@@ -19,17 +19,17 @@ class PostDetailViewUITests: NBUITests {
     }
 
     override func tearDown() { super.tearDown() }
-    
+
     func testDeleteParentPost() {
         let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
         existingPost.deleteSelf()
     }
-    
+
     func testEditParentPostText() {
         let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
         existingPost.editText()
     }
-    
+
     func testEditParentPostAddAttachments() {
         let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
         existingPost.addAttachments(editingExisting: true)
@@ -37,12 +37,12 @@ class PostDetailViewUITests: NBUITests {
         let modifiedPost = Bulletin.waitUntilPostExists(atIndex: 0)
         modifiedPost.assertAttachmentsExist()
     }
-    
+
     func testLikeParentPost() {
         let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
         existingPost.likeSelf()
     }
-    
+
     func testUnlikeParentPost() {
         let existingPost = Bulletin.waitUntilPostExists(atIndex: 0)
         existingPost.likeSelf()

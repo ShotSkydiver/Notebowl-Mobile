@@ -25,12 +25,12 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var postButton: UIBarButtonItem!
     @IBOutlet weak var fakeNavBar: UINavigationBar!
     @IBOutlet weak var fakeNavTitle: UINavigationItem!
-    
+
     lazy var bar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
         return bar
     }()
-    
+
     lazy var attachmentManager: AttachmentManager = { [weak self] in
         let manager = AttachmentManager()
         manager.attachmentView.accessibilityIdentifier = "AttachmentsCollectionView"
@@ -41,7 +41,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         manager.attachmentView.register(UploadImageAttachmentCell.self, forCellWithReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier)
         return manager
     }()
-    
+
     var photoLibraryButton: InputBarButtonItem!
     var coursePickerButton: InputBarButtonItem!
     var anonymousButton: InputBarButtonItem!
@@ -52,7 +52,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     }
 
     var viewIsLoaded = false
-    
+
     var objectsForPicker: [NBModel]!
     var selectedIndex: Int = 0
     var pickerViewValues = [[String]]()
@@ -65,7 +65,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
     var editingExisting: Bool = false
     var existingObjectToEdit: PostsComments!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -76,15 +76,15 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         setupInputBar()
         viewIsLoaded = true
     }
-    
+
     func setupPickerValues() {
         let itemTitles = objectsForPicker.compactMap({($0 as! WithName).fullName})
         pickerViewValues = [itemTitles.map { $0 }]
     }
-    
+
     func setupViews() {
         fakeNavBar.shadowImage = UIImage.init()
-  
+
         userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                options: [
                                 .transition(ImageTransition.fade(0.3)),
@@ -110,12 +110,12 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             }
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         postTextView.becomeFirstResponder()
     }
-    
+
     func textViewDidChange(_ textView: UITextView) {
         if !textView.text.isEmpty || attachmentManager.attachments.count > 0 {
             postButton.isEnabled = true
@@ -124,7 +124,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             postButton.isEnabled = false
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
@@ -150,7 +150,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             config.colors.tintColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             config.colors.multipleItemsSelectedCircleColor = #colorLiteral(red: 0.2310000062, green: 0.6510000229, blue: 0.8859999776, alpha: 1)
             let picker = YPImagePicker(configuration: config)
-            
+
             picker.didFinishPicking { [unowned picker] items, cancelled in
                 if cancelled {
                     picker.dismiss(animated: true, completion: nil)
@@ -165,7 +165,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     })
                 }
             }
-            
+
             if let popoverController = picker.popoverPresentationController {
                 popoverController.sourceView = self.view
                 popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
@@ -180,16 +180,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         coursePickerButton.onSelected { courseButton in
             self.pickerAlert = UIAlertController(title: "Select a Course or Group", message: "Your post will be created in the course or group you select, and only users enrolled in that course/group will be able to see it.", preferredStyle: .actionSheet)
-            
+
             let demoSelectedValue: PickerViewViewController.Index = (column: 0, row: self.selectedIndex)
-            
+
             self.pickerAlert.addPickerView(values: self.pickerViewValues, initialSelection: demoSelectedValue) { vc, picker, index, values in
                 self.selectedIndex = index.row
                 self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
                 self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
             }
             self.pickerAlert.addAction(title: "Done", style: .cancel)
-            
+
             if let popoverController = self.pickerAlert.popoverPresentationController {
                 popoverController.sourceView = self.view
                 popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
@@ -197,7 +197,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             }
             self.present(self.pickerAlert, animated: true, completion: nil)
         }
-        
+
         anonymousButton = makeButton(image: "visibility_on-vector")
         anonymousButton.accessibilityIdentifier = "anonymousButton"
         anonymousButton.configure {
@@ -242,10 +242,10 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         }
         bar.isTranslucent = true
     }
-    
+
     func resetBar() {
         bar.inputPlugins = [self.attachmentManager]
-        
+
         let inputTextViewWidth = NSLayoutConstraint(item: bar.inputTextView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         bar.addConstraint(inputTextViewWidth)
         bar.setLeftStackViewWidthConstant(to: UIScreen.main.bounds.width, animated: false)
@@ -255,7 +255,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         bar.padding = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         bar.invalidateIntrinsicContentSize()
     }
-    
+
     func makeButton(image: String) -> InputBarButtonItem {
         return InputBarButtonItem()
             .configure {
@@ -264,16 +264,16 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 $0.setSize(CGSize(width: 30, height: 36), animated: viewIsLoaded)
         }
     }
-    
+
     @IBAction func postButtonAction(_ sender: Any) {
         self.postTextView.resignFirstResponder()
-        
+
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
             let postText = self.postTextView.text
             if self.editingExisting {
                 self.existingObjectToEdit.saveEditedObjectWithText(newText: postText!)
-                
+
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     for file in self.attachmentIDs {
                         if !file.contains("https://") {
@@ -305,12 +305,12 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     }
                 }
             }
-            
+
             HUD.flash(.success, delay: 0.5)
             self.dismiss(animated: true, completion: nil)
         }
     }
-    
+
     @IBAction func dismissButtonAction(_ sender: Any) {
         postTextView.resignFirstResponder()
         self.dismiss(animated: true, completion: nil)
@@ -318,11 +318,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 }
 
 extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
-    
+
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
-    
+
         if case .image(let image) = attachment {
             if self.editingExisting {
                 if indexPath.row < (self.existingObjectToEdit.attachments.count-self.attachmentsToDelete.count) {
@@ -331,7 +331,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     }
                     log.debug("this is an existing attachment!")
                     cell.accessibilityIdentifier = String(format: "ImageAttachmentCell-%d", indexPath.row)
-                    
+
                     cell.attachment = attachment
                     cell.indexPath = indexPath
                     cell.manager = manager
@@ -340,12 +340,12 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     return cell
                 }
             }
-            
+
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
             cell.accessibilityIdentifier = String(format: "UploadImageAttachmentCell-%d", indexPath.row)
-            
+
             cell.attachment = attachment
             cell.indexPath = indexPath
             cell.manager = manager
@@ -384,7 +384,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
     }
-    
+
     func setAttachmentManager(active: Bool) {
         log.debug("setAttachmentManager")
         let topStackView = bar.topStackView
@@ -392,7 +392,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             log.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
-            
+
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             log.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
@@ -413,7 +413,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if manager.attachments.count == 0 && self.postTextView.isEmpty { postButton.isEnabled = false }
-        
+
         if self.editingExisting {
             self.attachmentsToDelete.append(self.attachmentIDs[index])
         }
@@ -430,7 +430,7 @@ class UploadImageAttachmentCell: AttachmentCell {
     public var attachmentFileID: String!
     public var uploadStarted: Bool = false
     public var isExistingAttachment: Bool = false
-    
+
     public let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -441,7 +441,7 @@ class UploadImageAttachmentCell: AttachmentCell {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()

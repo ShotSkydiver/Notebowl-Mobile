@@ -19,11 +19,11 @@ import PKHUD
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
+
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
         guard proposedContentOffset.x > 0 else {
             return CGPoint(x: 0, y: 0)
@@ -35,13 +35,13 @@ class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
             return CGPoint(x: proposedContentOffset.x, y: 0)
         }
         let collectionFrame = CGRect(x: proposedContentOffset.x, y: 0, width: collectionView.bounds.width, height: collectionView.bounds.height)
-        
+
         guard let layoutAttributes: [UICollectionViewLayoutAttributes] = super.layoutAttributesForElements(in: collectionFrame) else {
             return CGPoint(x: proposedContentOffset.x, y: 0)
         }
         let collectionViewInsets: CGFloat = 10.0
         let proposedXCoordWithInsets = proposedContentOffset.x + collectionViewInsets
-        
+
         var offsetCorrection: CGFloat = .greatestFiniteMagnitude
         layoutAttributes.filter { layoutAttribute -> Bool in
             layoutAttribute.representedElementCategory == .cell
@@ -62,7 +62,7 @@ class IndexedCollectionView: UICollectionView {
 }
 
 class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
+
     @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var pinnedRibbon: UIImageView!
@@ -87,7 +87,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewUrl: UILabel!
     @IBOutlet weak var linkPreviewThumbnail: ProfileImageView!
-    
+
     var images = [UIImage]()
     var lightboxPhotos = [LightboxImage]()
     var postForCell: Post!
@@ -95,9 +95,9 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     var collectionViewPaginatedScroll: Bool?
     var isValidTouch: Bool = true
     weak var parentController: HomeFeedViewController?
-    
+
     weak var lightboxController: LightboxController?
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         collectionView.accessibilityIdentifier = "IndexedCollectionView"
@@ -105,16 +105,16 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         collectionView.dataSource = self
         initSetup()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         initSetup()
     }
-    
+
     func initSetup() {
         collectionView.register(UINib(nibName: "IndexedCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: IndexedCollectionViewCell.identifier)
         collectionViewPaginatedScroll = true
@@ -123,16 +123,16 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         linkPreviewHeight.constant = 0.0
 
         actionsStackView.setCustomSpacing(UIStackView.spacingUseSystem, after: commentButton)
-        
+
         postContentTextView.wrapToContent()
         moreButton.setImage(UIImage(named: "more-vector")!.filled(withColor: .lightGray).withRenderingMode(.alwaysOriginal), for: .normal)
-        
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nameDateTapped(_:)))
         tapGesture.numberOfTapsRequired = 1
         tapGesture.numberOfTouchesRequired = 1
         nameDateStackView.addGestureRecognizer(tapGesture)
         userAvatar.addGestureRecognizer(tapGesture)
-        
+
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
         LightboxConfig.loadImage = {
@@ -169,30 +169,30 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @objc func nameDateTapped(_ sender: Any) {
         log.debug("nameDate tapped!")
     }
-    
+
     func configure(post: Post) {
         likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControl.Event.touchUpInside)
-        
+
         likeButton.setSelected(selected: post.likedByCurrentUser, animated: false)
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
         postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.totalCommentsCount())"
-        
+
         if post.text == nil { postContentTextView.isHidden = true }
         else { postContentTextView.text = post.text! }
-        
+
         if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName }
         else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
- 
+
         if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") }
         else { (postedDate.text = post.createdAt.relativeFormat) }
-        
+
         designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
         designableView.borderColor = (post.pinned ? UIColor(hexString: "#dfdfdf") : UIColor(hexString: "#e7e7e7"))
         designableView.borderWidth = (post.pinned ? 1.0 : 0.5)
-        
+
         pinnedRibbon.isHidden = (post.pinned ? false : true)
         userAvatarConstraint.constant = (post.pinned ? 40.0 : 12.0)
-        
+
         if post.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")
@@ -213,7 +213,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                                     .keepCurrentImageWhileLoading
                                 ])
         }
-        
+
         if lightboxPhotos.isEmpty {
             for attachment in post.attachments {
                 let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
@@ -260,7 +260,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         }
         self.postForCell = post
     }
-    
+
     final override func layoutSubviews() {
         super.layoutSubviews()
         collectionFlowLayout.paginatedScroll = collectionViewPaginatedScroll
@@ -274,7 +274,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             UIApplication.shared.open(url)
         }
     }
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -282,7 +282,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @objc func likeActionTriggered(_ sender: FaveButton) {
         updateLike()
     }
-        
+
     func updateLike() {
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
@@ -300,15 +300,15 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             HUD.flash(.success, delay: 0.5)
         }
     }
-    
+
     @IBAction func moreButtonAction(_ sender: Any) {
         self.showSwipe(orientation: .right, animated: true, completion: nil)
     }
-    
-    
+
+
     final func setCollectionView(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate, indexPath: IndexPath) {
         collectionView.indexPath = indexPath
-        
+
         if collectionView.dataSource == nil {
             collectionView.dataSource = dataSource
         }
@@ -317,27 +317,27 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         }
         collectionView.reloadData()
     }
-    
+
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.postForCell.attachments.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IndexedCollectionViewCell.identifier, for: indexPath) as! IndexedCollectionViewCell
-        
+
         cell.isAccessibilityElement = true
         cell.accessibilityIdentifier = String(format: "IndexedCollectionViewCell-%d-%d", indexPath.section, indexPath.item)
         cell.accessibilityLabel = cell.accessibilityIdentifier
         cell.contentView.accessibilityIdentifier = String(format: "IndexedCollectionContentView-%d-%d", indexPath.section, indexPath.item)
         cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
-        
+
         cell.attachment.accessibilityIdentifier = "IndexedCollectionCellImageView"
         cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay"
         cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel"
-        
+
         let attachmentForCell = self.postForCell.attachments[indexPath.item]
 
         if attachmentForCell.mimeType == .image {
@@ -359,7 +359,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         }
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
         var newphotos = [LightboxImage]()
@@ -373,7 +373,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         lightbox.dismissalDelegate = self
         lightbox.imageTouchDelegate = self
         lightbox.dynamicBackground = true
-        
+
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             return
         }
@@ -387,11 +387,11 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             self.lightboxController = lightbox
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.item > 2 {
             return CGSize(width: 0, height: 90)
@@ -400,7 +400,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             return CGSize(width: 90, height: 90)
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 10
     }
@@ -423,7 +423,7 @@ extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDi
             homeVC.showingPhotoPicker = false
         }
     }
-    
+
     func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
         log.debug("lightbox didtouch")
     }

@@ -52,7 +52,7 @@ struct LowercasedDictionary<Key: Hashable, Value>: Collection, ExpressibleByDict
     public func index(after: Index) -> Index {
         return _data.index(after: after)
     }
-    
+
     public var count: Int {
         assert(_data.count == _keyMap.count, "internal keys out of sync")
         return _data.count
@@ -60,7 +60,7 @@ struct LowercasedDictionary<Key: Hashable, Value>: Collection, ExpressibleByDict
     public var isEmpty: Bool {
         return _data.isEmpty
     }
-    
+
     public init(dictionaryLiteral elements: (Key, Value)...) {
         for (key, value) in elements {
             _keyMap["\(key)".lowercased()] = key
@@ -76,7 +76,7 @@ struct LowercasedDictionary<Key: Hashable, Value>: Collection, ExpressibleByDict
     public subscript (position: Index) -> Element {
         return _data[position]
     }
-    
+
     public subscript (key: Key) -> Value? {
         get {
             if let realKey = _keyMap["\(key)".lowercased()] {
@@ -92,7 +92,7 @@ struct LowercasedDictionary<Key: Hashable, Value>: Collection, ExpressibleByDict
             _data[_keyMap[lowerKey]!] = newValue
         }
     }
-    
+
     public func makeIterator() -> DictionaryIterator<Key, Value> {
         return _data.makeIterator()
     }

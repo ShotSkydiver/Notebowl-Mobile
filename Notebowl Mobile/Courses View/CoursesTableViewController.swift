@@ -17,7 +17,7 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
     var indexes: Paths = Paths()
     var courses: [Course]!
     var placeholderTableView: CourseTableView?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         placeholderTableView = tableView as? CourseTableView
@@ -46,29 +46,29 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
         self.courses = (NBClient.shared.storedTypes.has(key: Course.classIdentifier) ? NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course] : [])
         placeholderTableView?.reloadData()
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (self.courses != nil) {
            return self.courses.count
         }
         return 0
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "courseCell", for: indexPath) as! CoursesTableViewCell
-        
+
         let courseForCell = self.courses[indexPath.row]
         cell.courseTitle.text = courseForCell.name
         cell.courseNumber.text = courseForCell.courseCode
         cell.lastUpdated.text = "Updated \(courseForCell.updatedAt.relativeFormat)"
         cell.showCell(true)
-        
+
         return cell
     }
     @IBAction func profileButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let senderCell = sender as? CoursesTableViewCell {
             let indexPath = tableView.indexPath(for: senderCell)
@@ -93,7 +93,7 @@ extension CoursesTableViewController {
             }
         }
     }
-    
+
     func handleDeleted(deletedObject: NBModel) {
         if let deleteCourse = deletedObject as? Enrollment {
             log.warning("deletecourse")
@@ -106,7 +106,7 @@ extension CoursesTableViewController {
             }
         }
     }
-    
+
     func handleElapsed(elapsedObject: NBModel) {}
     func reloadTableViews() {}
 }

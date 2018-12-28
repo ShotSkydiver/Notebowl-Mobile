@@ -17,22 +17,22 @@ class NotificationSettingCell: UITableViewCell {
     @IBOutlet weak var settingName: KerningLabel!
     @IBOutlet weak var settingSubtitle: KerningLabel!
     @IBOutlet weak var settingSwitch: UISwitch!
-    
+
     var settingForCell: SettingsDefault!
     var currentValue: Bool! = nil
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-    
+
     func configure(setting: SettingsDefault) {
         settingSwitch.addTarget(self, action: #selector(switchActionTriggered(_:)), for: UIControl.Event.valueChanged)
         settingName.text = setting.name
@@ -40,11 +40,11 @@ class NotificationSettingCell: UITableViewCell {
         settingSwitch.setOn((setting.userSetting != nil ? setting.userSetting!.value : setting.defaultValue), animated: false)
         self.settingForCell = setting
     }
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
+
     func changeSetting() {
         HUD.show(.progress)
         NBClient.shared.delay(1.0) {
@@ -64,7 +64,7 @@ class NotificationSettingCell: UITableViewCell {
             HUD.flash(.success, delay: 0.5)
         }
     }
-    
+
     @IBAction func switchActionTriggered(_ sender: UISwitch) {
         changeSetting()
     }
@@ -75,11 +75,11 @@ extension NotificationSettingCell {
     static var reuseId: String {
         return "settingCell"
     }
-    
+
     class func register(in tableView: UITableView) {
         tableView.register(UINib(nibName: "NotificationSettingCell", bundle: nil), forCellReuseIdentifier: self.reuseId)
     }
-    
+
     class func dequeue(from tableView: UITableView) -> NotificationSettingCell? {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseId)
         return cell as? NotificationSettingCell

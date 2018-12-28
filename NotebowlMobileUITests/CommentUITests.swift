@@ -9,7 +9,7 @@
 import XCTest
 
 class CommentUITests: NBUITests {
-    
+
     override func setUp() {
         super.setUp()
         setupBulletin(app, testCase: self)

@@ -17,30 +17,30 @@ class SettingsTableViewController: UITableViewController {
 
     var loadingView: NBLoadingView!
     var bgView: UIView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         SettingsTableViewHeader.register(in: tableView)
         NotificationSettingCell.register(in: tableView)
-        
+
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80.0
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
-        
+
         self.loadingView = NBLoadingView()
         self.bgView = UIView(loadingView: self.loadingView)
         self.view.addSubview(bgView)
-        
+
         self.getTableData()
     }
-    
+
     func getTableData() {
         loadingView.alpha = 1.0
         bgView.alpha = 1.0
         DispatchQueue.main.async {
             self.settings = (NBClient.shared.storedTypes.has(key: Setting.classIdentifier) ? NBClient.shared.storedTypes[Setting.classIdentifier]! as! [Setting] : [])
-            
+
             let result = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "users/getSettingsList"))
 
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
@@ -51,18 +51,18 @@ class SettingsTableViewController: UITableViewController {
             self.bgView.alpha = 0.0
         }
     }
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return ( self.settingsArray != nil ? self.settingsArray.count : 4 )
     }
-    
+
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = SettingsTableViewHeader.dequeue(from: tableView)!
         header.setupHeader(showButton: false)
         header.sectionTitle.text = ( self.settingsArray != nil ? self.settingsArray[section]!.sectionName.uppercased() : "" )
         return header
     }
-    
+
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
     }
@@ -70,13 +70,13 @@ class SettingsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return ( self.settingsArray != nil ? self.settingsArray[section]!.sectionMobileSettings.count : 0 )
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = NotificationSettingCell.dequeue(from: tableView)!
         if self.restorationIdentifier == "mobileSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionMobileSettings[indexPath.row]) }
         else if self.restorationIdentifier == "emailSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionEmailSettings[indexPath.row]) }
         else if self.restorationIdentifier == "webSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionWebSettings[indexPath.row]) }
-        
+
         return cell
     }
 }

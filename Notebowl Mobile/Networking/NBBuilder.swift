@@ -28,7 +28,7 @@ extension NBNetworking {
         }
         return components
     }
-    
+
     func query(_ parameters: [String: Any]) -> String {
         var components: [(String, String)] = []
         for key in Array(parameters.keys).sorted(by: <) {
@@ -37,7 +37,7 @@ extension NBNetworking {
         }
         return (components.map{"\($0)=\($1)"} as [String]).joined(separator: "&")
     }
-    
+
     func percentEncodeString(_ originalObject: Any) -> String {
         if originalObject is NSNull {
             return "null"
@@ -48,7 +48,7 @@ extension NBNetworking {
                 .addingPercentEncoding(withAllowedCharacters: reserved) ?? ""
         }
     }
-    
+
     func synthesizeMultipartBody(_ data: [String: Any], files: [String: File]) -> Data? {
         var body = Data()
         let boundary = "--\(self.sessionDefaults.multipartBoundary)\r\n"
@@ -102,7 +102,7 @@ extension NBNetworking {
         }
         return body
     }
-    
+
     func addCookies(_ URL: Foundation.URL, newCookies: [String: String]) {
         for (k, v) in newCookies {
             if let cookie = HTTPCookie(properties: [
@@ -116,5 +116,5 @@ extension NBNetworking {
             }
         }
     }
-    
+
 }

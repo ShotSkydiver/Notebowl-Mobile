@@ -17,7 +17,7 @@ class NBUITests: XCTestCase {
     var courseTab: XCUIElement { return app.tabBars.buttons["Courses"] }
     var notificationTab: XCUIElement { return app.tabBars.buttons["Notifications"] }
     var badgeValue: String { return notificationTab.value as! String }
-    
+
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
@@ -25,7 +25,7 @@ class NBUITests: XCTestCase {
         doUserLogin()
         waitForLoadingViewToDisappear()
     }
-    
+
     override func tearDown() { super.tearDown() }
 
 
