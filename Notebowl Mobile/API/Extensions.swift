@@ -219,7 +219,7 @@ public extension UIImage {
     }
 
     public func compressedData(quality: CGFloat = 0.5) -> Data? {
-        return self.jpegData(compressionQuality:quality)
+        return self.jpegData(compressionQuality: quality)
     }
 
     public func cropped(to rect: CGRect) -> UIImage {
@@ -318,10 +318,10 @@ extension DesignableView {
     }
 }
 
-private var bottomLineColorAssociatedKey : UIColor = .black
-private var topLineColorAssociatedKey : UIColor = .black
-private var rightLineColorAssociatedKey : UIColor = .black
-private var leftLineColorAssociatedKey : UIColor = .black
+private var bottomLineColorAssociatedKey: UIColor = .black
+private var topLineColorAssociatedKey: UIColor = .black
+private var rightLineColorAssociatedKey: UIColor = .black
+private var leftLineColorAssociatedKey: UIColor = .black
 extension DesignableView {
     @IBInspectable var bottomLineColor: UIColor {
         get {
@@ -405,7 +405,7 @@ extension DesignableView {
             border.name = "topBorderLayer"
             self.removePreviouslyAddedLayer(name: border.name ?? "")
             border.backgroundColor = color.cgColor
-            border.frame = CGRect(x: 0, y : 0,width: self.frame.size.width, height: width)
+            border.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: width)
             self.layer.addSublayer(border)
         }
     }
@@ -416,7 +416,7 @@ extension DesignableView {
             border.name = "rightBorderLayer"
             self.removePreviouslyAddedLayer(name: border.name ?? "")
             border.backgroundColor = color.cgColor
-            border.frame = CGRect(x: self.frame.size.width - width, y: 0, width : width, height :self.frame.size.height)
+            border.frame = CGRect(x: self.frame.size.width - width, y: 0, width: width, height: self.frame.size.height)
             self.layer.addSublayer(border)
         }
     }
@@ -427,7 +427,7 @@ extension DesignableView {
             border.name = "bottomBorderLayer"
             self.removePreviouslyAddedLayer(name: border.name ?? "")
             border.backgroundColor = color.cgColor
-            border.frame = CGRect(x: 0, y: self.frame.size.height - width,width : self.frame.size.width,height: width)
+            border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
             self.layer.addSublayer(border)
         }
     }
@@ -438,11 +438,11 @@ extension DesignableView {
             border.name = "leftBorderLayer"
             self.removePreviouslyAddedLayer(name: border.name ?? "")
             border.backgroundColor = color.cgColor
-            border.frame = CGRect(x:0, y:0,width : width, height : self.frame.size.height)
+            border.frame = CGRect(x: 0, y: 0, width: width, height: self.frame.size.height)
             self.layer.addSublayer(border)
         }
     }
-    func removePreviouslyAddedLayer(name : String) {
+    func removePreviouslyAddedLayer(name: String) {
         if self.layer.sublayers?.count ?? 0 > 0 {
             self.layer.sublayers?.forEach {
                 if $0.name == name {
@@ -628,7 +628,7 @@ extension DesignableView {
     }
     func applyProperties()
     {
-        let shapeLayer:CAShapeLayer = CAShapeLayer()
+        let shapeLayer: CAShapeLayer = CAShapeLayer()
         let frameSize = self.frame.size
         let shapeRect = CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height)
 
@@ -639,7 +639,7 @@ extension DesignableView {
         shapeLayer.lineWidth = borderWidthImg
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         if dashedBorder{
-            shapeLayer.lineDashPattern = [6,3]
+            shapeLayer.lineDashPattern = [6, 3]
         }
         shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious).cgPath
         self.layer.cornerRadius = isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious
@@ -824,7 +824,7 @@ extension FloatingPoint {
 }
 
 extension Double {
-    func rounded(toPlaces places:Int) -> Double {
+    func rounded(toPlaces places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return (self * divisor).rounded() / divisor
     }
@@ -1030,7 +1030,7 @@ extension UIColor {
         let red   = CGFloat(r) / 255.0
         let green = CGFloat(g) / 255.0
         let blue  = CGFloat(b) / 255.0
-        self.init(red:red, green:green, blue:blue, alpha:1)
+        self.init(red: red, green: green, blue: blue, alpha: 1)
     }
 
     var isDarkColor: Bool {
@@ -1143,7 +1143,7 @@ extension PlaceholdersProvider {
         nbStyle.titleColor = .darkText
         nbStyle.subtitleColor = .gray
         nbStyle.actionTitleColor = UIColor.init(hexString: "#fafafa")
-        nbStyle.actionBackgroundColor = UIColor(red:0.18, green:0.49, blue:0.82, alpha:1.0)
+        nbStyle.actionBackgroundColor = UIColor(red: 0.18, green: 0.49, blue: 0.82, alpha: 1.0)
         nbStyle.isAnimated = true
         nbStyle.titleFont = UIFont.systemFont(ofSize: 19.0, weight: .bold)
         nbStyle.subtitleFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)

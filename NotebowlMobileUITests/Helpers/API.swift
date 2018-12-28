@@ -107,19 +107,19 @@ class API {
 
     static func createCourse(currentUserAsTA: Bool = false) {
         let uniUrl = getFirst("universities")
-        let payload: Any = ["name":"Test Course","subject":"SOCK","number":"101","units":3,"usesWeightedGrades":false,"published":true,"_university":"\(uniUrl)"]
+        let payload: Any = ["name": "Test Course", "subject": "SOCK", "number": "101", "units": 3, "usesWeightedGrades": false, "published": true, "_university": "\(uniUrl)"]
         let courseUrl = createNew("courses", payload: payload, user: "admin@notebowl.com")
 
         let profUserUrl = getFirst("credentials", user: "bob.smith@notebowl.com")
-        let profEnrollPayload: Any = ["role":"Professor","status":"Accepted","_user":"\(profUserUrl)","_parent":"\(courseUrl)"]
+        let profEnrollPayload: Any = ["role": "Professor", "status": "Accepted", "_user": "\(profUserUrl)", "_parent": "\(courseUrl)"]
         _ = createNew("enrollments", payload: profEnrollPayload, user: "admin@notebowl.com")
 
         let userUrl = getFirst("credentials")
         if currentUserAsTA {
-            let enrollPayload: Any = ["role":"TA","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
+            let enrollPayload: Any = ["role": "TA", "status": "Accepted", "_user": "\(userUrl)", "_parent": "\(courseUrl)"]
             _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
         } else if !currentUserAsTA {
-            let enrollPayload: Any = ["role":"Student","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
+            let enrollPayload: Any = ["role": "Student", "status": "Accepted", "_user": "\(userUrl)", "_parent": "\(courseUrl)"]
             _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
         }
     }
@@ -132,34 +132,34 @@ class API {
     static func createBasicAssignment() {
         let courseUrl = getFirst("courses", mostRecent: true)
         let catUrl = getFirst("categories", mostRecent: true)
-        let payload: Any = ["title":"Test Assignment","points":60,"gradeOnly":false,"description":"\(Lorem.sentences(2))","submissionScheme":"No Submission","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        let payload: Any = ["title": "Test Assignment", "points": 60, "gradeOnly": false, "description": "\(Lorem.sentences(2))", "submissionScheme": "No Submission", "lateSubmissionPermitted": false, "availableDate": "2018-07-13T07:04:23+0000", "dueDate": "2018-12-13T07:04:23+0000", "_category": "\(catUrl)", "_parent": "\(courseUrl)"]
         _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
     }
 
     static func createFileSubmissionAssignment() {
         let courseUrl = getFirst("courses", mostRecent: true)
         let catUrl = getFirst("categories", mostRecent: true)
-        let payload: Any = ["title":"File Submission Assignment","points":80,"gradeOnly":false,"description":"\(Lorem.sentences(2))","submissionScheme":"File Submission","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        let payload: Any = ["title": "File Submission Assignment", "points": 80, "gradeOnly": false, "description": "\(Lorem.sentences(2))", "submissionScheme": "File Submission", "lateSubmissionPermitted": false, "availableDate": "2018-07-13T07:04:23+0000", "dueDate": "2018-12-13T07:04:23+0000", "_category": "\(catUrl)", "_parent": "\(courseUrl)"]
         _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
     }
 
     static func createDiscussionBoardAssignment(minComments: Int = 0, minPosts: Int = 0, wordCount: Int = 0, wordCountRequired: String = "Recommended") {
         let courseUrl = getFirst("courses", mostRecent: true)
         let catUrl = getFirst("categories", mostRecent: true)
-        let payload: Any = ["title":"Discussion Board Assignment","type":"Individual","points":50,"gradeOnly":false,"gradeScheme":"Percentage","description":"\(Lorem.sentences(2))","submissionScheme":"Discussion Board","minNumComments":minComments,"minNumPosts":minPosts,"wordCountComments":wordCount,"wordCountPosts":wordCount,"commentsRequired":"\(wordCountRequired)","postsRequired":"\(wordCountRequired)","lateSubmissionPermitted":false,"availableDate":"2018-07-13T07:04:23+0000","dueDate":"2018-12-13T07:04:23+0000","_category":"\(catUrl)","_parent":"\(courseUrl)"]
+        let payload: Any = ["title": "Discussion Board Assignment", "type": "Individual", "points": 50, "gradeOnly": false, "gradeScheme": "Percentage", "description": "\(Lorem.sentences(2))", "submissionScheme": "Discussion Board", "minNumComments": minComments, "minNumPosts": minPosts, "wordCountComments": wordCount, "wordCountPosts": wordCount, "commentsRequired": "\(wordCountRequired)", "postsRequired": "\(wordCountRequired)", "lateSubmissionPermitted": false, "availableDate": "2018-07-13T07:04:23+0000", "dueDate": "2018-12-13T07:04:23+0000", "_category": "\(catUrl)", "_parent": "\(courseUrl)"]
         _ = createNew("assignments", payload: payload, user: "bob.smith@notebowl.com")
     }
 
     static func createGrade() {
         let assignUrl = getFirst("assignments")
         let studentUserUrl = getFirst("credentials", user: "alexs@notebowl.com")
-        let payload: Any = ["grade":60,"_parent":"\(assignUrl)","_owner":"\(assignUrl)","_related":"\(studentUserUrl)"]
+        let payload: Any = ["grade": 60, "_parent": "\(assignUrl)", "_owner": "\(assignUrl)", "_related": "\(studentUserUrl)"]
         _ = createNew("grades", payload: payload, user: "bob.smith@notebowl.com")
     }
 
     static func updateGrade() {
         let gradeUrl = getFirst("grades")
-        let payload: Any = ["grade":65]
+        let payload: Any = ["grade": 65]
         updateExisting(gradeUrl, payload: payload)
     }
 
@@ -186,7 +186,7 @@ extension URL {
         self = appendingQueryParameters(parameters)
     }
     public func appendToken(user: String) -> URL {
-        let params = ["token":user]
+        let params = ["token": user]
         return self.appendingQueryParameters(params)
     }
 }

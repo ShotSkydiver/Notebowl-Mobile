@@ -25,7 +25,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
 
-    var cellHeights: [IndexPath : CGFloat] = [:]
+    var cellHeights: [IndexPath: CGFloat] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +74,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     func afterFullyLoaded() {
         UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.sound,.alert,.badge]) { (granted, error) in
+        center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
             if granted {
                 log.debug("Notification Enabled Successfully")
             } else if error != nil {
@@ -141,7 +141,7 @@ extension HomeFeedViewController {
 
         if let newPost = newObject as? Post {
             handleUpdatedPost(newPost: newPost)
-        } else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
+        } else if ["Comment", "Like", "AttachmentS3", "AttachmentExternal"].contains(newObject.itemType.className) {
             handleUpdatedPostChild(newObject: newObject)
         } else if let newEnrollment = newObject as? Enrollment {
             handleUpdatedEnrollment(newEnrollment: newEnrollment)
@@ -155,7 +155,7 @@ extension HomeFeedViewController {
 
         if let deletePost = deletedObject as? Post {
             handleDeletedPost(deletedPost: deletePost)
-        } else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
+        } else if ["Comment", "Like", "AttachmentS3", "AttachmentExternal"].contains(deletedObject.itemType.className) {
             handleDeletedPostChild(deletedObject: deletedObject)
         } else if let deleteEnrollment = deletedObject as? Enrollment {
             handleDeletedEnrollment(deletedEnrollment: deleteEnrollment)

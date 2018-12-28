@@ -12,7 +12,7 @@ import SocketIO
 import ObjectMapper
 import Bugsnag
 
-struct SendData : SocketData {
+struct SendData: SocketData {
     let itemType: ItemType
     let updateUrl: String
     let action: String
@@ -24,9 +24,9 @@ class NBSocket {
         return NBSocket()
     }()
     #if DEBUG
-    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true),.secure(true),.selfSigned(true),.forceNew(true),.sessionDelegate(NBNetworking.shared)])
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true), .secure(true), .selfSigned(true), .forceNew(true), .sessionDelegate(NBNetworking.shared)])
     #else
-    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false),.secure(true),.selfSigned(true),.forceNew(true)])
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false), .secure(true), .selfSigned(true), .forceNew(true)])
     #endif
 
     private init() { }
@@ -48,7 +48,7 @@ class NBSocket {
         manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, emitter) in
             guard let message = data[0] as? String else { return }
             guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-            let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+            let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
 
             if let updateUrl = JSON["updateUrl"] as? String, let itemType = ItemType.fromURL(updateUrl), let action = JSON["action"] as? String, let updatedAt = JSON["updatedAt"] as? String {
                 let newResponse = SendData(itemType: itemType, updateUrl: updateUrl, action: action, updatedAt: updatedAt)
@@ -58,7 +58,7 @@ class NBSocket {
     }
 
     func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) -> NBModel? {
-        let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrl)", "action":"\(action)", "updatedAt":"\(updatedAt)"])
+        let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrl)", "action": "\(action)", "updatedAt": "\(updatedAt)"])
         guard let object = mapped!.genericObject else { return nil }
 
         if object is Enrollment {

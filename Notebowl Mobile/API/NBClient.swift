@@ -201,10 +201,10 @@ class NBClient {
     func sendBugsnagException(fromResult: NBResult) {
         var exception: NSException!
         if fromResult.statusCode == nil, let resultError = fromResult.error as NSError? {
-            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \(resultError.localizedDescription), url: \(resultError.domain)", userInfo: resultError.userInfo )
+            exception = NSException(name: NSExceptionName(rawValue: "URLResponseError"), reason: "Error statusCode is nil: \(resultError.localizedDescription), url: \(resultError.domain)", userInfo: resultError.userInfo )
         } else if let statusCode: HTTPStatusCode = fromResult.statusCode, let resultUrl: URL = fromResult.url {
             log.debug("getmappable error: \(statusCode) - \(resultUrl.absoluteString)")
-            exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(statusCode): \(statusCode.localizedReasonPhrase), url: \(resultUrl.absoluteString)", userInfo:nil)
+            exception = NSException(name: NSExceptionName(rawValue: "URLResponseError"), reason: "Error \(statusCode): \(statusCode.localizedReasonPhrase), url: \(resultUrl.absoluteString)", userInfo: nil)
         }
         Bugsnag.notify(exception)
     }

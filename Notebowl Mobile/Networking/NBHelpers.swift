@@ -20,7 +20,7 @@ extension RequestKind {
         return ("https://\(baseUrl)\(self.rawValue)\(url)")
     }
 }
-public let errorStatusCodes = [401,403,404,412]
+public let errorStatusCodes = [401, 403, 404, 412]
 
 enum File {
     case url(URL, String?)

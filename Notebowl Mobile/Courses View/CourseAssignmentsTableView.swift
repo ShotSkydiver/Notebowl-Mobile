@@ -29,7 +29,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         self.title = selectedCourse.courseCode
 
         gradientColors = selectedCourse.hexValuesFromGradientHeader()
-        gradientImage = TMGradientNavigationBar().generateGradientImage(direction: .horizontal, startColor: gradientColors[0], endColor:  gradientColors[1], startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7), height: 500.0)
+        gradientImage = TMGradientNavigationBar().generateGradientImage(direction: .horizontal, startColor: gradientColors[0], endColor: gradientColors[1], startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7), height: 500.0)
 
         stretchyHeaderView = AssignmentsHeaderView(frame: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width, height: 160))
         stretchyHeaderView.label.text = selectedCourse.name

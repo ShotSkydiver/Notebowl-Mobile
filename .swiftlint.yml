@@ -29,7 +29,8 @@
 #    - vertical_whitespace_closing_braces
 #    - vertical_whitespace_opening_braces
 whitelist_rules:
-    #- colon
+     - colon
+     - comma
     #- closure_parameter_position
      - vertical_whitespace
      - statement_position

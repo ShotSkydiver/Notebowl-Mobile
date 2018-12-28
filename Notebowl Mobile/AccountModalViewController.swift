@@ -15,7 +15,7 @@ import MMUploadImage
 import YPImagePicker
 
 protocol ContainerToMaster {
-    func startUpload(image:UIImage)
+    func startUpload(image: UIImage)
     func uploadingImage()
 }
 
@@ -104,7 +104,7 @@ class AccountModalTableViewController: UITableViewController {
     public func uploadingImage() {
         let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                                                  params: ["uuid": UIDevice().uuid],
-                                                 files: ["files[]":.data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
+                                                 files: ["files[]": .data("profile.jpg", self.selectedImage.compressedData()!, "image/jpeg")],
                                                  loadImmediately: false,
                                                  asyncProgressHandler: { p in
                                                     DispatchQueue.main.async(execute: {

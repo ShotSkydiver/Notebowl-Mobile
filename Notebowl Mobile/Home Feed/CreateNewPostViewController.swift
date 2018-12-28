@@ -231,9 +231,9 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
         bar.separatorLine.backgroundColor = UIColor.groupTableViewBackground
 
         if editingExisting {
-            bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace], forStack: .left, animated: viewIsLoaded)
+            bar.setStackViewItems([photoLibraryButton, InputBarButtonItem.flexibleSpace], forStack: .left, animated: viewIsLoaded)
         } else {
-            bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
+            bar.setStackViewItems([photoLibraryButton, coursePickerButton, InputBarButtonItem.flexibleSpace, anonymousButton, pinnedButton], forStack: .left, animated: viewIsLoaded)
         }
         bar.isTranslucent = true
     }
@@ -349,7 +349,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                         params: ["uuid": UIDevice().uuid],
-                        files: ["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
+                        files: ["files[]": .data("attachment.jpg", image.compressedData()!, "image/jpeg")],
                         loadImmediately: false,
                         asyncProgressHandler: { p in
                             DispatchQueue.main.async(execute: {

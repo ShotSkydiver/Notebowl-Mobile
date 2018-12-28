@@ -243,11 +243,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 $0.inputBarAccessoryView?.didSelectSendButton()
         }
 
-        inputBar.setStackViewItems([photoLibraryButton,InputBarButtonItem.fixedSpace(4)], forStack: .left, animated: false)
+        inputBar.setStackViewItems([photoLibraryButton, InputBarButtonItem.fixedSpace(4)], forStack: .left, animated: false)
         inputBar.setLeftStackViewWidthConstant(to: 0, animated: false)
 
         inputBar.setRightStackViewWidthConstant(to: 98, animated: false)
-        inputBar.setStackViewItems([anonymousButton,InputBarButtonItem.fixedSpace(4),inputBar.sendButton], forStack: .right, animated: false)
+        inputBar.setStackViewItems([anonymousButton, InputBarButtonItem.fixedSpace(4), inputBar.sendButton], forStack: .right, animated: false)
 
         inputBar.middleContentViewPadding.right = -42
         inputBar.topStackViewPadding = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -432,7 +432,7 @@ extension HomeFeedPostViewController {
             handleUpdatedPost(newPost: newPost)
         } else if let newComment = newObject as? Comment {
             handleUpdatedComment(newComment: newComment)
-        } else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
+        } else if ["Like", "AttachmentS3", "AttachmentExternal"].contains(newObject.itemType.className) {
             handleUpdatedAttachLike(newObject: newObject)
         }
     }
@@ -446,7 +446,7 @@ extension HomeFeedPostViewController {
             handleDeletedPost(deletePost: deletePost)
         } else if let deleteComment = deletedObject as? Comment {
             handleDeletedComment(deleteComment: deleteComment)
-        } else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
+        } else if ["Like", "AttachmentS3", "AttachmentExternal"].contains(deletedObject.itemType.className) {
             handleDeletedAttachLike(deleteObject: deletedObject)
         }
     }
@@ -614,7 +614,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                 cell.uploadStarted = true
                 let upload = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/files/upload"),
                                                          params: ["uuid": UIDevice().uuid],
-                                                         files: ["files[]":.data("attachment.jpg", image.compressedData()!, "image/jpeg")],
+                                                         files: ["files[]": .data("attachment.jpg", image.compressedData()!, "image/jpeg")],
                                                          loadImmediately: false,
                                                          asyncProgressHandler: { p in
                                                             DispatchQueue.main.async(execute: {

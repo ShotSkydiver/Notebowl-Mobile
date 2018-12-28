@@ -68,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupLibraries() {
         Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
 
-        if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
+        if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug", "Question", "Looks good!"]) }
 
         ImageDownloader.default.trustedHosts = Set(trustedHosts)
     }
@@ -85,7 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         log.debug(error.localizedDescription)
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         return true
     }
 
@@ -147,10 +147,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     var objectsToUpdate: [NBModel] = []
                     for enrollment in possibleNewEnrollments {
                         guard let contentData = enrollment.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-                        let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+                        let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
                         guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
 
-                        let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
+                        let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrlString)", "action": "\((JSON["action"] as! String))", "updatedAt": "\((JSON["updatedAt"] as! String))"])
                         guard let object = mapped!.genericObject else { return }
                         objectsToUpdate.append(object)
                     }
@@ -168,11 +168,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 for result in keyPaths {
                     guard let contentData = result.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-                    let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String : AnyObject]
+                    let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
                     guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
-                    let mapped = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(updateUrlString)", "action":"\((JSON["action"] as! String))", "updatedAt":"\((JSON["updatedAt"] as! String))"])
+                    let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrlString)", "action": "\((JSON["action"] as! String))", "updatedAt": "\((JSON["updatedAt"] as! String))"])
                     guard let object = mapped!.genericObject else { return }
-                    if ["Enrollment","CourseUser","GroupUser"].contains(object.itemType.className) {
+                    if ["Enrollment", "CourseUser", "GroupUser"].contains(object.itemType.className) {
                         if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
                             continue
                         }

@@ -304,7 +304,7 @@ extension NBNetworking: URLSessionTaskDelegate, URLSessionDataDelegate {
                         if let file = file_der {
                             if let cert2 = NSData(contentsOfFile: file) {
                                 if cert1.isEqual(to: cert2 as Data) {
-                                    completionHandler(URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust:serverTrust))
+                                    completionHandler(URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust: serverTrust))
                                     return
                                 }
                             }

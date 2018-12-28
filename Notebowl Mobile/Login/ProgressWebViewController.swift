@@ -32,7 +32,7 @@ open class ProgressWebViewController: UIViewController {
         "hosts": ["itunes.apple.com"],
         "schemes": ["tel", "mailto", "sms"],
         "_blank": true
-        ] as [String : Any]
+        ] as [String: Any]
 
     open var cookies: [HTTPCookie]? {
         didSet {
@@ -176,7 +176,7 @@ open class ProgressWebViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath {
         case estimatedProgressKeyPath?:
             guard let estimatedProgress = webView?.estimatedProgress else {

@@ -116,7 +116,7 @@ public enum ItemType: String {
         if endpoint == "users" { return ItemType(rawValue: "credentials") }
 
         guard let item = ItemType(rawValue: endpoint) else {
-            let exception = NSException(name:NSExceptionName(rawValue: "ItemTypeNilException"), reason:"Object type \(endpoint) has not been implemented yet!", userInfo: nil )
+            let exception = NSException(name: NSExceptionName(rawValue: "ItemTypeNilException"), reason: "Object type \(endpoint) has not been implemented yet!", userInfo: nil )
             Bugsnag.notify(exception)
             return nil
         }
@@ -306,7 +306,7 @@ class Generic: StaticMappable {
                 return Response<Group>()
             case "Event":
                 return Response<Event>()
-            case "CourseUser","GroupUser":
+            case "CourseUser", "GroupUser":
                 return Response<Enrollment>()
             case "Post":
                 return Response<Post>()
@@ -397,7 +397,7 @@ public class NBModel: Mappable {
         if deleteReq.statusCode!.rawValue == 410, let itemType = ItemType.fromURL(self.url.absoluteString) {
             _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
         } else {
-            if let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result") as? [String : AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
+            if let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
                 _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
             }
         }
@@ -445,11 +445,11 @@ public class NBModel: Mappable {
         }
 
         if result.statusCode!.rawValue == 422 {
-            let exception = NSException(name:NSExceptionName(rawValue: "URLRequestException"), reason:"Status code 422: \(result.error.debugDescription) ", userInfo: nil )
+            let exception = NSException(name: NSExceptionName(rawValue: "URLRequestException"), reason: "Status code 422: \(result.error.debugDescription) ", userInfo: nil )
             Bugsnag.notify(exception)
             return nil
         }
-        if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String : AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
+        if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
             let finalObject = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
             return finalObject
         }
@@ -474,16 +474,16 @@ public class NBModel: Mappable {
 
         if shouldMapParent {
             if let parentString = map.JSON["_parent"] as? String, let itemType = ItemType.fromURL(parentString) {
-                let parentMap = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(parentString)"])
+                let parentMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(parentString)"])
                 parent = parentMap?.genericObject
             }
         }
         if let ownerString = (map.JSON["_owner"] as? String), let itemType = ItemType.fromURL(ownerString) {
-            let ownerMap = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(ownerString)"])
+            let ownerMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(ownerString)"])
             owner = ownerMap?.genericObject
         }
         if let relatedString = (map.JSON["_related"] as? String), let itemType = ItemType.fromURL(relatedString) {
-            let relatedMap = Mapper<Generic>().map(JSON: ["itemType":"\(itemType)", "updateUrl":"\(relatedString)"])
+            let relatedMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(relatedString)"])
             related = relatedMap?.genericObject
         }
     }
@@ -1994,7 +1994,7 @@ class SettingDefaults: Mappable {
         settingsEmail <- map["notifications"]
         settingsWeb <- map["notifications"]
 
-        for (key,value) in settingsMobile {
+        for (key, value) in settingsMobile {
             self.settingsArray[settingsPositions.index(of: key)!] = SettingsGroup(sectionName: key, sectionMobileSettings: value, sectionEmailSettings: settingsEmail[key], sectionWebSettings: settingsWeb[key])
         }
     }
