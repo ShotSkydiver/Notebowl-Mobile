@@ -79,11 +79,81 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         setupInputBar()
 
         tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 0, right: 0)
-        refreshAllComments()
-
         self.postCommentToReplyTo = self.displayedPost
 
+        setupObservers()
         viewIsLoaded = true
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPost(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingComment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
+    }
+
+    @objc func finishUpdatingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newPost = dict["object"] as? Post else {
+            return
+        }
+        if !isDisplayedPost(object: newPost) {
+            return
+        }
+
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+    }
+
+    @objc func finishUpdatingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+        if !isDisplayedPost(object: newComment) {
+            return
+        }
+
+        guard let index = self.getIndexOfComment(comment: newComment) else {
+            return
+        }
+
+        var isExistingComment = tableView.numberOfSections > self.displayedPost.comments.count
+        if newComment.isCommentReply {
+            isExistingComment = tableView.numberOfRows(inSection: index.section) >= self.displayedPost.comments[index.section - 1].comments.count + 1
+        }
+
+        tableView.beginUpdates()
+
+        if isExistingComment {
+            tableView.reloadRows(at: [index], with: .automatic)
+        } else {
+            if !newComment.isCommentReply {
+                tableView.insertSections(IndexSet(integer: index.section), with: .automatic)
+            }
+            tableView.insertRows(at: [index], with: .automatic)
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        }
+
+        tableView.endUpdates()
+        tableView.scrollToRow(at: index, at: .none, animated: true)
+    }
+
+    @objc func finishUpdatingLikesAttachments(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+        if !isDisplayedPost(object: newObject) {
+            return
+        }
+
+        if newObject.parent is Post {
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            return
+        }
+
+        guard let commentIndex = self.getIndexOfComment(comment: newObject.parent as! Comment) else {
+            return
+        }
+
+        tableView.reloadRows(at: [commentIndex], with: .automatic)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -93,10 +163,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
-    }
-
-    func refreshAllComments() {
-        for comment in self.displayedPost.comments { comment.refresh() }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -126,7 +192,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             self.navigationController?.popViewController(animated: true)
         } else if objectToDelete is Comment {
             if (objectToDelete as! Comment).isCommentReply {
-                let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment), refresh: false)
+                let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment))
                 self.displayedPost.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
             } else {
                 self.displayedPost.comments.removeAll(objectToDelete as! Comment)
@@ -342,16 +408,18 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         }
     }
 
-    func getIndexOfComment(comment: Comment, refresh: Bool = true) -> IndexPath! {
-        let section = comment.isCommentReply ? self.displayedPost.comments.index(of: comment.parent! as! Comment) : self.displayedPost.comments.index(of: comment)
-        if section == nil { return nil }
-        let row = comment.isCommentReply ? self.displayedPost.comments[section!].comments.index(of: comment) : 0
-        if row == nil { return nil }
-        return comment.isCommentReply ? IndexPath(row: row!+1, section: section!+1) : IndexPath(row: row!, section: section!+1)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    func getIndexOfComment(comment: Comment) -> IndexPath! {
+        if comment.isCommentReply {
+            guard let section = displayedPost.comments.index(of: comment.parent as! Comment), let row = displayedPost.comments[section].comments.index(of: comment) else {
+                return nil
+            }
+            return IndexPath(row: row + 1, section: section + 1)
+        } else {
+            guard let section = self.displayedPost.comments.index(of: comment) else {
+                return nil
+            }
+            return IndexPath(row: 0, section: section + 1)
+        }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -421,18 +489,6 @@ extension HomeFeedPostViewController {
         if let newUser = newObject as? User {
             handleUpdatedUser(newUser: newUser)
         }
-
-        if !isDisplayedPost(object: newObject) {
-            return
-        }
-
-        if let newPost = newObject as? Post {
-            handleUpdatedPost(newPost: newPost)
-        } else if let newComment = newObject as? Comment {
-            handleUpdatedComment(newComment: newComment)
-        } else if ["Like", "AttachmentS3", "AttachmentExternal"].contains(newObject.itemType.className) {
-            handleUpdatedAttachLike(newObject: newObject)
-        }
     }
 
     func handleDeleted(deletedObject: NBModel) {
@@ -450,51 +506,6 @@ extension HomeFeedPostViewController {
     }
 
     func handleElapsed(elapsedObject: NBModel) {}
-
-    func handleUpdatedPost(newPost: Post) {
-        self.displayedPost = (newPost as PostsComments)
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-    }
-
-    func handleUpdatedComment(newComment: Comment) {
-        let indexOfComment = self.getIndexOfComment(comment: newComment)
-
-        if newComment.parent is Comment {
-            let existingComment = tableView.numberOfRows(inSection: indexOfComment!.section) >= getCommentAtIndexPath(indexPath: indexOfComment!).comments.count+1
-
-            tableView.beginUpdates()
-            if existingComment {
-                tableView.reloadRows(at: [indexOfComment!], with: .fade)
-            } else {
-                tableView.insertRows(at: [indexOfComment!], with: .automatic)
-            }
-            tableView.endUpdates()
-        } else if newComment.parent is Post {
-            let existingComment = (tableView.numberOfSections+1 > self.displayedPost.comments.count+1)
-
-            tableView.beginUpdates()
-            if existingComment {
-                tableView.reloadRows(at: [indexOfComment!], with: .fade)
-            } else {
-                tableView.insertSections(IndexSet(integer: indexOfComment!.section), with: .automatic)
-                tableView.insertRows(at: [indexOfComment!], with: .automatic)
-            }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-            tableView.endUpdates()
-        }
-
-        tableView.scrollToRow(at: indexOfComment!, at: .none, animated: true)
-    }
-
-    func handleUpdatedAttachLike(newObject: NBModel) {
-        if newObject.parent is Comment {
-            let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
-
-            tableView.reloadRows(at: [indexOfComment!], with: .fade)
-        } else if newObject.parent is Post {
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-        }
-    }
 
     func handleUpdatedUser(newUser: User) {
         if newUser != NBClient.shared.getCurrentUser() {
@@ -521,7 +532,7 @@ extension HomeFeedPostViewController {
     }
 
     func handleDeletedComment(deleteComment: Comment) {
-        guard let indexOfComment = self.getIndexOfComment(comment: deleteComment, refresh: false) else {
+        guard let indexOfComment = self.getIndexOfComment(comment: deleteComment) else {
             return
         }
 
