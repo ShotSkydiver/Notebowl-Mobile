@@ -45,6 +45,69 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         bulletinTableView.separatorColor = bulletinTableView.backgroundColor
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7))
         self.navigationController?.view.backgroundColor = UIColor.white
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPost(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingComment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostChild(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostChild(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
+    }
+
+    @objc func finishUpdatingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newPost = dict["object"] as? Post else {
+            return
+        }
+
+        if !shouldHandleResponse(object: newPost) {
+            return
+        }
+
+        if !self.posts.contains(newPost) {
+            self.posts.insert(newPost, at: self.posts.startIndex)
+        }
+
+        let index = self.posts.index(of: newPost)
+        
+        if bulletinTableView.numberOfRows(inSection: 0) >= self.posts.count {
+            bulletinTableView.reloadRows(at: [IndexPath(row: index!, section: 0)], with: .fade)
+        } else {
+            bulletinTableView.insertRows(at: [IndexPath(row: index!, section: 0)], with: .left)
+        }
+    }
+
+    @objc func finishUpdatingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if !shouldHandleResponse(object: newComment) {
+            return
+        }
+
+        guard let postIndex = self.posts.index(of: newComment.getParentByType(Post.self)) else {
+            return
+        }
+
+        bulletinTableView.reloadRows(at: [IndexPath(row: postIndex, section: 0)], with: .fade)
+    }
+
+    @objc func finishUpdatingPostChild(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !shouldHandleResponse(object: newObject) {
+            return
+        }
+
+        guard newObject.parent is Post, let postIndex = self.posts.index(of: newObject.parent as! Post) else {
+            return
+        }
+
+        bulletinTableView.reloadRows(at: [IndexPath(row: postIndex, section: 0)], with: .fade)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -138,11 +201,7 @@ extension HomeFeedViewController {
             return
         }
 
-        if let newPost = newObject as? Post {
-            handleUpdatedPost(newPost: newPost)
-        } else if ["Comment", "Like", "AttachmentS3", "AttachmentExternal"].contains(newObject.itemType.className) {
-            handleUpdatedPostChild(newObject: newObject)
-        } else if let newEnrollment = newObject as? Enrollment {
+        if let newEnrollment = newObject as? Enrollment {
             handleUpdatedEnrollment(newEnrollment: newEnrollment)
         }
     }
@@ -159,32 +218,6 @@ extension HomeFeedViewController {
         } else if let deleteEnrollment = deletedObject as? Enrollment {
             handleDeletedEnrollment(deletedEnrollment: deleteEnrollment)
         }
-    }
-
-    func handleUpdatedPost(newPost: Post) {
-        guard let indexOfPost = self.posts.index(of: newPost) else {
-            return
-        }
-
-        let existingPost = bulletinTableView.numberOfRows(inSection: 0) >= self.posts.count
-
-        if self.bulletinTableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell {
-            self.bulletinTableView.showDefault()
-            return
-        }
-
-        if existingPost {
-            self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
-        } else {
-            self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .left)
-        }
-    }
-
-    func handleUpdatedPostChild(newObject: NBModel) {
-        guard let indexOfPost = self.posts.index(of: newObject.getParentByType(Post.self)) else {
-            return
-        }
-        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
     }
 
     func handleUpdatedUser(newUser: User) {
