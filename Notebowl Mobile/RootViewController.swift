@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import Bugsnag
 import SocketIO
-import Siren
 
 class RootViewController: UIViewController {
     var shouldLoad: Bool = true
@@ -18,7 +17,6 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
-        Siren.shared.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -28,7 +26,6 @@ class RootViewController: UIViewController {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }
         else if UserDefaults.hasUserLoggedIn {
-            Siren.shared.checkVersion(checkType: .immediately)
             loadLoggedIn()
         }
     }
@@ -75,15 +72,5 @@ extension RootViewController: ProgressWebViewControllerDelegate {
             UserDefaults.set(hasUserLoggedIn: true)
             controller.dismiss(animated: true, completion: nil)
         }
-    }
-}
-
-extension RootViewController: SirenDelegate {
-    func sirenDidDetectNewVersionWithoutAlert(title: String, message: String, updateType: UpdateType) {
-        loadLoggedIn()
-    }
-
-    func sirenLatestVersionInstalled() {
-        loadLoggedIn()
     }
 }

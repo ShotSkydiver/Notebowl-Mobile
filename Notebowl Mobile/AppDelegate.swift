@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupLog()
         setupUserDefaults()
         setupLibraries()
+        setupSiren()
 
         return true
     }
@@ -53,16 +54,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func setupLibraries() {
+    func setupSiren() {
         let siren = Siren.shared
         if Config.appConfiguration == .Debug { siren.debugEnabled = true }
-        siren.alertType = .force
-        siren.majorUpdateAlertType = .force
-        siren.minorUpdateAlertType = .force
-        siren.patchUpdateAlertType = .none
-        siren.revisionUpdateAlertType = .none
-        siren.forceLanguageLocalization = .english
+        siren.rulesManager = RulesManager(majorUpdateRules: .critical, minorUpdateRules: .annoying, patchUpdateRules: .default, revisionUpdateRules: .relaxed)
+        siren.wail { (results, error) in
+            if let error = error {
+                Bugsnag.notifyError(error)
+            }
+        }
+    }
 
+    func setupLibraries() {
         Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
 
         if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug","Question","Looks good!"]) }
@@ -105,8 +108,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        Siren.shared.checkVersion(checkType: .immediately)
-
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return }
         if NBSocket.shared.manager.status == .disconnected {
             NBSocket.shared.manager.connect()

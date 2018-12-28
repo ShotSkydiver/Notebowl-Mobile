@@ -21,11 +21,11 @@ PODS:
   - PKHUD (5.2.0)
   - PryntTrimmerView (3.0.0)
   - SimulatorStatusMagic (2.3.2)
-  - Siren (3.9.1)
+  - Siren (4.0.0)
   - Socket.IO-Client-Swift (13.4.0):
     - Starscream (~> 3.0.6)
   - Starscream (3.0.6)
-  - SteviaLayout (4.4.0)
+  - SteviaLayout (4.4.1)
   - SwiftDate (5.0.13)
   - SwiftLint (0.29.2)
   - SwiftyBeaver (1.6.1)
@@ -166,10 +166,10 @@ SPEC CHECKSUMS:
   PKHUD: dd5357ac65f26115c35c4a68e9b328053326c5fe
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
   SimulatorStatusMagic: 0c0e711acef6e70dd8a0710962347635a9cdef24
-  Siren: 22b68056e52c5b6707bcbfac09d2d16874ee098a
+  Siren: 277d198933672c55aaa7f52fea5768144f2afaf5
   Socket.IO-Client-Swift: 08f3f835e1c5385efb83af74aa961a7bb0556261
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
-  SteviaLayout: dd74d1abd127bbf0ce346ac9430441684fe427d0
+  SteviaLayout: 582d54f1f17afa5f87e7cce2ca1dd939f7e278f6
   SwiftDate: f4aea5fa9dee812485f34041121a4cbde01b0dee
   SwiftLint: 47df60bdea6e7e902b193b6596db8683aafd86a3
   SwiftyBeaver: ccfcdf85a04d429f1633f668650b0ce8020bda3a
