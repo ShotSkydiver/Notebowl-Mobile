@@ -19,7 +19,6 @@ class CommentUITests: NBUITests {
     }
     override func tearDown() { super.tearDown() }
 
-
     func testCreateComment() {
         Bulletin.startCreatingNewComment()
         Bulletin.finishCreatingAndSubmit()

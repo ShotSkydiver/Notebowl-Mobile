@@ -171,7 +171,6 @@ extension HomeFeedViewController {
         }
     }
 
-
     func handleUpdatedPost(newPost: Post) {
         guard let indexOfPost = self.posts.index(of: newPost) else {
             return
@@ -265,7 +264,6 @@ extension HomeFeedViewController {
         }
     }
 
-
     func handleDeletedPost(deletedPost: Post) {
         guard let indexOfPost = self.posts.index(of: deletedPost) else {
             return
@@ -334,7 +332,6 @@ extension HomeFeedViewController {
 
     func handleElapsed(elapsedObject: NBModel) { }
 }
-
 
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 

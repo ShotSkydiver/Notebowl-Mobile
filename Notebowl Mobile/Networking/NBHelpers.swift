@@ -22,7 +22,6 @@ extension RequestKind {
 }
 public let errorStatusCodes = [401,403,404,412]
 
-
 enum File {
     case url(URL, String?)
     case data(String, Foundation.Data, String?)
@@ -103,8 +102,6 @@ struct LowercasedDictionary<Key: Hashable, Value>: Collection, ExpressibleByDict
         return _data.values
     }
 }
-
-
 
 extension URLResponse {
     var Headers: [String: String] {

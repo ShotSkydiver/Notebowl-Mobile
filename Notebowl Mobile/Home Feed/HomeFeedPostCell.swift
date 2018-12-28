@@ -305,7 +305,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         self.showSwipe(orientation: .right, animated: true, completion: nil)
     }
 
-
     final func setCollectionView(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate, indexPath: IndexPath) {
         collectionView.indexPath = indexPath
 
@@ -408,7 +407,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         return 5
     }
 }
-
 
 extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
     func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {

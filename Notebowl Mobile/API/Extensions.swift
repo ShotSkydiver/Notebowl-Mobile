@@ -229,7 +229,6 @@ public extension UIImage {
     }
 }
 
-
 @IBDesignable
 class DesignableView: UIView {
 }
@@ -1324,7 +1323,6 @@ extension CellActionsVC {
         vc.present(alert, animated: true, completion: nil)
     }
 }
-
 
 class ObjectTransform<T: NBModel>: TransformType {
     public typealias Object = T

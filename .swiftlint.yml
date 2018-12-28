@@ -29,7 +29,10 @@
 #    - vertical_whitespace_closing_braces
 #    - vertical_whitespace_opening_braces
 whitelist_rules:
-    - trailing_whitespace
+    #- colon
+    - vertical_whitespace
+    #- closure_parameter_position
+    #- statement_position
 included:
     - "Notebowl Mobile"
     - "NotebowlMobileUITests"

@@ -133,7 +133,6 @@ class API {
         deleteExisting(enrollUrl)
     }
 
-
     static func createBasicAssignment() {
         let courseUrl = getFirst("courses", mostRecent: true)
         let catUrl = getFirst("categories", mostRecent: true)
@@ -178,7 +177,6 @@ class API {
         deleteExisting(assignUrl)
     }
 }
-
 
 extension URL {
     public func appendingQueryParameters(_ parameters: [String: String]) -> URL {

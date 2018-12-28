@@ -300,7 +300,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         }
     }
 
-
     final func setCollectionView(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate, indexPath: IndexPath) {
         collectionView.indexPath = indexPath
 
@@ -312,7 +311,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         }
         collectionView.reloadData()
     }
-
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -377,7 +375,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         }
     }
 
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
     }
@@ -417,7 +414,6 @@ extension HomeFeedCommentCell: LightboxControllerPageDelegate, LightboxControlle
     func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
         log.debug("lightbox didtouch")
     }
-
 
 }
 

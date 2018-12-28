@@ -57,7 +57,6 @@ class SnapshotUITests: NBUITests {
     }
 }
 
-
 extension XCUIElement {
     func scrollToElement(element: XCUIElement) {
         while !element.visible() {

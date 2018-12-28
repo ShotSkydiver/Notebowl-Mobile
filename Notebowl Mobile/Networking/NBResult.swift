@@ -19,7 +19,6 @@ final class NBResult: NSObject {
     var encoding = String.Encoding.utf8
     var JSONReadingOptions = JSONSerialization.ReadingOptions(rawValue: 0)
 
-
     init(data: Data?, response: URLResponse?, error: Error?, task: URLSessionTask?) {
         self.content = data
         self.response = response
@@ -32,11 +31,9 @@ final class NBResult: NSObject {
 
     override var description: String { return ("\(request!.httpMethod!) \(request!.url!.absoluteString) \(statusCode!.description)") }
 
-
     var json: Any? { return content.flatMap { try? JSONSerialization.jsonObject(with: $0, options: JSONReadingOptions) }}
     var text: String? { return content.flatMap { String(data: $0, encoding: encoding) } }
     var url: URL? { return response?.url }
-
 
     lazy var headers: LowercasedDictionary<String, String> = {
         return LowercasedDictionary<String, String>(

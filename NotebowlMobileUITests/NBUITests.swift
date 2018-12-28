@@ -28,7 +28,6 @@ class NBUITests: XCTestCase {
 
     override func tearDown() { super.tearDown() }
 
-
     func doUserLogin() {
         checkForExistence(app.otherElements["main"], timeout: 10.0)
         app.otherElements["main"].textFields["Email"].tap()

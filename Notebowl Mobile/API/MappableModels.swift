@@ -12,7 +12,6 @@ import Bugsnag
 import URLPatterns
 import DeckTransition
 
-
 enum DeepLink {
     case home, bulletin, courses, notifications, groups, clubs, settings
     case bulletinPost(post: String)
@@ -83,7 +82,6 @@ struct DeepLinker {
         return false
     }
 }
-
 
 public enum ItemType: String {
     case user = "credentials"
@@ -165,7 +163,6 @@ extension ItemType {
         }
     }
 }
-
 
 public enum ActionType: String {
     case updated = "updated"
@@ -265,7 +262,6 @@ public struct DefaultValues {
     var DEFAULT_GRADING_PRECISION = 1
 }
 
-
 class Generic: StaticMappable {
     var action: ActionType = .unknown
     var itemType: String!
@@ -346,7 +342,6 @@ class Generic: StaticMappable {
     }
 }
 
-
 class Response<T>: Generic where T: NBModel {
     var responseObject: T!
 
@@ -360,9 +355,6 @@ class Response<T>: Generic where T: NBModel {
         genericObject = responseObject
     }
 }
-
-
-
 
 public class NBModel: Mappable {
     var createdAt: Date!
@@ -415,7 +407,6 @@ public class NBModel: Mappable {
 
     public var firstTimeLoading: Bool!
     public var shouldMapParent: Bool!
-
 
     public var enrollmentForUser: Enrollment! {
         if let enroll = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { $0.parent == self && ($0 as! Enrollment).user == NBClient.shared.getCurrentUser()}) as? Enrollment {
@@ -1182,7 +1173,6 @@ class AssessmentResponse: NBModel {
     }
 }
 
-
 public class Category: NBModel {
     var title: String!
     var weight: Int!
@@ -1271,7 +1261,6 @@ public class Enrollment: NBModel {
     }
 }
 
-
 class Group: NBModel, WithName {
 
     var availableDate: Date!
@@ -1356,7 +1345,6 @@ class Event: NBModel {
     }
 
 }
-
 
 public class Post: NBModel, PostsComments {
     public var text: String!
@@ -1903,7 +1891,6 @@ class Notification: NBModel {
 
 }
 
-
 class Abuse: NBModel {
     var reason: String!
 
@@ -2049,5 +2036,4 @@ class SettingDefaults: Mappable {
         }
     }
 }
-
 

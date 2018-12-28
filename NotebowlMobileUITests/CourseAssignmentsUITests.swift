@@ -21,7 +21,6 @@ class CourseAssignmentsUITests: NBUITests {
     }
     override func tearDown() { super.tearDown() }
 
-
     func testCreateNewAssignment() {
         API.createBasicAssignment()
         let newAssignment = Courses.waitUntilAssignmentExists(atIndex: 0)

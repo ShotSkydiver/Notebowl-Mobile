@@ -59,7 +59,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         return userStackView
     }()
 
-
     override var canBecomeFirstResponder: Bool { return true }
     override var inputAccessoryView: UIView? { return inputBar }
 
@@ -210,7 +209,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             .onKeyboardEditingEnds { item in
                 item.inputBarAccessoryView?.setLeftStackViewWidthConstant(to: 0, animated: true)
         }
-
 
         anonymousButton = makeButton(named: "visibility_on-vector")
             .configure {
@@ -596,7 +594,6 @@ extension HomeFeedPostViewController {
     }
 }
 
-
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
 
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
@@ -637,7 +634,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             cell.indexPath = indexPath
             cell.manager = self.attachmentManager
             cell.imageView.image = image
-
 
             if !cell.uploadStarted || cell.attachmentFileID == "" {
                 cell.uploadStarted = true

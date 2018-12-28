@@ -159,7 +159,6 @@ class AccountModalTableViewController: UITableViewController {
         self.present(picker, animated: true, completion: nil)
     }
 
-
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else {
             return

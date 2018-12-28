@@ -147,7 +147,6 @@ extension UINavigationController {
     }
 }
 
-
 class AnimatedNavBarViewController: UITableViewController {
 
     private var _preferredStyle = UIStatusBarStyle.lightContent

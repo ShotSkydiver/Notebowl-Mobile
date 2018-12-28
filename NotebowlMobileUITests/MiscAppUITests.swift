@@ -8,7 +8,6 @@
 
 import XCTest
 
-
 class MiscAppUITests: XCTestCase {
 
     let app = XCUIApplication()

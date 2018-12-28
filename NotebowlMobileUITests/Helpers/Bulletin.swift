@@ -18,7 +18,6 @@ class Bulletin: XCTestHelpers {
     static var app: XCUIApplication!
     static var currentTestCase: NBUITests!
 
-
     class func setup(_ app: XCUIApplication, testCase: NBUITests) {
         Bulletin.app = app
         Bulletin.currentTestCase = testCase
@@ -81,7 +80,6 @@ extension XCUIApplication {
     var cancelUserReplyButton: XCUIElement { return self.buttons["removeReplyButton"] }
 }
 
-
 class BulletinComment: BulletinPost {
     var deleteCommentAction: XCUIElement { return app.alerts["Delete Comment"].buttons["Delete"] }
 
@@ -110,7 +108,6 @@ class BulletinComment: BulletinPost {
 
     }
 }
-
 
 class BulletinPost: NSObject {
     var app: XCUIApplication!

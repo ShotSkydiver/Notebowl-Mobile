@@ -125,7 +125,6 @@ open class ProgressWebViewController: UIViewController {
         webView.allowsBackForwardNavigationGestures = true
         webView.isMultipleTouchEnabled = true
 
-
         webView.addObserver(self, forKeyPath: estimatedProgressKeyPath, options: .new, context: nil)
         if websiteTitleInNavigationBar {
             webView.addObserver(self, forKeyPath: titleKeyPath, options: .new, context: nil)

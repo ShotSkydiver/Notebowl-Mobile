@@ -42,7 +42,6 @@ class SettingsTableViewHeader: UITableViewHeaderFooterView {
     }
 }
 
-
 extension SettingsTableViewHeader {
     static var reuseId: String {
         return "SettingsTableViewHeader"

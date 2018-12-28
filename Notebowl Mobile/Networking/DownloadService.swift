@@ -66,8 +66,6 @@ struct NBSessionDefaults {
     }
 }
 
-
-
 class NBNetworking: NSObject, URLSessionDelegate {
     var nbSession: URLSession!
     var sessionDefaults: NBSessionDefaults!
