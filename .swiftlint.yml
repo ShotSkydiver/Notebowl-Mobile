@@ -29,8 +29,11 @@
 #    - vertical_whitespace_closing_braces
 #    - vertical_whitespace_opening_braces
 whitelist_rules:
-    #- opening_brace
-    #- closing_brace
+    - opening_brace
+    - vertical_whitespace_opening_braces
+    - closing_brace
+    - vertical_whitespace_closing_braces
+    #- closure_spacing
     - control_statement
     - colon
     - comma

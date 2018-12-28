@@ -62,7 +62,6 @@ class IndexedCollectionView: UICollectionView {
 }
 
 class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var pinnedRibbon: UIImageView!
@@ -349,7 +348,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         var newphotos = [LightboxImage]()
         for attachment in self.postForCell.attachments {
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)

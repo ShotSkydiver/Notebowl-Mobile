@@ -330,8 +330,7 @@ class Generic: StaticMappable {
         }
         return nil
     }
-    init(){
-
+    init() {
     }
 
     func mapping(map: Map) {
@@ -418,7 +417,6 @@ public class NBModel: Mappable {
 
     func setPayload() -> [String: Any] { return [:] }
     func save(withCustomPayload: [String: Any]? = nil) -> NBModel? {
-
         var json: [String: Any] = [:]
 
         if withCustomPayload != nil {
@@ -491,7 +489,6 @@ public class NBModel: Mappable {
     func equal(to: NBModel) -> Bool {
         return resourceKey == to.resourceKey
     }
-
 }
 extension NBModel: Hashable {
     public var hashValue: Int {
@@ -663,7 +660,6 @@ extension AssignmentAssessment {
                             return (percentString + " (\(titles[currentIndex].uppercased()))")
                         }
                         return titles[currentIndex].uppercased()
-
                     }
                 }
             }
@@ -677,7 +673,6 @@ extension AssignmentAssessment {
 }
 
 public class User: NBModel {
-
     var firstName: String!
     var lastName: String!
     var email: String?
@@ -696,7 +691,6 @@ public class User: NBModel {
     }
 
     override public func mapping(map: Map) {
-
         super.mapping(map: map)
         firstName <- map["firstName"]
         lastName <- map["lastName"]
@@ -708,7 +702,6 @@ public class User: NBModel {
 }
 
 class Term: NBModel {
-
     var title: String?
     var termStart: Date!
     var termEnd: Date!
@@ -1185,7 +1178,6 @@ public class Grade: NBModel {
 }
 
 class University: NBModel {
-
     var profileLogo: String?
     var defaultLogo: String?
     var domain: String?
@@ -1210,7 +1202,6 @@ class University: NBModel {
 }
 
 public class Enrollment: NBModel {
-
     var role: UserRole!
     var status: String!
     var user: User!
@@ -1235,7 +1226,6 @@ public class Enrollment: NBModel {
 }
 
 class Group: NBModel, WithName {
-
     var availableDate: Date!
     var category: String?
     var desc: String?
@@ -1288,7 +1278,6 @@ class Group: NBModel, WithName {
 }
 
 class Event: NBModel {
-
     var title: String!
     var desc: String?
     var location: String?
@@ -1316,7 +1305,6 @@ class Event: NBModel {
         startDate <- (map["startDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
     }
-
 }
 
 public class Post: NBModel, PostsComments {
@@ -1460,7 +1448,7 @@ public class Post: NBModel, PostsComments {
 
         if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
             self.attachments.append(newAttachment)
-        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment) {
             self.externalAttachments.append(newAttachment)
         }
     }
@@ -1719,7 +1707,7 @@ public class Comment: NBModel, PostsComments {
             return
         }
 
-        if newComment == self, newComment.updatedAt > self.updatedAt  {
+        if newComment == self, newComment.updatedAt > self.updatedAt {
             self.text = newComment.text
             self.editedAt = newComment.editedAt
             self.updatedAt = newComment.updatedAt
@@ -1757,7 +1745,7 @@ public class Comment: NBModel, PostsComments {
 
         if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
             self.attachments.append(newAttachment)
-        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment) {
             self.externalAttachments.append(newAttachment)
         }
     }
@@ -1820,7 +1808,6 @@ public class Like: NBModel {
 }
 
 class Notification: NBModel {
-
     var status: String!
     var text: String!
     var type: String!
@@ -1851,7 +1838,6 @@ class Notification: NBModel {
         text <- map["text"]
         type <- map["type"]
     }
-
 }
 
 class Abuse: NBModel {

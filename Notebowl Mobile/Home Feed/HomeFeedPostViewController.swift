@@ -262,7 +262,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if makeVisible && !topStackView.arrangedSubviews.contains(replyUserStackView) {
             topStackView.insertArrangedSubview(replyUserStackView, at: 0)
             inputBar.layoutStackViews([.top])
-
         } else if !makeVisible && topStackView.arrangedSubviews.contains(replyUserStackView) {
             topStackView.removeArrangedSubview(replyUserStackView)
             inputBar.layoutStackViews([.top])
@@ -401,7 +400,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 }
 
 extension HomeFeedPostViewController {
-
     func isDisplayedPost(object: NBModel) -> Bool {
         if let postParent = object.getParentByType(Post.self, withSelf: true) {
             if (postParent.parent is Assignment) || (postParent.parent is Submission) || (postParent != (self.displayedPost as! NBModel)) {
@@ -572,7 +570,6 @@ extension HomeFeedPostViewController {
 }
 
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
-
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         if indexPath.section == 0 {
             return self.cellActions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
@@ -591,11 +588,9 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
 }
 
 class AttachmentMan: AttachmentManager {
-
 }
 
 extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
-
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
@@ -640,7 +635,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                 upload.task?.resume()
             }
             return cell
-
         } else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
@@ -651,7 +645,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             inputBar.layoutStackViews([.top])
-
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             inputBar.layoutStackViews([.top])
@@ -670,7 +663,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
             inputBar.sendButton.isEnabled = true
         }
-
     }
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {

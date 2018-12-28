@@ -69,7 +69,6 @@ open class Snapshot: NSObject {
     }
 
     open class func setupSnapshot(_ app: XCUIApplication) {
-
         Snapshot.app = app
 
         do {

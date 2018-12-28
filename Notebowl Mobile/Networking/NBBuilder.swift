@@ -35,7 +35,7 @@ extension NBNetworking {
             let empty = parameters[key]
             components += self.queryComponents(key, empty)
         }
-        return (components.map{"\($0)=\($1)"} as [String]).joined(separator: "&")
+        return (components.map {"\($0)=\($1)"} as [String]).joined(separator: "&")
     }
 
     func percentEncodeString(_ originalObject: Any) -> String {
@@ -110,11 +110,9 @@ extension NBNetworking {
                 HTTPCookiePropertyKey.value: v,
                 HTTPCookiePropertyKey.originURL: URL,
                 HTTPCookiePropertyKey.path: "/"
-                ])
-            {
+                ]) {
                 self.nbSession.configuration.httpCookieStorage?.setCookie(cookie)
             }
         }
     }
-
 }

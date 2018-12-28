@@ -10,7 +10,6 @@ import XCTest
 import Foundation
 
 class PostUITests: NBUITests {
-
     override func setUp() {
         setupBulletin(app, testCase: self)
         super.setUp()

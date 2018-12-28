@@ -115,7 +115,6 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
 }
 
 class RootNavigationBarVC: UINavigationController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -131,7 +130,6 @@ class RootNavigationBarVC: UINavigationController {
 }
 
 extension UINavigationController {
-
     func setNavigationBarTransparent(_ transparent: Bool, animated: Bool) {
         UIView.animate(withDuration: (animated ? 0.33 : 0)) {
             if transparent {
@@ -147,7 +145,6 @@ extension UINavigationController {
 }
 
 class AnimatedNavBarViewController: UITableViewController {
-
     private var _preferredStyle = UIStatusBarStyle.lightContent
     override var preferredStatusBarStyle: UIStatusBarStyle {
         get {
@@ -164,16 +161,16 @@ class AnimatedNavBarViewController: UITableViewController {
     }
 
     override func willMove(toParent parent: UIViewController?) {
-        if let last = self.navigationController?.viewControllers.last as? AnimatedNavBarViewController{
-            if last == self && self.navigationController!.viewControllers.count > 1{
-                if let parent = self.navigationController!.viewControllers[self.navigationController!.viewControllers.count - 2] as? AnimatedNavBarViewController{
+        if let last = self.navigationController?.viewControllers.last as? AnimatedNavBarViewController {
+            if last == self && self.navigationController!.viewControllers.count > 1 {
+                if let parent = self.navigationController!.viewControllers[self.navigationController!.viewControllers.count - 2] as? AnimatedNavBarViewController {
                     parent.setNavigationColors()
                 }
             }
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
-        if let parent = navigationController?.viewControllers.last as? AnimatedNavBarViewController{
+        if let parent = navigationController?.viewControllers.last as? AnimatedNavBarViewController {
             parent.animateNavigationColors()
         }
     }
@@ -181,7 +178,7 @@ class AnimatedNavBarViewController: UITableViewController {
         self.setNavigationColors()
     }
 
-    func animateNavigationColors(){
+    func animateNavigationColors() {
         self.setBeforePopNavigationColors()
         transitionCoordinator?.animate(alongsideTransition: { [weak self](context) in
             self?.setNavigationColors()
@@ -191,6 +188,6 @@ class AnimatedNavBarViewController: UITableViewController {
     func setBeforePopNavigationColors() {
     }
 
-    func setNavigationColors(){
+    func setNavigationColors() {
     }
 }

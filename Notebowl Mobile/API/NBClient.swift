@@ -15,7 +15,6 @@ import SwipeCellKit
 import HTTPStatusCodes
 
 class NBClient {
-
     static let shared: NBClient = {
         return NBClient()
     }()
@@ -142,7 +141,6 @@ class NBClient {
             log.debug("URL Request: \(resultStatus) - \(resultUrl.absoluteString)")
 
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
-
                 guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else { return nil }
                 let storedObjects: [T] = NBClient.shared.storeObjectsInCache(mapped)
                 return storedObjects
@@ -159,16 +157,12 @@ class NBClient {
 
         for object in objects {
             if let pos = storedTypes[T.classIdentifier]?.firstIndex(of: object), let existingObj = storedTypes[T.classIdentifier]?[pos] {
-
                 if object.updatedAt > existingObj.updatedAt {
-
                     object.firstTimeLoading = false
 
                     storedTypes[T.classIdentifier]![pos] = object
                     newObjectArray.append(object)
-
                 } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
-
                     existingObj.firstTimeLoading = false
 
                     newObjectArray.append(newObj)
@@ -182,11 +176,9 @@ class NBClient {
                 }
                 newObjectArray.append(object)
             }
-
         }
 
         if !objects.isEmpty || objects.count > 0 {
-
             storedTypes[T.classIdentifier]!.sortByDate()
             newObjectArray.sortByDate()
 
@@ -216,7 +208,6 @@ class NBClient {
 }
 
 extension Collection {
-
     /// SwifterSwift: Performs `each` closure for each element of collection in parallel.
     ///
     ///        array.forEachInParallel { item in
@@ -252,7 +243,6 @@ extension Array {
 }
 
 extension Array where Element: Equatable {
-
     func containSameElements(_ array: [Element]) -> Bool {
         var selfCopy = self
         var secondArrayCopy = array

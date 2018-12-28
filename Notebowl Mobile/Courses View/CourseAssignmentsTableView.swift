@@ -66,9 +66,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
     func reloadTable() {
         HUD.show(.progress)
         DispatchQueue.main.async {
-
             if self.selectedCourse.courseAssignments.isEmpty {
-
                 var assigns = NBClient.shared.requireByReference(Assignment.self, property: "parent", value: self.selectedCourse)
                 if let userRole = (assigns.first)?.parent?.enrollmentForUser.role, userRole == .TA {
                     assigns = assigns.filter({$0.gradeOnly == false})
@@ -143,10 +141,9 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
 }
 
 extension CourseAssignmentsTableView {
-
     func handleUpdated(newObject: NBModel) {
         if newObject is AssignmentAssessment {
-            let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject} )
+            let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject})
             self.updateSorting(newObject: newObject)
 
             guard let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject}) else { return }
@@ -216,7 +213,7 @@ extension CourseAssignmentsTableView {
 
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject is AssignmentAssessment {
-            guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject} ) else { return }
+            guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject}) else { return }
             tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
 
             self.updateSorting(newObject: nil)

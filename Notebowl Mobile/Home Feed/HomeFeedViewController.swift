@@ -116,7 +116,6 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
 }
 
 extension HomeFeedViewController {
-
     func shouldHandleResponse(object: NBModel) -> Bool {
         if let postParent = object.getParentByType(Post.self, withSelf: true) {
             if (postParent.parent is Assignment) || (postParent.parent is Submission) {
@@ -320,7 +319,6 @@ extension HomeFeedViewController {
 }
 
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 1
     }
@@ -367,7 +365,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension HomeFeedViewController: SwipeTableViewCellDelegate {
-
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         return self.cellActions(isPost: true, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
     }

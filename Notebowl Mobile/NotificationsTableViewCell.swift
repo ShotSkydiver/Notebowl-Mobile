@@ -11,7 +11,6 @@ import UIKit
 import Kingfisher
 
 class NotificationsTableViewCell: UITableViewCell {
-
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var notificationContent: UILabel!

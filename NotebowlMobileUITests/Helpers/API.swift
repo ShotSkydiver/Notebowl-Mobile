@@ -11,7 +11,6 @@ import XCTest
 import HTTPStatusCodes
 
 class API {
-
     static var baseUrl = Environment.Local.rawValue
 
     required init() { }

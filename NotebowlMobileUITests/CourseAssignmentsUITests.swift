@@ -9,7 +9,6 @@
 import XCTest
 
 class CourseAssignmentsUITests: NBUITests {
-
     override func setUp() {
         setupCourses(app, testCase: self)
         super.setUp()

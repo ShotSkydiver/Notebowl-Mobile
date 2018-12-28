@@ -373,7 +373,6 @@ fileprivate extension ProgressWebViewController {
         if let progressView = progressView {
             navigationController?.navigationBar.addSubview(progressView)
         }
-
     }
 
     func rollbackState() {
@@ -481,7 +480,6 @@ fileprivate extension ProgressWebViewController {
 
 // MARK: - WKUIDelegate
 extension ProgressWebViewController: WKUIDelegate {
-
 }
 
 // MARK: - WKNavigationDelegate

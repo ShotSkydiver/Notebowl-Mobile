@@ -38,7 +38,6 @@ class Courses: XCTestHelpers {
             XCTAssert(app.tables.cells.staticTexts[title].exists)
         }
     }
-
 }
 extension XCUIApplication {
     var deletedCourse: XCUIElement { return self.tables["courseTableView"].cells.staticTexts["Honors English"] }

@@ -122,7 +122,6 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
 }
 
 extension NotificationsTableViewController {
-
     func handleUpdated(newObject: NBModel) {
         if let newNotification = newObject as? Notification, NBClient.shared.storedTypes.has(key: Notification.classIdentifier) {
             self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]

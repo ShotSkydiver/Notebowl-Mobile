@@ -9,7 +9,6 @@
 import XCTest
 
 class MiscAppUITests: XCTestCase {
-
     let app = XCUIApplication()
 
     override func setUp() {

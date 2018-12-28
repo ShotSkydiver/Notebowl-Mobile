@@ -119,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if keyPaths.isEmpty || keyPaths.count == 0 { return }
 
             var doAppReset: Bool = false
-            let enrollments = keyPaths.filter( {$0.contains("enrollment")} )
+            let enrollments = keyPaths.filter({$0.contains("enrollment")})
             if !enrollments.isEmpty || enrollments.count > 0 {
                 var possibleNewEnrollments: [String] = []
 

@@ -11,7 +11,6 @@ import UIKit
 import Kingfisher
 
 class BulletinTableViewHeader: UITableViewHeaderFooterView {
-
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var dummyTextField: AutoSizeTextField!
 

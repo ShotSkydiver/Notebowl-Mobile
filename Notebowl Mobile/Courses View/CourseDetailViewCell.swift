@@ -11,7 +11,6 @@ import Foundation
 import SwiftDate
 
 class CourseDetailViewCell: UITableViewCell {
-
     @IBOutlet weak var assignmentName: KerningLabel!
     @IBOutlet weak var assignmentCategory: PillUILabel!
     @IBOutlet weak var dueDateNumber: UILabel!

@@ -61,7 +61,6 @@ class CommentCollectionView: UICollectionView {
 }
 
 class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     @IBOutlet weak var designableView: DesignableView!
     @IBOutlet weak var dummyTextField: AutoSizeTextField!
     @IBOutlet weak var dummyStack: UIStackView!
@@ -344,7 +343,6 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         var newphotos = [LightboxImage]()
         for attachment in self.commentForCell.attachments {
             let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
@@ -407,11 +405,9 @@ extension HomeFeedCommentCell: LightboxControllerPageDelegate, LightboxControlle
     func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
         log.debug("lightbox didtouch")
     }
-
 }
 
 extension HomeFeedCommentCell {
-
     static var reuseId: String {
         return "commentCell"
     }

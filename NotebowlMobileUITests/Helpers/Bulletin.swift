@@ -105,7 +105,6 @@ class BulletinComment: BulletinPost {
     func postReplyToSelf(asAnon: Bool = false) {
         replyButton.tap()
         XCTAssertEqual(app.replyToUserLabel.label, (asAnon ? "Replying to Anonymous" : "Replying to Alex Slaughter"))
-
     }
 }
 

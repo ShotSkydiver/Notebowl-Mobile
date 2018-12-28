@@ -9,7 +9,6 @@
 import UIKit
 
 class SettingsTableViewHeader: UITableViewHeaderFooterView {
-
     @IBOutlet weak var sectionTitle: KerningLabel!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var buttonStackView: UIStackView!

@@ -13,7 +13,6 @@ import PKHUD
 import SocketIO
 
 class NotificationSettingCell: UITableViewCell {
-
     @IBOutlet weak var settingName: KerningLabel!
     @IBOutlet weak var settingSubtitle: KerningLabel!
     @IBOutlet weak var settingSwitch: UISwitch!

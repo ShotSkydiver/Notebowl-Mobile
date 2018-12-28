@@ -10,7 +10,6 @@ import XCTest
 import SimulatorStatusMagic
 
 class SnapshotUITests: NBUITests {
-
     override func setUp() {
         setupSnapshot(app)
         super.setUp()

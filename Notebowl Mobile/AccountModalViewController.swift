@@ -65,7 +65,6 @@ class AccountModalTableViewController: UITableViewController {
     }
 
     @IBAction func doneButtonTapped(_ sender: Any) {
-
         if let keyPath = self.updatedUser as? [String: AnyObject], let fileID = keyPath["fileId"] as? String {
             let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
                                                       json: ["fileId": fileID])

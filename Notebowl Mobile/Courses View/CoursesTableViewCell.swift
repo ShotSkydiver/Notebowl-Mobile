@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 class CoursesTableViewCell: UITableViewCell {
-
     @IBOutlet weak var courseTitle: UILabel!
     @IBOutlet weak var courseNumber: UILabel!
     @IBOutlet weak var lastUpdated: UILabel!

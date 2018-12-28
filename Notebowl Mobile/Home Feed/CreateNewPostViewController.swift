@@ -17,7 +17,6 @@ import SocketIO
 import PKHUD
 
 class CreateNewPostViewController: UIViewController, UITextViewDelegate {
-
     @IBOutlet weak var postTextView: PlaceholderTextView!
     @IBOutlet weak var userAvatar: ProfileImageView!
     @IBOutlet weak var pickedCourseGroup: UILabel!
@@ -312,7 +311,6 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 }
 
 extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentManagerDataSource {
-
     func attachmentManager(_ manager: AttachmentManager, cellFor attachment: AttachmentManager.Attachment, at index: Int) -> AttachmentCell {
         let indexPath = IndexPath(row: index, section: 0)
         let attachment = manager.attachments[indexPath.row]
@@ -384,7 +382,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
             log.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
-
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
             log.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)

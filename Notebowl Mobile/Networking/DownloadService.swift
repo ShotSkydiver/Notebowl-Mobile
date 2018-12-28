@@ -53,8 +53,7 @@ struct NBSessionDefaults {
         multipartBoundary: String = "Ju5tH77P15Aw350m3",
         credentialPersistence: URLCredential.Persistence = .forSession,
         encoding: String.Encoding = String.Encoding.utf8,
-        cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy)
-    {
+        cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy) {
         self.startRequestImmediately = startRequestImmediately
         self.JSONReadingOptions = JSONReadingOptions
         self.JSONWritingOptions = JSONWritingOptions
@@ -84,18 +83,14 @@ class NBNetworking: NSObject, URLSessionDelegate {
 
     private override init() { }
 
-    func makeTask(_ request: URLRequest, configuration: RequestConfiguration) -> URLSessionDataTask?
-    {
+    func makeTask(_ request: URLRequest, configuration: RequestConfiguration) -> URLSessionDataTask? {
         let task = nbSession.dataTask(with: request)
         requestConfigs[task.taskIdentifier] = configuration
         return task
-
     }
-
 }
 
 extension NBNetworking {
-
     func synthesizeRequest(
         _ method: Method,
         url: URLComponentsMutable,
@@ -141,7 +136,6 @@ extension NBNetworking {
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: requestJSON,
                                                        options: sessionDefaults.JSONWritingOptions)
-
                 } else {
                     if data.count > 0 {
                         if headers["content-type"]?.lowercased() == "application/json" {
@@ -158,8 +152,7 @@ extension NBNetworking {
                 finalHeaders["Content-Type"] = contentTypeValue
             }
             if let auth = auth,
-                let utf8 = "\(auth.0):\(auth.1)".data(using: String.Encoding.utf8)
-            {
+                let utf8 = "\(auth.0):\(auth.1)".data(using: String.Encoding.utf8) {
                 finalHeaders["Authorization"] = "Basic \(utf8.base64EncodedString())"
             }
 
@@ -203,14 +196,12 @@ extension NBNetworking {
         asyncProgressHandler: RequestProgressHandler? = nil,
         asyncCompletionHandler: ((NBResult) -> Void)? = nil
         ) -> NBResult {
-
         let isSynchronous = asyncCompletionHandler == nil
         let semaphore = DispatchSemaphore(value: 0)
         var requestResult: NBResult = NBResult(data: nil, response: nil, error: improperAsyncAccess, task: nil)
 
         let caseInsensitiveHeaders = LowercasedDictionary<String, String>(dictionary: headers)
         guard let synthesizedRequest = synthesizeRequest(method, url: url, params: params, data: data, json: json, headers: caseInsensitiveHeaders, files: files, auth: auth, timeout: timeout, urlQuery: urlQuery, requestBody: requestBody) else {
-
             let resultWithError = NBResult(data: nil, response: nil, error: invalidURL, task: nil)
             if let handler = asyncCompletionHandler {
                 handler(resultWithError)

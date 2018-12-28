@@ -77,7 +77,6 @@ public extension URL {
         let uuidParams = ["uuid": UIDevice().uuid]
         return self.appendingQueryParameters(uuidParams)
     }
-
 }
 
 public extension DateFormatter {
@@ -233,7 +232,6 @@ public extension UIImage {
 class DesignableView: UIView {
 }
 extension DesignableView {
-
     @IBInspectable
     var cornerRadius: CGFloat {
         get {
@@ -454,7 +452,6 @@ extension DesignableView {
 }
 
 @IBDesignable class BGLabel: UILabel {
-
     @IBInspectable var kerning: CGFloat = 0.0 {
         didSet {
             if attributedText?.length == nil { return }
@@ -507,7 +504,6 @@ extension DesignableView {
 }
 
 @IBDesignable class FilledButton: UIButton {
-
     @IBInspectable var cornerRadius: CGFloat = 5 {
         didSet {
             self.setNeedsLayout()
@@ -540,12 +536,10 @@ extension DesignableView {
     func applyProperties() {
         self.layer.cornerRadius = cornerRadius
         self.layer.masksToBounds = masksToBounds
-
     }
 }
 
 @IBDesignable class ProfileImageView: UIImageView {
-
     @IBInspectable var dashedBorder: Bool = false {
         didSet {
             self.setNeedsLayout()
@@ -626,8 +620,7 @@ extension DesignableView {
     override func layoutSubviews() {
         self.applyProperties()
     }
-    func applyProperties()
-    {
+    func applyProperties() {
         let shapeLayer: CAShapeLayer = CAShapeLayer()
         let frameSize = self.frame.size
         let shapeRect = CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height)
@@ -638,7 +631,7 @@ extension DesignableView {
         shapeLayer.strokeColor = borderColorImg.cgColor
         shapeLayer.lineWidth = borderWidthImg
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
-        if dashedBorder{
+        if dashedBorder {
             shapeLayer.lineDashPattern = [6, 3]
         }
         shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: isCircular ? CGFloat(self.frame.size.height / 2.0) :  cornerRadious).cgPath
@@ -656,7 +649,6 @@ extension DesignableView {
 }
 
 @IBDesignable class DottedLine: UIView {
-
     @IBInspectable
     public var lineColor: UIColor = UIColor.black
 
@@ -684,7 +676,6 @@ extension DesignableView {
     }
 
     override public func draw(_ rect: CGRect) {
-
         let path = UIBezierPath()
         path.lineWidth = lineWidth
 
@@ -713,7 +704,6 @@ extension DesignableView {
 
             path.move(to: CGPoint(x: startPositionX, y: center))
             path.addLine(to: CGPoint(x: drawWidth, y: center))
-
         } else {
             let center = rect.width * 0.5
             let drawHeight = rect.size.height - (rect.size.height.truncatingRemainder(dividingBy: (lineWidth * 2))) + lineWidth
@@ -736,7 +726,6 @@ extension DesignableView {
 
             path.move(to: CGPoint(x: startPositionX, y: center))
             path.addLine(to: CGPoint(x: drawWidth, y: center))
-
         } else {
             let center = rect.width * 0.5
             let drawHeight = rect.size.height - (rect.size.height.truncatingRemainder(dividingBy: (lineWidth * 2)))
@@ -753,7 +742,6 @@ extension DesignableView {
 }
 
 @IBDesignable class PillUILabel: UILabel {
-
     @IBInspectable var verticalPad: CGFloat = 0
     @IBInspectable var horizontalPad: CGFloat = 0
 
@@ -789,7 +777,6 @@ extension DesignableView {
 
 @IBDesignable
 class KerningLabel: UILabel {
-
     @IBInspectable var kerning: CGFloat = 0.0 {
         didSet {
             if attributedText?.length == nil { return }
@@ -869,7 +856,6 @@ extension Bool {
 }
 
 public extension UITableView {
-
     public func scrollToBottom(animated: Bool = true) {
         let bottomOffset = CGPoint(x: 0, y: contentSize.height - bounds.size.height)
         setContentOffset(bottomOffset, animated: animated)
@@ -896,12 +882,10 @@ public extension UITableView {
     }
 
     public func reload(tableView: UITableView) {
-
         let contentOffset = tableView.contentOffset
         tableView.reloadData()
         tableView.layoutIfNeeded()
         tableView.setContentOffset(contentOffset, animated: false)
-
     }
 
     /// Set table header view & add Auto layout.
@@ -1012,7 +996,6 @@ extension UIColor {
     }
 
     convenience init(hexString: String) {
-
         let hexString: String       = (hexString as NSString).trimmingCharacters(in: .whitespacesAndNewlines)
         let scanner                 = Scanner(string: hexString as String)
 
@@ -1350,7 +1333,6 @@ class ObjectTransform<T: NBModel>: TransformType {
         } else if self.actionType == .deleted || self.actionType == .elapsed {
             return nil
         } else {
-
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
             guard let returnObject = mapReq?.first else {
                 return nil
@@ -1366,7 +1348,6 @@ class ObjectTransform<T: NBModel>: TransformType {
 }
 
 class ISO8601FixedDateTransform: DateFormatterTransform {
-
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")
 
     public init() {
@@ -1395,7 +1376,6 @@ struct Paths {
 }
 
 protocol UpdateVC {
-
     func handleUpdated(newObject: NBModel)
     func handleDeleted(deletedObject: NBModel)
     func handleElapsed(elapsedObject: NBModel)

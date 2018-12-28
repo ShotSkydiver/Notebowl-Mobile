@@ -9,7 +9,6 @@
 import XCTest
 
 class NotificationUITests: NBUITests {
-
     override func setUp() { super.setUp() }
     override func tearDown() { super.tearDown() }
 

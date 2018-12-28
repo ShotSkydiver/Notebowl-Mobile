@@ -97,7 +97,6 @@ class NBSocket {
                         default:
                             return nil
                         }
-
                     }
                 }
             }
