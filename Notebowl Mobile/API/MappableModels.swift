@@ -1383,13 +1383,13 @@ public class Post: NBModel, PostsComments {
     }
 
     func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedPost(_:)), name: .SocketDidReceiveUpdatedPost, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedComment(_:)), name: .SocketDidReceiveUpdatedComment, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedLike(_:)), name: .SocketDidReceiveUpdatedLike, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedAttachment(_:)), name: .SocketDidReceiveUpdatedAttachment, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingPost(_:)), name: NSNotification.Name("ModelDidBeginUpdatingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingLike(_:)), name: NSNotification.Name("ModelDidBeginUpdatingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAttachment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAttachment"), object: nil)
     }
 
-    @objc func handleUpdatedPost(_ notification: NSNotification) {
+    @objc func beginUpdatingPost(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newPost = dict["object"] as? Post, newPost == self else {
             return
         }
@@ -1403,7 +1403,7 @@ public class Post: NBModel, PostsComments {
         }
     }
 
-    @objc func handleUpdatedComment(_ notification: NSNotification) {
+    @objc func beginUpdatingComment(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
             return
         }
@@ -1419,7 +1419,7 @@ public class Post: NBModel, PostsComments {
         }
     }
 
-    @objc func handleUpdatedLike(_ notification: NSNotification) {
+    @objc func beginUpdatingLike(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
             return
         }
@@ -1438,7 +1438,7 @@ public class Post: NBModel, PostsComments {
         }
     }
 
-    @objc func handleUpdatedAttachment(_ notification: NSNotification) {
+    @objc func beginUpdatingAttachment(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
             return
         }
@@ -1697,12 +1697,12 @@ public class Comment: NBModel, PostsComments {
     }
 
     func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedComment(_:)), name: .SocketDidReceiveUpdatedComment, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedLike(_:)), name: .SocketDidReceiveUpdatedLike, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdatedAttachment(_:)), name: .SocketDidReceiveUpdatedAttachment, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingLike(_:)), name: NSNotification.Name("ModelDidBeginUpdatingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAttachment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAttachment"), object: nil)
     }
 
-    @objc func handleUpdatedComment(_ notification: NSNotification) {
+    @objc func beginUpdatingComment(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
             return
         }
@@ -1716,7 +1716,7 @@ public class Comment: NBModel, PostsComments {
         }
     }
 
-    @objc func handleUpdatedLike(_ notification: NSNotification) {
+    @objc func beginUpdatingLike(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
             return
         }
@@ -1735,7 +1735,7 @@ public class Comment: NBModel, PostsComments {
         }
     }
 
-    @objc func handleUpdatedAttachment(_ notification: NSNotification) {
+    @objc func beginUpdatingAttachment(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
             return
         }

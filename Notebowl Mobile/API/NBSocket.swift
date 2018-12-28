@@ -68,17 +68,7 @@ class NBSocket {
         }
 
         if mapped?.action == .updated {
-            if object is Notification {
-                NotificationCenter.default.post(name: .SocketDidReceiveUpdatedNotification, object: (object as! Notification), userInfo: nil)
-            } else if object is Post {
-                NotificationCenter.default.post(name: .SocketDidReceiveUpdatedPost, object: nil, userInfo: ["object": object])
-            } else if object is Comment {
-                NotificationCenter.default.post(name: .SocketDidReceiveUpdatedComment, object: nil, userInfo: ["object": object])
-            } else if object is Like {
-                NotificationCenter.default.post(name: .SocketDidReceiveUpdatedLike, object: nil, userInfo: ["object": object])
-            } else if object is Attachment {
-                NotificationCenter.default.post(name: .SocketDidReceiveUpdatedAttachment, object: nil, userInfo: ["object": object])
-            }
+            NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
         }
 
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return nil }
@@ -103,12 +93,4 @@ class NBSocket {
         }
         return object
     }
-}
-
-extension Foundation.Notification.Name {
-    public static let SocketDidReceiveUpdatedPost = Foundation.Notification.Name("SocketDidReceiveUpdatedPost")
-    public static let SocketDidReceiveUpdatedComment = Foundation.Notification.Name("SocketDidReceiveUpdatedComment")
-    public static let SocketDidReceiveUpdatedLike = Foundation.Notification.Name("SocketDidReceiveUpdatedLike")
-    public static let SocketDidReceiveUpdatedAttachment = Foundation.Notification.Name("SocketDidReceiveUpdatedAttachment")
-    public static let SocketDidReceiveUpdatedNotification = Foundation.Notification.Name("SocketDidReceiveUpdatedNotification")
 }
