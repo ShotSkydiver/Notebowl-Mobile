@@ -1180,8 +1180,7 @@ extension CellActionsVC {
             if ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.creator) : ((selectedCell as! HomeFeedCommentCell).commentForCell.creator))!.resourceKey == NBClient.shared.getCurrentUser().resourceKey) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .professor) || ((isPost ? ((selectedCell as! HomeFeedPostCell).postForCell.owner) : (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner))!.enrollmentForUser?.role == .admin) {
                 options.expansionStyle = SwipeExpansionStyle.destructive(automaticallyDelete: false)
             }
-        }
-        else {
+        } else {
             options.expansionStyle = SwipeExpansionStyle.fill
         }
         options.transitionStyle = SwipeTransitionStyle.border
@@ -1196,10 +1195,8 @@ extension CellActionsVC {
         selectedCell = isPost ? (tableView.cellForRow(at: indexPath) as! HomeFeedPostCell) : (tableView.cellForRow(at: indexPath) as! HomeFeedCommentCell)
         let edit = SwipeAction(style: .default, title: "Edit") { (action, indexPath) in
             if isPost {
-                if fromPostDetails { (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedPostCell)) }
-                else { (vc as! HomeFeedViewController).performSegue(withIdentifier: "createPostSegue", sender: (selectedCell as! HomeFeedPostCell)) }
-            }
-            else if !isPost {
+                if fromPostDetails { (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedPostCell)) } else { (vc as! HomeFeedViewController).performSegue(withIdentifier: "createPostSegue", sender: (selectedCell as! HomeFeedPostCell)) }
+            } else if !isPost {
                 (vc as! HomeFeedPostViewController).performSegue(withIdentifier: "createPostDetailSegue", sender: (selectedCell as! HomeFeedCommentCell))
             }
         }
@@ -1244,26 +1241,20 @@ extension CellActionsVC {
             if ((selectedCell as! HomeFeedPostCell).postForCell.creator != nil) && ((selectedCell as! HomeFeedPostCell).postForCell.creator == NBClient.shared.getCurrentUser()) {
                 if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
                     return [delete, pin, edit]
-                }
-                else {
+                } else {
                     return [delete, edit]
                 }
-            }
-            else if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
+            } else if ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .professor) || ((selectedCell as! HomeFeedPostCell).postForCell.owner!.enrollmentForUser?.role == .admin) {
                 return [delete, report]
-            }
-            else {
+            } else {
                 return [report]
             }
-        }
-        else {
+        } else {
             if ((selectedCell as! HomeFeedCommentCell).commentForCell.creator != nil) && ((selectedCell as! HomeFeedCommentCell).commentForCell.creator == NBClient.shared.getCurrentUser()) {
                 return [delete, edit]
-            }
-            else if (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .professor) || (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .admin) {
+            } else if (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .professor) || (((vc as! HomeFeedPostViewController).displayedPost as! NBModel).owner!.enrollmentForUser?.role == .admin) {
                 return [delete, report]
-            }
-            else {
+            } else {
                 return [report]
             }
         }
@@ -1277,8 +1268,7 @@ extension CellActionsVC {
         })
         let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
             (vc as! CellActionsVC).handleDeleteAction(objectToDelete: objectToDelete)
-            if vc.navigationController?.topViewController is HomeFeedViewController && vc is HomeFeedPostViewController { }
-            else {
+            if vc.navigationController?.topViewController is HomeFeedViewController && vc is HomeFeedPostViewController { } else {
                 action.fulfill(with: .delete)
             }
 
@@ -1345,11 +1335,9 @@ class ObjectTransform<T: NBModel>: TransformType {
             if self.actionType == .elapsed {
                 log.debug("action: elapsed!")
                 return objectExists as? T
-            }
-            else if self.actionType == .deleted {
+            } else if self.actionType == .deleted {
                 return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
-            }
-            else {
+            } else {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
                     log.debug("new object is more recent than existing object!")
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
@@ -1358,12 +1346,9 @@ class ObjectTransform<T: NBModel>: TransformType {
                 }
                 return objectExists as? T
             }
-        }
-        else if self.actionType == .deleted || self.actionType == .elapsed {
+        } else if self.actionType == .deleted || self.actionType == .elapsed {
             return nil
-        }
-
-        else {
+        } else {
 
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
             guard let returnObject = mapReq?.first else {
@@ -1404,8 +1389,7 @@ struct Paths {
         reloadIndexPaths = [IndexPath]() }
 
     var shouldReload: Bool {
-        if insertSections.isEmpty && deleteSections.isEmpty && reloadSections.isEmpty && insertIndexPaths.isEmpty && deleteIndexPaths.isEmpty && reloadIndexPaths.isEmpty { return false }
-        else { return true }
+        if insertSections.isEmpty && deleteSections.isEmpty && reloadSections.isEmpty && insertIndexPaths.isEmpty && deleteIndexPaths.isEmpty && reloadIndexPaths.isEmpty { return false } else { return true }
     }
 }
 

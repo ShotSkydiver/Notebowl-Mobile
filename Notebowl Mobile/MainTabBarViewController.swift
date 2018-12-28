@@ -139,8 +139,7 @@ extension UINavigationController {
                 self.navigationBar.shadowImage = UIImage()
                 self.navigationBar.backgroundColor = UIColor.clear
                 self.navigationBar.barTintColor = UIColor.clear
-            }
-            else {
+            } else {
                 self.navigationBar.setBackgroundImage(nil, for: .default)
             }
         }

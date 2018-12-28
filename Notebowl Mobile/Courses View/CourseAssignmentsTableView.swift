@@ -103,20 +103,15 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         self.assignments.sort() {
             if let userRole = ($0 as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA, $0.status.sortValueProfessor != $1.status.sortValueProfessor {
                 return $0.status.sortValueProfessor < $1.status.sortValueProfessor
-            }
-            else if $0.status.sortValue != $1.status.sortValue {
+            } else if $0.status.sortValue != $1.status.sortValue {
                 return $0.status.sortValue < $1.status.sortValue
-            }
-            else if $0.status == .NotPublished {
+            } else if $0.status == .NotPublished {
                 return ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt
-            }
-            else if $0.status == .Graded {
+            } else if $0.status == .Graded {
                 return $0.userGrade.updatedAt > $1.userGrade.updatedAt
-            }
-            else if $0.status == .Open || $0.status == .NotAvailableYet {
+            } else if $0.status == .Open || $0.status == .NotAvailableYet {
                 return $0.availableDate > $1.availableDate
-            }
-            else {
+            } else {
                 return $0.dueDate > $1.dueDate
             }
         }
@@ -159,25 +154,20 @@ extension CourseAssignmentsTableView {
 
             if !existingAssignment {
                 tableView.insertRows(at: [IndexPath(row: newIndex, section: 0)], with: .left)
-            }
-            else if existingAssignment {
+            } else if existingAssignment {
                 if oldIndex != nil && oldIndex != newIndex {
                     tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
                 }
                 tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
             }
-        }
-
-        else if newObject is AssessmentQuestion {
+        } else if newObject is AssessmentQuestion {
             if newObject.parent is Assessment {
                 if let indexOfAssessment = self.assignments.index(where: {($0 as! NBModel) == newObject.parent }) {
                     (self.assignments[indexOfAssessment] as! Assessment).refreshCachedPoints()
                     tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
                 }
             }
-        }
-
-        else if newObject is PostsComments {
+        } else if newObject is PostsComments {
             if newObject.related is Assignment && (newObject as! PostsComments).creator == NBClient.shared.getCurrentUser() {
                 let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject.related })
                 self.updateSorting(newObject: newObject.related!)
@@ -189,9 +179,7 @@ extension CourseAssignmentsTableView {
                     tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
                 }
             }
-        }
-
-        else if newObject is Submission || newObject is AssessmentSubmission {
+        } else if newObject is Submission || newObject is AssessmentSubmission {
             if newObject.parent is AssignmentAssessment {
                 if newObject.parent!.parent?.enrollmentForUser?.role == .professor || newObject.parent!.parent?.enrollmentForUser?.role == .admin {
                     return
@@ -206,9 +194,7 @@ extension CourseAssignmentsTableView {
                     tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
                 }
             }
-        }
-
-        else if let newGrade = newObject as? Grade {
+        } else if let newGrade = newObject as? Grade {
             if newGrade.owner is AssignmentAssessment {
                 if newGrade.owner!.parent?.enrollmentForUser?.role == .professor || newGrade.owner!.parent?.enrollmentForUser?.role == .admin {
                     return
@@ -223,9 +209,7 @@ extension CourseAssignmentsTableView {
                     tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
                 }
             }
-        }
-
-        else if newObject is Course {
+        } else if newObject is Course {
             reloadTable()
         }
     }
@@ -236,9 +220,7 @@ extension CourseAssignmentsTableView {
             tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
 
             self.updateSorting(newObject: nil)
-        }
-
-        else if deletedObject is PostsComments {
+        } else if deletedObject is PostsComments {
             if deletedObject.related is Assignment && (deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser() {
                 let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject.related })
                 self.updateSorting(newObject: deletedObject.related!)
@@ -250,9 +232,7 @@ extension CourseAssignmentsTableView {
                     tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
                 }
             }
-        }
-
-        else if let deleteCourse = deletedObject as? Enrollment {
+        } else if let deleteCourse = deletedObject as? Enrollment {
             if deleteCourse.parent is Course {
                 if (deleteCourse.parent as! Course) == self.selectedCourse {
                     self.navigationController?.popViewController(animated: true)

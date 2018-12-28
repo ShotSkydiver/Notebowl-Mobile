@@ -73,9 +73,7 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
                     }
                 }
                 return
-            }
-
-            else {
+            } else {
                 let unreadCount = self.notifications.filter({ $0.unseenBool == true })
                 let countString = String(format: "%d", (unreadCount.count))
                 self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count > 99 ? ("99+") : countString) )
@@ -131,13 +129,10 @@ extension NotificationsTableViewController {
             let indexOfNotification = self.notifications.index(of: newNotification)
             let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
 
-            if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell { placeholderTableView?.showDefault() }
-
-            else if existingNotification == false {
+            if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell { placeholderTableView?.showDefault() } else if existingNotification == false {
                 tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left)
                 updateBadgeCount()
-            }
-            else {
+            } else {
                 tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
             }
         }

@@ -140,8 +140,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
                 if (error != nil) {
                     completion?(nil)
-                }
-                else {
+                } else {
                     log.debug("lightbox loaded!")
                     completion?(image)
                 }
@@ -177,14 +176,11 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
         postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.totalCommentsCount())"
 
-        if post.text == nil { postContentTextView.isHidden = true }
-        else { postContentTextView.text = post.text! }
+        if post.text == nil { postContentTextView.isHidden = true } else { postContentTextView.text = post.text! }
 
-        if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName }
-        else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
+        if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName } else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
 
-        if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") }
-        else { (postedDate.text = post.createdAt.relativeFormat) }
+        if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") } else { (postedDate.text = post.createdAt.relativeFormat) }
 
         designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
         designableView.borderColor = (post.pinned ? UIColor(hexString: "#dfdfdf") : UIColor(hexString: "#e7e7e7"))
@@ -196,16 +192,14 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         if post.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")
-        }
-        else if post.creator! == NBClient.shared.getCurrentUser() {
+        } else if post.creator! == NBClient.shared.getCurrentUser() {
             userName.text = post.creator!.fullName
             userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
                                     .keepCurrentImageWhileLoading
                 ])
-        }
-        else {
+        } else {
             userName.text = post.creator!.fullName
             userAvatar.kf.setImage(with: post.creator!.profileUrl,
                                    options: [
@@ -236,16 +230,14 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                                                  options: [
                                                     .transition(ImageTransition.fade(0.3))
                     ])
-            }
-            else {
+            } else {
                 linkPreviewThumbnail.isHidden = true
             }
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(linkPreviewTapped(_:)))
             tapGesture.numberOfTapsRequired = 1
             tapGesture.numberOfTouchesRequired = 1
             linkPreviewView.addGestureRecognizer(tapGesture)
-        }
-        else {
+        } else {
             linkPreviewHeight.constant = 0.0
             linkPreviewTitle.isHidden = true
             linkPreviewThumbnail.isHidden = true
@@ -254,8 +246,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
         if let firstAtt = post.attachments.first, firstAtt.mimeType == .image {
             collectionViewHeight.constant = 100.0
-        }
-        else {
+        } else {
             collectionViewHeight.constant = 0.0
         }
         self.postForCell = post
@@ -288,8 +279,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         NBClient.shared.delay(1.0) {
             if !self.likeButton.isSelected {
                 self.postForCell.likeFromCurrentUser!.deleteSelf()
-            }
-            else if self.likeButton.isEnabled {
+            } else if self.likeButton.isEnabled {
                 let newLike = Like(parent: self.postForCell)
                 let finalLike = newLike.save()
                 if finalLike == nil {
@@ -351,8 +341,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
             if indexPath.item == 2 && indexPath.item < self.postForCell.attachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.postForCell.attachments.count-2)", forceUpdate: false)
-            }
-            else {
+            } else {
                 cell.attachmentOverlay.showViewAnimated(false)
             }
         }
@@ -380,8 +369,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             homeVC.showingPhotoPicker = true
             homeVC.present(lightbox, animated: true, completion: nil)
             self.lightboxController = lightbox
-        }
-        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
+        } else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
             homeVC.present(lightbox, animated: true, completion: nil)
             self.lightboxController = lightbox
         }
@@ -394,8 +382,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.item > 2 {
             return CGSize(width: 0, height: 90)
-        }
-        else {
+        } else {
             return CGSize(width: 90, height: 90)
         }
     }

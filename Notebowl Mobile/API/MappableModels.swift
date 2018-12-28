@@ -45,8 +45,7 @@ struct DeepLinker {
 
             if tabVC.topestViewController is HomeFeedPostViewController || tabVC.topestViewController is CourseAssignmentsTableView {
                 (tabVC.selectedViewController as! RootNavigationBarVC).popViewController(animated: false)
-            }
-            else if tabVC.topestViewController is AccountModalViewController || tabVC.topestViewController is CreateNewPostViewController {
+            } else if tabVC.topestViewController is AccountModalViewController || tabVC.topestViewController is CreateNewPostViewController {
                 tabVC.topestViewController!.dismiss(animated: true, completion: nil)
             }
             switch link {
@@ -397,8 +396,7 @@ public class NBModel: Mappable {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
         if deleteReq.statusCode!.rawValue == 410, let itemType = ItemType.fromURL(self.url.absoluteString) {
             _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
-        }
-        else {
+        } else {
             if let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result") as? [String : AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
                 _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
             }
@@ -425,17 +423,14 @@ public class NBModel: Mappable {
 
         if withCustomPayload != nil {
             json = withCustomPayload!
-        }
-        else {
+        } else {
             let payloadJson = self.setPayload()
             for item in payloadJson {
                 if item.value is NBModel {
                     json += ["_\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
-                }
-                else if item.value is Date {
+                } else if item.value is Date {
                     json += [item.key: "\((item.value as! Date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))"]
-                }
-                else {
+                } else {
                     json += [item.key: item.value]
                 }
             }
@@ -445,8 +440,7 @@ public class NBModel: Mappable {
 
         if self.url != nil {
             result = NBNetworking.shared.request(.put, url: self.url.absoluteString, json: (json as Any))
-        }
-        else {
+        } else {
             result = NBNetworking.shared.request(.post, url: type(of: self).endpoint, json: (json as Any))
         }
 
@@ -568,14 +562,11 @@ extension AssignmentAssessment {
                 if isPastDue {
                     if let firstGrade = userGrade, firstGrade.grade != nil {
                         return AssignmentStatus.Graded
-                    }
-                    else {
+                    } else {
                         return AssignmentStatus.NeedsGrading
                     }
                 }
-            }
-
-            else if userRole == .student {
+            } else if userRole == .student {
                 if let grade = userGrade, grade.grade != nil {
                     return AssignmentStatus.Graded
                 }
@@ -587,8 +578,7 @@ extension AssignmentAssessment {
                                 return AssignmentStatus.Submitted
                             }
                         }
-                    }
-                    else if selfAssignment.submissionScheme == .discussionBoard {
+                    } else if selfAssignment.submissionScheme == .discussionBoard {
                         if selfAssignment.isUserSubmissionStarted {
                             if selfAssignment.hasRequirements && !selfAssignment.isUserSubmissionComplete {
                                 if isPastDue {
@@ -602,22 +592,18 @@ extension AssignmentAssessment {
                     if isPastDue && selfAssignment.allowLateSubmission {
                         return AssignmentStatus.PastDue
                     }
-                }
-
-                else if let selfAssessment = self as? Assessment {
+                } else if let selfAssessment = self as? Assessment {
                     if selfAssessment.submissions != nil, let userSubmission = selfAssessment.submissions.first {
                         if userSubmission.isInProgress {
                             return AssignmentStatus.InProgress
-                        }
-                        else { return AssignmentStatus.Submitted }
+                        } else { return AssignmentStatus.Submitted }
                     }
                 }
             }
 
             if !isPastDue && isAvailable {
                 return AssignmentStatus.Open
-            }
-            else if isPastDue {
+            } else if isPastDue {
                 return AssignmentStatus.Closed
             }
         }
@@ -630,23 +616,17 @@ extension AssignmentAssessment {
 
         if self.gradeScheme == .completion {
             return gradePoints == 0 && self.points! > 0 ? "Incomplete" : "Complete"
-        }
-
-        else if self.gradeScheme == .percent && ((self as! NBModel).parent as! Course).gradeGPAEnabled {
+        } else if self.gradeScheme == .percent && ((self as! NBModel).parent as! Course).gradeGPAEnabled {
             var rawPercent = gradePoints / self.points * 100
             rawPercent = rawPercent / 100 * 4
             let gpaValue = rawPercent.rounded(toPlaces: ((self as! NBModel).parent as! Course).gradePrecision)
             return String(format: "%.2f", gpaValue)
-        }
-
-        else if self.gradeScheme == .percent {
+        } else if self.gradeScheme == .percent {
             let percentFormatted = self.getRoundedGradePercent(grade: gradePoints)
             let places = ((self as! NBModel).parent as! Course).gradePrecision
             let formatString = "%.\(places!)f%%"
             return String(format: formatString, percentFormatted)
-        }
-
-        else if self.gradeScheme == .letter {
+        } else if self.gradeScheme == .letter {
             let percentGrade = self.getRoundedGradePercent(grade: gradePoints)
 
             var titles: [String] = []
@@ -669,9 +649,7 @@ extension AssignmentAssessment {
 
             if (percentGrade < 0) {
                 return titles[0].uppercased()
-            }
-
-            else {
+            } else {
                 for value in values {
                     let currentIndex = values.index(of: value)!
                     let indexAfter = values.index(after: currentIndex)
@@ -692,8 +670,7 @@ extension AssignmentAssessment {
         }
         if gradePoints.isInt {
             return "\(Int(gradePoints)) pts"
-        }
-        else {
+        } else {
             return "\(gradePoints) pts"
         }
     }
@@ -830,15 +807,13 @@ class Course: NBModel, WithName {
                 let endColor = UIColor(hexString: "\(endHex)")
                 return [startColor, endColor]
             }
-        }
-        else if profileUrl.absoluteString.contains("/latest/images/cover/default/default_") {
+        } else if profileUrl.absoluteString.contains("/latest/images/cover/default/default_") {
             let defaultName = profileUrl.deletingPathExtension().lastPathComponent
             if let defaults = Gradients.getDefaultGradients() {
                 let gradientColor = Gradients.gradientColorWithName(defaults, name: defaultName)
                 return [gradientColor!.startColor, gradientColor!.endColor]
             }
-        }
-        else {
+        } else {
             return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
         }
         return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
@@ -943,8 +918,7 @@ public class Assignment: NBModel, AssignmentAssessment {
         gradeOnly <- map["gradeOnly"]
         if gradeOnly {
             desc = ""
-        }
-        else {
+        } else {
             desc <- map["description"]
         }
         gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
@@ -1243,8 +1217,7 @@ public class Enrollment: NBModel {
     var lastAccessAt: Date!
 
     public var statusIsAccepted: Bool {
-        if status.contains("Accepted") { return true }
-        else { return false }
+        if status.contains("Accepted") { return true } else { return false }
     }
 
     override class var routeType: ItemType { return .enrollment }
@@ -1366,8 +1339,7 @@ public class Post: NBModel, PostsComments {
             if self.text.wordCount >= parentDiscussionBoard.wordCountPosts {
                 return true
             }
-        }
-        else if parentDiscussionBoard.postsWordCountRequired == "Recommended" {
+        } else if parentDiscussionBoard.postsWordCountRequired == "Recommended" {
             return true
         }
         return false
@@ -1488,8 +1460,7 @@ public class Post: NBModel, PostsComments {
 
         if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
             self.attachments.append(newAttachment)
-        }
-        else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
             self.externalAttachments.append(newAttachment)
         }
     }
@@ -1509,15 +1480,13 @@ public class Post: NBModel, PostsComments {
         if postLikes.isEmpty || postLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
-        }
-        else if postLikes.count > 0 {
+        } else if postLikes.count > 0 {
             let like = postLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
 
             if like != nil {
                 likedByCurrentUser = true
                 likeFromCurrentUser = like
-            }
-            else if like == nil {
+            } else if like == nil {
                 likedByCurrentUser = false
                 likeFromCurrentUser = nil
             }
@@ -1560,8 +1529,7 @@ public enum AttachmentTypes: String {
     }
 
     public init?(typeValue: String!) {
-        if typeValue == nil { self.init(rawValue: "unsupported") }
-        else {
+        if typeValue == nil { self.init(rawValue: "unsupported") } else {
             let slash = CharacterSet.init(charactersIn: "/")
             let parts = typeValue.components(separatedBy: slash)
             self.init(rawValue: parts[0])
@@ -1691,8 +1659,7 @@ public class Comment: NBModel, PostsComments {
             if self.text.wordCount >= parentDiscussionBoard.wordCountComments {
                 return true
             }
-        }
-        else if parentDiscussionBoard.commentsWordCountRequired == "Recommended" {
+        } else if parentDiscussionBoard.commentsWordCountRequired == "Recommended" {
             return true
         }
         return false
@@ -1756,8 +1723,7 @@ public class Comment: NBModel, PostsComments {
             self.text = newComment.text
             self.editedAt = newComment.editedAt
             self.updatedAt = newComment.updatedAt
-        }
-        else if newComment.parent == self, !self.comments.contains(newComment) {
+        } else if newComment.parent == self, !self.comments.contains(newComment) {
             self.comments.append(newComment)
         }
     }
@@ -1791,8 +1757,7 @@ public class Comment: NBModel, PostsComments {
 
         if newAttachment.mimeType == .image, !self.attachments.contains(newAttachment) {
             self.attachments.append(newAttachment)
-        }
-        else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
+        } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment)  {
             self.externalAttachments.append(newAttachment)
         }
     }
@@ -1812,15 +1777,13 @@ public class Comment: NBModel, PostsComments {
         if commentLikes.isEmpty || commentLikes == nil {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
-        }
-        else if commentLikes.count > 0 {
+        } else if commentLikes.count > 0 {
             let like = commentLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
 
             if like != nil {
                 likedByCurrentUser = true
                 likeFromCurrentUser = like
-            }
-            else if like == nil {
+            } else if like == nil {
                 likedByCurrentUser = false
                 likeFromCurrentUser = nil
             }

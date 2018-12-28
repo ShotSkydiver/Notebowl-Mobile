@@ -131,8 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                 NBClient.shared.resetApp(andLogoutUser: false)
                                 return
                             }
-                        }
-                        else if socketResponse.contains("updated") {
+                        } else if socketResponse.contains("updated") {
                             let otherUsersCachedEnrollments = (NBClient.shared.storedTypes[Enrollment.classIdentifier]! as! [Enrollment]).filter({ $0.user != NBClient.shared.getCurrentUser() })
                             if !otherUsersCachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
                                 doAppReset = true
@@ -140,8 +139,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     doAppReset = true
                 }
 
@@ -199,8 +197,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         }
                     }
                 }
-            }
-            catch let error {
+            } catch let error {
                 print("Error parsing json: \(error)")
             }
         }

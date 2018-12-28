@@ -154,8 +154,7 @@ open class ProgressWebViewController: UIViewController {
 
         if let url = url {
             load(url)
-        }
-        else {
+        } else {
             log.debug("[ProgressWebViewController][Error] NULL URL")
         }
     }
@@ -451,8 +450,7 @@ fileprivate extension ProgressWebViewController {
         webView?.stopLoading()
         if webView?.url != nil {
             webView?.reload()
-        }
-        else if let url = url {
+        } else if let url = url {
             load(url)
         }
     }

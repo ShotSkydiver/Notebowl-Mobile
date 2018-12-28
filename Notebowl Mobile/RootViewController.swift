@@ -24,8 +24,7 @@ class RootViewController: UIViewController {
 
         if !(UserDefaults.hasUserLoggedIn) {
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
-        }
-        else if UserDefaults.hasUserLoggedIn {
+        } else if UserDefaults.hasUserLoggedIn {
             loadLoggedIn()
         }
     }
@@ -34,8 +33,7 @@ class RootViewController: UIViewController {
         let gotUserSuccess = NBClient.shared.resolveCurrentUser(true)
         if gotUserSuccess {
             self.performSegue(withIdentifier: "presentTabBarView", sender: nil)
-        }
-        else if !gotUserSuccess {
+        } else if !gotUserSuccess {
             UserDefaults.set(hasUserLoggedIn: false)
             self.performSegue(withIdentifier: "presentLoginView", sender: nil)
         }

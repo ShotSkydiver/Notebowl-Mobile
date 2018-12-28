@@ -85,8 +85,7 @@ extension CoursesTableViewController {
             var indexOfCourse = self.courses.index(of: newCourse)
             let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
             placeholderTableView?.showDefault()
-            if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) }
-            else {
+            if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) } else {
                 self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
                 indexOfCourse = 0
                 tableView.reloadRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade)

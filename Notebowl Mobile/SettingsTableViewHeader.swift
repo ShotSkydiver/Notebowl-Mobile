@@ -35,8 +35,7 @@ class SettingsTableViewHeader: UITableViewHeaderFooterView {
     func setupHeader(showButton: Bool) {
         if showButton {
             buttonStackView.isHidden = false
-        }
-        else {
+        } else {
             buttonStackView.isHidden = true
         }
     }

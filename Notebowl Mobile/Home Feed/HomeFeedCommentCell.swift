@@ -160,37 +160,37 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
 
         if !comment.commentLikes.isEmpty {
             commentLikes.text = comment.commentLikes.count == 1 ? "\(comment.commentLikes.count) Like" : "\(comment.commentLikes.count) Likes"
-        }
-        else {
+        } else {
             commentLikes.text = "Like"
         }
 
         if (!comment.comments.isEmpty && comment.comments != nil) {
             commentReplies.text = comment.comments.count == 1 ? "\(comment.comments.count) Reply" : "\(comment.comments.count) Replies"
-        }
-        else {
+        } else {
             commentReplies.text = " "
         }
 
-        if comment.text == nil { commentContent.isHidden = true }
-        else { commentContent.text = comment.text! }
+        if comment.text == nil {
+            commentContent.isHidden = true
+        } else { commentContent.text = comment.text! }
 
-        if comment.editedAt != nil { (postedDate.text = "• " + comment.createdAt.relativeShortFormat + " (edited)") }
-        else { (postedDate.text = "• " + comment.createdAt.relativeShortFormat) }
+        if comment.editedAt != nil {
+            (postedDate.text = "• " + comment.createdAt.relativeShortFormat + " (edited)")
+        } else {
+            (postedDate.text = "• " + comment.createdAt.relativeShortFormat)
+        }
 
         if comment.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")!
-        }
-        else if comment.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+        } else if comment.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
             userName.text = comment.creator!.fullName
             userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),
                                     .keepCurrentImageWhileLoading
                 ])
-        }
-        else {
+        } else {
             userName.text = comment.creator!.fullName
             userAvatar.kf.setImage(with: comment.creator!.profileUrl,
                                    options: [
@@ -222,16 +222,14 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
                                                  options: [
                                                     .transition(ImageTransition.fade(0.3))
                     ])
-            }
-            else {
+            } else {
                 linkPreviewThumbnail.isHidden = true
             }
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(linkPreviewTapped(_:)))
             tapGesture.numberOfTapsRequired = 1
             tapGesture.numberOfTouchesRequired = 1
             linkPreviewView.addGestureRecognizer(tapGesture)
-        }
-        else {
+        } else {
             linkPreviewHeight.constant = 0.0
             linkPreviewTitle.isHidden = true
             linkPreviewThumbnail.isHidden = true
@@ -240,8 +238,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
 
         if let firstAtt = comment.attachments.first, firstAtt.mimeType == .image {
             collectionViewHeight.constant = 100.0
-        }
-        else {
+        } else {
             collectionViewHeight.constant = 0.0
         }
 
@@ -273,8 +270,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         NBClient.shared.delay(1.0) {
             if !self.commentLikeButton.isSelected {
                 self.commentForCell.likeFromCurrentUser!.deleteSelf()
-            }
-            else if self.commentLikeButton.isEnabled {
+            } else if self.commentLikeButton.isEnabled {
                 let newLike = Like(parent: self.commentForCell)
                 let finalLike = newLike.save()
                 if finalLike == nil {
@@ -340,8 +336,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             })
             if indexPath.item == 2 && indexPath.item < self.commentForCell.attachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.commentForCell.attachments.count-2)", forceUpdate: false)
-            }
-            else {
+            } else {
                 cell.attachmentOverlay.showViewAnimated(false)
             }
         }
@@ -368,8 +363,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             homeVC.showingPhotoPicker = true
             homeVC.present(lightbox, animated: true, completion: nil)
             self.lightboxController = lightbox
-        }
-        else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
+        } else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
             homeVC.present(lightbox, animated: true, completion: nil)
             self.lightboxController = lightbox
         }
@@ -382,8 +376,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.item > 2 {
             return CGSize(width: 0, height: 90)
-        }
-        else {
+        } else {
             return CGSize(width: 90, height: 90)
         }
     }

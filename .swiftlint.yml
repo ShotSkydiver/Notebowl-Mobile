@@ -30,9 +30,9 @@
 #    - vertical_whitespace_opening_braces
 whitelist_rules:
     #- colon
-    - vertical_whitespace
     #- closure_parameter_position
-    #- statement_position
+     - vertical_whitespace
+     - statement_position
 included:
     - "Notebowl Mobile"
     - "NotebowlMobileUITests"
@@ -42,6 +42,13 @@ excluded:
     - "Notebowl Mobile/Libraries"
 
 custom_rules:
+    #block_statements_newline:
+    #    included: ".*\\.swift"
+    #    name: "Block Statement Newline"
+    #    regex: "([i]f(.+)\\})"
+    #     match_kinds: identifier
+    #    message: "Code within a block statement should begin on a new line"
+    #    severity: warning
     debugging_logs:
         included: ".*\\.swift"
         name: "Printing to Log"

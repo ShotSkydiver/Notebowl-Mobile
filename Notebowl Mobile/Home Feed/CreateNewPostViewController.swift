@@ -119,8 +119,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         if !textView.text.isEmpty || attachmentManager.attachments.count > 0 {
             postButton.isEnabled = true
-        }
-        else {
+        } else {
             postButton.isEnabled = false
         }
     }
@@ -154,8 +153,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             picker.didFinishPicking { [unowned picker] items, cancelled in
                 if cancelled {
                     picker.dismiss(animated: true, completion: nil)
-                }
-                else if !cancelled {
+                } else if !cancelled {
                     picker.dismiss(animated: true, completion: {
                     for item in items {
                         if case .photo(let photo) = item {
@@ -209,8 +207,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             if self.anonymousToggle {
                 self.postButton.width = 170
                 self.postButton.title = "Post as Anonymous"
-            }
-            else if !self.anonymousToggle {
+            } else if !self.anonymousToggle {
                 self.postButton.width = 48
                 self.postButton.title = "Post"
             }
@@ -227,8 +224,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             self.pickedCourseGroup.isHidden = true
             self.pickedCourseGroup.text = ""
             self.pinnedButton.isHidden = true
-        }
-        else {
+        } else {
             self.pickedCourseGroup.text = ("Posting to " + (self.objectsForPicker[self.selectedIndex] as! WithName).fullName)
             self.pinnedButton.isHidden = (self.objectsForPicker[self.selectedIndex] is Course ? !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .professor) : !(self.objectsForPicker[self.selectedIndex].enrollmentForUser?.role == .admin))
         }
@@ -236,8 +232,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
 
         if editingExisting {
             bar.setStackViewItems([photoLibraryButton,InputBarButtonItem.flexibleSpace], forStack: .left, animated: viewIsLoaded)
-        }
-        else {
+        } else {
             bar.setStackViewItems([photoLibraryButton,coursePickerButton,InputBarButtonItem.flexibleSpace,anonymousButton,pinnedButton], forStack: .left, animated: viewIsLoaded)
         }
         bar.isTranslucent = true
@@ -290,8 +285,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 let newPost = Post(text: postText!, owner: self.objectsForPicker[self.selectedIndex], parent: self.objectsForPicker[self.selectedIndex], isAnonymous: self.anonymousToggle, pinned: (!(self.pinnedButton.isHidden) ? self.pinnedToggle : false))
                 let posted = newPost.save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
@@ -368,8 +362,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     log.debug(cell.attachmentFileID)
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)
-                    }
-                    else {
+                    } else {
                         self.attachmentIDs[index] = cell.attachmentFileID
                     }
                     DispatchQueue.main.async(execute: {
@@ -379,8 +372,7 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                 upload.task?.resume()
             }
             return cell
-        }
-        else {
+        } else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
     }

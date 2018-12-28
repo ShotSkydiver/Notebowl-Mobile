@@ -73,9 +73,13 @@ class SettingsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = NotificationSettingCell.dequeue(from: tableView)!
-        if self.restorationIdentifier == "mobileSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionMobileSettings[indexPath.row]) }
-        else if self.restorationIdentifier == "emailSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionEmailSettings[indexPath.row]) }
-        else if self.restorationIdentifier == "webSettingsView" { cell.configure(setting: self.settingsArray[indexPath.section]!.sectionWebSettings[indexPath.row]) }
+        if self.restorationIdentifier == "mobileSettingsView" {
+            cell.configure(setting: self.settingsArray[indexPath.section]!.sectionMobileSettings[indexPath.row])
+        } else if self.restorationIdentifier == "emailSettingsView" {
+            cell.configure(setting: self.settingsArray[indexPath.section]!.sectionEmailSettings[indexPath.row])
+        } else if self.restorationIdentifier == "webSettingsView" {
+            cell.configure(setting: self.settingsArray[indexPath.section]!.sectionWebSettings[indexPath.row])
+        }
 
         return cell
     }

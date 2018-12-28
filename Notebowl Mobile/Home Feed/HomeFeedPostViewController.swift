@@ -113,8 +113,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
                 destVC.objectsForPicker = pickerItems
                 destVC.existingObjectToEdit = (sender as! HomeFeedPostCell).postForCell
-            }
-            else if sender is HomeFeedCommentCell {
+            } else if sender is HomeFeedCommentCell {
                 destVC.objectsForPicker = []
                 destVC.existingObjectToEdit = (sender as! HomeFeedCommentCell).commentForCell
             }
@@ -125,13 +124,11 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     func handleDeleteAction(objectToDelete: NBModel) {
         if (objectToDelete is Post) {
             self.navigationController?.popViewController(animated: true)
-        }
-        else if (objectToDelete is Comment) {
+        } else if (objectToDelete is Comment) {
             if (objectToDelete as! Comment).isCommentReply {
                 let parentIndex = self.getIndexOfComment(comment: ((objectToDelete as! Comment).parent! as! Comment), refresh: false)
                 self.displayedPost.comments[parentIndex!.section-1].comments.removeAll(objectToDelete as! Comment)
-            }
-            else {
+            } else {
                 self.displayedPost.comments.removeAll(objectToDelete as! Comment)
             }
         }
@@ -183,8 +180,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     if cancelled {
                         log.debug("cancelled")
                         picker.dismiss(animated: true, completion: nil)
-                    }
-                    else if !cancelled {
+                    } else if !cancelled {
                         self.showingPhotoPicker = false
                         picker.dismiss(animated: true, completion: {
                             for item in items {
@@ -380,15 +376,13 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
             cell.configure(post: (self.displayedPost as! Post))
             cell.delegate = self
             return cell
-        }
-        else {
+        } else {
             let cell = HomeFeedCommentCell.dequeue(from: tableView)!
 
             cell.isAccessibilityElement = false
             if indexPath.row > 0 {
                 cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-Reply-DetailView-%d-%d", indexPath.section, indexPath.row)
-            }
-            else {
+            } else {
                 cell.accessibilityIdentifier = String(format: "HomeFeedCommentCell-DetailView-%d-%d", indexPath.section, indexPath.row)
             }
             cell.accessibilityLabel = cell.accessibilityIdentifier
@@ -436,13 +430,9 @@ extension HomeFeedPostViewController {
 
         if let newPost = newObject as? Post {
             handleUpdatedPost(newPost: newPost)
-        }
-
-        else if let newComment = newObject as? Comment {
+        } else if let newComment = newObject as? Comment {
             handleUpdatedComment(newComment: newComment)
-        }
-
-        else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
+        } else if ["Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
             handleUpdatedAttachLike(newObject: newObject)
         }
     }
@@ -454,13 +444,9 @@ extension HomeFeedPostViewController {
 
         if let deletePost = deletedObject as? Post {
             handleDeletedPost(deletePost: deletePost)
-        }
-
-        else if let deleteComment = deletedObject as? Comment {
+        } else if let deleteComment = deletedObject as? Comment {
             handleDeletedComment(deleteComment: deleteComment)
-        }
-
-        else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
+        } else if ["Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
             handleDeletedAttachLike(deleteObject: deletedObject)
         }
     }
@@ -481,21 +467,17 @@ extension HomeFeedPostViewController {
             tableView.beginUpdates()
             if existingComment {
                 tableView.reloadRows(at: [indexOfComment!], with: .fade)
-            }
-            else {
+            } else {
                 tableView.insertRows(at: [indexOfComment!], with: .automatic)
             }
             tableView.endUpdates()
-        }
-
-        else if (newComment.parent is Post) {
+        } else if (newComment.parent is Post) {
             let existingComment = (tableView.numberOfSections+1 > self.displayedPost.comments.count+1)
 
             tableView.beginUpdates()
             if existingComment {
                 tableView.reloadRows(at: [indexOfComment!], with: .fade)
-            }
-            else {
+            } else {
                 tableView.insertSections(IndexSet(integer: indexOfComment!.section), with: .automatic)
                 tableView.insertRows(at: [indexOfComment!], with: .automatic)
             }
@@ -511,8 +493,7 @@ extension HomeFeedPostViewController {
             let indexOfComment = self.getIndexOfComment(comment: (newObject.parent! as! Comment))
 
             tableView.reloadRows(at: [indexOfComment!], with: .fade)
-        }
-        else if newObject.parent is Post {
+        } else if newObject.parent is Post {
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
     }
@@ -553,8 +534,7 @@ extension HomeFeedPostViewController {
         if deleteComment.isCommentReply {
             self.tableView.deleteRows(at: [indexOfComment], with: .fade)
             getCommentAtIndexPath(indexPath: indexOfComment).refresh()
-        }
-        else {
+        } else {
             self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
             (self.displayedPost as! NBModel).refresh()
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
@@ -572,8 +552,7 @@ extension HomeFeedPostViewController {
 
             if (deleteObject.parent as! Comment).isCommentReply {
                 getCommentReplyAtIndexPath(indexPath: indexOfComment).refresh()
-            }
-            else {
+            } else {
                 getCommentAtIndexPath(indexPath: indexOfComment).refresh()
             }
 
@@ -582,9 +561,7 @@ extension HomeFeedPostViewController {
             tableView.reloadRows(at: [indexOfComment], with: .none)
             tableView.endUpdates()
             UIView.setAnimationsEnabled(true)
-        }
-
-        else if deleteObject.parent is Post {
+        } else if deleteObject.parent is Post {
             UIView.setAnimationsEnabled(false)
             tableView.beginUpdates()
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
@@ -599,8 +576,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         if indexPath.section == 0 {
             return self.cellActions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
-        }
-        else {
+        } else {
             return self.cellActions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
     }
@@ -608,8 +584,7 @@ extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
         if indexPath.section == 0 {
             return self.cellActionOptions(isPost: (self.displayedPost is Post), vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
-        }
-        else {
+        } else {
             return self.cellActionOptions(isPost: false, vc: self, tableView: tableView, indexPath: indexPath, orientation: orientation)
         }
     }
@@ -654,8 +629,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
 
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)
-                    }
-                    else {
+                    } else {
                         self.attachmentIDs[index] = cell.attachmentFileID
                     }
 
@@ -667,9 +641,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             }
             return cell
 
-        }
-
-        else {
+        } else {
             return self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "AttachmentCell", for: indexPath) as! AttachmentCell
         }
     }
@@ -703,8 +675,7 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if !inputBar.sendButton.isEnabled && manager.attachments.count > 0 {
             inputBar.sendButton.isEnabled = true
-        }
-        else if inputBar.sendButton.isEnabled && manager.attachments.count == 0 && inputBar.inputTextView.text.isEmpty {
+        } else if inputBar.sendButton.isEnabled && manager.attachments.count == 0 && inputBar.inputTextView.text.isEmpty {
             inputBar.sendButton.isEnabled = false
         }
         self.attachmentIDs[index] = ""

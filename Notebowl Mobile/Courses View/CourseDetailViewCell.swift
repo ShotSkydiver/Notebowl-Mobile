@@ -46,8 +46,7 @@ class CourseDetailViewCell: UITableViewCell {
         assignmentCategory.text = assignment.category.title.uppercased()
         if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
             userGradeText.text = ""
-        }
-        else {
+        } else {
             userGradeText.text = assignment.getUserGrade()
         }
         submittedText.text = assignment.status.rawValue
@@ -56,12 +55,10 @@ class CourseDetailViewCell: UITableViewCell {
             let parsedDateString = assignment.dueDate.literalFormat
             if assignment.status == .NotAvailableYet {
                 dueDateNumber.text = "opens \(parsedDateString)"
-            }
-            else {
+            } else {
                 dueDateNumber.text = parsedDateString
             }
-        }
-        else {
+        } else {
             dueDateNumber.text = ""
         }
         dueDateText.text = " "
@@ -69,16 +66,13 @@ class CourseDetailViewCell: UITableViewCell {
         if assignment.points.isInt {
             if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
                 totalPointsNumber.text = ("\(Int(assignment.points!))")
-            }
-            else {
+            } else {
             totalPointsNumber.text = ("/ \(Int(assignment.points!))")
             }
-        }
-        else {
+        } else {
             if let userRole = (assignment as! NBModel).parent?.enrollmentForUser.role, userRole == .professor || userRole == .admin || userRole == .TA {
                 totalPointsNumber.text = ("\(assignment.points!)")
-            }
-            else {
+            } else {
             totalPointsNumber.text = ("/ \(assignment.points!)")
             }
         }

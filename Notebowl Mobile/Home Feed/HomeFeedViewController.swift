@@ -90,8 +90,7 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
             if let sourceCell = sender as? HomeFeedPostCell {
                 destVC.displayedPost = sourceCell.postForCell
             }
-        }
-        else if segue.identifier == "createPostSegue" {
+        } else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
 
             var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
@@ -142,13 +141,9 @@ extension HomeFeedViewController {
 
         if let newPost = newObject as? Post {
             handleUpdatedPost(newPost: newPost)
-        }
-
-        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
+        } else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(newObject.itemType.className) {
             handleUpdatedPostChild(newObject: newObject)
-        }
-
-        else if let newEnrollment = newObject as? Enrollment {
+        } else if let newEnrollment = newObject as? Enrollment {
             handleUpdatedEnrollment(newEnrollment: newEnrollment)
         }
     }
@@ -160,13 +155,9 @@ extension HomeFeedViewController {
 
         if let deletePost = deletedObject as? Post {
             handleDeletedPost(deletedPost: deletePost)
-        }
-
-        else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
+        } else if ["Comment","Like","AttachmentS3","AttachmentExternal"].contains(deletedObject.itemType.className) {
             handleDeletedPostChild(deletedObject: deletedObject)
-        }
-
-        else if let deleteEnrollment = deletedObject as? Enrollment {
+        } else if let deleteEnrollment = deletedObject as? Enrollment {
             handleDeletedEnrollment(deletedEnrollment: deleteEnrollment)
         }
     }
@@ -185,8 +176,7 @@ extension HomeFeedViewController {
 
         if existingPost {
             self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
-        }
-        else {
+        } else {
             self.bulletinTableView.insertRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .left)
         }
     }
@@ -224,16 +214,13 @@ extension HomeFeedViewController {
         }
         if !newEnrollment.parent!.firstTimeLoading {
             newEnrollment.parent!.refresh()
-        }
-
-        else if newEnrollment.parent!.firstTimeLoading {
+        } else if newEnrollment.parent!.firstTimeLoading {
             guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
 
             let loadingViewController = LoadingViewController()
             if tabbarVC.presentedViewController == nil {
                 tabbarVC.present(loadingViewController, animated: true, completion: nil)
-            }
-            else if tabbarVC.presentedViewController is LoadingViewController {
+            } else if tabbarVC.presentedViewController is LoadingViewController {
                 return
             }
 
@@ -299,8 +286,7 @@ extension HomeFeedViewController {
 
         if tabbarVC.presentedViewController == nil {
             tabbarVC.present(loadingViewController, animated: true, completion: nil)
-        }
-        else if tabbarVC.presentedViewController is LoadingViewController {
+        } else if tabbarVC.presentedViewController is LoadingViewController {
             return
         }
 

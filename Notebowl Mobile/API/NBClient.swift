@@ -37,8 +37,7 @@ class NBClient {
                 Bugsnag.addAttribute("uuid", withValue: "\(UIDevice().uuid)", toTabWithName: "user")
                 return true
             }
-        }
-        else if currentUser != nil { return true }
+        } else if currentUser != nil { return true }
 
         return false
     }
@@ -148,8 +147,7 @@ class NBClient {
                 let storedObjects: [T] = NBClient.shared.storeObjectsInCache(mapped)
                 return storedObjects
             }
-        }
-        else {
+        } else {
             NBClient.shared.sendBugsnagException(fromResult: result)
             return []
         }
@@ -169,21 +167,17 @@ class NBClient {
                     storedTypes[T.classIdentifier]![pos] = object
                     newObjectArray.append(object)
 
-                }
-                else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
+                } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
 
                     existingObj.firstTimeLoading = false
 
                     newObjectArray.append(newObj)
                 }
-            }
-
-            else {
+            } else {
                 object.firstTimeLoading = true
                 if let oldData = storedTypes.updateValue([object], forKey: T.classIdentifier) {
                     storedTypes[T.classIdentifier]!.append(contentsOf: oldData)
-                }
-                else {
+                } else {
                     log.verbose("no existing key")
                 }
                 newObjectArray.append(object)
@@ -208,8 +202,7 @@ class NBClient {
         var exception: NSException!
         if fromResult.statusCode == nil, let resultError = fromResult.error as NSError? {
             exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error statusCode is nil: \(resultError.localizedDescription), url: \(resultError.domain)", userInfo: resultError.userInfo )
-        }
-        else if let statusCode: HTTPStatusCode = fromResult.statusCode, let resultUrl: URL = fromResult.url {
+        } else if let statusCode: HTTPStatusCode = fromResult.statusCode, let resultUrl: URL = fromResult.url {
             log.debug("getmappable error: \(statusCode) - \(resultUrl.absoluteString)")
             exception = NSException(name:NSExceptionName(rawValue: "URLResponseError"), reason:"Error \(statusCode): \(statusCode.localizedReasonPhrase), url: \(resultUrl.absoluteString)", userInfo:nil)
         }
@@ -254,10 +247,7 @@ extension Array {
     }
 
     mutating func sortByDate() {
-        if self is [Course] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } }
-        else if self is [AssignmentAssessment] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } }
-        else if self is [Comment] { sort() { ($0 as! NBModel).createdAt < ($1 as! NBModel).createdAt } }
-        else if self is [NBModel] { sort() { ($0 as! NBModel).createdAt > ($1 as! NBModel).createdAt } }
+        if self is [Course] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } } else if self is [AssignmentAssessment] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } } else if self is [Comment] { sort() { ($0 as! NBModel).createdAt < ($1 as! NBModel).createdAt } } else if self is [NBModel] { sort() { ($0 as! NBModel).createdAt > ($1 as! NBModel).createdAt } }
     }
 }
 

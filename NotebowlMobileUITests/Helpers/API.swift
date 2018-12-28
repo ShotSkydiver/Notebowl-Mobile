@@ -66,8 +66,7 @@ class API {
 
             if let keyPaths = keyPath as? [[String: Any]] {
                 responseUrl = ( keyPaths.first!["url"] as! String)
-            }
-            else if let keyPaths = keyPath as? [String: Any] {
+            } else if let keyPaths = keyPath as? [String: Any] {
                 responseUrl = ( keyPaths["url"] as! String)
             }
             semaphore.signal()
@@ -83,8 +82,7 @@ class API {
         if discussionBoardPost {
             let assignmentUrl = getFirst("assignments")
             _ = createNew("posts", parent: assignmentUrl, owner: courseUrl, related: assignmentUrl, user: user)
-        }
-        else if !discussionBoardPost {
+        } else if !discussionBoardPost {
             _ = createNew("posts", parent: courseUrl, owner: courseUrl, related: courseUrl, user: user)
         }
     }
@@ -95,8 +93,7 @@ class API {
         if discussionBoardComment {
             let assignmentUrl = getFirst("assignments")
             _ = API.createNew("comments", parent: postUrl, owner: courseUrl, related: assignmentUrl, user: user)
-        }
-        else if !discussionBoardComment {
+        } else if !discussionBoardComment {
             _ = API.createNew("comments", parent: postUrl, owner: courseUrl, related: courseUrl, user: user)
         }
     }
@@ -121,8 +118,7 @@ class API {
         if currentUserAsTA {
             let enrollPayload: Any = ["role":"TA","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
             _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
-        }
-        else if !currentUserAsTA {
+        } else if !currentUserAsTA {
             let enrollPayload: Any = ["role":"Student","status":"Accepted","_user":"\(userUrl)","_parent":"\(courseUrl)"]
             _ = createNew("enrollments", payload: enrollPayload, user: "admin@notebowl.com")
         }

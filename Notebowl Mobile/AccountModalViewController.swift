@@ -140,8 +140,7 @@ class AccountModalTableViewController: UITableViewController {
         picker.didFinishPicking(completion: { [unowned picker] items, cancelled in
             if cancelled {
                 picker.dismiss(animated: true, completion: nil)
-            }
-            else if !cancelled {
+            } else if !cancelled {
                 if let photo = items.singlePhoto {
                     self.startUpload(image: photo.image)
                     picker.dismiss(animated: true, completion: {
@@ -166,14 +165,10 @@ class AccountModalTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if cell.reuseIdentifier == "changeProfileCell" {
             setupMenuForAlert()
-        }
-        else if cell.reuseIdentifier == "emailSettingsCell" {
-        }
-        else if cell.reuseIdentifier == "pushSettingsCell" {
-        }
-        else if cell.reuseIdentifier == "webSettingsCell" {
-        }
-        else if cell.reuseIdentifier == "logoutCell" {
+        } else if cell.reuseIdentifier == "emailSettingsCell" {
+        } else if cell.reuseIdentifier == "pushSettingsCell" {
+        } else if cell.reuseIdentifier == "webSettingsCell" {
+        } else if cell.reuseIdentifier == "logoutCell" {
             NBClient.shared.resetApp(andLogoutUser: true)
         }
     }

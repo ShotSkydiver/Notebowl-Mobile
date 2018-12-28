@@ -70,17 +70,13 @@ class NBSocket {
         if mapped?.action == .updated {
             if object is Notification {
                 NotificationCenter.default.post(name: .SocketDidReceiveUpdatedNotification, object: (object as! Notification), userInfo: nil)
-            }
-            else if object is Post {
+            } else if object is Post {
                 NotificationCenter.default.post(name: .SocketDidReceiveUpdatedPost, object: nil, userInfo: ["object": object])
-            }
-            else if object is Comment {
+            } else if object is Comment {
                 NotificationCenter.default.post(name: .SocketDidReceiveUpdatedComment, object: nil, userInfo: ["object": object])
-            }
-            else if object is Like {
+            } else if object is Like {
                 NotificationCenter.default.post(name: .SocketDidReceiveUpdatedLike, object: nil, userInfo: ["object": object])
-            }
-            else if object is Attachment {
+            } else if object is Attachment {
                 NotificationCenter.default.post(name: .SocketDidReceiveUpdatedAttachment, object: nil, userInfo: ["object": object])
             }
         }

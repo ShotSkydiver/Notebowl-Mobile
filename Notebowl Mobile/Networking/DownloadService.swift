@@ -118,8 +118,7 @@ extension NBNetworking {
 
             if queryString.count > 0 && queryString.count < 20000 {
                 urlComponents.percentEncodedQuery = queryString
-            }
-            else if queryString.count >= 20000 {
+            } else if queryString.count >= 20000 {
                 finalMethod = .post
                 finalHeaders["X-Notebowl-Method-Override"] = "GET"
                 jsonFromQuery = params
@@ -138,8 +137,7 @@ extension NBNetworking {
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: jsonQuery,
                                                        options: sessionDefaults.JSONWritingOptions)
-                }
-                else if let requestJSON = json {
+                } else if let requestJSON = json {
                     contentType = "application/json"
                     body = try? JSONSerialization.data(withJSONObject: requestJSON,
                                                        options: sessionDefaults.JSONWritingOptions)
@@ -234,8 +232,7 @@ extension NBNetworking {
         if let task = makeTask(synthesizedRequest, configuration: config) {
             if loadImmediately {
                 task.resume()
-            }
-            else {
+            } else {
                 return NBResult(data: nil, response: nil, error: taskNeverStarted, task: task)
             }
         }
