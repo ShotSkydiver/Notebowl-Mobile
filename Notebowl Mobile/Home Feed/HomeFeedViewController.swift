@@ -25,6 +25,8 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
 
+    var currentWorkingIndexPath: IndexPath!
+
     var cellHeights: [IndexPath: CGFloat] = [:]
 
     override func viewDidLoad() {
@@ -50,10 +52,17 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
     }
 
     func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(willDeletePost(_:)), name: NSNotification.Name("ModelWillDeletePost"), object: nil)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPost(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingComment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostChild(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostChild(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingPost(_:)), name: NSNotification.Name("ModelDidFinishDeletingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingComment(_:)), name: NSNotification.Name("ModelDidFinishDeletingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingAttachment"), object: nil)
     }
 
     @objc func finishUpdatingPost(_ notification: NSNotification) {
@@ -94,7 +103,68 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         bulletinTableView.reloadRows(at: [IndexPath(row: postIndex, section: 0)], with: .fade)
     }
 
-    @objc func finishUpdatingPostChild(_ notification: NSNotification) {
+    @objc func finishUpdatingLikesAttachments(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !shouldHandleResponse(object: newObject) {
+            return
+        }
+
+        guard newObject.parent is Post, let postIndex = self.posts.index(of: newObject.parent as! Post) else {
+            return
+        }
+
+        bulletinTableView.reloadRows(at: [IndexPath(row: postIndex, section: 0)], with: .fade)
+    }
+
+    @objc func willDeletePost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletingPost = dict["object"] as? Post else {
+            return
+        }
+        if !shouldHandleResponse(object: deletingPost) {
+            return
+        }
+
+        guard let index = self.posts.index(of: deletingPost) else {
+            return
+        }
+
+        currentWorkingIndexPath = IndexPath(row: index, section: 0)
+    }
+
+    @objc func finishDeletingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedPost = dict["object"] as? Post else {
+            return
+        }
+        if !shouldHandleResponse(object: deletedPost) {
+            return
+        }
+
+        if let index = currentWorkingIndexPath, !self.posts.contains(deletedPost) {
+            bulletinTableView.deleteRows(at: [index], with: .automatic)
+        }
+        currentWorkingIndexPath = nil
+    }
+
+    @objc func finishDeletingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if !shouldHandleResponse(object: newComment) {
+            return
+        }
+
+        guard let postIndex = self.posts.index(of: newComment.getParentByType(Post.self)) else {
+            return
+        }
+
+        bulletinTableView.reloadRows(at: [IndexPath(row: postIndex, section: 0)], with: .fade)
+    }
+
+    @objc func finishDeletingLikesAttachments(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
             return
         }
@@ -188,10 +258,6 @@ extension HomeFeedViewController {
         return true
     }
 
-    func updatePostsFromCache() {
-        self.posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ $0.parent is Course || $0.parent is Group }) as? [Post]
-    }
-
     func handleUpdated(newObject: NBModel) {
         if let newUser = newObject as? User {
             handleUpdatedUser(newUser: newUser)
@@ -203,20 +269,6 @@ extension HomeFeedViewController {
 
         if let newEnrollment = newObject as? Enrollment {
             handleUpdatedEnrollment(newEnrollment: newEnrollment)
-        }
-    }
-
-    func handleDeleted(deletedObject: NBModel) {
-        if !shouldHandleResponse(object: deletedObject) {
-            return
-        }
-
-        if let deletePost = deletedObject as? Post {
-            handleDeletedPost(deletedPost: deletePost)
-        } else if ["Comment", "Like", "AttachmentS3", "AttachmentExternal"].contains(deletedObject.itemType.className) {
-            handleDeletedPostChild(deletedObject: deletedObject)
-        } else if let deleteEnrollment = deletedObject as? Enrollment {
-            handleDeletedEnrollment(deletedEnrollment: deleteEnrollment)
         }
     }
 
@@ -283,35 +335,6 @@ extension HomeFeedViewController {
         }
     }
 
-    func handleDeletedPost(deletedPost: Post) {
-        guard let indexOfPost = self.posts.index(of: deletedPost) else {
-            return
-        }
-        updatePostsFromCache()
-
-        self.bulletinTableView.deleteRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .right)
-
-        if self.bulletinTableView.numberOfRows(inSection: 0) == 0 {
-            self.bulletinTableView.showNoResultsPlaceholder()
-        }
-    }
-
-    func handleDeletedPostChild(deletedObject: NBModel) {
-        if !(deletedObject is Comment || deletedObject.parent is Post) {
-            return
-        }
-
-        guard let indexOfPost = self.posts.index(of: deletedObject.getParentByType(Post.self)) else {
-            return
-        }
-
-        if self.navigationController?.topViewController is HomeFeedViewController || !(deletedObject is Comment) {
-            self.posts[indexOfPost].refresh()
-        }
-
-        self.bulletinTableView.reloadRows(at: [IndexPath(row: indexOfPost, section: 0)], with: .fade)
-    }
-
     func handleDeletedEnrollment(deletedEnrollment: Enrollment) {
         guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
         let loadingViewController = LoadingViewController()
@@ -348,6 +371,7 @@ extension HomeFeedViewController {
         }
     }
 
+    func handleDeleted(deletedObject: NBModel) { }
     func handleElapsed(elapsedObject: NBModel) { }
 }
 

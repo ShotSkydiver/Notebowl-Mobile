@@ -507,6 +507,7 @@ public protocol PostsComments {
     var creator: User! { get }
 
     var attachments: [Attachment]! { get set }
+    var externalAttachments: [Attachment]! { get set }
     var comments: [Comment]! { get set }
     mutating func saveEditedObjectWithText(newText: String)
 }
@@ -1387,6 +1388,10 @@ public class Post: NBModel, PostsComments {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingLike(_:)), name: NSNotification.Name("ModelDidBeginUpdatingLike"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAttachment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAttachment"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingComment(_:)), name: NSNotification.Name("ModelDidBeginDeletingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingLike(_:)), name: NSNotification.Name("ModelDidBeginDeletingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingAttachment(_:)), name: NSNotification.Name("ModelDidBeginDeletingAttachment"), object: nil)
     }
 
     @objc func beginUpdatingPost(_ notification: NSNotification) {
@@ -1407,13 +1412,11 @@ public class Post: NBModel, PostsComments {
         guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
             return
         }
-        guard newComment.parent == self else {
+
+        if newComment.isCommentReply || newComment.parent != self {
             return
         }
 
-        if newComment.isCommentReply {
-            return
-        }
         if !self.comments.contains(newComment) {
             self.comments.append(newComment)
         }
@@ -1423,11 +1426,8 @@ public class Post: NBModel, PostsComments {
         guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
             return
         }
-        guard newLike.parent == self else {
-            return
-        }
 
-        if self.postLikes.contains(newLike) {
+        if self.postLikes.contains(newLike) || newLike.parent != self {
             return
         }
 
@@ -1442,7 +1442,7 @@ public class Post: NBModel, PostsComments {
         guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
             return
         }
-        guard newAttachment.parent == self else {
+        if newAttachment.parent != self {
             return
         }
 
@@ -1450,6 +1450,52 @@ public class Post: NBModel, PostsComments {
             self.attachments.append(newAttachment)
         } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment) {
             self.externalAttachments.append(newAttachment)
+        }
+    }
+
+    @objc func beginDeletingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if deletedComment.isCommentReply || deletedComment.parent != self {
+            return
+        }
+
+        if self.comments.contains(deletedComment) {
+            self.comments.removeAll(deletedComment)
+        }
+    }
+
+    @objc func beginDeletingLike(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedLike = dict["object"] as? Like else {
+            return
+        }
+        if deletedLike.parent != self {
+            return
+        }
+
+        if self.postLikes.contains(deletedLike) {
+            self.postLikes.removeAll(deletedLike)
+            if deletedLike.owner == NBClient.shared.getCurrentUser() {
+                self.likedByCurrentUser = false
+                self.likeFromCurrentUser = nil
+            }
+        }
+    }
+
+    @objc func beginDeletingAttachment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedAttachment = dict["object"] as? Attachment else {
+            return
+        }
+        if deletedAttachment.parent != self {
+            return
+        }
+
+        if self.attachments.contains(deletedAttachment) {
+            self.attachments.removeAll(deletedAttachment)
+        } else if self.externalAttachments.contains(deletedAttachment) {
+            self.externalAttachments.removeAll(deletedAttachment)
         }
     }
 
@@ -1700,6 +1746,10 @@ public class Comment: NBModel, PostsComments {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingLike(_:)), name: NSNotification.Name("ModelDidBeginUpdatingLike"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAttachment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAttachment"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingComment(_:)), name: NSNotification.Name("ModelDidBeginDeletingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingLike(_:)), name: NSNotification.Name("ModelDidBeginDeletingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingAttachment(_:)), name: NSNotification.Name("ModelDidBeginDeletingAttachment"), object: nil)
     }
 
     @objc func beginUpdatingComment(_ notification: NSNotification) {
@@ -1720,11 +1770,8 @@ public class Comment: NBModel, PostsComments {
         guard let dict = notification.userInfo as NSDictionary?, let newLike = dict["object"] as? Like else {
             return
         }
-        guard newLike.parent == self else {
-            return
-        }
 
-        if self.commentLikes.contains(newLike) {
+        if self.commentLikes.contains(newLike) || newLike.parent != self {
             return
         }
 
@@ -1739,7 +1786,7 @@ public class Comment: NBModel, PostsComments {
         guard let dict = notification.userInfo as NSDictionary?, let newAttachment = dict["object"] as? Attachment else {
             return
         }
-        guard newAttachment.parent == self else {
+        if newAttachment.parent != self {
             return
         }
 
@@ -1747,6 +1794,51 @@ public class Comment: NBModel, PostsComments {
             self.attachments.append(newAttachment)
         } else if newAttachment.attachmentScheme == .External, !self.externalAttachments.contains(newAttachment) {
             self.externalAttachments.append(newAttachment)
+        }
+    }
+
+    @objc func beginDeletingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedComment = dict["object"] as? Comment else {
+            return
+        }
+        if deletedComment.parent != self {
+            return
+        }
+
+        if self.comments.contains(deletedComment) {
+            self.comments.removeAll(deletedComment)
+        }
+    }
+
+    @objc func beginDeletingLike(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedLike = dict["object"] as? Like else {
+            return
+        }
+        if deletedLike.parent != self {
+            return
+        }
+
+        if self.commentLikes.contains(deletedLike) {
+            self.commentLikes.removeAll(deletedLike)
+            if deletedLike.owner == NBClient.shared.getCurrentUser() {
+                self.likedByCurrentUser = false
+                self.likeFromCurrentUser = nil
+            }
+        }
+    }
+
+    @objc func beginDeletingAttachment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedAttachment = dict["object"] as? Attachment else {
+            return
+        }
+        if deletedAttachment.parent != self {
+            return
+        }
+
+        if self.attachments.contains(deletedAttachment) {
+            self.attachments.removeAll(deletedAttachment)
+        } else if self.externalAttachments.contains(deletedAttachment) {
+            self.externalAttachments.removeAll(deletedAttachment)
         }
     }
 
