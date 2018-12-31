@@ -23,6 +23,7 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     var showingPhotoPicker: Bool = false
 
     var postCommentToReplyTo: PostsComments!
+    var currentWorkingIndexPath: IndexPath!
 
     lazy var inputBar: InputBarAccessoryView = { [weak self] in
         let bar = InputBarAccessoryView()
@@ -86,10 +87,17 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
     }
 
     func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(willDeleteComment(_:)), name: NSNotification.Name("ModelWillDeleteComment"), object: nil)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPost(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingComment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingPost(_:)), name: NSNotification.Name("ModelDidFinishDeletingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingComment(_:)), name: NSNotification.Name("ModelDidFinishDeletingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingLike"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingAttachment"), object: nil)
     }
 
     @objc func finishUpdatingPost(_ notification: NSNotification) {
@@ -154,6 +162,79 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         }
 
         tableView.reloadRows(at: [commentIndex], with: .automatic)
+    }
+
+    @objc func willDeleteComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletingComment = dict["object"] as? Comment else {
+            return
+        }
+        if !isDisplayedPost(object: deletingComment) {
+            return
+        }
+
+        guard let index = self.getIndexOfComment(comment: deletingComment) else {
+            return
+        }
+
+        currentWorkingIndexPath = index
+    }
+
+    @objc func finishDeletingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedPost = dict["object"] as? Post else {
+            return
+        }
+
+        if !isDisplayedPost(object: deletedPost) {
+            return
+        }
+
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    @objc func finishDeletingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if !isDisplayedPost(object: deletedComment) {
+            return
+        }
+
+        guard let index = currentWorkingIndexPath else {
+            return
+        }
+
+        tableView.beginUpdates()
+
+        if deletedComment.isCommentReply {
+            tableView.deleteRows(at: [index], with: .fade)
+        } else {
+            tableView.deleteSections(IndexSet(integer: index.section), with: .fade)
+        }
+
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        tableView.endUpdates()
+
+        currentWorkingIndexPath = nil
+    }
+
+    @objc func finishDeletingLikesAttachments(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !isDisplayedPost(object: deletedObject) {
+            return
+        }
+
+        UIView.setAnimationsEnabled(false)
+        tableView.beginUpdates()
+        if deletedObject.parent is Comment, let commentIndex = self.getIndexOfComment(comment: deletedObject.parent as! Comment) {
+            tableView.reloadRows(at: [commentIndex], with: .none)
+        }
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        tableView.endUpdates()
+        UIView.setAnimationsEnabled(true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -477,34 +558,13 @@ extension HomeFeedPostViewController {
         return true
     }
 
-    func getCommentAtIndexPath(indexPath: IndexPath) -> Comment {
-        return self.displayedPost.comments[indexPath.section-1]
-    }
-
-    func getCommentReplyAtIndexPath(indexPath: IndexPath) -> Comment {
-        return getCommentAtIndexPath(indexPath: indexPath).comments[indexPath.row-1]
-    }
-
     func handleUpdated(newObject: NBModel) {
         if let newUser = newObject as? User {
             handleUpdatedUser(newUser: newUser)
         }
     }
 
-    func handleDeleted(deletedObject: NBModel) {
-        if !isDisplayedPost(object: deletedObject) {
-            return
-        }
-
-        if let deletePost = deletedObject as? Post {
-            handleDeletedPost(deletePost: deletePost)
-        } else if let deleteComment = deletedObject as? Comment {
-            handleDeletedComment(deleteComment: deleteComment)
-        } else if ["Like", "AttachmentS3", "AttachmentExternal"].contains(deletedObject.itemType.className) {
-            handleDeletedAttachLike(deleteObject: deletedObject)
-        }
-    }
-
+    func handleDeleted(deletedObject: NBModel) {}
     func handleElapsed(elapsedObject: NBModel) {}
 
     func handleUpdatedUser(newUser: User) {
@@ -525,58 +585,6 @@ extension HomeFeedPostViewController {
             }
         }
         tableView.reloadRows(at: indexPaths, with: .fade)
-    }
-
-    func handleDeletedPost(deletePost: Post) {
-        self.navigationController?.popViewController(animated: true)
-    }
-
-    func handleDeletedComment(deleteComment: Comment) {
-        guard let indexOfComment = self.getIndexOfComment(comment: deleteComment) else {
-            return
-        }
-
-        let deleted = deleteComment.isCommentReply ? getCommentAtIndexPath(indexPath: indexOfComment).comments.remove(at: indexOfComment.row-1) : self.displayedPost.comments.remove(at: indexOfComment.section-1)
-
-        self.tableView.beginUpdates()
-
-        if deleteComment.isCommentReply {
-            self.tableView.deleteRows(at: [indexOfComment], with: .fade)
-            getCommentAtIndexPath(indexPath: indexOfComment).refresh()
-        } else {
-            self.tableView.deleteSections(IndexSet(integer: indexOfComment.section), with: .fade)
-            (self.displayedPost as! NBModel).refresh()
-            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-        }
-
-        self.tableView.endUpdates()
-        (self.parent?.children[0] as! HomeFeedViewController).handleDeleted(deletedObject: deleted)
-    }
-
-    func handleDeletedAttachLike(deleteObject: NBModel) {
-        if deleteObject.parent is Comment {
-            guard let indexOfComment = self.getIndexOfComment(comment: (deleteObject.parent! as! Comment)) else {
-                return
-            }
-
-            if (deleteObject.parent as! Comment).isCommentReply {
-                getCommentReplyAtIndexPath(indexPath: indexOfComment).refresh()
-            } else {
-                getCommentAtIndexPath(indexPath: indexOfComment).refresh()
-            }
-
-            UIView.setAnimationsEnabled(false)
-            tableView.beginUpdates()
-            tableView.reloadRows(at: [indexOfComment], with: .none)
-            tableView.endUpdates()
-            UIView.setAnimationsEnabled(true)
-        } else if deleteObject.parent is Post {
-            UIView.setAnimationsEnabled(false)
-            tableView.beginUpdates()
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-            tableView.endUpdates()
-            UIView.setAnimationsEnabled(true)
-        }
     }
 }
 
