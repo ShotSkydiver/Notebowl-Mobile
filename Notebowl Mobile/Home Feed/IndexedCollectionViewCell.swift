@@ -12,23 +12,18 @@ import Kingfisher
 class IndexedCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "indexCollectionCell"
 
-    @IBOutlet weak var attachment: ProfileImageView!
+    @IBOutlet weak var attachment: DesignableImageView!
     @IBOutlet weak var attachmentOverlay: UIView!
     @IBOutlet weak var attachmentCount: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
         attachmentOverlay.layer.cornerRadius = 4.0
         attachmentOverlay.layer.masksToBounds = false
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        initSetup()
-    }
-
-    func initSetup() {
     }
 
     func cellDisplaysOverlay(count: String, forceUpdate: Bool) {

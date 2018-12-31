@@ -89,7 +89,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
     @IBOutlet weak var linkPreviewTitle: UILabel!
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewUrl: UILabel!
-    @IBOutlet weak var linkPreviewThumbnail: ProfileImageView!
+    @IBOutlet weak var linkPreviewThumbnail: DesignableImageView!
 
     var lightboxPhotos = [LightboxImage]()
     var commentForCell: Comment!
@@ -182,7 +182,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
         if comment.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")!
-        } else if comment.creator!.resourceKey == NBClient.shared.getCurrentUser().resourceKey {
+        } else if comment.creator == NBClient.shared.getCurrentUser() {
             userName.text = comment.creator!.fullName
             userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [

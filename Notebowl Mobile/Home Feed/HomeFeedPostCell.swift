@@ -85,7 +85,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var linkPreviewTitle: UILabel!
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewUrl: UILabel!
-    @IBOutlet weak var linkPreviewThumbnail: ProfileImageView!
+    @IBOutlet weak var linkPreviewThumbnail: DesignableImageView!
 
     var images = [UIImage]()
     var lightboxPhotos = [LightboxImage]()
@@ -191,7 +191,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         if post.isAnonymous {
             userName.text = "Anonymous"
             userAvatar.image = UIImage(named: "anonymous")
-        } else if post.creator! == NBClient.shared.getCurrentUser() {
+        } else if post.creator == NBClient.shared.getCurrentUser() {
             userName.text = post.creator!.fullName
             userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
                                    options: [

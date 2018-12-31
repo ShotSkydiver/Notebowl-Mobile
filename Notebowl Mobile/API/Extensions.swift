@@ -539,7 +539,7 @@ extension DesignableView {
     }
 }
 
-@IBDesignable class ProfileImageView: UIImageView {
+@IBDesignable class DesignableImageView: UIImageView {
     @IBInspectable var dashedBorder: Bool = false {
         didSet {
             self.setNeedsLayout()
@@ -620,6 +620,7 @@ extension DesignableView {
     override func layoutSubviews() {
         self.applyProperties()
     }
+
     func applyProperties() {
         let shapeLayer: CAShapeLayer = CAShapeLayer()
         let frameSize = self.frame.size

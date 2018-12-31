@@ -699,6 +699,23 @@ public class User: NBModel {
         gradMonth <- map["gradMonth"]
         gradYear <- map["gradYear"]
         profileUrl <- (map["profileUrl"], URLTransform())
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingUser(_:)), name: NSNotification.Name("ModelDidBeginUpdatingUser"), object: nil)
+    }
+
+    @objc func beginUpdatingUser(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newUser = dict["object"] as? User, newUser == self else {
+            return
+        }
+
+        if newUser.updatedAt > self.updatedAt {
+            self.profileUrl = newUser.profileUrl
+            self.updatedAt = newUser.updatedAt
+        }
     }
 }
 

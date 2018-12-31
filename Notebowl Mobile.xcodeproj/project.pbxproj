@@ -44,6 +44,7 @@
 		8587DE632107EC0A00B41DB6 /* CommentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE622107EC0A00B41DB6 /* CommentUITests.swift */; };
 		8587DE652107EC1D00B41DB6 /* NotificationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */; };
 		8587DE672107EC5400B41DB6 /* MiscAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */; };
+		858FD76321DAD5740008AA64 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858FD76221DAD5740008AA64 /* ProfileImageView.swift */; };
 		8595017220A2614E004640B3 /* IndexedCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */; };
 		8595017320A2614E004640B3 /* IndexedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */; };
 		859BB17D212DDA6C009745A4 /* PostDetailViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859BB17C212DDA6C009745A4 /* PostDetailViewUITests.swift */; };
@@ -144,6 +145,7 @@
 		8587DE622107EC0A00B41DB6 /* CommentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUITests.swift; sourceTree = "<group>"; };
 		8587DE642107EC1D00B41DB6 /* NotificationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUITests.swift; sourceTree = "<group>"; };
 		8587DE662107EC5400B41DB6 /* MiscAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscAppUITests.swift; sourceTree = "<group>"; };
+		858FD76221DAD5740008AA64 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		8595017020A2614E004640B3 /* IndexedCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedCollectionViewCell.swift; sourceTree = "<group>"; };
 		8595017120A2614E004640B3 /* IndexedCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IndexedCollectionViewCell.xib; sourceTree = "<group>"; };
 		859BB17C212DDA6C009745A4 /* PostDetailViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewUITests.swift; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 				85252DE820B4220F00A67102 /* Networking */,
 				8534A19E2045CF1B0001B5BA /* RootViewController.swift */,
 				85E7E01A1FE97F4F00ECF5F8 /* MainTabBarViewController.swift */,
+				858FD76221DAD5740008AA64 /* ProfileImageView.swift */,
 				85CC9BF4202B8E30001CABB0 /* Home Feed */,
 				85250A07202A1AF40003A416 /* Login */,
 				8583F6C42034AFB000313C9D /* Courses View */,
@@ -813,6 +816,7 @@
 				85F4545A1FE0A888006D8B77 /* CoursesTableViewController.swift in Sources */,
 				85CC2DEA20873267007073BD /* PlaceholderTextView.swift in Sources */,
 				8502108321485ACA00534F13 /* StaticValues.swift in Sources */,
+				858FD76321DAD5740008AA64 /* ProfileImageView.swift in Sources */,
 				85250A15202A2DC50003A416 /* QCMethod.swift in Sources */,
 				852462AB20B6035800E944E2 /* NBResult.swift in Sources */,
 				8531ACB31FC4EA9F00EC72FA /* Extensions.swift in Sources */,

@@ -259,10 +259,6 @@ extension HomeFeedViewController {
     }
 
     func handleUpdated(newObject: NBModel) {
-        if let newUser = newObject as? User {
-            handleUpdatedUser(newUser: newUser)
-        }
-
         if !shouldHandleResponse(object: newObject) {
             return
         }
@@ -270,26 +266,6 @@ extension HomeFeedViewController {
         if let newEnrollment = newObject as? Enrollment {
             handleUpdatedEnrollment(newEnrollment: newEnrollment)
         }
-    }
-
-    func handleUpdatedUser(newUser: User) {
-        if newUser != NBClient.shared.getCurrentUser() {
-            return
-        }
-
-        NBClient.shared.setCurrentUser(user: newUser)
-
-        let postsForUser = self.posts.filter({ ($0.creator != nil) && ($0.creator == newUser) })
-        var indexPaths = [IndexPath]()
-
-        for post in postsForUser {
-            if let index = self.posts.index(of: post) {
-                indexPaths.append(IndexPath(row: index, section: 0))
-            }
-        }
-
-        self.bulletinTableView.reloadRows(at: indexPaths, with: .fade)
-        (self.bulletinTableView.tableHeaderView as! BulletinTableViewHeader).reloadAvatar()
     }
 
     func handleUpdatedEnrollment(newEnrollment: Enrollment) {

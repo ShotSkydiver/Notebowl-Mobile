@@ -558,34 +558,9 @@ extension HomeFeedPostViewController {
         return true
     }
 
-    func handleUpdated(newObject: NBModel) {
-        if let newUser = newObject as? User {
-            handleUpdatedUser(newUser: newUser)
-        }
-    }
-
+    func handleUpdated(newObject: NBModel) {}
     func handleDeleted(deletedObject: NBModel) {}
     func handleElapsed(elapsedObject: NBModel) {}
-
-    func handleUpdatedUser(newUser: User) {
-        if newUser != NBClient.shared.getCurrentUser() {
-            return
-        }
-
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-
-        let commentsForUser = self.displayedPost.comments.filter({ $0.creator! == newUser })
-        var indexPaths = [IndexPath]()
-
-        for comment in commentsForUser {
-            indexPaths.append(self.getIndexOfComment(comment: comment))
-
-            for reply in comment.comments {
-                indexPaths.append(self.getIndexOfComment(comment: reply))
-            }
-        }
-        tableView.reloadRows(at: indexPaths, with: .fade)
-    }
 }
 
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {
