@@ -194,7 +194,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
             return
         }
 
-        if deletedEnrollment.parent != self.selectedCourse {
+        if deletedEnrollment.user != NBClient.shared.getCurrentUser() || deletedEnrollment.parent != self.selectedCourse {
             return
         }
 

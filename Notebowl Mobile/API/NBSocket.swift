@@ -61,12 +61,6 @@ class NBSocket {
         let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrl)", "action": "\(action)", "updatedAt": "\(updatedAt)"])
         guard let object = mapped!.genericObject else { return nil }
 
-        if object is Enrollment {
-            if (object as! Enrollment).user.resourceKey != NBClient.shared.getCurrentUser().resourceKey {
-                return nil
-            }
-        }
-
         if mapped?.action == .updated {
             NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
             NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])

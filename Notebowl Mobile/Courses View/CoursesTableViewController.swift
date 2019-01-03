@@ -54,6 +54,10 @@ class CoursesTableViewController: AnimatedNavBarViewController {
             return
         }
 
+        if newEnrollment.user != NBClient.shared.getCurrentUser() {
+            return
+        }
+
         guard let newCourse = newEnrollment.parent as? Course else {
             return
         }
@@ -74,6 +78,10 @@ class CoursesTableViewController: AnimatedNavBarViewController {
 
     @objc func finishDeletingEnrollment(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let deletedEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        if deletedEnrollment.user != NBClient.shared.getCurrentUser() {
             return
         }
 

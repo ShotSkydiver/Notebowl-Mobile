@@ -273,6 +273,10 @@ extension HomeFeedViewController {
     }
 
     func handleUpdatedEnrollment(newEnrollment: Enrollment) {
+        if newEnrollment.user != NBClient.shared.getCurrentUser() {
+            return
+        }
+
         if newEnrollment.parent!.firstTimeLoading == nil {
             (newEnrollment.parent as! WithName).firstTimeLoaded()
         }
@@ -316,6 +320,10 @@ extension HomeFeedViewController {
     }
 
     func handleDeletedEnrollment(deletedEnrollment: Enrollment) {
+        if deletedEnrollment.user != NBClient.shared.getCurrentUser() {
+            return
+        }
+
         guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
         let loadingViewController = LoadingViewController()
 
