@@ -158,7 +158,7 @@ extension ItemType {
         case .n1(Regex("AssignmentSubType.*")):
             self = .assignment
         default:
-            self = ItemType(rawValue: "\(item.lowercased())s")!
+            self = ItemType(rawValue: "\(item.lowercase)s")!
         }
     }
 }
@@ -809,6 +809,9 @@ class Course: NBModel, WithName {
 
     func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingCourse(_:)), name: NSNotification.Name("ModelDidBeginUpdatingCourse"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssignment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingCategory(_:)), name: NSNotification.Name("ModelDidBeginUpdatingCategory"), object: nil)
     }
 
     @objc func beginUpdatingCourse(_ notification: NSNotification) {
@@ -825,6 +828,38 @@ class Course: NBModel, WithName {
             self.availableDate = newCourse.availableDate
             self.endDate = newCourse.endDate
             self.updatedAt = newCourse.updatedAt
+        }
+    }
+
+    @objc func beginUpdatingAssignment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newAssignment = dict["object"] as? NBModel else {
+            return
+        }
+
+        if newAssignment.parent != self {
+            return
+        }
+
+        if newAssignment is Assignment && enrollmentForUser.role == .TA && (newAssignment as! Assignment).gradeOnly {
+            return
+        }
+
+        if !self.courseAssignments.contains(where: {($0 as! NBModel) == newAssignment}) {
+            self.courseAssignments.append(newAssignment as! AssignmentAssessment)
+        }
+    }
+
+    @objc func beginUpdatingCategory(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newCategory = dict["object"] as? Category else {
+            return
+        }
+
+        if newCategory.parent != self {
+            return
+        }
+
+        if !self.courseCategories.contains(newCategory) {
+            self.courseCategories.append(newCategory)
         }
     }
 
@@ -970,6 +1005,105 @@ public class Assignment: NBModel, AssignmentAssessment {
         submissionPosts = []
         submissionComments = []
         fileSubmissions = []
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssignment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingPost(_:)), name: NSNotification.Name("ModelDidBeginUpdatingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingSubmission"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingGrade(_:)), name: NSNotification.Name("ModelDidBeginUpdatingGrade"), object: nil)
+    }
+
+    @objc func beginUpdatingAssignment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newAssignment = dict["object"] as? Assignment, newAssignment == self else {
+            return
+        }
+
+        if newAssignment.updatedAt > self.updatedAt {
+            self.category = newAssignment.category
+            self.title = newAssignment.title
+            self.points = newAssignment.points
+            self.dueDate = newAssignment.dueDate
+            self.availableDate = newAssignment.availableDate
+            self.desc = newAssignment.desc
+            self.gradeScheme = newAssignment.gradeScheme
+            self.type = newAssignment.type
+            self.gradesPublished = newAssignment.gradesPublished
+            self.allowLateSubmission = newAssignment.allowLateSubmission
+            self.minComments = newAssignment.minComments
+            self.minPosts = newAssignment.minPosts
+            self.wordCountPosts = newAssignment.wordCountPosts
+            self.wordCountComments = newAssignment.wordCountComments
+            self.postsWordCountRequired = newAssignment.postsWordCountRequired
+            self.commentsWordCountRequired = newAssignment.commentsWordCountRequired
+            self.updatedAt = newAssignment.updatedAt
+            self.status = getStatus()
+        }
+    }
+
+    @objc func beginUpdatingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newPost = dict["object"] as? Post else {
+            return
+        }
+
+        if newPost.related != self {
+            return
+        }
+
+        if !self.submissionPosts.contains(newPost) {
+            self.submissionPosts.append(newPost)
+        }
+
+        self.status = getStatus()
+    }
+
+    @objc func beginUpdatingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if newComment.isCommentReply || newComment.related != self {
+            return
+        }
+
+        if !self.submissionComments.contains(newComment) {
+            self.submissionComments.append(newComment)
+        }
+
+        self.status = getStatus()
+    }
+
+    @objc func beginUpdatingSubmission(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newSubmission = dict["object"] as? Submission else {
+            return
+        }
+
+        if newSubmission.creator != NBClient.shared.getCurrentUser() || newSubmission.parent != self {
+            return
+        }
+
+        if !self.fileSubmissions.contains(newSubmission) {
+            self.fileSubmissions.append(newSubmission)
+        }
+
+        self.status = getStatus()
+    }
+
+    @objc func beginUpdatingGrade(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newGrade = dict["object"] as? Grade else {
+            return
+        }
+
+        if newGrade.parent != self {
+            return
+        }
+        
+        self.userGrade = newGrade
+        self.gradeString = getUserGrade()
+        self.status = getStatus()
     }
 
     func refreshCachedSubmissions() {
@@ -1081,6 +1215,62 @@ public class Assessment: NBModel, AssignmentAssessment {
         category <- (map["_category"], ObjectTransform<Category>())
         userGrade = nil
         submissions = []
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssessment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingSubmission"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingGrade(_:)), name: NSNotification.Name("ModelDidBeginUpdatingGrade"), object: nil)
+    }
+
+    @objc func beginUpdatingAssessment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newAssessment = dict["object"] as? Assessment, newAssessment == self else {
+            return
+        }
+
+        if newAssessment.updatedAt > self.updatedAt {
+            self.category = newAssessment.category
+            self.title = newAssessment.title
+            self.dueDate = newAssessment.dueDate
+            self.availableDate = newAssessment.availableDate
+            self.desc = newAssessment.desc
+            self.gradeScheme = newAssessment.gradeScheme
+            self.gradesPublished = newAssessment.gradesPublished
+            self.updatedAt = newAssessment.updatedAt
+            self.status = getStatus()
+        }
+    }
+
+    @objc func beginUpdatingSubmission(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newSubmission = dict["object"] as? AssessmentSubmission else {
+            return
+        }
+
+        if newSubmission.owner != NBClient.shared.getCurrentUser() || newSubmission.parent != self {
+            return
+        }
+
+        if !self.submissions.contains(newSubmission) {
+            self.submissions.append(newSubmission)
+        }
+
+        self.status = getStatus()
+    }
+
+    @objc func beginUpdatingGrade(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newGrade = dict["object"] as? Grade else {
+            return
+        }
+
+        if newGrade.parent != self {
+            return
+        }
+
+        self.userGrade = newGrade
+        self.gradeString = getUserGrade()
+        self.status = getStatus()
     }
 
     func refreshCachedSubmissions() {
@@ -1139,6 +1329,26 @@ class AssessmentQuestion: NBModel {
         points <- map["points"]
         desc <- map["description"]
         extraCredit <- map["extraCredit"]
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssessmentQuestion(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessmentQuestion"), object: nil)
+    }
+
+    @objc func beginUpdatingAssessmentQuestion(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newQuestion = dict["object"] as? AssessmentQuestion, newQuestion == self else {
+            return
+        }
+
+        if newQuestion.updatedAt > self.updatedAt {
+            self.title = newQuestion.title
+            self.points = newQuestion.points
+            self.desc = newQuestion.desc
+            self.extraCredit = newQuestion.extraCredit
+            self.updatedAt = newQuestion.updatedAt
+        }
     }
 }
 
@@ -1159,6 +1369,24 @@ public class AssessmentSubmission: NBModel {
 
         startDate <- (map["startDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssessmentSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessmentSubmission"), object: nil)
+    }
+
+    @objc func beginUpdatingAssessmentSubmission(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newSubmission = dict["object"] as? AssessmentSubmission, newSubmission == self else {
+            return
+        }
+
+        if newSubmission.updatedAt > self.updatedAt {
+            self.startDate = newSubmission.startDate
+            self.endDate = newSubmission.endDate
+            self.updatedAt = newSubmission.updatedAt
+        }
     }
 }
 
@@ -1197,6 +1425,26 @@ public class Category: NBModel {
         weight <- map["weight"]
         isExtraCredit <- map["isExtraCredit"]
         dropLowest <- map["dropLowest"]
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingCategory(_:)), name: NSNotification.Name("ModelDidBeginUpdatingCategory"), object: nil)
+    }
+
+    @objc func beginUpdatingCategory(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newCategory = dict["object"] as? Category, newCategory == self else {
+            return
+        }
+
+        if newCategory.updatedAt > self.updatedAt {
+            self.title = newCategory.title
+            self.weight = newCategory.weight
+            self.isExtraCredit = newCategory.isExtraCredit
+            self.dropLowest = newCategory.dropLowest
+            self.updatedAt = newCategory.updatedAt
+        }
     }
 }
 
@@ -1212,6 +1460,23 @@ public class Grade: NBModel {
     override public func mapping(map: Map) {
         super.mapping(map: map)
         grade <- map["grade"]
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingGrade(_:)), name: NSNotification.Name("ModelDidBeginUpdatingGrade"), object: nil)
+    }
+
+    @objc func beginUpdatingGrade(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newGrade = dict["object"] as? Grade, newGrade == self else {
+            return
+        }
+
+        if newGrade.updatedAt > self.updatedAt {
+            self.grade = newGrade.grade
+            self.updatedAt = newGrade.updatedAt
+        }
     }
 }
 

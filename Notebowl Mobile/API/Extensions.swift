@@ -31,6 +31,14 @@ public extension String {
         return first + rest
     }
 
+    var lowercase: String {
+        var firstCharacter = self.first!
+        firstCharacter = String(firstCharacter).lowercased().first!
+        let first = String(firstCharacter)
+        let rest = String(self.dropFirst())
+        return first + rest
+    }
+
     var untilFirstCapital: String {
         let mutatingSelf = self
         let index = mutatingSelf.index(where: { $0.isUppercased }) ?? mutatingSelf.endIndex

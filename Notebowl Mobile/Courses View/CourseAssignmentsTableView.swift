@@ -48,6 +48,111 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
 
         CourseDetailViewCell.register(in: tableView)
         reloadTable()
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAssignment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAssessment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingAssessmentQuestion(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAssessmentQuestion"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingGrade(_:)), name: NSNotification.Name("ModelDidFinishUpdatingGrade"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostsComments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPostsComments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidFinishUpdatingSubmission"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAssessmentSubmission"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingCourse(_:)), name: NSNotification.Name("ModelDidFinishUpdatingCourse"), object: nil)
+    }
+
+    func updateRows(from object: NBModel) {
+        guard let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == object }) else {
+            return
+        }
+
+        self.updateSorting()
+
+        guard let newIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == object }) else {
+            return
+        }
+
+        if tableView.numberOfRows(inSection: 0) >= self.assignments.count {
+            if oldIndex != newIndex {
+                tableView.moveRow(at: IndexPath(row: oldIndex, section: 0), to: IndexPath(row: newIndex, section: 0))
+            }
+            tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: newIndex, section: 0)], with: .left)
+        }
+    }
+
+    @objc func finishUpdatingAssignment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !self.assignments.contains(where: { ($0 as! NBModel) == newObject }) {
+            self.assignments.insert((newObject as! AssignmentAssessment), at: self.assignments.startIndex)
+        }
+
+        updateRows(from: newObject)
+    }
+
+    @objc func finishUpdatingAssessmentQuestion(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newQuestion = dict["object"] as? AssessmentQuestion else {
+            return
+        }
+
+        if let indexOfAssessment = self.assignments.index(where: { ($0 as! NBModel) == newQuestion.parent }) {
+            (self.assignments[indexOfAssessment] as! Assessment).refreshCachedPoints()
+            tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
+        }
+    }
+
+    @objc func finishUpdatingGrade(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newGrade = dict["object"] as? Grade else {
+            return
+        }
+
+        if newGrade.owner!.parent?.enrollmentForUser?.role == .professor || newGrade.owner!.parent?.enrollmentForUser?.role == .admin {
+            return
+        }
+
+        updateRows(from: newGrade.owner!)
+    }
+
+    @objc func finishUpdatingSubmission(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if newObject.parent!.parent?.enrollmentForUser?.role == .professor || newObject.parent!.parent?.enrollmentForUser?.role == .admin {
+            return
+        }
+
+        updateRows(from: newObject.parent!)
+    }
+
+    @objc func finishUpdatingPostsComments(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !(newObject.related is Assignment || (newObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
+            return
+        }
+
+        updateRows(from: newObject.related!)
+    }
+
+    @objc func finishUpdatingCourse(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newCourse = dict["object"] as? Course else {
+            return
+        }
+
+        if newCourse != self.selectedCourse {
+            return
+        }
+
+        reloadTable()
     }
 
     override func setNavigationColors() {
@@ -86,7 +191,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
 
                 assigns.refreshAll()
                 assess.refreshAll()
-
                 self.selectedCourse.refresh()
             }
 
@@ -130,97 +234,25 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         return cell
     }
 
-    func updateSorting(newObject: NBModel!) {
-        if newObject != nil {
-            newObject.refresh()
-        }
-        self.selectedCourse.refresh()
+    func updateSorting() {
         self.assignments = self.selectedCourse.courseAssignments
         self.sortAssignments()
     }
 }
 
 extension CourseAssignmentsTableView {
-    func handleUpdated(newObject: NBModel) {
-        if newObject is AssignmentAssessment {
-            let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject})
-            self.updateSorting(newObject: newObject)
-
-            guard let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject}) else { return }
-            let existingAssignment = tableView.numberOfRows(inSection: 0) < self.assignments.count ? false : true
-
-            if !existingAssignment {
-                tableView.insertRows(at: [IndexPath(row: newIndex, section: 0)], with: .left)
-            } else if existingAssignment {
-                if oldIndex != nil && oldIndex != newIndex {
-                    tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
-                }
-                tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
-            }
-        } else if newObject is AssessmentQuestion {
-            if newObject.parent is Assessment {
-                if let indexOfAssessment = self.assignments.index(where: {($0 as! NBModel) == newObject.parent }) {
-                    (self.assignments[indexOfAssessment] as! Assessment).refreshCachedPoints()
-                    tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
-                }
-            }
-        } else if newObject is PostsComments {
-            if newObject.related is Assignment && (newObject as! PostsComments).creator == NBClient.shared.getCurrentUser() {
-                let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject.related })
-                self.updateSorting(newObject: newObject.related!)
-
-                if let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == newObject.related }) {
-                    if oldIndex != nil && oldIndex != newIndex {
-                        tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
-                    }
-                    tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
-                }
-            }
-        } else if newObject is Submission || newObject is AssessmentSubmission {
-            if newObject.parent is AssignmentAssessment {
-                if newObject.parent!.parent?.enrollmentForUser?.role == .professor || newObject.parent!.parent?.enrollmentForUser?.role == .admin {
-                    return
-                }
-                let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject.parent })
-                self.updateSorting(newObject: newObject.parent!)
-
-                if let newIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newObject.parent }) {
-                    if oldIndex != nil && oldIndex != newIndex {
-                        tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
-                    }
-                    tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
-                }
-            }
-        } else if let newGrade = newObject as? Grade {
-            if newGrade.owner is AssignmentAssessment {
-                if newGrade.owner!.parent?.enrollmentForUser?.role == .professor || newGrade.owner!.parent?.enrollmentForUser?.role == .admin {
-                    return
-                }
-                let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newGrade.owner })
-                self.updateSorting(newObject: newObject.owner!)
-
-                if let newIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == newGrade.owner }) {
-                    if oldIndex != nil && oldIndex != newIndex {
-                        tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
-                    }
-                    tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
-                }
-            }
-        } else if newObject is Course {
-            reloadTable()
-        }
-    }
+    func handleUpdated(newObject: NBModel) {}
 
     func handleDeleted(deletedObject: NBModel) {
         if deletedObject is AssignmentAssessment {
             guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject}) else { return }
             tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
 
-            self.updateSorting(newObject: nil)
+            self.updateSorting()
         } else if deletedObject is PostsComments {
             if deletedObject.related is Assignment && (deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser() {
                 let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject.related })
-                self.updateSorting(newObject: deletedObject.related!)
+                self.updateSorting()
 
                 if let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == deletedObject.related }) {
                     if oldIndex != nil && oldIndex != newIndex {
