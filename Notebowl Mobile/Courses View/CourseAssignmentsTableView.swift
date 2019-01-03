@@ -13,7 +13,7 @@ import Tamamushi
 import GSKStretchyHeaderView
 import PKHUD
 
-class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
+class CourseAssignmentsTableView: AnimatedNavBarViewController {
     var assignments: [AssignmentAssessment]!
     var selectedCourse: Course!
     var gradientColors: [UIColor]!
@@ -61,6 +61,12 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidFinishUpdatingSubmission"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAssessmentSubmission"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingCourse(_:)), name: NSNotification.Name("ModelDidFinishUpdatingCourse"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingAssignment(_:)), name: NSNotification.Name("ModelDidFinishDeletingAssignment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingAssignment(_:)), name: NSNotification.Name("ModelDidFinishDeletingAssessment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingPostsComments(_:)), name: NSNotification.Name("ModelDidFinishDeletingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingPostsComments(_:)), name: NSNotification.Name("ModelDidFinishDeletingComment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingEnrollment(_:)), name: NSNotification.Name("ModelDidFinishDeletingEnrollment"), object: nil)
     }
 
     func updateRows(from object: NBModel) {
@@ -155,6 +161,46 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         reloadTable()
     }
 
+    @objc func finishDeletingAssignment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        guard let index = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject}) else {
+            return
+        }
+
+        self.assignments.removeAll(where: { ($0 as! NBModel) == deletedObject})
+
+        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
+
+        self.updateSorting()
+    }
+
+    @objc func finishDeletingPostsComments(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedObject = dict["object"] as? NBModel else {
+            return
+        }
+
+        if !(deletedObject.related is Assignment || (deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
+            return
+        }
+
+        updateRows(from: deletedObject.related!)
+    }
+
+    @objc func finishDeletingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        if deletedEnrollment.parent != self.selectedCourse {
+            return
+        }
+
+        self.navigationController?.popViewController(animated: true)
+    }
+
     override func setNavigationColors() {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -238,39 +284,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController, UpdateVC {
         self.assignments = self.selectedCourse.courseAssignments
         self.sortAssignments()
     }
-}
-
-extension CourseAssignmentsTableView {
-    func handleUpdated(newObject: NBModel) {}
-
-    func handleDeleted(deletedObject: NBModel) {
-        if deletedObject is AssignmentAssessment {
-            guard let indexOfAssignment = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject}) else { return }
-            tableView.deleteRows(at: [IndexPath(row: indexOfAssignment, section: 0)], with: .left)
-
-            self.updateSorting()
-        } else if deletedObject is PostsComments {
-            if deletedObject.related is Assignment && (deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser() {
-                let oldIndex = self.assignments.firstIndex(where: { ($0 as! NBModel) == deletedObject.related })
-                self.updateSorting()
-
-                if let newIndex = self.assignments.firstIndex(where: {($0 as! NBModel) == deletedObject.related }) {
-                    if oldIndex != nil && oldIndex != newIndex {
-                        tableView.moveRow(at: IndexPath(row: oldIndex!, section: 0), to: IndexPath(row: newIndex, section: 0))
-                    }
-                    tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
-                }
-            }
-        } else if let deleteCourse = deletedObject as? Enrollment {
-            if deleteCourse.parent is Course {
-                if (deleteCourse.parent as! Course) == self.selectedCourse {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
-        }
-    }
-
-    func handleElapsed(elapsedObject: NBModel) {}
 }
 
 class AssignmentsHeaderView: GSKStretchyHeaderView {

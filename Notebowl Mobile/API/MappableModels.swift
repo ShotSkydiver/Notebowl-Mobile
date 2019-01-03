@@ -812,6 +812,9 @@ class Course: NBModel, WithName {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssignment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssignment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingCategory(_:)), name: NSNotification.Name("ModelDidBeginUpdatingCategory"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingAssignment(_:)), name: NSNotification.Name("ModelDidBeginDeletingAssignment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingAssignment(_:)), name: NSNotification.Name("ModelDidBeginDeletingAssessment"), object: nil)
     }
 
     @objc func beginUpdatingCourse(_ notification: NSNotification) {
@@ -860,6 +863,20 @@ class Course: NBModel, WithName {
 
         if !self.courseCategories.contains(newCategory) {
             self.courseCategories.append(newCategory)
+        }
+    }
+
+    @objc func beginDeletingAssignment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletingAssignment = dict["object"] as? NBModel else {
+            return
+        }
+
+        if deletingAssignment.parent != self {
+            return
+        }
+
+        if self.courseAssignments.contains(where: {($0 as! NBModel) == deletingAssignment}) {
+            self.courseAssignments.removeAll(where: {($0 as! NBModel) == deletingAssignment})
         }
     }
 
@@ -1015,6 +1032,9 @@ public class Assignment: NBModel, AssignmentAssessment {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingComment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingSubmission"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingGrade(_:)), name: NSNotification.Name("ModelDidBeginUpdatingGrade"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingPost(_:)), name: NSNotification.Name("ModelDidBeginDeletingPost"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingComment(_:)), name: NSNotification.Name("ModelDidBeginDeletingComment"), object: nil)
     }
 
     @objc func beginUpdatingAssignment(_ notification: NSNotification) {
@@ -1103,6 +1123,38 @@ public class Assignment: NBModel, AssignmentAssessment {
         
         self.userGrade = newGrade
         self.gradeString = getUserGrade()
+        self.status = getStatus()
+    }
+
+    @objc func beginDeletingPost(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletingPost = dict["object"] as? Post else {
+            return
+        }
+
+        if deletingPost.related != self {
+            return
+        }
+
+        if self.submissionPosts.contains(deletingPost) {
+            self.submissionPosts.removeAll(deletingPost)
+        }
+
+        self.status = getStatus()
+    }
+
+    @objc func beginDeletingComment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletingComment = dict["object"] as? Comment else {
+            return
+        }
+
+        if deletingComment.isCommentReply || deletingComment.related != self {
+            return
+        }
+
+        if self.submissionComments.contains(deletingComment) {
+            self.submissionComments.removeAll(deletingComment)
+        }
+
         self.status = getStatus()
     }
 
