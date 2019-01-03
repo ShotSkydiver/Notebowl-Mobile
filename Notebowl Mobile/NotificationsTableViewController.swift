@@ -15,8 +15,7 @@ import QuartzCore
 import Tamamushi
 import SocketIO
 
-class NotificationsTableViewController: UITableViewController, UpdateVC {
-    var indexes: Paths = Paths()
+class NotificationsTableViewController: UITableViewController {
     var notifications: [Notification]!
     var placeholderTableView: NotificationTableView?
 
@@ -27,6 +26,46 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7))
         self.navigationController?.view.backgroundColor = UIColor.white
         reloadTable()
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingNotification(_:)), name: NSNotification.Name("ModelDidFinishUpdatingNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingNotification(_:)), name: NSNotification.Name("ModelDidFinishDeletingNotification"), object: nil)
+    }
+
+    @objc func finishUpdatingNotification(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newNotification = dict["object"] as? Notification else {
+            return
+        }
+
+        if !self.notifications.contains(newNotification) {
+            self.notifications.insert(newNotification, at: self.notifications.startIndex)
+        }
+
+        let index = self.notifications.index(of: newNotification)!
+
+        if tableView.numberOfRows(inSection: 0) >= self.notifications.count {
+            tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .left)
+            updateBadgeCount()
+        }
+    }
+
+    @objc func finishDeletingNotification(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedNotification = dict["object"] as? Notification else {
+            return
+        }
+
+        guard let index = self.notifications.index(of: deletedNotification) else {
+            return
+        }
+
+        self.notifications.removeAll(deletedNotification)
+
+        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .right)
+        updateBadgeCount()
     }
 
     func reloadTable() {
@@ -119,36 +158,6 @@ class NotificationsTableViewController: UITableViewController, UpdateVC {
         cell.configure(notification: notification)
         return cell
     }
-}
-
-extension NotificationsTableViewController {
-    func handleUpdated(newObject: NBModel) {
-        if let newNotification = newObject as? Notification, NBClient.shared.storedTypes.has(key: Notification.classIdentifier) {
-            self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
-            let indexOfNotification = self.notifications.index(of: newNotification)
-            let existingNotification = tableView.numberOfRows(inSection: 0) < self.notifications.count ? false : true
-
-            if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) is PlaceholderTableViewCell { placeholderTableView?.showDefault() } else if existingNotification == false {
-                tableView.insertRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .left)
-                updateBadgeCount()
-            } else {
-                tableView.reloadRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .fade)
-            }
-        }
-    }
-
-    func handleDeleted(deletedObject: NBModel) {
-        if let deleteNotification = deletedObject as? Notification {
-            let indexOfNotification = self.notifications.index(of: deleteNotification)
-            self.notifications = NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification]
-            if indexOfNotification != nil { tableView.deleteRows(at: [IndexPath(row: indexOfNotification!, section: 0)], with: .right) }
-            if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.showNoResultsPlaceholder() }
-            updateBadgeCount()
-        }
-    }
-
-    func handleElapsed(elapsedObject: NBModel) { }
-    func reloadTableViews() { }
 }
 
 extension NotificationsTableViewController: PlaceholderDelegate {

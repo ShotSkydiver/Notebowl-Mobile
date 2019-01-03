@@ -2302,6 +2302,25 @@ class Notification: NBModel {
         status <- map["status"]
         text <- map["text"]
         type <- map["type"]
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingNotification(_:)), name: NSNotification.Name("ModelDidBeginUpdatingNotification"), object: nil)
+    }
+
+    @objc func beginUpdatingNotification(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newNotification = dict["object"] as? Notification, newNotification == self else {
+            return
+        }
+
+        if newNotification.updatedAt > self.updatedAt {
+            self.status = newNotification.status
+            self.text = newNotification.text
+            self.type = newNotification.type
+            self.updatedAt = newNotification.updatedAt
+        }
     }
 }
 
