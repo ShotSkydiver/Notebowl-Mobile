@@ -17,7 +17,7 @@ enum Environment: String {
 public var baseUrl: String {
     return Environment.Production.rawValue
 }
-public var trustedHosts: [String] { return ["demo.notebowl.xyz","chdowen.notebowl.xyz"] }
+public var trustedHosts: [String] { return ["demo.notebowl.xyz", "chdowen.notebowl.xyz"] }
 public var socketUrl: String { return "https://\(baseUrl)/socket.io/" }
 
 public struct Gradients {

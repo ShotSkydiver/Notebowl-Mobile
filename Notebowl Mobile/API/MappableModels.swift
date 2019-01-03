@@ -765,7 +765,7 @@ class Course: NBModel, WithName {
     public var gradeGPAEnabled: Bool { return gradeBase?.compare("gpa").rawValue == 0 ? true : false }
     public var isAvailable: Bool { return Date().isInRange(date: availableDate, and: endDate, orEqual: true, granularity: .hour ) }
     var courseCode: String { return (subject + " " + number) }
-    var fullName: String!
+    var fullName: String! { return (courseCode + ": " + name) }
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval!
     public var refreshedOnce: Bool = false
@@ -799,13 +799,33 @@ class Course: NBModel, WithName {
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
-
         term <- (map["_term"], ObjectTransform<Term>())
-
-        fullName = (courseCode + ": " + name)
 
         courseAssignments = []
         courseCategories = []
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingCourse(_:)), name: NSNotification.Name("ModelDidBeginUpdatingCourse"), object: nil)
+    }
+
+    @objc func beginUpdatingCourse(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newCourse = dict["object"] as? Course, newCourse == self else {
+            return
+        }
+
+        if newCourse.updatedAt > self.updatedAt {
+            self.profileUrl = newCourse.profileUrl
+            self.name = newCourse.name
+            self.units = newCourse.units
+            self.location = newCourse.location
+            self.desc = newCourse.desc
+            self.availableDate = newCourse.availableDate
+            self.endDate = newCourse.endDate
+            self.updatedAt = newCourse.updatedAt
+        }
     }
 
     func hexValuesFromGradientHeader() -> [UIColor] {
@@ -1240,6 +1260,25 @@ public class Enrollment: NBModel {
         role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
         user <- (map["_user"], ObjectTransform<User>())
+
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingEnrollment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingEnrollment"), object: nil)
+    }
+
+    @objc func beginUpdatingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newEnrollment = dict["object"] as? Enrollment, newEnrollment == self else {
+            return
+        }
+
+        if newEnrollment.updatedAt > self.updatedAt {
+            self.role = newEnrollment.role
+            self.status = newEnrollment.status
+            self.lastAccessAt = newEnrollment.lastAccessAt
+            self.updatedAt = newEnrollment.updatedAt
+        }
     }
 }
 

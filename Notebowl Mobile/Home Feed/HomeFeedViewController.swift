@@ -142,6 +142,10 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
             return
         }
 
+        if self.posts.contains(deletedPost) {
+            self.posts.removeAll(deletedPost)
+        }
+
         if let index = currentWorkingIndexPath, !self.posts.contains(deletedPost) {
             bulletinTableView.deleteRows(at: [index], with: .automatic)
         }

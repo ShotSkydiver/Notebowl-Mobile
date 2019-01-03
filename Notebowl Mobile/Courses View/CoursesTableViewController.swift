@@ -13,8 +13,7 @@ import QuartzCore
 import Tamamushi
 import ObjectMapper
 
-class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
-    var indexes: Paths = Paths()
+class CoursesTableViewController: AnimatedNavBarViewController {
     var courses: [Course]!
     var placeholderTableView: CourseTableView?
 
@@ -24,6 +23,67 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
         placeholderTableView?.placeholderDelegate = self
 
         reloadTable()
+        setupObservers()
+    }
+
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingCourse(_:)), name: NSNotification.Name("ModelDidFinishUpdatingCourse"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingEnrollment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingEnrollment"), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingEnrollment(_:)), name: NSNotification.Name("ModelDidFinishDeletingEnrollment"), object: nil)
+    }
+
+    @objc func finishUpdatingCourse(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newCourse = dict["object"] as? Course else {
+            return
+        }
+
+        guard let index = self.courses.index(of: newCourse) else {
+            return
+        }
+
+        self.courses.sortByDate()
+        let newIndex = self.courses.index(of: newCourse)!
+
+        tableView.moveRow(at: IndexPath(row: index, section: 0), to: IndexPath(row: newIndex, section: 0))
+        tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .fade)
+    }
+
+    @objc func finishUpdatingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        guard let newCourse = newEnrollment.parent as? Course else {
+            return
+        }
+
+        if !self.courses.contains(newCourse) {
+            self.courses.insert(newCourse, at: self.courses.startIndex)
+            self.courses.sortByDate()
+        }
+
+        let index = self.courses.index(of: newCourse)!
+
+        if tableView.numberOfRows(inSection: 0) >= self.courses.count {
+            tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .left)
+        }
+    }
+
+    @objc func finishDeletingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        guard let deletedCourse = deletedEnrollment.parent as? Course, let index = self.courses.index(of: deletedCourse) else {
+            return
+        }
+
+        self.courses.removeAll(deletedCourse)
+
+        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     override func setBeforePopNavigationColors() {
@@ -65,6 +125,7 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
 
         return cell
     }
+
     @IBAction func profileButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "segueDeck", sender: nil)
     }
@@ -76,38 +137,6 @@ class CoursesTableViewController: AnimatedNavBarViewController, UpdateVC {
             destVC.selectedCourse = self.courses[indexPath!.row]
         }
     }
-}
-
-extension CoursesTableViewController {
-    func handleUpdated(newObject: NBModel) {
-        if let newCourse = newObject as? Course {
-            self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as? [Course]
-            var indexOfCourse = self.courses.index(of: newCourse)
-            let existingCourse = self.tableView.numberOfRows(inSection: 0) < self.courses.count ? false : true
-            placeholderTableView?.showDefault()
-            if !existingCourse { tableView.insertRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .left) } else {
-                self.tableView.moveRow(at: IndexPath(row: indexOfCourse!, section: 0), to: IndexPath(row: 0, section: 0))
-                indexOfCourse = 0
-                tableView.reloadRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade)
-            }
-        }
-    }
-
-    func handleDeleted(deletedObject: NBModel) {
-        if let deleteCourse = deletedObject as? Enrollment {
-            log.warning("deletecourse")
-            if deleteCourse.parent is Course {
-                let indexOfCourse = self.courses.index(where: { $0 == (deletedObject.parent as! Course) })
-                NBClient.shared.storedTypes[Course.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[Course.classIdentifier]?.index(of: deletedObject.parent!))!)
-                self.courses = NBClient.shared.storedTypes[Course.classIdentifier] as? [Course]
-                if indexOfCourse != nil { tableView.deleteRows(at: [IndexPath(row: indexOfCourse!, section: 0)], with: .fade) }
-                if tableView.numberOfRows(inSection: 0) == 0 { placeholderTableView?.reloadData() }
-            }
-        }
-    }
-
-    func handleElapsed(elapsedObject: NBModel) {}
-    func reloadTableViews() {}
 }
 
 extension CoursesTableViewController: PlaceholderDelegate {
