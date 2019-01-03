@@ -70,26 +70,6 @@ class NBSocket {
             NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
         }
 
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return nil }
-        if let viewControllers = tabbarVC.viewControllers {
-            for viewController in viewControllers {
-                let rootNavController = viewController as! UINavigationController
-                for vc in rootNavController.viewControllers {
-                    if let switchVC = vc as? UpdateVC {
-                        switch mapped!.action {
-                        case .updated:
-                            switchVC.handleUpdated(newObject: object)
-                        case .deleted:
-                            switchVC.handleDeleted(deletedObject: object)
-                        case .elapsed:
-                            switchVC.handleElapsed(elapsedObject: object)
-                        default:
-                            return nil
-                        }
-                    }
-                }
-            }
-        }
         return object
     }
 }

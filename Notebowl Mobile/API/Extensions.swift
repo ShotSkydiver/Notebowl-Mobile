@@ -1364,32 +1364,6 @@ class ISO8601FixedDateTransform: DateFormatterTransform {
     }
 }
 
-struct Paths {
-    var insertSections: IndexSet
-    var deleteSections: IndexSet
-    var reloadSections: IndexSet
-    var insertIndexPaths: [IndexPath]
-    var deleteIndexPaths: [IndexPath]
-    var reloadIndexPaths: [IndexPath]
-    init() {
-        insertSections = IndexSet()
-        deleteSections = IndexSet()
-        reloadSections = IndexSet()
-        insertIndexPaths = [IndexPath]()
-        deleteIndexPaths = [IndexPath]()
-        reloadIndexPaths = [IndexPath]() }
-
-    var shouldReload: Bool {
-        if insertSections.isEmpty && deleteSections.isEmpty && reloadSections.isEmpty && insertIndexPaths.isEmpty && deleteIndexPaths.isEmpty && reloadIndexPaths.isEmpty { return false } else { return true }
-    }
-}
-
-protocol UpdateVC {
-    func handleUpdated(newObject: NBModel)
-    func handleDeleted(deletedObject: NBModel)
-    func handleElapsed(elapsedObject: NBModel)
-}
-
 enum AppConfiguration {
     case Debug
     case TestFlight

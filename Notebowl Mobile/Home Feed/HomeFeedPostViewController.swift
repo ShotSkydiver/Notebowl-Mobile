@@ -15,7 +15,7 @@ import YPImagePicker
 import SwipeCellKit
 import PKHUD
 
-class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, UpdateVC, CellActionsVC {
+class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, CellActionsVC {
     var viewIsLoaded = false
     var displayedPost: PostsComments!
     var attachmentIDs = [String]()
@@ -557,10 +557,6 @@ extension HomeFeedPostViewController {
         }
         return true
     }
-
-    func handleUpdated(newObject: NBModel) {}
-    func handleDeleted(deletedObject: NBModel) {}
-    func handleElapsed(elapsedObject: NBModel) {}
 }
 
 extension HomeFeedPostViewController: SwipeTableViewCellDelegate {

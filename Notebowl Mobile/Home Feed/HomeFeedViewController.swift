@@ -20,7 +20,7 @@ import PKHUD
 import Bugsnag
 import UserNotifications
 
-class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
+class HomeFeedViewController: UIViewController, CellActionsVC {
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
@@ -53,16 +53,69 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
 
     func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(willDeletePost(_:)), name: NSNotification.Name("ModelWillDeletePost"), object: nil)
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingEnrollment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingEnrollment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingPost(_:)), name: NSNotification.Name("ModelDidFinishUpdatingPost"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingComment(_:)), name: NSNotification.Name("ModelDidFinishUpdatingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingLike"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishUpdatingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishUpdatingAttachment"), object: nil)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingEnrollment(_:)), name: NSNotification.Name("ModelDidFinishDeletingEnrollment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingPost(_:)), name: NSNotification.Name("ModelDidFinishDeletingPost"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingComment(_:)), name: NSNotification.Name("ModelDidFinishDeletingComment"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingLike"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(finishDeletingLikesAttachments(_:)), name: NSNotification.Name("ModelDidFinishDeletingAttachment"), object: nil)
+    }
+
+    @objc func finishUpdatingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let newEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        if newEnrollment.user != NBClient.shared.getCurrentUser() {
+            return
+        }
+
+        if newEnrollment.parent!.firstTimeLoading == nil {
+            (newEnrollment.parent as! WithName).firstTimeLoaded()
+        }
+        if !newEnrollment.parent!.firstTimeLoading {
+            newEnrollment.parent!.refresh()
+        } else if newEnrollment.parent!.firstTimeLoading {
+            guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+
+            let loadingViewController = LoadingViewController()
+            if tabbarVC.presentedViewController == nil {
+                tabbarVC.present(loadingViewController, animated: true, completion: nil)
+            } else if tabbarVC.presentedViewController is LoadingViewController {
+                return
+            }
+
+            DispatchQueue.main.async {
+                NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+                NBClient.shared.resolveCurrentUser(true)
+                _ = NBClient.shared.getMappable(Setting.self)!
+                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
+                let filter = NBClient.shared.doEnrollmentRequests()
+                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
+                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+                let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+                var combinedFilter = (retrievedPosts as [NBModel])
+                combinedFilter.append(contentsOf: (postComments as [NBModel]))
+                combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
+                _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+                _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+                NBClient.shared.reinitCache()
+
+                let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+                let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
+                let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
+                self.reloadTable()
+                courseVC.reloadTable()
+                notifsVC.reloadTable()
+                loadingViewController.dismiss(animated: true, completion: nil)
+            }
+        }
     }
 
     @objc func finishUpdatingPost(_ notification: NSNotification) {
@@ -132,6 +185,50 @@ class HomeFeedViewController: UIViewController, UpdateVC, CellActionsVC {
         }
 
         currentWorkingIndexPath = IndexPath(row: index, section: 0)
+    }
+
+    @objc func finishDeletingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deletedEnrollment = dict["object"] as? Enrollment else {
+            return
+        }
+
+        if deletedEnrollment.user != NBClient.shared.getCurrentUser() {
+            return
+        }
+
+        guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
+        let loadingViewController = LoadingViewController()
+
+        if tabbarVC.presentedViewController == nil {
+            tabbarVC.present(loadingViewController, animated: true, completion: nil)
+        } else if tabbarVC.presentedViewController is LoadingViewController {
+            return
+        }
+
+        DispatchQueue.main.async {
+            NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+            NBClient.shared.resolveCurrentUser(true)
+            _ = NBClient.shared.getMappable(Setting.self)
+            _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
+            let filter = NBClient.shared.doEnrollmentRequests()
+            let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
+            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+            var combinedFilter = (retrievedPosts as [NBModel])
+            combinedFilter.append(contentsOf: (postComments as [NBModel]))
+            combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
+            _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+            _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+            NBClient.shared.reinitCache()
+
+            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
+            let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
+            let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
+            self.reloadTable()
+            courseVC.reloadTable()
+            notifsVC.reloadTable()
+            loadingViewController.dismiss(animated: true, completion: nil)
+        }
     }
 
     @objc func finishDeletingPost(_ notification: NSNotification) {
@@ -261,106 +358,6 @@ extension HomeFeedViewController {
         }
         return true
     }
-
-    func handleUpdated(newObject: NBModel) {
-        if !shouldHandleResponse(object: newObject) {
-            return
-        }
-
-        if let newEnrollment = newObject as? Enrollment {
-            handleUpdatedEnrollment(newEnrollment: newEnrollment)
-        }
-    }
-
-    func handleUpdatedEnrollment(newEnrollment: Enrollment) {
-        if newEnrollment.user != NBClient.shared.getCurrentUser() {
-            return
-        }
-
-        if newEnrollment.parent!.firstTimeLoading == nil {
-            (newEnrollment.parent as! WithName).firstTimeLoaded()
-        }
-        if !newEnrollment.parent!.firstTimeLoading {
-            newEnrollment.parent!.refresh()
-        } else if newEnrollment.parent!.firstTimeLoading {
-            guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-
-            let loadingViewController = LoadingViewController()
-            if tabbarVC.presentedViewController == nil {
-                tabbarVC.present(loadingViewController, animated: true, completion: nil)
-            } else if tabbarVC.presentedViewController is LoadingViewController {
-                return
-            }
-
-            DispatchQueue.main.async {
-                NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
-                NBClient.shared.resolveCurrentUser(true)
-                _ = NBClient.shared.getMappable(Setting.self)!
-                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-                let filter = NBClient.shared.doEnrollmentRequests()
-                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
-                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-                let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
-                var combinedFilter = (retrievedPosts as [NBModel])
-                combinedFilter.append(contentsOf: (postComments as [NBModel]))
-                combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-                _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-                _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-                NBClient.shared.reinitCache()
-
-                let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-                let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
-                let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
-                self.reloadTable()
-                courseVC.reloadTable()
-                notifsVC.reloadTable()
-                loadingViewController.dismiss(animated: true, completion: nil)
-            }
-        }
-    }
-
-    func handleDeletedEnrollment(deletedEnrollment: Enrollment) {
-        if deletedEnrollment.user != NBClient.shared.getCurrentUser() {
-            return
-        }
-
-        guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-        let loadingViewController = LoadingViewController()
-
-        if tabbarVC.presentedViewController == nil {
-            tabbarVC.present(loadingViewController, animated: true, completion: nil)
-        } else if tabbarVC.presentedViewController is LoadingViewController {
-            return
-        }
-
-        DispatchQueue.main.async {
-            NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
-            NBClient.shared.resolveCurrentUser(true)
-            _ = NBClient.shared.getMappable(Setting.self)
-            _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-            let filter = NBClient.shared.doEnrollmentRequests()
-            let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
-            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
-            var combinedFilter = (retrievedPosts as [NBModel])
-            combinedFilter.append(contentsOf: (postComments as [NBModel]))
-            combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-            _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-            _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-            NBClient.shared.reinitCache()
-
-            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-            let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
-            let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
-            self.reloadTable()
-            courseVC.reloadTable()
-            notifsVC.reloadTable()
-            loadingViewController.dismiss(animated: true, completion: nil)
-        }
-    }
-
-    func handleDeleted(deletedObject: NBModel) { }
-    func handleElapsed(elapsedObject: NBModel) { }
 }
 
 extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
