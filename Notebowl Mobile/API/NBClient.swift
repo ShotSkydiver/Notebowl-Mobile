@@ -140,14 +140,11 @@ class NBClient {
     }
 
     public func decacheMappable(object: NBModel) {
-        for key in storedTypes.keys {
-            if storedTypes[key]!.contains(object) {
-                storedTypes[key]!.removeAll(object)
-                NotificationCenter.default.post(name: NSNotification.Name("ModelWillDelete\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-                NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-                NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-                break
-            }
+        if type(of: object).getCache().contains(object) {
+            type(of: object).removeFromCache(object: object)
+            NotificationCenter.default.post(name: NSNotification.Name("ModelWillDelete\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+            NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+            NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
         }
     }
 

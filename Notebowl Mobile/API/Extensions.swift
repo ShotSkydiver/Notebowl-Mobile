@@ -1322,7 +1322,7 @@ class ObjectTransform<T: NBModel>: TransformType {
         let urlToGet = value as! String
         let url = URL(string: urlToGet)
 
-        if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
+        if let objectExists = T.getCache().first(where: {$0.resourceKey == url!.lastPathComponent }) {
             if self.actionType == .updated {
                 if self.updateDate != nil && self.updateDate! > objectExists.updatedAt {
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)

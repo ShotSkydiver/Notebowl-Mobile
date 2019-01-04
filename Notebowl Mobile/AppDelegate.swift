@@ -120,25 +120,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             var doAppReset: Bool = false
             let enrollments = keyPaths.filter({$0.contains("enrollment")})
-            if !enrollments.isEmpty || enrollments.count > 0 {
+            if !enrollments.isEmpty {
                 var possibleNewEnrollments: [String] = []
 
-                if NBClient.shared.storedTypes[Enrollment.classIdentifier] != nil {
-                    let cachedEnrollments = (NBClient.shared.storedTypes[Enrollment.classIdentifier]! as! [Enrollment]).filter({ $0.user == NBClient.shared.getCurrentUser() })
-                    for socketResponse in enrollments {
-                        if cachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
-                            if socketResponse.contains("deleted") {
-                                NBClient.shared.resetApp(andLogoutUser: false)
-                                return
-                            }
-                        } else if socketResponse.contains("updated") {
-                            let otherUsersCachedEnrollments = (NBClient.shared.storedTypes[Enrollment.classIdentifier]! as! [Enrollment]).filter({ $0.user != NBClient.shared.getCurrentUser() })
-                            if !otherUsersCachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
-                                doAppReset = true
-                                possibleNewEnrollments.append(socketResponse)
-                            }
+                let cachedEnrollments: [Enrollment] = Enrollment.getCache().filter({ $0.user == NBClient.shared.getCurrentUser() })
+                for socketResponse in enrollments {
+                    if cachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
+                        if socketResponse.contains("deleted") {
+                            NBClient.shared.resetApp(andLogoutUser: false)
+                            return
+                        }
+                    } else if socketResponse.contains("updated") {
+                        let otherUsersCachedEnrollments: [Enrollment] = Enrollment.getCache().filter({ $0.user == NBClient.shared.getCurrentUser() })
+
+                        if !otherUsersCachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
+                            doAppReset = true
+                            possibleNewEnrollments.append(socketResponse)
                         }
                     }
+                }
 
                 if !possibleNewEnrollments.isEmpty {
                     var objectsToUpdate: [NBModel] = []

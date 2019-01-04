@@ -416,6 +416,10 @@ public class NBModel: Mappable {
         return objects as! [T]
     }
 
+    class func removeFromCache<T>(object: T) where T: NBModel {
+        NBClient.shared.storedTypes[self.classIdentifier]?.removeAll(object)
+    }
+
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
     public var secondsSinceCreation: TimeInterval { return self.createdAt.timeIntervalSinceReferenceDate }
 
