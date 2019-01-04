@@ -66,12 +66,7 @@ class AccountModalTableViewController: UITableViewController {
 
     @IBAction func doneButtonTapped(_ sender: Any) {
         if let keyPath = self.updatedUser as? [String: AnyObject], let fileID = keyPath["fileId"] as? String {
-            let newFile = NBNetworking.shared.request(.post, url: ("https://\(baseUrl)/rpc/v1.0/users/" + NBClient.shared.getCurrentUser().resourceKey + "/changeProfilePicture"),
-                                                      json: ["fileId": fileID])
-
-            if let newKeys = (newFile.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = newKeys["url"] as? String, let updatedAt = newKeys["updatedAt"] as? String, let itemType = ItemType.fromURL(url) {
-                _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: url, action: "updated", updatedAt: updatedAt)
-            }
+            _ = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "users/\(NBClient.shared.getCurrentUser().resourceKey!)/changeProfilePicture"), json: ["fileId": fileID])
         }
         self.dismiss(animated: true, completion: nil)
     }
@@ -107,7 +102,6 @@ class AccountModalTableViewController: UITableViewController {
                                                  loadImmediately: false,
                                                  asyncProgressHandler: { p in
                                                     DispatchQueue.main.async(execute: {
-                                                        log.debug("prgoress: \(p.percentageUpload)")
                                                         self.profilePicture.uploadImage(image: self.selectedImage, progress: Float(p.percentageUpload))
                                                     })
         }, asyncCompletionHandler: { r in

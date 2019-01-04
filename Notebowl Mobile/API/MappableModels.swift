@@ -442,11 +442,13 @@ public class NBModel: Mappable {
             return nil
         }
 
-        if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
-            let finalObject = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
-            return finalObject
-        }
+        if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String {
+            let mapReq = NBClient.shared.getMappable(type(of: self), url: url)
 
+            if let newObject = mapReq?.first {
+                return newObject
+            }
+        }
         return nil
     }
 
