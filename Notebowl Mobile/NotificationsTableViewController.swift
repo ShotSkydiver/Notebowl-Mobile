@@ -128,7 +128,9 @@ class NotificationsTableViewController: UITableViewController {
                                                     NBClient.shared.delay(1.0) {
                                                         if let jsonObject = r.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedResults = nestedJson as? [[String: Any]] {
                                                             let mapped = Mapper<Notification>().mapArray(JSONArray: nestedResults)
-                                                            let updatedNotifs = NBClient.shared.storeObjectsInCache(mapped)
+                                                            for object in mapped {
+                                                                NBClient.shared.storeObjectInCache(object)
+                                                            }
                                                             self.notifications = (NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification])
                                                             self.tabBarController?.tabBar.items![2].badgeValue = nil
                                                         }

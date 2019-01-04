@@ -82,8 +82,10 @@ class NBClient {
         _ = NBClient.shared.getMappable(Course.self, filters: "[\"resourceKey:IN:\(coursesFilter)\"]")
         _ = NBClient.shared.getMappable(Group.self, filters: "[\"resourceKey:IN:\(groupsFilter)\"]")
 
-        let mappy = Mapper<Enrollment>().mapArray(JSONArray: keyPaths)
-        _ = NBClient.shared.storeObjectsInCache(mappy)
+        let mappedEnrollments = Mapper<Enrollment>().mapArray(JSONArray: keyPaths)
+        for object in mappedEnrollments {
+            storeObjectInCache(object)
+        }
 
         return combinedUrlsFilter
     }
@@ -128,9 +130,13 @@ class NBClient {
         return req
     }
 
-    public func cacheMappable(object: NBModel) {
-        NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-        NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+    public func cacheMappable<T>(object: T) -> T where T: NBModel {
+        let cachedObject = storeObjectInCache(object)
+
+        NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(cachedObject.itemType.className)"), object: nil, userInfo: ["object": cachedObject])
+        NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(cachedObject.itemType.className)"), object: nil, userInfo: ["object": cachedObject])
+
+        return cachedObject
     }
 
     public func decacheMappable(object: NBModel) {
@@ -159,11 +165,15 @@ class NBClient {
 
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
                 guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else { return nil }
-                let storedObjects: [T] = NBClient.shared.storeObjectsInCache(mapped)
-                for object in storedObjects {
-                    NBClient.shared.cacheMappable(object: object)
+
+                var newObjectArray = [T]()
+
+                for object in mapped {
+                    let cachedObject = NBClient.shared.cacheMappable(object: object)
+                    newObjectArray.append(cachedObject)
                 }
-                return storedObjects
+
+                return newObjectArray
             }
         } else {
             NBClient.shared.sendBugsnagException(fromResult: result)
@@ -172,38 +182,24 @@ class NBClient {
         return nil
     }
 
-    func storeObjectsInCache<T>(_ objects: [T]) -> [T] where T: NBModel {
-        var newObjectArray: [T] = [T]()
-
-        for object in objects {
-            if let pos = storedTypes[T.classIdentifier]?.firstIndex(of: object), let existingObj = storedTypes[T.classIdentifier]?[pos] {
-                if object.updatedAt > existingObj.updatedAt {
-                    object.firstTimeLoading = false
-
-                    storedTypes[T.classIdentifier]![pos] = object
-                    newObjectArray.append(object)
-                } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
-                    existingObj.firstTimeLoading = false
-
-                    newObjectArray.append(newObj)
-                }
-            } else {
-                object.firstTimeLoading = true
-                if let oldData = storedTypes.updateValue([object], forKey: T.classIdentifier) {
-                    storedTypes[T.classIdentifier]!.append(contentsOf: oldData)
-                } else {
-                    log.verbose("no existing key")
-                }
-                newObjectArray.append(object)
+    func storeObjectInCache<T>(_ object: T) -> T where T: NBModel {
+        if let pos = storedTypes[T.classIdentifier]?.firstIndex(of: object), let existingObj = storedTypes[T.classIdentifier]?[pos] {
+            if object.updatedAt > existingObj.updatedAt {
+                object.firstTimeLoading = false
+                storedTypes[T.classIdentifier]![pos] = object
+            } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
+                existingObj.firstTimeLoading = false
+                return newObj
+            }
+        } else {
+            object.firstTimeLoading = true
+            if let oldData = storedTypes.updateValue([object], forKey: T.classIdentifier) {
+                storedTypes[T.classIdentifier]!.append(contentsOf: oldData)
             }
         }
+        storedTypes[T.classIdentifier]!.sortByDate()
 
-        if !objects.isEmpty {
-            storedTypes[T.classIdentifier]!.sortByDate()
-            newObjectArray.sortByDate()
-        }
-
-        return newObjectArray
+        return object
     }
 
     func sendBugsnagException(fromResult: NBResult) {
