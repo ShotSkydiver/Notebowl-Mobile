@@ -393,13 +393,7 @@ public class NBModel: Mappable {
 
     func deleteSelf() {
         let deleteReq = NBNetworking.shared.request(.delete, url: self.url.absoluteString)
-        if deleteReq.statusCode!.rawValue == 410, let itemType = ItemType.fromURL(self.url.absoluteString) {
-            _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: self.url.absoluteString, action: "deleted", updatedAt: "\(self.updatedAt!)")
-        } else {
-            if let keyPath = (deleteReq.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
-                _ = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "deleted", updatedAt: (keyPath["updatedAt"] as! String))
-            }
-        }
+        NBClient.shared.decacheMappable(object: self)
     }
 
     public var firstTimeLoading: Bool!

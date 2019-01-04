@@ -52,6 +52,7 @@ class NBSocket {
 
             if let updateUrl = JSON["updateUrl"] as? String, let itemType = ItemType.fromURL(updateUrl), let action = JSON["action"] as? String, let updatedAt = JSON["updatedAt"] as? String {
                 let newResponse = SendData(itemType: itemType, updateUrl: updateUrl, action: action, updatedAt: updatedAt)
+
                 _ = self.updateHandler(itemType: "\(newResponse.itemType)", updateUrl: "\(newResponse.updateUrl)", action: "\(newResponse.action)", updatedAt: "\(newResponse.updatedAt)")
             }
         }
@@ -65,9 +66,7 @@ class NBSocket {
             NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
             NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
         } else if mapped?.action == .deleted {
-            NotificationCenter.default.post(name: NSNotification.Name("ModelWillDelete\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-            NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-            NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+            NBClient.shared.decacheMappable(object: object)
         }
 
         return object

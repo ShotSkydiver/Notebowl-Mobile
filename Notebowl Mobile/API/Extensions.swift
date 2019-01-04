@@ -1325,16 +1325,11 @@ class ObjectTransform<T: NBModel>: TransformType {
         let url = URL(string: urlToGet)
 
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            if self.actionType == .elapsed {
-                log.debug("action: elapsed!")
+            if self.actionType == .elapsed || self.actionType == .deleted {
                 return objectExists as? T
-            } else if self.actionType == .deleted {
-                return NBClient.shared.storedTypes[T.classIdentifier]!.remove(at: (NBClient.shared.storedTypes[T.classIdentifier]?.index(of: objectExists))!) as? T
             } else {
                 if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
-                    log.debug("new object is more recent than existing object!")
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-
                     return mapReq?.first
                 }
                 return objectExists as? T

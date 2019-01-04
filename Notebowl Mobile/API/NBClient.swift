@@ -128,6 +128,18 @@ class NBClient {
         return req
     }
 
+    public func decacheMappable(object: NBModel) {
+        for key in storedTypes.keys {
+            if storedTypes[key]!.contains(object) {
+                storedTypes[key]!.removeAll(object)
+                NotificationCenter.default.post(name: NSNotification.Name("ModelWillDelete\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+                NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+                NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishDeleting\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+                break
+            }
+        }
+    }
+
     public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String! = "", sortBy: String! = "", limit: String! = "") -> [T]! where T: NBModel {
         let requestUrl: String = url ?? someObject.endpoint
 
