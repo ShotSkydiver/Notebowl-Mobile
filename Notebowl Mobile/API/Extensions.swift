@@ -1280,8 +1280,7 @@ extension CellActionsVC {
         let alert = isPost ? UIAlertController(title: "Report Post", message: "What's wrong with this post?", preferredStyle: .actionSheet) : UIAlertController(title: "Report Comment", message: "What's wrong with this comment?", preferredStyle: .actionSheet)
 
         let inappropriate = UIAlertAction(title: "It doesn't belong on Notebowl", style: .default, handler: { inappAction in
-            let abuse = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
-            _ = abuse.save()
+            _ = Abuse(reason: "inappropriate", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)).save()
             alert.dismiss(animated: true, completion: nil)
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
             PKHUD.sharedHUD.show()
@@ -1289,8 +1288,7 @@ extension CellActionsVC {
         })
 
         let spam = UIAlertAction(title: "It's spam", style: .default, handler: { spamAction in
-            let abuse = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell))
-            _ = abuse.save()
+            _ = Abuse(reason: "spam", parent: (isPost ? (selectedCell as! HomeFeedPostCell).postForCell : (selectedCell as! HomeFeedCommentCell).commentForCell)).save()
             alert.dismiss(animated: true, completion: nil)
             PKHUD.sharedHUD.contentView = PKHUDSuccessView(title: "Report Sent", subtitle: nil)
             PKHUD.sharedHUD.show()
@@ -1325,15 +1323,13 @@ class ObjectTransform<T: NBModel>: TransformType {
         let url = URL(string: urlToGet)
 
         if let objectExists = NBClient.shared.storedTypes[T.classIdentifier]?.first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            if self.actionType == .elapsed || self.actionType == .deleted {
-                return objectExists as? T
-            } else {
-                if (self.updateDate != nil) && (self.updateDate!.timeIntervalSinceReferenceDate > objectExists.updatedAt.timeIntervalSinceReferenceDate) {
+            if self.actionType == .updated {
+                if self.updateDate != nil && self.updateDate! > objectExists.updatedAt {
                     let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
                     return mapReq?.first
                 }
-                return objectExists as? T
             }
+            return objectExists as? T
         } else if self.actionType == .deleted || self.actionType == .elapsed {
             return nil
         } else {

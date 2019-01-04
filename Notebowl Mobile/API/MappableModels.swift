@@ -441,10 +441,12 @@ public class NBModel: Mappable {
             Bugsnag.notify(exception)
             return nil
         }
+
         if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String, let itemType = ItemType.fromURL(url) {
             let finalObject = NBSocket.shared.updateHandler(itemType: "\(itemType)", updateUrl: (url), action: "updated", updatedAt: (keyPath["updatedAt"] as! String))
             return finalObject
         }
+
         return nil
     }
 

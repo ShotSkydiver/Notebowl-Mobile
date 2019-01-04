@@ -48,7 +48,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
 
         CourseDetailViewCell.register(in: tableView)
         reloadTable()
-        setupObservers()
     }
 
     func setupObservers() {
@@ -157,8 +156,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
         if newCourse != self.selectedCourse {
             return
         }
-
-        reloadTable()
     }
 
     @objc func finishDeletingAssignment(_ notification: NSNotification) {
@@ -243,6 +240,7 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
             self.assignments = self.selectedCourse.courseAssignments
             self.sortAssignments()
             self.tableView.reloadData()
+            self.setupObservers()
             HUD.hide(animated: true)
         }
     }

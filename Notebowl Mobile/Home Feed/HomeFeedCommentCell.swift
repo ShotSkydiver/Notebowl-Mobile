@@ -270,9 +270,8 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
             if !self.commentLikeButton.isSelected {
                 self.commentForCell.likeFromCurrentUser!.deleteSelf()
             } else if self.commentLikeButton.isEnabled {
-                let newLike = Like(parent: self.commentForCell)
-                let finalLike = newLike.save()
-                if finalLike == nil {
+                let newLike = Like(parent: self.commentForCell).save()
+                if newLike == nil {
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }

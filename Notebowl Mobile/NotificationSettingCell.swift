@@ -51,13 +51,12 @@ class NotificationSettingCell: UITableViewCell {
                 self.settingForCell.userSetting!.deleteSelf()
                 self.settingForCell.userSetting = nil
             } else if self.settingSwitch.isOn != self.settingForCell.defaultValue {
-                let newSetting = Setting(key: self.settingForCell.key, value: self.settingSwitch.isOn)
-                let finalSetting = newSetting.save()
-                if finalSetting == nil {
+                let newSetting = Setting(key: self.settingForCell.key, value: self.settingSwitch.isOn).save()
+                if newSetting == nil {
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }
-                self.settingForCell.userSetting = (finalSetting as! Setting)
+                self.settingForCell.userSetting = (newSetting as! Setting)
             }
             HUD.flash(.success, delay: 0.5)
         }

@@ -60,11 +60,13 @@ class NBSocket {
 
     func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) -> NBModel? {
         let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrl)", "action": "\(action)", "updatedAt": "\(updatedAt)"])
-        guard let object = mapped!.genericObject else { return nil }
+
+        guard let object = mapped!.genericObject else {
+            return nil
+        }
 
         if mapped?.action == .updated {
-            NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
-            NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+            NBClient.shared.cacheMappable(object: object)
         } else if mapped?.action == .deleted {
             NBClient.shared.decacheMappable(object: object)
         }

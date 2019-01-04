@@ -271,8 +271,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
                     for file in self.attachmentIDs {
                         if !file.contains("https://") {
-                            let newAttach = Attachment(file: file, parent: (self.existingObjectToEdit as! NBModel))
-                            _ = newAttach.save()
+                            _ = Attachment(file: file, parent: (self.existingObjectToEdit as! NBModel)).save()
                         }
                     }
                 }
@@ -285,15 +284,11 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
                     }
                 }
             } else {
-                let newPost = Post(text: postText!, owner: self.objectsForPicker[self.selectedIndex], parent: self.objectsForPicker[self.selectedIndex], isAnonymous: self.anonymousToggle, pinned: (!(self.pinnedButton.isHidden) ? self.pinnedToggle : false))
-                let posted = newPost.save()
+                let newPost = Post(text: postText!, owner: self.objectsForPicker[self.selectedIndex], parent: self.objectsForPicker[self.selectedIndex], isAnonymous: self.anonymousToggle, pinned: (!(self.pinnedButton.isHidden) ? self.pinnedToggle : false)).save()
                 if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                    log.debug("attachment count: \(self.attachmentIDs.count)")
                     for file in self.attachmentIDs {
                         if file.count > 1 {
-                            log.debug(file)
-                            let newAttach = Attachment(file: file, parent: posted)
-                            _ = newAttach.save()
+                            _ = Attachment(file: file, parent: newPost).save()
                         }
                     }
                 }

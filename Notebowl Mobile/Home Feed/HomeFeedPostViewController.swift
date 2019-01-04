@@ -461,18 +461,14 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         inputBar.inputTextView.isUserInteractionEnabled = false
 
         NBClient.shared.delay(1.0) {
-            let newComment = Comment(text: text, owner: (self.postCommentToReplyTo as! NBModel).parent, parent: (self.postCommentToReplyTo as! NBModel), related: (self.postCommentToReplyTo as! NBModel).owner, isAnonymous: self.anonymousToggle)
-            let finalComment = newComment.save()
-            if finalComment == nil {
+            let newComment = Comment(text: text, owner: (self.postCommentToReplyTo as! NBModel).parent, parent: (self.postCommentToReplyTo as! NBModel), related: (self.postCommentToReplyTo as! NBModel).owner, isAnonymous: self.anonymousToggle).save()
+            if newComment == nil {
                 HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                 return
             }
             if self.attachmentIDs.count > 0 || !self.attachmentIDs.isEmpty {
-                log.debug("attachment count: \(self.attachmentIDs.count)")
                 for file in self.attachmentIDs {
-                    log.debug("uploading attachment: \(file)")
-                    let newAttach = Attachment(file: file, parent: finalComment)
-                    _ = newAttach.save()
+                    _ = Attachment(file: file, parent: newComment).save()
                 }
             }
 

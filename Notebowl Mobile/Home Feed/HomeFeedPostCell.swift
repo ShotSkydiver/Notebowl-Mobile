@@ -279,9 +279,8 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
             if !self.likeButton.isSelected {
                 self.postForCell.likeFromCurrentUser!.deleteSelf()
             } else if self.likeButton.isEnabled {
-                let newLike = Like(parent: self.postForCell)
-                let finalLike = newLike.save()
-                if finalLike == nil {
+                let newLike = Like(parent: self.postForCell).save()
+                if newLike == nil {
                     HUD.flash(.labeledError(title: "Server Error!", subtitle: "Well, this is embarrassing, something's wrong on our end."), delay: 0.5)
                     return
                 }

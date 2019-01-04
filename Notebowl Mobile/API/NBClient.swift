@@ -128,6 +128,11 @@ class NBClient {
         return req
     }
 
+    public func cacheMappable(object: NBModel) {
+        NotificationCenter.default.post(name: NSNotification.Name("ModelDidBeginUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+        NotificationCenter.default.post(name: NSNotification.Name("ModelDidFinishUpdating\(object.itemType.className)"), object: nil, userInfo: ["object": object])
+    }
+
     public func decacheMappable(object: NBModel) {
         for key in storedTypes.keys {
             if storedTypes[key]!.contains(object) {
@@ -155,6 +160,9 @@ class NBClient {
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
                 guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else { return nil }
                 let storedObjects: [T] = NBClient.shared.storeObjectsInCache(mapped)
+                for object in storedObjects {
+                    NBClient.shared.cacheMappable(object: object)
+                }
                 return storedObjects
             }
         } else {
@@ -190,13 +198,9 @@ class NBClient {
             }
         }
 
-        if !objects.isEmpty || objects.count > 0 {
+        if !objects.isEmpty {
             storedTypes[T.classIdentifier]!.sortByDate()
             newObjectArray.sortByDate()
-
-            if storedTypes[T.classIdentifier]!.containSameElements(newObjectArray) {
-                log.verbose("SAME!")
-            }
         }
 
         return newObjectArray

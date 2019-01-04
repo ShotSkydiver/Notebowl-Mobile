@@ -47,8 +47,6 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         bulletinTableView.separatorColor = bulletinTableView.backgroundColor
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7))
         self.navigationController?.view.backgroundColor = UIColor.white
-
-        setupObservers()
     }
 
     func setupObservers() {
@@ -316,6 +314,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
             }
         }
         NBSocket.shared.setup()
+        setupObservers()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
