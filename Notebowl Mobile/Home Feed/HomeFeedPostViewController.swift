@@ -250,7 +250,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if segue.identifier == "createPostDetailSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
             if sender is HomeFeedPostCell {
-
                 var courseForPicker: [Course] = Course.getCache().filter({ $0.isAvailable })
                 courseForPicker.sort() { $0.fullName < $1.fullName }
                 var pickerItems = courseForPicker as [NBModel]

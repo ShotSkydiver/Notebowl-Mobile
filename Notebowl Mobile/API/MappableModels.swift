@@ -151,7 +151,7 @@ extension ItemType {
             self = .category
         case .n1("University"):
             self = .university
-        case .n1("CourseUser"), .n1("GroupUser"):
+        case .n1("CourseUser"), .n1("GroupUser"), .n1("EventUser"):
             self = .enrollment
         case .n1(Regex("Attachment.*")):
             self = .attachment
@@ -407,17 +407,17 @@ public class NBModel: Mappable {
     }
 
     class func getCache<T>() -> [T] where T: NBModel {
-        if !NBClient.shared.storedTypes.has(key: self.classIdentifier) {
-            NBClient.shared.storedTypes[self.classIdentifier] = []
+        if !NBClient.shared.storedTypes.has(key: self.routeType) {
+            NBClient.shared.storedTypes[self.routeType] = []
         }
 
-        let objects = NBClient.shared.storedTypes[self.classIdentifier]
+        let objects = NBClient.shared.storedTypes[self.routeType]
 
         return objects as! [T]
     }
 
     class func removeFromCache<T>(object: T) where T: NBModel {
-        NBClient.shared.storedTypes[self.classIdentifier]?.removeAll(object)
+        NBClient.shared.storedTypes[self.routeType]?.removeAll(object)
     }
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }

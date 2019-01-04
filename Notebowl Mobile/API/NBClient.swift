@@ -20,7 +20,7 @@ class NBClient {
     }()
 
     private var currentUser: User!
-    public var storedTypes = [ObjectIdentifier: [NBModel]]()
+    public var storedTypes = [ItemType: [NBModel]]()
 
     private init() { }
 
@@ -58,7 +58,7 @@ class NBClient {
             guard let nullResult = (delReq.json as AnyObject).value(forKeyPath: "result") as? NSNull else { fatalError() }
         }
         currentUser = nil
-        NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+        NBClient.shared.storedTypes = [ItemType: [NBModel]]()
         let rootViewController = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
         rootViewController.dismiss(animated: true, completion: nil)
     }
@@ -180,21 +180,21 @@ class NBClient {
     }
 
     func storeObjectInCache<T>(_ object: T) -> T where T: NBModel {
-        if let pos = storedTypes[T.classIdentifier]?.firstIndex(of: object), let existingObj = storedTypes[T.classIdentifier]?[pos] {
+        if let pos = storedTypes[T.routeType]?.firstIndex(of: object), let existingObj = storedTypes[T.routeType]?[pos] {
             if object.updatedAt > existingObj.updatedAt {
                 object.firstTimeLoading = false
-                storedTypes[T.classIdentifier]![pos] = object
+                storedTypes[T.routeType]![pos] = object
             } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
                 existingObj.firstTimeLoading = false
                 return newObj
             }
         } else {
             object.firstTimeLoading = true
-            if let oldData = storedTypes.updateValue([object], forKey: T.classIdentifier) {
-                storedTypes[T.classIdentifier]!.append(contentsOf: oldData)
+            if let oldData = storedTypes.updateValue([object], forKey: T.routeType) {
+                storedTypes[T.routeType]!.append(contentsOf: oldData)
             }
         }
-        storedTypes[T.classIdentifier]!.sortByDate()
+        storedTypes[T.routeType]!.sortByDate()
 
         return object
     }

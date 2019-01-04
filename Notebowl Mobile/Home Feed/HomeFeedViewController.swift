@@ -90,7 +90,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
             }
 
             DispatchQueue.main.async {
-                NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+                NBClient.shared.storedTypes = [ItemType: [NBModel]]()
                 NBClient.shared.resolveCurrentUser(true)
                 _ = NBClient.shared.getMappable(Setting.self)!
                 _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
@@ -204,7 +204,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         }
 
         DispatchQueue.main.async {
-            NBClient.shared.storedTypes = [ObjectIdentifier: [NBModel]]()
+            NBClient.shared.storedTypes = [ItemType: [NBModel]]()
             NBClient.shared.resolveCurrentUser(true)
             _ = NBClient.shared.getMappable(Setting.self)
             _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
