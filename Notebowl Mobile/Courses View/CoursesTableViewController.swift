@@ -111,7 +111,7 @@ class CoursesTableViewController: AnimatedNavBarViewController {
     }
 
     func reloadTable() {
-        self.courses = (NBClient.shared.storedTypes.has(key: Course.classIdentifier) ? NBClient.shared.storedTypes[Course.classIdentifier]! as! [Course] : [])
+        self.courses = Course.getCache()
         placeholderTableView?.reloadData()
     }
 

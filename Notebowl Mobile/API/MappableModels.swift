@@ -53,7 +53,7 @@ struct DeepLinker {
                 tabVC.selectedIndex = 0
             case .bulletinPost(post: let post):
                 tabVC.selectedIndex = 0
-                if let postNav = NBClient.shared.storedTypes[Post.classIdentifier]!.first(where: { $0.resourceKey == post }) as? Post {
+                if let postNav: Post = Post.getCache().first(where: { $0.resourceKey == post }) {
                     let postDetailVC = storyboard.instantiateViewController(withIdentifier: "postViewController") as! HomeFeedPostViewController
                     postDetailVC.displayedPost = postNav
                     (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(postDetailVC, animated: false)
@@ -62,7 +62,7 @@ struct DeepLinker {
                 tabVC.selectedIndex = 1
             case .course(permalink: let course):
                 tabVC.selectedIndex = 1
-                if let courseNav = NBClient.shared.storedTypes[Course.classIdentifier]!.first(where: { ($0 as! Course).permalink == course }) as? Course {
+                if let courseNav: Course = Course.getCache().first(where: { $0.permalink == course }) {
                     let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "courseAssignmentsTableView") as! CourseAssignmentsTableView
                     courseDetailVC.selectedCourse = courseNav
                     (tabVC.selectedViewController as! RootNavigationBarVC).pushViewController(courseDetailVC, animated: true)
@@ -400,10 +400,20 @@ public class NBModel: Mappable {
     public var shouldMapParent: Bool!
 
     public var enrollmentForUser: Enrollment! {
-        if let enroll = NBClient.shared.storedTypes[Enrollment.classIdentifier]?.first(where: { $0.parent == self && ($0 as! Enrollment).user == NBClient.shared.getCurrentUser()}) as? Enrollment {
-            return enroll
+        guard let enrollment: Enrollment = Enrollment.getCache().first(where: { $0.parent == self && $0.user == NBClient.shared.getCurrentUser() }) else {
+            return nil
         }
-        return nil
+        return enrollment
+    }
+
+    class func getCache<T>() -> [T] where T: NBModel {
+        if !NBClient.shared.storedTypes.has(key: self.classIdentifier) {
+            NBClient.shared.storedTypes[self.classIdentifier] = []
+        }
+
+        let objects = NBClient.shared.storedTypes[self.classIdentifier]
+
+        return objects as! [T]
     }
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
@@ -907,16 +917,16 @@ class Course: NBModel, WithName {
     }
 
     func refreshCachedAssignments() {
-        var assignments = NBClient.shared.storedTypes[Assignment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
-        assignments = (assignments == nil ? [] : assignments!)
+        var assignments: [Assignment] = Assignment.getCache().filter({ $0.parent == self })
+
         if self.enrollmentForUser != nil, self.enrollmentForUser.role == .TA {
-            assignments = assignments!.filter({($0 as! Assignment).gradeOnly == false})
+            assignments = assignments.filter({ !$0.gradeOnly })
         }
-        let assessments = NBClient.shared.storedTypes[Assessment.classIdentifier]?.filter({ $0.parent == self }) as? [AssignmentAssessment]
-        if assessments != nil { assignments! += assessments! }
-        self.courseAssignments = assignments!
-        let categories = NBClient.shared.storedTypes[Category.classIdentifier]?.filter({ $0.parent! == self }) as? [Category]
-        self.courseCategories = (categories == nil ? [] : categories!)
+        courseAssignments = assignments
+        let assessments: [Assessment] = Assessment.getCache().filter({ $0.parent == self })
+        courseAssignments += assessments as [AssignmentAssessment]
+
+        courseCategories = Category.getCache().filter({ $0.parent == self })
     }
 
     override public func refresh() {
@@ -1157,21 +1167,19 @@ public class Assignment: NBModel, AssignmentAssessment {
     }
 
     func refreshCachedSubmissions() {
-        let posts = NBClient.shared.storedTypes[Post.classIdentifier]?.filter({ ($0.related == self) && (($0 as! Post).creator == NBClient.shared.getCurrentUser()) }) as? [Post]
-        self.submissionPosts = (posts == nil ? [] : posts!)
-        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ ($0.related == self) && (($0 as! Comment).creator == NBClient.shared.getCurrentUser()) }) as? [Comment]
-        self.submissionComments = (comments == nil ? [] : comments!)
-        let submissions = NBClient.shared.storedTypes[Submission.classIdentifier]?.filter({ ($0.parent == self) && (($0 as! Submission).creator == NBClient.shared.getCurrentUser()) }) as? [Submission]
-        self.fileSubmissions = (submissions == nil ? [] : submissions!)
+        self.submissionPosts = Post.getCache().filter({ $0.related == self && $0.creator == NBClient.shared.getCurrentUser() })
+        self.submissionComments = Comment.getCache().filter({ $0.related == self && $0.creator == NBClient.shared.getCurrentUser() })
+        self.fileSubmissions = Submission.getCache().filter({ $0.parent == self && $0.creator == NBClient.shared.getCurrentUser() })
     }
 
     public func refreshCachedGradeString() {
-        if let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: {$0.parent == self}) as? Grade {
+        if let grade: Grade = Grade.getCache().first(where: {$0.parent == self}) {
             self.userGrade = grade
         }
 
         self.gradeString = getUserGrade()
     }
+
     public func refreshCachedStatus() {
         self.status = getStatus()
     }
@@ -1324,26 +1332,26 @@ public class Assessment: NBModel, AssignmentAssessment {
     }
 
     func refreshCachedSubmissions() {
-        let subs = NBClient.shared.storedTypes[AssessmentSubmission.classIdentifier]?.filter({ ($0.parent == self) && ($0.owner == NBClient.shared.getCurrentUser()) }) as? [AssessmentSubmission]
-        self.submissions = (subs == nil ? [] : subs!)
+        self.submissions = AssessmentSubmission.getCache().filter({ $0.parent == self && $0.owner == NBClient.shared.getCurrentUser() })
     }
 
     public func refreshCachedPoints() {
         var pointsCalculated: Double = 0
-        if let questions = NBClient.shared.storedTypes[AssessmentQuestion.classIdentifier]?.filter({ $0.parent == self }) as? [AssessmentQuestion] {
-            for question in questions {
-                if !question.extraCredit {
-                    pointsCalculated += question.points
-                }
+        let questions: [AssessmentQuestion] = AssessmentQuestion.getCache().filter({ $0.parent == self })
+
+        for question in questions {
+            if !question.extraCredit {
+                pointsCalculated += question.points
             }
         }
         self.points = pointsCalculated
     }
 
     public func refreshCachedGradeString() {
-        if let grade = NBClient.shared.storedTypes[Grade.classIdentifier]?.first(where: {$0.owner == self}) as? Grade {
+        if let grade: Grade = Grade.getCache().first(where: {$0.owner == self}) {
             self.userGrade = grade
         }
+
         self.gradeString = getUserGrade()
     }
     public func refreshCachedStatus() {
@@ -1880,31 +1888,21 @@ public class Post: NBModel, PostsComments {
     }
 
     func refreshCachedLikes() {
-        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]
-        self.postLikes = (likes == nil ? [] : likes!)
-        if postLikes.isEmpty || postLikes == nil {
+        postLikes = Like.getCache().filter({ $0.parent == self })
+
+        if postLikes.isEmpty {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
-        } else if postLikes.count > 0 {
-            let like = postLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
-
-            if like != nil {
-                likedByCurrentUser = true
-                likeFromCurrentUser = like
-            } else if like == nil {
-                likedByCurrentUser = false
-                likeFromCurrentUser = nil
-            }
+        } else if let like = postLikes.first(where: { $0.owner == NBClient.shared.getCurrentUser() }) {
+            likedByCurrentUser = true
+            likeFromCurrentUser = like
         }
     }
-    func refreshCachedCommentsAttachments() {
-        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
-        self.comments = (comments == nil ? [] : comments!)
 
-        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
-        self.attachments = (attach == nil ? [] : attach!)
-        let attachExt = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).attachmentScheme == .External }) as? [Attachment]
-        self.externalAttachments = (attachExt == nil ? [] : attachExt!)
+    func refreshCachedCommentsAttachments() {
+        self.comments = Comment.getCache().filter({ $0.parent == self })
+        self.attachments = Attachment.getCache().filter({ $0.parent == self && $0.mimeType == .image })
+        self.externalAttachments = Attachment.getCache().filter({ $0.parent == self && $0.attachmentScheme == .External })
     }
 
     override public func refresh() {
@@ -2214,30 +2212,20 @@ public class Comment: NBModel, PostsComments {
     }
 
     public func refreshCachedAttachments() {
-        let comments = NBClient.shared.storedTypes[Comment.classIdentifier]?.filter({ $0.parent! == self }) as? [Comment]
-        self.comments = (comments == nil ? [] : comments!)
-
-        let attach = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent == self && ($0 as! Attachment).mimeType == .image }) as? [Attachment]
-        self.attachments = (attach == nil ? [] : attach!)
-        let attachExt = NBClient.shared.storedTypes[Attachment.classIdentifier]?.filter({ $0.parent! == self && ($0 as! Attachment).attachmentScheme == .External }) as? [Attachment]
-        self.externalAttachments = (attachExt == nil ? [] : attachExt!)
+        self.comments = Comment.getCache().filter({ $0.parent == self })
+        self.attachments = Attachment.getCache().filter({ $0.parent == self && $0.mimeType == .image })
+        self.externalAttachments = Attachment.getCache().filter({ $0.parent == self && $0.attachmentScheme == .External })
     }
+
     public func refreshCachedLikes() {
-        let likes = NBClient.shared.storedTypes[Like.classIdentifier]?.filter({ ($0 as! Like).parent! == self }) as? [Like]
-        self.commentLikes = (likes == nil ? [] : likes!)
-        if commentLikes.isEmpty || commentLikes == nil {
+        commentLikes = Like.getCache().filter({ $0.parent == self })
+
+        if commentLikes.isEmpty {
             likedByCurrentUser = false
             likeFromCurrentUser = nil
-        } else if commentLikes.count > 0 {
-            let like = commentLikes.first(where: { $0.owner! == NBClient.shared.getCurrentUser() })
-
-            if like != nil {
-                likedByCurrentUser = true
-                likeFromCurrentUser = like
-            } else if like == nil {
-                likedByCurrentUser = false
-                likeFromCurrentUser = nil
-            }
+        } else if let like = commentLikes.first(where: { $0.owner == NBClient.shared.getCurrentUser() }) {
+            likedByCurrentUser = true
+            likeFromCurrentUser = like
         }
     }
 
@@ -2402,7 +2390,9 @@ class SettingsDefault: Mappable, Equatable {
         type <- map["type"]
     }
 
-    public func findSetting() { userSetting = NBClient.shared.storedTypes[Setting.classIdentifier]?.first(where: { ($0 as! Setting).key == self.key }) as? Setting }
+    public func findSetting() {
+        userSetting = Setting.getCache().first(where: { $0.key == self.key })
+    }
 
     static func == (lhs: SettingsDefault, rhs: SettingsDefault) -> Bool {
         return lhs.name == rhs.name

@@ -250,13 +250,14 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
         if segue.identifier == "createPostDetailSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
             if sender is HomeFeedPostCell {
-                var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+
+                var courseForPicker: [Course] = Course.getCache().filter({ $0.isAvailable })
                 courseForPicker.sort() { $0.fullName < $1.fullName }
                 var pickerItems = courseForPicker as [NBModel]
 
-                var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
-                groups.sort() { $0.fullName < $1.fullName }
-                pickerItems += groups as [NBModel]
+                var groupsForPicker: [Group] = Group.getCache()
+                groupsForPicker.sort() { $0.fullName < $1.fullName }
+                pickerItems += groupsForPicker as [NBModel]
 
                 destVC.objectsForPicker = pickerItems
                 destVC.existingObjectToEdit = (sender as! HomeFeedPostCell).postForCell

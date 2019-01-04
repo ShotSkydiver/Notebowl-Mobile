@@ -47,7 +47,7 @@ class BulletinTableViewHeader: UITableViewHeaderFooterView {
     }
 
     @objc func singleTap(gesture: UITapGestureRecognizer) {
-        if NBClient.shared.storedTypes.has(key: Course.classIdentifier) || NBClient.shared.storedTypes.has(key: Group.classIdentifier) {
+        if !Course.getCache().isEmpty || !Group.getCache().isEmpty {
             if let parentVC = parentViewController as? HomeFeedViewController {
                 parentVC.performSegue(withIdentifier: "createPostSegue", sender: nil)
             }

@@ -139,9 +139,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             }
                         }
                     }
-                } else {
-                    doAppReset = true
-                }
 
                 if !possibleNewEnrollments.isEmpty {
                     var objectsToUpdate: [NBModel] = []

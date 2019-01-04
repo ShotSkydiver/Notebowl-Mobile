@@ -288,7 +288,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     }
 
     func reloadTable() {
-        self.posts = (NBClient.shared.storedTypes.has(key: Post.classIdentifier) ? NBClient.shared.storedTypes[Post.classIdentifier]! as! [Post] : [])
+        self.posts = Post.getCache()
         bulletinTableView.reloadData()
     }
 
@@ -326,16 +326,15 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         } else if segue.identifier == "createPostSegue" {
             let destVC = segue.destination as! CreateNewPostViewController
 
-            var courseForPicker = (NBClient.shared.storedTypes[Course.classIdentifier] as! [Course]).filter({ $0.isAvailable })
+            var courseForPicker: [Course] = Course.getCache().filter({ $0.isAvailable })
             courseForPicker.sort() { $0.fullName < $1.fullName }
             var pickerItems = courseForPicker as [NBModel]
 
-            var groups = (NBClient.shared.storedTypes.has(key: Group.classIdentifier) ? NBClient.shared.storedTypes[Group.classIdentifier]! as! [Group] : [])
-            groups.sort() { $0.fullName < $1.fullName }
-            pickerItems += groups as [NBModel]
+            var groupsForPicker: [Group] = Group.getCache()
+            groupsForPicker.sort() { $0.fullName < $1.fullName }
+            pickerItems += groupsForPicker as [NBModel]
 
             destVC.objectsForPicker = pickerItems
-
             if sender is HomeFeedPostCell {
                 destVC.editingExisting = true
                 destVC.existingObjectToEdit = (sender as! HomeFeedPostCell).postForCell

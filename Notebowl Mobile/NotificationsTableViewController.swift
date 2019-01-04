@@ -69,7 +69,7 @@ class NotificationsTableViewController: UITableViewController {
     }
 
     func reloadTable() {
-        self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
+        self.notifications = Notification.getCache()
         updateBadgeCount()
         placeholderTableView?.reloadData()
         setupObservers()
