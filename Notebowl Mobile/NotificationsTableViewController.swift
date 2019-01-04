@@ -26,7 +26,6 @@ class NotificationsTableViewController: UITableViewController {
         TMGradientNavigationBar().setGradientColorOnNavigationBar(bar: (navigationController?.navigationBar)!, direction: .horizontal, startColor: #colorLiteral(red: 0.04705882353, green: 0.4823529412, blue: 0.7568627451, alpha: 1), endColor: #colorLiteral(red: 0.04705882353, green: 0.5294117647, blue: 0.3607843137, alpha: 1), startPoint: CGPoint(x: 0.0, y: 0.4), endPoint: CGPoint(x: 0.8, y: 0.7))
         self.navigationController?.view.backgroundColor = UIColor.white
         reloadTable()
-        setupObservers()
     }
 
     func setupObservers() {
@@ -49,8 +48,9 @@ class NotificationsTableViewController: UITableViewController {
             tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .fade)
         } else {
             tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .left)
-            updateBadgeCount()
         }
+
+        updateBadgeCount()
     }
 
     @objc func finishDeletingNotification(_ notification: NSNotification) {
@@ -70,9 +70,9 @@ class NotificationsTableViewController: UITableViewController {
 
     func reloadTable() {
         self.notifications = (NBClient.shared.storedTypes.has(key: Notification.classIdentifier) ? NBClient.shared.storedTypes[Notification.classIdentifier]! as! [Notification] : [])
-        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : String(format: "%d", (unreadCount.count)) )
+        updateBadgeCount()
         placeholderTableView?.reloadData()
+        setupObservers()
     }
 
     @IBAction func profileButtonTapped(_ sender: Any) {
@@ -99,44 +99,21 @@ class NotificationsTableViewController: UITableViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !notifications.isEmpty && notifications.contains(where: {$0.unseenBool == true }) { markAsSeen() }
-    }
 
-    func updateBadgeCount() {
-        if let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController {
-            if (tabbarVC.selectedViewController as! UINavigationController).topViewController is NotificationsTableViewController {
-                for notif in self.notifications {
-                    if notif.unseenBool {
-                        notif.status = "seen"
-                        _ = NBNetworking.shared.request(.put, url: notif.url.absoluteString, json: ["status": "seen"])
-                    }
-                }
-                return
-            } else {
-                let unreadCount = self.notifications.filter({ $0.unseenBool == true })
-                let countString = String(format: "%d", (unreadCount.count))
-                self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count > 99 ? ("99+") : countString) )
-                return
-            }
+        if !notifications.isEmpty && notifications.contains(where: {$0.unseenBool == true }) {
+            markAsSeen()
         }
     }
 
+    func updateBadgeCount() {
+        let unreadCount = self.notifications.filter({ $0.unseenBool == true })
+        let countString = String(format: "%d", (unreadCount.count))
+        self.tabBarController?.tabBar.items![2].badgeValue = ( unreadCount.count == 0 ? nil : (unreadCount.count > 99 ? ("99+") : countString) )
+        return
+    }
+
     func markAsSeen() {
-        let markSeen = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"),
-                                                   loadImmediately: false,
-                                                   asyncCompletionHandler: { r in
-                                                    NBClient.shared.delay(1.0) {
-                                                        if let jsonObject = r.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedResults = nestedJson as? [[String: Any]] {
-                                                            let mapped = Mapper<Notification>().mapArray(JSONArray: nestedResults)
-                                                            for object in mapped {
-                                                                NBClient.shared.storeObjectInCache(object)
-                                                            }
-                                                            self.notifications = (NBClient.shared.storedTypes[Notification.classIdentifier] as! [Notification])
-                                                            self.tabBarController?.tabBar.items![2].badgeValue = nil
-                                                        }
-                                                    }
-        })
-        markSeen.task?.resume()
+        _ = NBNetworking.shared.request(.post, url: RequestKind.rpc.requestUrl(url: "notifications/markAsSeen"))
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
