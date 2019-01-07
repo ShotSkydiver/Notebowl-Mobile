@@ -262,16 +262,13 @@ public struct DefaultValues {
 }
 
 class Generic: StaticMappable {
-    var action: ActionType = .unknown
-    var itemType: String!
     var updatedAt: Date!
 
     public var genericObject: NBModel?
-    public var isManual: Bool = false
 
     class func objectForMapping(map: Map) -> BaseMappable? {
-        if let type: String = map["itemType"].value() {
-            switch type.capitalised {
+        if let url: String = map["updateUrl"].value(), let itemType = ItemType.fromURL(url) {
+            switch itemType.className {
             case "User":
                 return Response<User>()
             case "Course":
@@ -334,8 +331,6 @@ class Generic: StaticMappable {
     }
 
     func mapping(map: Map) {
-        action <- (map["action"], TransformOf<ActionType, String>(fromJSON: { ActionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
-        itemType <- map["itemType"]
         updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
     }
 }
@@ -348,8 +343,7 @@ class Response<T>: Generic where T: NBModel {
 
     public override func mapping(map: Map) {
         super.mapping(map: map)
-
-        responseObject <- (map["updateUrl"], ObjectTransform<T>(action: action, update: updatedAt))
+        responseObject <- (map["updateUrl"], ObjectTransform<T>(update: updatedAt))
         genericObject = responseObject
     }
 }
@@ -484,16 +478,16 @@ public class NBModel: Mappable {
 
         if shouldMapParent {
             if let parentString = map.JSON["_parent"] as? String, let itemType = ItemType.fromURL(parentString) {
-                let parentMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(parentString)"])
+                let parentMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(parentString)"])
                 parent = parentMap?.genericObject
             }
         }
         if let ownerString = (map.JSON["_owner"] as? String), let itemType = ItemType.fromURL(ownerString) {
-            let ownerMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(ownerString)"])
+            let ownerMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(ownerString)"])
             owner = ownerMap?.genericObject
         }
         if let relatedString = (map.JSON["_related"] as? String), let itemType = ItemType.fromURL(relatedString) {
-            let relatedMap = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(relatedString)"])
+            let relatedMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(relatedString)"])
             related = relatedMap?.genericObject
         }
     }

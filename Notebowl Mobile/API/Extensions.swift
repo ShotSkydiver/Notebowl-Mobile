@@ -1309,11 +1309,9 @@ class ObjectTransform<T: NBModel>: TransformType {
     public typealias Object = T
     public typealias JSON = String
 
-    private let actionType: ActionType?
     private let updateDate: Date?
 
-    public init(action: ActionType = .unknown, update: Date? = nil) {
-        self.actionType = action
+    public init(update: Date? = nil) {
         self.updateDate = update
     }
 
@@ -1323,15 +1321,11 @@ class ObjectTransform<T: NBModel>: TransformType {
         let url = URL(string: urlToGet)
 
         if let objectExists = T.getCache().first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            if self.actionType == .updated {
-                if self.updateDate != nil && self.updateDate! > objectExists.updatedAt {
-                    let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-                    return mapReq?.first
-                }
+            if self.updateDate != nil && self.updateDate! > objectExists.updatedAt {
+                let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
+                return mapReq?.first
             }
             return objectExists as? T
-        } else if self.actionType == .deleted || self.actionType == .elapsed {
-            return nil
         } else {
             let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
             guard let returnObject = mapReq?.first else {

@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import SocketIO
 import ObjectMapper
-import Bugsnag
 
 struct SendData: SocketData {
     let itemType: ItemType
@@ -46,31 +45,20 @@ class NBSocket {
             self.registerForUser()
         }
         manager.defaultSocket.on(NBClient.shared.getCurrentUser().resourceKey) { (data, emitter) in
-            guard let message = data[0] as? String else { return }
+            guard let message = data[0] as? String else {
+                return
+            }
             guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
             let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
+            guard let updateUrl = JSON["updateUrl"] as? String, let action = JSON["action"] as? String else {
+                return
+            }
 
-            if let updateUrl = JSON["updateUrl"] as? String, let itemType = ItemType.fromURL(updateUrl), let action = JSON["action"] as? String, let updatedAt = JSON["updatedAt"] as? String {
-                let newResponse = SendData(itemType: itemType, updateUrl: updateUrl, action: action, updatedAt: updatedAt)
-
-                _ = self.updateHandler(itemType: "\(newResponse.itemType)", updateUrl: "\(newResponse.updateUrl)", action: "\(newResponse.action)", updatedAt: "\(newResponse.updatedAt)")
+            if action == "updated" {
+                let mapped = Mapper<Generic>().map(JSONString: message)
+            } else if action == "deleted" {
+                NBClient.shared.decacheMappable(object: updateUrl)
             }
         }
-    }
-
-    func updateHandler(itemType: String, updateUrl: String, action: String, updatedAt: String) -> NBModel? {
-        let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrl)", "action": "\(action)", "updatedAt": "\(updatedAt)"])
-
-        guard let object = mapped!.genericObject else {
-            return nil
-        }
-
-        if mapped?.action == .updated {
-            NBClient.shared.cacheMappable(object: object)
-        } else if mapped?.action == .deleted {
-            NBClient.shared.decacheMappable(object: object)
-        }
-
-        return object
     }
 }

@@ -148,6 +148,12 @@ class NBClient {
         }
     }
 
+    public func decacheMappable(object: String) {
+        if let cachedObject = storedTypes[ItemType.fromURL(object)]?.first(where: { $0.resourceKey == URL(string: object)!.lastPathComponent }) {
+            decacheMappable(object: cachedObject)
+        }
+    }
+
     public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String! = "", sortBy: String! = "", limit: String! = "") -> [T]! where T: NBModel {
         let requestUrl: String = url ?? someObject.endpoint
 
