@@ -24,6 +24,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     var posts: [Post]!
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
+    var currentEnrollments: [NBModel]!
 
     var currentWorkingIndexPath: IndexPath!
 
@@ -74,46 +75,22 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
             return
         }
 
-        if newEnrollment.parent!.firstTimeLoading == nil {
-            (newEnrollment.parent as! WithName).firstTimeLoaded()
+        if currentEnrollments.contains(newEnrollment.parent!) {
+            return
         }
-        if !newEnrollment.parent!.firstTimeLoading {
-            newEnrollment.parent!.refresh()
-        } else if newEnrollment.parent!.firstTimeLoading {
-            guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
 
-            let loadingViewController = LoadingViewController()
-            if tabbarVC.presentedViewController == nil {
-                tabbarVC.present(loadingViewController, animated: true, completion: nil)
-            } else if tabbarVC.presentedViewController is LoadingViewController {
-                return
-            }
-
-            DispatchQueue.main.async {
-                NBClient.shared.storedTypes = [ItemType: [NBModel]]()
-                NBClient.shared.resolveCurrentUser(true)
-                _ = NBClient.shared.getMappable(Setting.self)!
-                _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-                let filter = NBClient.shared.doEnrollmentRequests()
-                let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
-                let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-                let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
-                var combinedFilter = (retrievedPosts as [NBModel])
-                combinedFilter.append(contentsOf: (postComments as [NBModel]))
-                combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-                _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-                _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-                NBClient.shared.reinitCache()
-
-                let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-                let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
-                let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
-                self.reloadTable()
-                courseVC.reloadTable()
-                notifsVC.reloadTable()
-                loadingViewController.dismiss(animated: true, completion: nil)
-            }
-        }
+        var toFilter = Course.getCache()
+        toFilter += Group.getCache()
+        let filterString = NBClient.shared.buildFilterString(from: toFilter)
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filterString)\"]", sortBy: "createdAt:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+        var combinedFilter = (retrievedPosts as [NBModel])
+        combinedFilter.append(contentsOf: (postComments as [NBModel]))
+        combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
+        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        reloadTable()
     }
 
     @objc func finishUpdatingPost(_ notification: NSNotification) {
@@ -194,39 +171,18 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
             return
         }
 
-        guard let tabbarVC = tabBarController as? MainTabBarViewController else { fatalError() }
-        let loadingViewController = LoadingViewController()
-
-        if tabbarVC.presentedViewController == nil {
-            tabbarVC.present(loadingViewController, animated: true, completion: nil)
-        } else if tabbarVC.presentedViewController is LoadingViewController {
-            return
-        }
-
-        DispatchQueue.main.async {
-            NBClient.shared.storedTypes = [ItemType: [NBModel]]()
-            NBClient.shared.resolveCurrentUser(true)
-            _ = NBClient.shared.getMappable(Setting.self)
-            _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")!
-            let filter = NBClient.shared.doEnrollmentRequests()
-            let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "createdAt:desc", limit: "10")!
-            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
-            var combinedFilter = (retrievedPosts as [NBModel])
-            combinedFilter.append(contentsOf: (postComments as [NBModel]))
-            combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-            _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-            _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
-            NBClient.shared.reinitCache()
-
-            let rootViews: [RootNavigationBarVC] = (tabbarVC.viewControllers as! [RootNavigationBarVC])
-            let courseVC = (rootViews[1].topViewController as! CoursesTableViewController)
-            let notifsVC = (rootViews[2].topViewController as! NotificationsTableViewController)
-            self.reloadTable()
-            courseVC.reloadTable()
-            notifsVC.reloadTable()
-            loadingViewController.dismiss(animated: true, completion: nil)
-        }
+        var toFilter = Course.getCache()
+        toFilter += Group.getCache()
+        let filterString = NBClient.shared.buildFilterString(from: toFilter)
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filterString)\"]", sortBy: "createdAt:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
+        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+        var combinedFilter = (retrievedPosts as [NBModel])
+        combinedFilter.append(contentsOf: (postComments as [NBModel]))
+        combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
+        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        reloadTable()
     }
 
     @objc func finishDeletingPost(_ notification: NSNotification) {
@@ -288,6 +244,8 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     }
 
     func reloadTable() {
+        self.currentEnrollments = Course.getCache()
+        self.currentEnrollments += Group.getCache()
         self.posts = Post.getCache()
         bulletinTableView.reloadData()
     }

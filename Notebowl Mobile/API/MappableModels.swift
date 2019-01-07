@@ -390,7 +390,6 @@ public class NBModel: Mappable {
         NBClient.shared.decacheMappable(object: self)
     }
 
-    public var firstTimeLoading: Bool!
     public var shouldMapParent: Bool!
 
     public var enrollmentForUser: Enrollment! {
@@ -527,7 +526,6 @@ extension PostsComments {
 public protocol WithName {
     var name: String! { get }
     var fullName: String! { get }
-    func firstTimeLoaded()
 }
 
 public protocol AssignmentAssessment {
@@ -906,12 +904,6 @@ class Course: NBModel, WithName {
             return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
         }
         return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
-    }
-
-    func firstTimeLoaded() {
-        if firstTimeLoading != nil {
-            if firstTimeLoading { firstTimeLoading = false }
-        }
     }
 
     func refreshCachedAssignments() {
@@ -1587,6 +1579,7 @@ public class Enrollment: NBModel {
 
     func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingEnrollment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingEnrollment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginDeletingEnrollment(_:)), name: NSNotification.Name("ModelDidBeginDeletingEnrollment"), object: nil)
     }
 
     @objc func beginUpdatingEnrollment(_ notification: NSNotification) {
@@ -1600,6 +1593,19 @@ public class Enrollment: NBModel {
             self.lastAccessAt = newEnrollment.lastAccessAt
             self.updatedAt = newEnrollment.updatedAt
         }
+    }
+
+    @objc func beginDeletingEnrollment(_ notification: NSNotification) {
+        guard let dict = notification.userInfo as NSDictionary?, let deleteEnrollment = dict["object"] as? Enrollment, deleteEnrollment == self else {
+            return
+        }
+
+        for post in Post.getCache() {
+            if deleteEnrollment.parent == post.parent {
+                Post.removeFromCache(object: post)
+            }
+        }
+        type(of: deleteEnrollment.parent!).removeFromCache(object: deleteEnrollment.parent!)
     }
 }
 
@@ -1643,12 +1649,6 @@ class Group: NBModel, WithName {
         type <- map["type"]
         website <- map["website"]
         starred <- map["starred"]
-    }
-
-    func firstTimeLoaded() {
-        if firstTimeLoading != nil {
-            if firstTimeLoading { firstTimeLoading = false }
-        }
     }
 
     override public func refresh() {

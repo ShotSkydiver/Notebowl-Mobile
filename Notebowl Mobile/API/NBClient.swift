@@ -188,14 +188,11 @@ class NBClient {
     func storeObjectInCache<T>(_ object: T) -> T where T: NBModel {
         if let pos = storedTypes[T.routeType]?.firstIndex(of: object), let existingObj = storedTypes[T.routeType]?[pos] {
             if object.updatedAt > existingObj.updatedAt {
-                object.firstTimeLoading = false
                 storedTypes[T.routeType]![pos] = object
             } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
-                existingObj.firstTimeLoading = false
                 return newObj
             }
         } else {
-            object.firstTimeLoading = true
             if let oldData = storedTypes.updateValue([object], forKey: T.routeType) {
                 storedTypes[T.routeType]!.append(contentsOf: oldData)
             }
@@ -245,10 +242,6 @@ extension Array {
         for element in self {
             guard element is NBModel else { fatalError() }
             (element as! NBModel).refresh()
-
-            if element is WithName {
-                (element as! WithName).firstTimeLoaded()
-            }
         }
     }
 
