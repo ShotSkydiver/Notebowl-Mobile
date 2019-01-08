@@ -1298,42 +1298,6 @@ extension CellActionsVC {
     }
 }
 
-class ObjectTransform<T: NBModel>: TransformType {
-    public typealias Object = T
-    public typealias JSON = String
-
-    private let updateDate: Date?
-
-    public init(update: Date? = nil) {
-        self.updateDate = update
-    }
-
-    func transformFromJSON(_ value: Any?) -> T? {
-        if value == nil { return nil }
-        let urlToGet = value as! String
-        let url = URL(string: urlToGet)
-
-        if let objectExists = T.getCache().first(where: {$0.resourceKey == url!.lastPathComponent }) {
-            if self.updateDate != nil && self.updateDate! > objectExists.updatedAt {
-                let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-                return mapReq?.first
-            }
-            return objectExists as? T
-        } else {
-            let mapReq = NBClient.shared.getMappable(T.self, url: urlToGet)
-            guard let returnObject = mapReq?.first else {
-                return nil
-            }
-            returnObject.refresh()
-            return returnObject
-        }
-    }
-
-    func transformToJSON(_ value: T?) -> String? {
-        return nil
-    }
-}
-
 class ISO8601FixedDateTransform: DateFormatterTransform {
     static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale: "en_US_POSIX")
 

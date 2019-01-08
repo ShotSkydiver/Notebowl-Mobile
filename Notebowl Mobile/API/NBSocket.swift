@@ -48,16 +48,19 @@ class NBSocket {
             guard let message = data[0] as? String else {
                 return
             }
-            guard let contentData = message.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-            let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
-            guard let updateUrl = JSON["updateUrl"] as? String, let action = JSON["action"] as? String else {
+            guard let metadata = Mapper<MetadataSocket>().map(JSONString: message) else {
                 return
             }
+            let dataObject = metadata.dataType.dataObject
 
-            if action == "updated" {
-                let mapped = Mapper<Generic>().map(JSONString: message)
-            } else if action == "deleted" {
-                NBClient.shared.decacheMappable(object: updateUrl)
+            if let existingObject = type(of: dataObject).getCache().first(where: { $0.resourceKey == metadata.updateUrl.lastPathComponent }) {
+                if metadata.action == .deleted {
+                    NBClient.shared.decacheMappable(object: existingObject)
+                } else if metadata.updatedAt > existingObject.updatedAt {
+                    type(of: dataObject).getSingular(objectUrl: metadata.updateUrl.absoluteString, forceRefresh: true)
+                }
+            } else if metadata.action == .updated {
+                type(of: dataObject).getSingular(objectUrl: metadata.updateUrl.absoluteString, forceRefresh: true)
             }
         }
     }

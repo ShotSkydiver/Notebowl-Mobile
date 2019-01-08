@@ -110,8 +110,9 @@ public enum ItemType: String {
     case setting = "settings"
 
     static func fromURL(_ urlString: String) -> ItemType! {
-        let urlComponents = URL(string: urlString)!.deletingLastPathComponent()
-        let endpoint = urlComponents.lastPathComponent
+        let url = URL(string: urlString)!
+        let urlComponents = url.pathComponents
+        let endpoint = urlComponents[3]
 
         if endpoint == "users" { return ItemType(rawValue: "credentials") }
 
@@ -133,6 +134,59 @@ public enum ItemType: String {
             return "University"
         default:
             return String(self.rawValue.capitalised.dropLast())
+        }
+    }
+
+    var dataObject: NBModel {
+        switch self {
+        case .user:
+            return User()
+        case .post:
+            return Post()
+        case .comment:
+            return Comment()
+        case .like:
+            return Like()
+        case .attachment:
+            return Attachment()
+        case .notification:
+            return Notification()
+        case .term:
+            return Term()
+        case .course:
+            return Course()
+        case .assignment:
+            return Assignment()
+        case .assignmentGroup:
+            return AssignmentGroup()
+        case .submission:
+            return Submission()
+        case .assessment:
+            return Assessment()
+        case .assessmentSubmission:
+            return AssessmentSubmission()
+        case .assessmentQuestion:
+            return AssessmentQuestion()
+        case .assessmentResponse:
+            return AssessmentResponse()
+        case .category:
+            return Category()
+        case .grade:
+            return Grade()
+        case .university:
+            return University()
+        case .enrollment:
+            return Enrollment()
+        case .group:
+            return Group()
+        case .folder:
+            return Folder()
+        case .abuse:
+            return Abuse()
+        case .setting:
+            return Setting()
+        default:
+            return NBModel()
         }
     }
 }
@@ -261,90 +315,53 @@ public struct DefaultValues {
     var DEFAULT_GRADING_PRECISION = 1
 }
 
-class Generic: StaticMappable {
-    var updatedAt: Date!
+class ModelTransformType<T: NBModel>: TransformType {
+    public typealias Object = NBModel
+    public typealias JSON = [String: Any]
 
-    public var genericObject: NBModel?
+    private var templateObject: T
 
-    class func objectForMapping(map: Map) -> BaseMappable? {
-        if let url: String = map["updateUrl"].value(), let itemType = ItemType.fromURL(url) {
-            switch itemType.className {
-            case "User":
-                return Response<User>()
-            case "Course":
-                return Response<Course>()
-            case "Assignment":
-                return Response<Assignment>()
-            case "AssignmentSubTypeIndividual":
-                return Response<Assignment>()
-            case "AssignmentSubTypeGroup":
-                return Response<Assignment>()
-            case "AssignmentSubTypeDiscussionBoard":
-                return Response<Assignment>()
-            case "AssignmentGroup":
-                return Response<AssignmentGroup>()
-            case "Submission":
-                return Response<Submission>()
-            case "Assessment":
-                return Response<Assessment>()
-            case "AssessmentSubmission":
-                return Response<AssessmentSubmission>()
-            case "AssessmentQuestion":
-                return Response<AssessmentQuestion>()
-            case "AssessmentResponse":
-                return Response<AssessmentResponse>()
-            case "Category":
-                return Response<Category>()
-            case "Grade":
-                return Response<Grade>()
-            case "Enrollment":
-                return Response<Enrollment>()
-            case "Group":
-                return Response<Group>()
-            case "Event":
-                return Response<Event>()
-            case "CourseUser", "GroupUser", "EventUser":
-                return Response<Enrollment>()
-            case "Post":
-                return Response<Post>()
-            case "Attachment":
-                return Response<Attachment>()
-            case "AttachmentS3":
-                return Response<Attachment>()
-            case "Folder":
-                return Response<Folder>()
-            case "Comment":
-                return Response<Comment>()
-            case "Like":
-                return Response<Like>()
-            case "Notification":
-                return Response<Notification>()
-            case "Setting":
-                return Response<Setting>()
-            default:
-                return Generic()
-            }
+    public init(template: T) {
+        self.templateObject = template
+    }
+
+    func transformFromJSON(_ value: Any?) -> Object? {
+        if let dictionaryValue = value as? [String: Any] {
+            return Mapper().map(JSON: dictionaryValue, toObject: templateObject)
         }
         return nil
     }
-    init() {
-    }
 
-    func mapping(map: Map) {
-        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
+    func transformToJSON(_ value: Object?) -> JSON? {
+        return value?.toJSON()
     }
 }
 
-class Response<T>: Generic where T: NBModel {
-    var responseObject: T!
+class MetadataSocket: Mappable {
+    var dataType: ItemType!
+    var updatedAt: Date!
+    var updateUrl: URL!
+    var action: ActionType!
 
-    public override init() {}
-    public required init?(map: Map) { }
+    required init?(map: Map) { }
 
-    public override func mapping(map: Map) {
-        super.mapping(map: map)
-        responseObject <- (map["updateUrl"], ObjectTransform<T>(update: updatedAt))
-        genericObject = responseObject
+    func mapping(map: Map) {
+        updatedAt <- (map["updatedAt"], ISO8601FixedDateTransform())
+        updateUrl <- (map["updateUrl"], URLTransform(shouldEncodeURLString: true, allowedCharacterSet: .urlQueryAllowed))
+        dataType <- (map["updateUrl"], TransformOf<ItemType, String>(fromJSON: { ItemType.fromURL($0!) }, toJSON: { $0!.rawValue }))
+        action <- map["action"]
+    }
+}
+
+class MetadataModel: Mappable {
+    var dataType: ItemType!
+    var data: NBModel!
+
+    required init?(map: Map) { }
+
+    func mapping(map: Map) {
+        dataType <- (map["url"], TransformOf<ItemType, String>(fromJSON: { ItemType.fromURL($0!) }, toJSON: { $0!.rawValue }))
+        data <- (map["result"], ModelTransformType(template: dataType.dataObject))
     }
 }
 
@@ -399,6 +416,23 @@ public class NBModel: Mappable {
         return enrollment
     }
 
+    class func getSingular<T>(objectUrl: String, forceRefresh: Bool = false) -> T where T: NBModel {
+        if !forceRefresh {
+            if let existingObject = self.getCache().first(where: { $0.resourceKey == URL(string: objectUrl)!.lastPathComponent }) {
+                return existingObject as! T
+            }
+        }
+
+        let result: NBResult = NBNetworking.shared.request(url: objectUrl)
+
+        let JSONresult = try! JSONSerialization.jsonObject(with: result.content!, options: .mutableContainers) as! [String: AnyObject]
+        let metadataModel = Mapper<MetadataModel>().map(JSON: JSONresult)!
+        let newDataObject = metadataModel.data
+        
+        let cached = NBClient.shared.cacheMappable(object: newDataObject!)
+        return cached as! T
+    }
+
     class func getCache<T>() -> [T] where T: NBModel {
         if !NBClient.shared.storedTypes.has(key: self.routeType) {
             NBClient.shared.storedTypes[self.routeType] = []
@@ -411,6 +445,10 @@ public class NBModel: Mappable {
 
     class func removeFromCache<T>(object: T) where T: NBModel {
         NBClient.shared.storedTypes[self.routeType]?.removeAll(object)
+    }
+
+    class func addToCache<T>(object: T) where T: NBModel {
+        NBClient.shared.storedTypes[self.routeType]?.append(object)
     }
 
     public var secondsSinceUpdate: TimeInterval { return self.updatedAt.timeIntervalSinceReferenceDate }
@@ -450,11 +488,8 @@ public class NBModel: Mappable {
         }
 
         if let keyPath = (result.json as AnyObject).value(forKeyPath: "result") as? [String: AnyObject], let url = keyPath["url"] as? String {
-            let mapReq = NBClient.shared.getMappable(type(of: self), url: url)
-
-            if let newObject = mapReq?.first {
-                return newObject
-            }
+            let newObject = type(of: self).getSingular(objectUrl: url, forceRefresh: true)
+            return newObject
         }
         return nil
     }
@@ -477,17 +512,17 @@ public class NBModel: Mappable {
 
         if shouldMapParent {
             if let parentString = map.JSON["_parent"] as? String, let itemType = ItemType.fromURL(parentString) {
-                let parentMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(parentString)"])
-                parent = parentMap?.genericObject
+                let parentDataObject = itemType.dataObject
+                parent = type(of: parentDataObject).getSingular(objectUrl: parentString)
             }
         }
         if let ownerString = (map.JSON["_owner"] as? String), let itemType = ItemType.fromURL(ownerString) {
-            let ownerMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(ownerString)"])
-            owner = ownerMap?.genericObject
+            let ownerDataObject = itemType.dataObject
+            owner = type(of: ownerDataObject).getSingular(objectUrl: ownerString)
         }
         if let relatedString = (map.JSON["_related"] as? String), let itemType = ItemType.fromURL(relatedString) {
-            let relatedMap = Mapper<Generic>().map(JSON: ["updateUrl": "\(relatedString)"])
-            related = relatedMap?.genericObject
+            let relatedDataObject = itemType.dataObject
+            related = type(of: relatedDataObject).getSingular(objectUrl: relatedString)
         }
     }
 
@@ -691,6 +726,10 @@ public class User: NBModel {
 
     override class var routeType: ItemType { return .user }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -731,6 +770,10 @@ class Term: NBModel {
     var university: University?
 
     override class var routeType: ItemType { return .term }
+
+    override init() {
+        super.init()
+    }
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -778,6 +821,10 @@ class Course: NBModel, WithName {
 
     override class var routeType: ItemType { return .course }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -803,7 +850,10 @@ class Course: NBModel, WithName {
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
-        term <- (map["_term"], ObjectTransform<Term>())
+
+        if let termString = map.JSON["_term"] as? String {
+            term = Term.getSingular(objectUrl: termString)
+        }
 
         courseAssignments = []
         courseCategories = []
@@ -985,6 +1035,10 @@ public class Assignment: NBModel, AssignmentAssessment {
 
     override class var routeType: ItemType { return .assignment }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1014,7 +1068,10 @@ public class Assignment: NBModel, AssignmentAssessment {
         commentsWordCountRequired <- map["commentsRequired"]
         submissionScheme <- (map["submissionScheme"], TransformOf<SubmissionType, String>(fromJSON: { SubmissionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
 
-        category <- (map["_category"], ObjectTransform<Category>())
+        if let categoryString = map.JSON["_category"] as? String {
+            category = Category.getSingular(objectUrl: categoryString)
+        }
+
         userGrade = nil
 
         submissionPosts = []
@@ -1187,6 +1244,10 @@ class AssignmentGroup: NBModel {
 
     override class var routeType: ItemType { return .assignmentGroup }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1206,6 +1267,10 @@ public class Submission: NBModel {
 
     override class var routeType: ItemType { return .submission }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1214,7 +1279,9 @@ public class Submission: NBModel {
         super.mapping(map: map)
 
         text <- map["text"]
-        creator <- (map["_creator"], ObjectTransform<User>())
+        if let objectString = map.JSON["_creator"] as? String {
+            creator = User.getSingular(objectUrl: objectString)
+        }
     }
 }
 
@@ -1246,6 +1313,10 @@ public class Assessment: NBModel, AssignmentAssessment {
 
     override class var routeType: ItemType { return .assessment }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1260,7 +1331,9 @@ public class Assessment: NBModel, AssignmentAssessment {
         gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         gradesPublished <- map["gradesPublished"]
 
-        category <- (map["_category"], ObjectTransform<Category>())
+        if let objectString = map.JSON["_category"] as? String {
+            category = Category.getSingular(objectUrl: objectString)
+        }
         userGrade = nil
         submissions = []
 
@@ -1365,6 +1438,10 @@ class AssessmentQuestion: NBModel {
 
     override class var routeType: ItemType { return .assessmentQuestion }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1408,6 +1485,10 @@ public class AssessmentSubmission: NBModel {
 
     override class var routeType: ItemType { return .assessmentSubmission }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1443,6 +1524,10 @@ class AssessmentResponse: NBModel {
 
     override class var routeType: ItemType { return .assessmentResponse }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1461,6 +1546,10 @@ public class Category: NBModel {
     var dropLowest: Int!
 
     override class var routeType: ItemType { return .category }
+
+    override init() {
+        super.init()
+    }
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -1501,6 +1590,10 @@ public class Grade: NBModel {
 
     override class var routeType: ItemType { return .grade }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1537,6 +1630,10 @@ class University: NBModel {
 
     override class var routeType: ItemType { return .university }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1564,6 +1661,10 @@ public class Enrollment: NBModel {
 
     override class var routeType: ItemType { return .enrollment }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1572,7 +1673,9 @@ public class Enrollment: NBModel {
         super.mapping(map: map)
         role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
-        user <- (map["_user"], ObjectTransform<User>())
+        if let objectString = map.JSON["_user"] as? String {
+            user = User.getSingular(objectUrl: objectString)
+        }
 
         setupObservers()
     }
@@ -1628,6 +1731,10 @@ class Group: NBModel, WithName {
 
     override class var routeType: ItemType { return .group }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1667,6 +1774,10 @@ class Event: NBModel {
     var endDate: Date!
 
     override class var routeType: ItemType { return .event }
+
+    override init() {
+        super.init()
+    }
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -1713,6 +1824,10 @@ public class Post: NBModel, PostsComments {
 
     override class var routeType: ItemType { return .post }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -1747,7 +1862,9 @@ public class Post: NBModel, PostsComments {
         if text == nil {
             text = ""
         }
-        creator <- (map["_creator"], ObjectTransform<User>())
+        if let objectString = map.JSON["_creator"] as? String {
+            creator = User.getSingular(objectUrl: objectString)
+        }
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
 
         postLikes = []
@@ -1975,6 +2092,10 @@ public class Attachment: NBModel {
 
     override class var routeType: ItemType { return .attachment }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -2030,6 +2151,10 @@ class Folder: NBModel {
 
     override class var routeType: ItemType { return .folder }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -2068,6 +2193,10 @@ public class Comment: NBModel, PostsComments {
 
     override class var routeType: ItemType { return .comment }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -2098,7 +2227,9 @@ public class Comment: NBModel, PostsComments {
         if text == nil {
             text = ""
         }
-        creator <- (map["_creator"], ObjectTransform<User>())
+        if let objectString = map.JSON["_creator"] as? String {
+            creator = User.getSingular(objectUrl: objectString)
+        }
         attachments = []
         externalAttachments = []
         commentLikes = []
@@ -2238,6 +2369,10 @@ public class Like: NBModel {
 
     override class var routeType: ItemType { return .like }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -2267,6 +2402,10 @@ class Notification: NBModel {
     public var userProfilePicURL: URL { return URL(string: RequestKind.rpc.requestUrl(url: "notifications/" + self.resourceKey + "/getProfilePicture"))!.appendingQueryParameters(["uuid": UIDevice().uuid]) }
 
     override class var routeType: ItemType { return .notification }
+
+    override init() {
+        super.init()
+    }
 
     required public init?(map: Map) {
         super.init(map: map)
@@ -2313,6 +2452,10 @@ class Abuse: NBModel {
 
     override class var routeType: ItemType { return .abuse }
 
+    override init() {
+        super.init()
+    }
+
     required public init?(map: Map) {
         super.init(map: map)
     }
@@ -2343,6 +2486,10 @@ class Setting: NBModel {
     public var group: String { return key.untilFirstCapital }
 
     override class var routeType: ItemType { return .setting }
+
+    override init() {
+        super.init()
+    }
 
     required public init?(map: Map) {
         super.init(map: map)

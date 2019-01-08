@@ -107,71 +107,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else { return }
         if NBSocket.shared.manager.status == .disconnected {
             NBSocket.shared.manager.connect()
-            let formatter = DateFormatter.iso8061
-            let dateString = formatter.string(from: self.disconnectDate)
-            let recReq = NBNetworking.shared.request(url: RequestKind.rpc.requestUrl(url: "operations/reconnect"), params: ["since": dateString])
-
-            guard let keyPaths = (recReq.json as AnyObject).value(forKeyPath: "result")! as? [String] else { return }
-            if keyPaths.isEmpty || keyPaths.count == 0 { return }
-
-            var doAppReset: Bool = false
-            let enrollments = keyPaths.filter({$0.contains("enrollment")})
-            if !enrollments.isEmpty {
-                var possibleNewEnrollments: [String] = []
-
-                let cachedEnrollments: [Enrollment] = Enrollment.getCache().filter({ $0.user == NBClient.shared.getCurrentUser() })
-                for socketResponse in enrollments {
-                    if cachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
-                        if socketResponse.contains("deleted") {
-                            NBClient.shared.resetApp(andLogoutUser: false)
-                            return
-                        }
-                    } else if socketResponse.contains("updated") {
-                        let otherUsersCachedEnrollments: [Enrollment] = Enrollment.getCache().filter({ $0.user == NBClient.shared.getCurrentUser() })
-
-                        if !otherUsersCachedEnrollments.contains(where: { socketResponse.contains($0.resourceKey) }) {
-                            doAppReset = true
-                            possibleNewEnrollments.append(socketResponse)
-                        }
-                    }
-                }
-
-                if !possibleNewEnrollments.isEmpty {
-                    var objectsToUpdate: [NBModel] = []
-                    for enrollment in possibleNewEnrollments {
-                        guard let contentData = enrollment.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-                        let JSON = try! JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
-                        guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
-
-                        let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrlString)", "action": "\((JSON["action"] as! String))", "updatedAt": "\((JSON["updatedAt"] as! String))"])
-                        guard let object = mapped!.genericObject else { return }
-                        objectsToUpdate.append(object)
-                    }
-                    if !objectsToUpdate.contains(where: { ($0 as! Enrollment).user == NBClient.shared.getCurrentUser() }) {
-                        doAppReset = false
-                    }
-                }
-
-                if doAppReset {
-                    NBClient.shared.resetApp(andLogoutUser: false)
-                    return
-                }
-            }
-
-            do {
-                for result in keyPaths {
-                    guard let contentData = result.data(using: String.Encoding.utf8, allowLossyConversion: true) else { return }
-                    let JSON = try JSONSerialization.jsonObject(with: contentData, options: .mutableContainers) as! [String: AnyObject]
-                    guard let updateUrlString = (JSON["updateUrl"] as? String), let itemType = ItemType.fromURL(updateUrlString) else { return }
-                    let mapped = Mapper<Generic>().map(JSON: ["itemType": "\(itemType)", "updateUrl": "\(updateUrlString)", "action": "\((JSON["action"] as! String))", "updatedAt": "\((JSON["updatedAt"] as! String))"])
-                    guard let object = mapped!.genericObject else { return }
-                }
-            } catch let error {
-                Bugsnag.notifyError(error)
-            }
         }
     }
 

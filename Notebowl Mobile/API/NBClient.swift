@@ -152,12 +152,6 @@ class NBClient {
         }
     }
 
-    public func decacheMappable(object: String) {
-        if let cachedObject = storedTypes[ItemType.fromURL(object)]?.first(where: { $0.resourceKey == URL(string: object)!.lastPathComponent }) {
-            decacheMappable(object: cachedObject)
-        }
-    }
-
     public func getMappable<T>(_ someObject: T.Type, url: String? = nil, filters: String! = "", sortBy: String! = "", limit: String! = "") -> [T]! where T: NBModel {
         let requestUrl: String = url ?? someObject.endpoint
 
@@ -167,20 +161,17 @@ class NBClient {
         if let limits: String = limit { payload += ["limit": limits] }
 
         let result: NBResult = NBNetworking.shared.request(url: requestUrl, params: payload)
-        if let resultStatus = result.statusCode, let resultUrl = result.url, resultStatus.isSuccess {
+        if let resultStatus = result.statusCode, resultStatus.isSuccess {
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
                 guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else {
                     return nil
                 }
 
-                var newObjectArray = [T]()
-
                 for object in mapped {
-                    let cachedObject = NBClient.shared.cacheMappable(object: object)
-                    newObjectArray.append(cachedObject)
+                    NBClient.shared.cacheMappable(object: object)
                 }
 
-                return newObjectArray
+                return mapped
             }
         } else {
             NBClient.shared.sendBugsnagException(fromResult: result)
@@ -190,16 +181,14 @@ class NBClient {
     }
 
     func storeObjectInCache<T>(_ object: T) -> T where T: NBModel {
-        if let pos = storedTypes[T.routeType]?.firstIndex(of: object), let existingObj = storedTypes[T.routeType]?[pos] {
-            if object.updatedAt > existingObj.updatedAt {
-                storedTypes[T.routeType]![pos] = object
-            } else if object.updatedAt <= existingObj.updatedAt, let newObj = existingObj as? T {
-                return newObj
+        if let existingObject = type(of: object).getCache().first(where: { $0 == object }) {
+            if object.updatedAt > existingObject.updatedAt {
+                return object
+            } else {
+                return existingObject as! T
             }
         } else {
-            if let oldData = storedTypes.updateValue([object], forKey: T.routeType) {
-                storedTypes[T.routeType]!.append(contentsOf: oldData)
-            }
+            type(of: object).addToCache(object: object)
         }
         storedTypes[T.routeType]!.sortByDate()
 
