@@ -1693,7 +1693,7 @@ public class Post: NBModel, PostsComments {
     public var attachments: [Attachment]!
     public var externalAttachments: [Attachment]!
     var pinned: Bool!
-    var availableDate: Date?
+    var availableDate: Date!
     public var postLikes: [Like]!
     public var comments: [Comment]!
     public var likedByCurrentUser: Bool!

@@ -56,10 +56,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func setupSiren() {
         let siren = Siren.shared
-        if Config.appConfiguration == .Debug { siren.debugEnabled = true }
         siren.rulesManager = RulesManager(majorUpdateRules: .critical, minorUpdateRules: .annoying, patchUpdateRules: .default, revisionUpdateRules: .relaxed)
         siren.wail { (results, error) in
-            if let error = error {
+            if let error = error, error.localizedDescription != KnownError.noUpdateAvailable.localizedDescription {
                 Bugsnag.notifyError(error)
             }
         }

@@ -45,7 +45,7 @@ xcuserdata/
 !*.xcodeproj/xcshareddata/
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
-
+StaticValues.swift
 
 ### macOS ###
 *.DS_Store

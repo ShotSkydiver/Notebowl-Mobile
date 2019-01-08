@@ -175,11 +175,23 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         postLikes.text = (post.postLikes.isEmpty || post.postLikes == nil) ? " " : "\(post.postLikes.count)  "
         postComments.text = (post.comments.isEmpty || post.comments == nil) ? " " : "\(post.totalCommentsCount())"
 
-        if post.text == nil { postContentTextView.isHidden = true } else { postContentTextView.text = post.text! }
+        if post.text == nil {
+            postContentTextView.isHidden = true
+        } else {
+            postContentTextView.text = post.text!
+        }
 
-        if post.owner is Course { courseForPost.text = (post.owner as! Course).fullName } else if post.owner is Group { courseForPost.text = (post.owner as! Group).name }
+        if post.owner is Course {
+            courseForPost.text = (post.owner as! Course).fullName
+        } else if post.owner is Group {
+            courseForPost.text = (post.owner as! Group).name
+        }
 
-        if post.editedAt != nil { (postedDate.text = post.createdAt.relativeFormat + " (edited)") } else { (postedDate.text = post.createdAt.relativeFormat) }
+        if post.editedAt != nil {
+            (postedDate.text = post.availableDate.relativeFormat + " (edited)")
+        } else {
+            (postedDate.text = post.availableDate.relativeFormat)
+        }
 
         designableView.backgroundColor = (post.pinned ? UIColor(hexString: "#fbfbfb") : UIColor(hexString: "#ffffff"))
         designableView.borderColor = (post.pinned ? UIColor(hexString: "#dfdfdf") : UIColor(hexString: "#e7e7e7"))

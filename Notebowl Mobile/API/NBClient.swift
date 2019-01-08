@@ -246,7 +246,17 @@ extension Array {
     }
 
     mutating func sortByDate() {
-        if self is [Course] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } } else if self is [AssignmentAssessment] { sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt } } else if self is [Comment] { sort() { ($0 as! NBModel).createdAt < ($1 as! NBModel).createdAt } } else if self is [NBModel] { sort() { ($0 as! NBModel).createdAt > ($1 as! NBModel).createdAt } }
+        if self is [Course] {
+            sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt }
+        } else if self is [AssignmentAssessment] {
+            sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt }
+        } else if self is [Comment] {
+            sort() { ($0 as! NBModel).createdAt < ($1 as! NBModel).createdAt }
+        } else if self is [Post] {
+            sort() { ($0 as! Post).availableDate > ($1 as! Post).availableDate }
+        } else if self is [NBModel] {
+            sort() { ($0 as! NBModel).createdAt > ($1 as! NBModel).createdAt }
+        }
     }
 }
 
