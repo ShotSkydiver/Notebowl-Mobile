@@ -75,7 +75,11 @@ class NBClient {
         for key in keyPaths {
             if let urlString = key["_parent"] as? String, let objectType = ItemType.fromURL(urlString) {
                 let resKey = URL(string: urlString)!.lastPathComponent
-                objectType == .course ? (coursesFilter = (coursesFilter + resKey + ",")) : (objectType == .group ? (groupsFilter = (groupsFilter + resKey + ",")) : log.debug("neither course nor group!"))
+                if objectType == .course {
+                    coursesFilter = (coursesFilter + resKey + ",")
+                } else if objectType == .group {
+                    groupsFilter = (groupsFilter + resKey + ",")
+                }
                 combinedUrlsFilter = (combinedUrlsFilter + urlString + ",")
             }
         }
@@ -164,10 +168,10 @@ class NBClient {
 
         let result: NBResult = NBNetworking.shared.request(url: requestUrl, params: payload)
         if let resultStatus = result.statusCode, let resultUrl = result.url, resultStatus.isSuccess {
-            log.debug("URL Request: \(resultStatus) - \(resultUrl.absoluteString)")
-
             if let jsonObject = result.json as AnyObject?, let nestedJson = jsonObject.value(forKeyPath: "result"), let nestedData = try? JSONSerialization.data(withJSONObject: nestedJson), let nestedString = String(data: nestedData, encoding: .utf8) {
-                guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else { return nil }
+                guard let mapped: [T] = Mapper<T>().mapArray(JSONString: nestedString) else {
+                    return nil
+                }
 
                 var newObjectArray = [T]()
 
@@ -207,7 +211,6 @@ class NBClient {
         if fromResult.statusCode == nil, let resultError = fromResult.error as NSError? {
             exception = NSException(name: NSExceptionName(rawValue: "URLResponseError"), reason: "Error statusCode is nil: \(resultError.localizedDescription), url: \(resultError.domain)", userInfo: resultError.userInfo )
         } else if let statusCode: HTTPStatusCode = fromResult.statusCode, let resultUrl: URL = fromResult.url {
-            log.debug("getmappable error: \(statusCode) - \(resultUrl.absoluteString)")
             exception = NSException(name: NSExceptionName(rawValue: "URLResponseError"), reason: "Error \(statusCode): \(statusCode.localizedReasonPhrase), url: \(resultUrl.absoluteString)", userInfo: nil)
         }
         Bugsnag.notify(exception)

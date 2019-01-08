@@ -265,10 +265,8 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
-            if granted {
-                log.debug("Notification Enabled Successfully")
-            } else if error != nil {
-                log.error("Some Error Occured, \(error!.localizedDescription)")
+            if error != nil {
+                Bugsnag.notifyError(error!)
             }
         }
         NBSocket.shared.setup()

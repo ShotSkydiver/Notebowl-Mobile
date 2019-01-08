@@ -66,9 +66,7 @@ final public class PickerViewViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        log.debug("has deinitialized")
-    }
+    deinit {}
     
     override public func loadView() {
         view = pickerView

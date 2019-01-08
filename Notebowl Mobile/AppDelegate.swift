@@ -81,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        log.debug(error.localizedDescription)
+        Bugsnag.notifyError(error)
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -170,14 +170,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     guard let object = mapped!.genericObject else { return }
                 }
             } catch let error {
-                print("Error parsing json: \(error)")
+                Bugsnag.notifyError(error)
             }
         }
     }
 
-    func applicationWillTerminate(_ application: UIApplication) {
-        log.debug("will terminate!")
-    }
+    func applicationWillTerminate(_ application: UIApplication) {}
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -188,10 +186,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         _ = response.notification.request.content.userInfo
-
-        if response.actionIdentifier == "viewActionIdentifier" {
-            log.debug("view action")
-        }
         completionHandler()
     }
 }

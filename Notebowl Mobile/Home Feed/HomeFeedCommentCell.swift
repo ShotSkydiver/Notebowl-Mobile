@@ -387,12 +387,9 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
 }
 
 extension HomeFeedCommentCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
-    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-        log.debug(page)
-    }
+    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) { }
 
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        log.debug("lightbox dismiss")
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             return
         }
@@ -401,9 +398,7 @@ extension HomeFeedCommentCell: LightboxControllerPageDelegate, LightboxControlle
         }
     }
 
-    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
-        log.debug("lightbox didtouch")
-    }
+    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) { }
 }
 
 extension HomeFeedCommentCell {

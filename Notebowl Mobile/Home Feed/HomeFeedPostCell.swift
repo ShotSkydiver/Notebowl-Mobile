@@ -140,7 +140,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                 if error != nil {
                     completion?(nil)
                 } else {
-                    log.debug("lightbox loaded!")
                     completion?(image)
                 }
             })
@@ -164,9 +163,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         selectedBackgroundView?.backgroundColor = UIColor.cyan
     }
 
-    @objc func nameDateTapped(_ sender: Any) {
-        log.debug("nameDate tapped!")
-    }
+    @objc func nameDateTapped(_ sender: Any) {}
 
     func configure(post: Post) {
         likeButton.addTarget(self, action: #selector(likeActionTriggered(_:)), for: UIControl.Event.touchUpInside)
@@ -405,11 +402,9 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 }
 
 extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
-    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) {
-        log.debug(page)
-    }
+    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) { }
+
     func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        log.debug("lightbox dismiss")
         guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
             return
         }
@@ -418,9 +413,7 @@ extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDi
         }
     }
 
-    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) {
-        log.debug("lightbox didtouch")
-    }
+    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) { }
 }
 
 extension HomeFeedPostCell {

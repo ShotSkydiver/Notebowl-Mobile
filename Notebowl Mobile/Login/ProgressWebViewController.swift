@@ -154,8 +154,6 @@ open class ProgressWebViewController: UIViewController {
 
         if let url = url {
             load(url)
-        } else {
-            log.debug("[ProgressWebViewController][Error] NULL URL")
         }
     }
 

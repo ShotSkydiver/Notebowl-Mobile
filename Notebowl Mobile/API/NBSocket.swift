@@ -23,7 +23,7 @@ class NBSocket {
         return NBSocket()
     }()
     #if DEBUG
-    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(true), .secure(true), .selfSigned(true), .forceNew(true), .sessionDelegate(NBNetworking.shared)])
+    let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false), .secure(true), .selfSigned(true), .forceNew(true), .sessionDelegate(NBNetworking.shared)])
     #else
     let manager = SocketManager(socketURL: URL(string: socketUrl)!, config: [.log(false), .secure(true), .selfSigned(true), .forceNew(true)])
     #endif

@@ -312,7 +312,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
 
                 picker.didFinishPicking(completion: { (items, cancelled) in
                     if cancelled {
-                        log.debug("cancelled")
                         picker.dismiss(animated: true, completion: nil)
                     } else if !cancelled {
                         self.showingPhotoPicker = false
@@ -572,7 +571,6 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
             guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: UploadImageAttachmentCell.reuseIdentifier, for: indexPath) as? UploadImageAttachmentCell else {
                 fatalError()
             }
-            log.debug("cellfor attachment")
             cell.attachment = attachment
             cell.indexPath = indexPath
             cell.manager = self.attachmentManager
@@ -586,14 +584,12 @@ extension HomeFeedPostViewController: AttachmentManagerDelegate, AttachmentManag
                                                          loadImmediately: false,
                                                          asyncProgressHandler: { p in
                                                             DispatchQueue.main.async(execute: {
-                                                                log.debug("prgoress: \(p.percentageUpload)")
                                                                 cell.imageView.uploadImage(image: image, progress: Float(p.percentageUpload))
                                                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
 
                     cell.attachmentFileID = fileID
-                    log.debug(cell.attachmentFileID)
 
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)

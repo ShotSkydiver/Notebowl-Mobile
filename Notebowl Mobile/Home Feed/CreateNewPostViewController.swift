@@ -316,7 +316,6 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                     guard let cell = self.attachmentManager.attachmentView.dequeueReusableCell(withReuseIdentifier: "ImageAttachmentCell", for: indexPath) as? ImageAttachmentCell else {
                         fatalError()
                     }
-                    log.debug("this is an existing attachment!")
                     cell.accessibilityIdentifier = String(format: "ImageAttachmentCell-%d", indexPath.row)
 
                     cell.attachment = attachment
@@ -346,13 +345,11 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
                         loadImmediately: false,
                         asyncProgressHandler: { p in
                             DispatchQueue.main.async(execute: {
-                                log.debug("prgoress: \(p.percentageUpload)")
                                 cell.imageView.uploadImage(image: image, progress: Float(p.percentageUpload))
                             })
                 }, asyncCompletionHandler: { r in
                     let fileID = ((r.json as AnyObject).value(forKeyPath: "result") as AnyObject).value(forKeyPath: "fileId") as! String
                     cell.attachmentFileID = fileID
-                    log.debug(cell.attachmentFileID)
                     if (self.attachmentIDs.count) <= index || self.attachmentIDs.isEmpty {
                         self.attachmentIDs.append(cell.attachmentFileID)
                     } else {
@@ -371,30 +368,24 @@ extension CreateNewPostViewController: AttachmentManagerDelegate, AttachmentMana
     }
 
     func setAttachmentManager(active: Bool) {
-        log.debug("setAttachmentManager")
         let topStackView = bar.topStackView
         if active && !topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            log.debug("setAttachmentManager active")
             topStackView.insertArrangedSubview(attachmentManager.attachmentView, at: topStackView.arrangedSubviews.count)
             topStackView.layoutIfNeeded()
         } else if !active && topStackView.arrangedSubviews.contains(attachmentManager.attachmentView) {
-            log.debug("setAttachmentManager not active")
             topStackView.removeArrangedSubview(attachmentManager.attachmentView)
             topStackView.layoutIfNeeded()
         }
     }
-    func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {
-        log.debug("manager didselectaddattachment")
-    }
+
     func attachmentManager(_ manager: AttachmentManager, shouldBecomeVisible: Bool) {
         setAttachmentManager(active: shouldBecomeVisible)
     }
-    func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
-        log.debug("manager didreloadto")
-    }
+
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
         if !postButton.isEnabled { postButton.isEnabled = true }
     }
+    
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
         if manager.attachments.count == 0 && self.postTextView.isEmpty { postButton.isEnabled = false }
 
