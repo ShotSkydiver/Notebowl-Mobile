@@ -1159,9 +1159,7 @@ extension UINavigationBar {
     }
 }
 
-protocol CellActionsVC {
-    func handleDeleteAction(objectToDelete: NBModel)
-}
+protocol CellActionsVC {}
 
 extension CellActionsVC {
     func cellActionOptions(isPost: Bool, vc: UIViewController, tableView: UITableView, indexPath: IndexPath, orientation: SwipeActionsOrientation) -> SwipeTableOptions {
@@ -1260,11 +1258,6 @@ extension CellActionsVC {
             action.fulfill(with: .reset)
         })
         let confirm = UIAlertAction(title: "Delete", style: .destructive, handler: { (deleteAction) in
-            (vc as! CellActionsVC).handleDeleteAction(objectToDelete: objectToDelete)
-            if vc.navigationController?.topViewController is HomeFeedViewController && vc is HomeFeedPostViewController { } else {
-                action.fulfill(with: .delete)
-            }
-
             HUD.show(.progress)
             NBClient.shared.delay(0.4) {
                 objectToDelete.deleteSelf()

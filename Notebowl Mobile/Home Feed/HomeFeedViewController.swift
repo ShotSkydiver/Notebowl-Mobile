@@ -299,10 +299,6 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
             }
         }
     }
-
-    func handleDeleteAction(objectToDelete: NBModel) {
-        self.posts.removeAll(objectToDelete as! Post)
-    }
 }
 
 extension HomeFeedViewController {

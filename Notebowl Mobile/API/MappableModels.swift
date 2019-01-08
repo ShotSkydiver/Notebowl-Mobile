@@ -303,7 +303,7 @@ class Generic: StaticMappable {
                 return Response<Group>()
             case "Event":
                 return Response<Event>()
-            case "CourseUser", "GroupUser":
+            case "CourseUser", "GroupUser", "EventUser":
                 return Response<Enrollment>()
             case "Post":
                 return Response<Post>()
