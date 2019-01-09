@@ -107,7 +107,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
         }
 
         if let indexOfAssessment = self.assignments.index(where: { ($0 as! NBModel) == newQuestion.parent }) {
-            (self.assignments[indexOfAssessment] as! Assessment).refreshCachedPoints()
             tableView.reloadRows(at: [IndexPath(row: indexOfAssessment, section: 0)], with: .fade)
         }
     }
@@ -231,10 +230,6 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
 
                 assignmentFilter = (assignmentFilter + NBClient.shared.buildFilterString(from: assess) + NBClient.shared.buildFilterString(from: assessSubs))
                 _ = NBClient.shared.getMappable(Grade.self, filters: "[\"_owner:IN:\(assignmentFilter)\"]")
-
-                assigns.refreshAll()
-                assess.refreshAll()
-                self.selectedCourse.refresh()
             }
 
             self.assignments = self.selectedCourse.courseAssignments

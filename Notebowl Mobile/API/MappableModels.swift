@@ -416,21 +416,25 @@ public class NBModel: Mappable {
         return enrollment
     }
 
-    class func getSingular<T>(objectUrl: String, forceRefresh: Bool = false) -> T where T: NBModel {
+    class func getSingular<T>(objectUrl: String, forceRefresh: Bool = false) -> T! where T: NBModel {
         if !forceRefresh {
             if let existingObject = self.getCache().first(where: { $0.resourceKey == URL(string: objectUrl)!.lastPathComponent }) {
-                return existingObject as! T
+                return existingObject as? T
             }
         }
 
         let result: NBResult = NBNetworking.shared.request(url: objectUrl)
+
+        guard let status = result.statusCode, status.isSuccess else {
+            return nil
+        }
 
         let JSONresult = try! JSONSerialization.jsonObject(with: result.content!, options: .mutableContainers) as! [String: AnyObject]
         let metadataModel = Mapper<MetadataModel>().map(JSON: JSONresult)!
         let newDataObject = metadataModel.data
         
         let cached = NBClient.shared.cacheMappable(object: newDataObject!)
-        return cached as! T
+        return cached as? T
     }
 
     class func getCache<T>() -> [T] where T: NBModel {
@@ -569,11 +573,9 @@ public protocol AssignmentAssessment {
     var category: Category! { get }
     var dueDate: Date! { get }
     var availableDate: Date! { get }
-    var status: AssignmentStatus! { get }
     var userGrade: Grade! { get }
     var gradeScheme: GradeType! { get }
-    var gradeString: String! { get }
-    var points: Double! { get set }
+    var points: Double! { get }
     func getUserGrade() -> String
     func refreshCachedGradeString()
     func getStatus() -> AssignmentStatus
@@ -583,6 +585,9 @@ public protocol AssignmentAssessment {
 extension AssignmentAssessment {
     var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
     var isPastDue: Bool { return dueDate.isInPast }
+
+    var status: AssignmentStatus { return getStatus() }
+    var gradeString: String { return getUserGrade() }
 
     public func getRoundedGradePercent(grade: Double) -> Double {
         let rawPercent = grade / self.points * 100
@@ -815,7 +820,6 @@ class Course: NBModel, WithName {
     var fullName: String! { return (courseCode + ": " + name) }
     public var lastUpdated: String?
     public var secondsSinceGradeUpdate: TimeInterval!
-    public var refreshedOnce: Bool = false
     public var courseAssignments: [AssignmentAssessment]!
     public var courseCategories: [Category]!
 
@@ -968,10 +972,6 @@ class Course: NBModel, WithName {
 
         courseCategories = Category.getCache().filter({ $0.parent == self })
     }
-
-    override public func refresh() {
-        refreshCachedAssignments()
-    }
 }
 
 public class Assignment: NBModel, AssignmentAssessment {
@@ -1029,9 +1029,9 @@ public class Assignment: NBModel, AssignmentAssessment {
         return false
     }
 
-    public var userGrade: Grade!
-    public var gradeString: String!
-    public var status: AssignmentStatus!
+    public var userGrade: Grade! {
+        return Grade.getCache().first(where: {$0.parent == self})
+    }
 
     override class var routeType: ItemType { return .assignment }
 
@@ -1071,8 +1071,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if let categoryString = map.JSON["_category"] as? String {
             category = Category.getSingular(objectUrl: categoryString)
         }
-
-        userGrade = nil
 
         submissionPosts = []
         submissionComments = []
@@ -1115,7 +1113,6 @@ public class Assignment: NBModel, AssignmentAssessment {
             self.postsWordCountRequired = newAssignment.postsWordCountRequired
             self.commentsWordCountRequired = newAssignment.commentsWordCountRequired
             self.updatedAt = newAssignment.updatedAt
-            self.status = getStatus()
         }
     }
 
@@ -1131,8 +1128,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if !self.submissionPosts.contains(newPost) {
             self.submissionPosts.append(newPost)
         }
-
-        self.status = getStatus()
     }
 
     @objc func beginUpdatingComment(_ notification: NSNotification) {
@@ -1147,8 +1142,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if !self.submissionComments.contains(newComment) {
             self.submissionComments.append(newComment)
         }
-
-        self.status = getStatus()
     }
 
     @objc func beginUpdatingSubmission(_ notification: NSNotification) {
@@ -1163,8 +1156,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if !self.fileSubmissions.contains(newSubmission) {
             self.fileSubmissions.append(newSubmission)
         }
-
-        self.status = getStatus()
     }
 
     @objc func beginUpdatingGrade(_ notification: NSNotification) {
@@ -1175,10 +1166,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if newGrade.parent != self {
             return
         }
-        
-        self.userGrade = newGrade
-        self.gradeString = getUserGrade()
-        self.status = getStatus()
     }
 
     @objc func beginDeletingPost(_ notification: NSNotification) {
@@ -1193,8 +1180,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if self.submissionPosts.contains(deletingPost) {
             self.submissionPosts.removeAll(deletingPost)
         }
-
-        self.status = getStatus()
     }
 
     @objc func beginDeletingComment(_ notification: NSNotification) {
@@ -1209,32 +1194,6 @@ public class Assignment: NBModel, AssignmentAssessment {
         if self.submissionComments.contains(deletingComment) {
             self.submissionComments.removeAll(deletingComment)
         }
-
-        self.status = getStatus()
-    }
-
-    func refreshCachedSubmissions() {
-        self.submissionPosts = Post.getCache().filter({ $0.related == self && $0.creator == NBClient.shared.getCurrentUser() })
-        self.submissionComments = Comment.getCache().filter({ $0.related == self && $0.creator == NBClient.shared.getCurrentUser() })
-        self.fileSubmissions = Submission.getCache().filter({ $0.parent == self && $0.creator == NBClient.shared.getCurrentUser() })
-    }
-
-    public func refreshCachedGradeString() {
-        if let grade: Grade = Grade.getCache().first(where: {$0.parent == self}) {
-            self.userGrade = grade
-        }
-
-        self.gradeString = getUserGrade()
-    }
-
-    public func refreshCachedStatus() {
-        self.status = getStatus()
-    }
-
-    override public func refresh() {
-        refreshCachedSubmissions()
-        refreshCachedGradeString()
-        refreshCachedStatus()
     }
 }
 
@@ -1304,10 +1263,22 @@ public class Assessment: NBModel, AssignmentAssessment {
     var timeLimit: Int!
     public var title: String!
     public var category: Category!
-    public var points: Double!
-    public var userGrade: Grade!
-    public var gradeString: String!
-    public var status: AssignmentStatus!
+
+    public var points: Double! {
+        var pointsCalculated: Double = 0
+        let questions: [AssessmentQuestion] = AssessmentQuestion.getCache().filter({ $0.parent == self })
+
+        for question in questions {
+            if !question.extraCredit {
+                pointsCalculated += question.points
+            }
+        }
+        return pointsCalculated
+    }
+
+    public var userGrade: Grade! {
+        return Grade.getCache().first(where: {$0.owner == self})
+    }
 
     public var submissions: [AssessmentSubmission]!
 
@@ -1334,7 +1305,7 @@ public class Assessment: NBModel, AssignmentAssessment {
         if let objectString = map.JSON["_category"] as? String {
             category = Category.getSingular(objectUrl: objectString)
         }
-        userGrade = nil
+
         submissions = []
 
         setupObservers()
@@ -1342,7 +1313,7 @@ public class Assessment: NBModel, AssignmentAssessment {
 
     func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingAssessment(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessment"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingSubmission"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingSubmission(_:)), name: NSNotification.Name("ModelDidBeginUpdatingAssessmentSubmission"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(beginUpdatingGrade(_:)), name: NSNotification.Name("ModelDidBeginUpdatingGrade"), object: nil)
     }
 
@@ -1360,7 +1331,6 @@ public class Assessment: NBModel, AssignmentAssessment {
             self.gradeScheme = newAssessment.gradeScheme
             self.gradesPublished = newAssessment.gradesPublished
             self.updatedAt = newAssessment.updatedAt
-            self.status = getStatus()
         }
     }
 
@@ -1376,8 +1346,6 @@ public class Assessment: NBModel, AssignmentAssessment {
         if !self.submissions.contains(newSubmission) {
             self.submissions.append(newSubmission)
         }
-
-        self.status = getStatus()
     }
 
     @objc func beginUpdatingGrade(_ notification: NSNotification) {
@@ -1388,44 +1356,6 @@ public class Assessment: NBModel, AssignmentAssessment {
         if newGrade.parent != self {
             return
         }
-
-        self.userGrade = newGrade
-        self.gradeString = getUserGrade()
-        self.status = getStatus()
-    }
-
-    func refreshCachedSubmissions() {
-        self.submissions = AssessmentSubmission.getCache().filter({ $0.parent == self && $0.owner == NBClient.shared.getCurrentUser() })
-    }
-
-    public func refreshCachedPoints() {
-        var pointsCalculated: Double = 0
-        let questions: [AssessmentQuestion] = AssessmentQuestion.getCache().filter({ $0.parent == self })
-
-        for question in questions {
-            if !question.extraCredit {
-                pointsCalculated += question.points
-            }
-        }
-        self.points = pointsCalculated
-    }
-
-    public func refreshCachedGradeString() {
-        if let grade: Grade = Grade.getCache().first(where: {$0.owner == self}) {
-            self.userGrade = grade
-        }
-
-        self.gradeString = getUserGrade()
-    }
-    public func refreshCachedStatus() {
-        self.status = getStatus()
-    }
-
-    override public func refresh() {
-        refreshCachedSubmissions()
-        refreshCachedPoints()
-        refreshCachedGradeString()
-        refreshCachedStatus()
     }
 }
 
@@ -1756,9 +1686,6 @@ class Group: NBModel, WithName {
         type <- map["type"]
         website <- map["website"]
         starred <- map["starred"]
-    }
-
-    override public func refresh() {
     }
 }
 
@@ -2359,8 +2286,8 @@ public class Comment: NBModel, PostsComments {
     }
 
     override public func refresh() {
-        refreshCachedLikes()
-        refreshCachedAttachments()
+        //refreshCachedLikes()
+        //refreshCachedAttachments()
     }
 }
 

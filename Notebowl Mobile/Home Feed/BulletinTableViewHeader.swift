@@ -38,9 +38,11 @@ class BulletinTableViewHeader: UITableViewHeaderFooterView {
 
     func reloadAvatar() {
         userAvatar.kf.setImage(with: NBClient.shared.getCurrentUser().profileUrl,
-                               options: [
-                                .transition(ImageTransition.fade(0.3)),
-                                .keepCurrentImageWhileLoading
+                                   options: [
+                                    .transition(ImageTransition.fade(0.3)),
+                                    .forceTransition,
+                                    .keepCurrentImageWhileLoading,
+                                    .forceRefresh
             ]
         )
         userAvatar.contentMode = .scaleAspectFill
