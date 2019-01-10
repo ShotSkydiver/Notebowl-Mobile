@@ -102,14 +102,6 @@ class NBClient {
         return filterString
     }
 
-    public func reinitCache() {
-        for objectType in NBClient.shared.storedTypes {
-            var newArray = objectType.value
-            newArray.refreshAll()
-            newArray.sortByDate()
-        }
-    }
-
     public func requireByResourceKeys<T>(_ object: T.Type, keys: [String]) -> [T]? where T: NBModel {
         var filterString: String = ""
         for key in keys {
@@ -230,13 +222,6 @@ extension Collection {
 }
 
 extension Array {
-    mutating func refreshAll() {
-        for element in self {
-            guard element is NBModel else { fatalError() }
-            (element as! NBModel).refresh()
-        }
-    }
-
     mutating func sortByDate() {
         if self is [Course] {
             sort() { ($0 as! NBModel).updatedAt > ($1 as! NBModel).updatedAt }

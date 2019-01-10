@@ -498,8 +498,6 @@ public class NBModel: Mappable {
         return nil
     }
 
-    public func refresh() { }
-
     public required init?(map: Map) { }
 
     init() { }
@@ -577,9 +575,7 @@ public protocol AssignmentAssessment {
     var gradeScheme: GradeType! { get }
     var points: Double! { get }
     func getUserGrade() -> String
-    func refreshCachedGradeString()
     func getStatus() -> AssignmentStatus
-    func refreshCachedStatus()
 }
 
 extension AssignmentAssessment {
@@ -958,19 +954,6 @@ class Course: NBModel, WithName {
             return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
         }
         return [UIColor(hexString: "#BF4458"), UIColor(hexString: "#854D88")]
-    }
-
-    func refreshCachedAssignments() {
-        var assignments: [Assignment] = Assignment.getCache().filter({ $0.parent == self })
-
-        if self.enrollmentForUser != nil, self.enrollmentForUser.role == .TA {
-            assignments = assignments.filter({ !$0.gradeOnly })
-        }
-        courseAssignments = assignments
-        let assessments: [Assessment] = Assessment.getCache().filter({ $0.parent == self })
-        courseAssignments += assessments as [AssignmentAssessment]
-
-        courseCategories = Category.getCache().filter({ $0.parent == self })
     }
 }
 
@@ -1928,29 +1911,6 @@ public class Post: NBModel, PostsComments {
 
         return count
     }
-
-    func refreshCachedLikes() {
-        postLikes = Like.getCache().filter({ $0.parent == self })
-
-        if postLikes.isEmpty {
-            likedByCurrentUser = false
-            likeFromCurrentUser = nil
-        } else if let like = postLikes.first(where: { $0.owner == NBClient.shared.getCurrentUser() }) {
-            likedByCurrentUser = true
-            likeFromCurrentUser = like
-        }
-    }
-
-    func refreshCachedCommentsAttachments() {
-        self.comments = Comment.getCache().filter({ $0.parent == self })
-        self.attachments = Attachment.getCache().filter({ $0.parent == self && $0.mimeType == .image })
-        self.externalAttachments = Attachment.getCache().filter({ $0.parent == self && $0.attachmentScheme == .External })
-    }
-
-    override public func refresh() {
-        refreshCachedCommentsAttachments()
-        refreshCachedLikes()
-    }
 }
 
 public enum AttachmentScheme: String {
@@ -2265,29 +2225,6 @@ public class Comment: NBModel, PostsComments {
         } else if self.externalAttachments.contains(deletedAttachment) {
             self.externalAttachments.removeAll(deletedAttachment)
         }
-    }
-
-    public func refreshCachedAttachments() {
-        self.comments = Comment.getCache().filter({ $0.parent == self })
-        self.attachments = Attachment.getCache().filter({ $0.parent == self && $0.mimeType == .image })
-        self.externalAttachments = Attachment.getCache().filter({ $0.parent == self && $0.attachmentScheme == .External })
-    }
-
-    public func refreshCachedLikes() {
-        commentLikes = Like.getCache().filter({ $0.parent == self })
-
-        if commentLikes.isEmpty {
-            likedByCurrentUser = false
-            likeFromCurrentUser = nil
-        } else if let like = commentLikes.first(where: { $0.owner == NBClient.shared.getCurrentUser() }) {
-            likedByCurrentUser = true
-            likeFromCurrentUser = like
-        }
-    }
-
-    override public func refresh() {
-        //refreshCachedLikes()
-        //refreshCachedAttachments()
     }
 }
 
