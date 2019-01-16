@@ -25,6 +25,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     @IBOutlet var bulletinTableView: HomeTableView!
     var placeholderTableView: HomeTableView?
     var currentEnrollments: [NBModel]!
+    var bulletinTableViewHeader: BulletinTableViewHeader!
 
     var currentWorkingIndexPath: IndexPath!
 
@@ -36,11 +37,10 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = true
 
-        let customView = Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader
-        customView.initSetup()
-        customView.reloadAvatar()
+        bulletinTableViewHeader = (Bundle.main.loadNibNamed("BulletinTableViewHeader", owner: nil, options: nil)!.first as! BulletinTableViewHeader)
+        bulletinTableViewHeader.initSetup()
 
-        bulletinTableView.setTableHeaderView(headerView: customView)
+        bulletinTableView.setTableHeaderView(headerView: bulletinTableViewHeader)
         bulletinTableView.updateHeaderViewFrame()
         HomeFeedPostCell.register(in: bulletinTableView)
         bulletinTableView.placeholderDelegate = self as PlaceholderDelegate
@@ -262,6 +262,7 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     }
 
     func afterFullyLoaded() {
+        bulletinTableViewHeader.reloadAvatar()
         UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
