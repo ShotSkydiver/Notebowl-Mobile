@@ -83,6 +83,7 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 let _ = (rootViews[1].topViewController as! CoursesTableViewController).view
                 let _ = (rootViews[2].topViewController as! NotificationsTableViewController).view
                 homeVC.reloadTable()
+                homeVC.bulletinTableViewHeader.reloadAvatar()
                 homeVC.bulletinTableView.alpha = 1.0
                 homeVC.navigationController?.setNavigationBarHidden(false, animated: false)
                 self.tabBar.isHidden = false

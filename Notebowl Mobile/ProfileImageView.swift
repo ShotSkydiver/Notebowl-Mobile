@@ -11,7 +11,7 @@ import UIKit
 import Kingfisher
 
 @IBDesignable class ProfileImageView: DesignableImageView {
-    var shouldUpdateCurrentUser: Bool = true
+    var forCurrentUser: Bool = true
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,6 +33,10 @@ import Kingfisher
 
     @objc func finishUpdatingUser(_ notification: NSNotification) {
         guard let dict = notification.userInfo as NSDictionary?, let newUser = dict["object"] as? User else {
+            return
+        }
+
+        if !self.forCurrentUser || newUser != NBClient.shared.getCurrentUser() {
             return
         }
 

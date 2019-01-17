@@ -181,6 +181,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
 
         if comment.isAnonymous {
             userName.text = "Anonymous"
+            userAvatar.forCurrentUser = false
             userAvatar.image = UIImage(named: "anonymous")!
         } else if comment.creator == NBClient.shared.getCurrentUser() {
             userName.text = comment.creator!.fullName
@@ -191,6 +192,7 @@ class HomeFeedCommentCell: SwipeTableViewCell, UICollectionViewDelegate, UIColle
                 ])
         } else {
             userName.text = comment.creator!.fullName
+            userAvatar.forCurrentUser = false
             userAvatar.kf.setImage(with: comment.creator!.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),

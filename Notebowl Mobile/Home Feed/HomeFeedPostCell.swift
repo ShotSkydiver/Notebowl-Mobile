@@ -199,6 +199,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
         if post.isAnonymous {
             userName.text = "Anonymous"
+            userAvatar.forCurrentUser = false
             userAvatar.image = UIImage(named: "anonymous")
         } else if post.creator == NBClient.shared.getCurrentUser() {
             userName.text = post.creator!.fullName
@@ -209,6 +210,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                 ])
         } else {
             userName.text = post.creator!.fullName
+            userAvatar.forCurrentUser = false
             userAvatar.kf.setImage(with: post.creator!.profileUrl,
                                    options: [
                                     .transition(ImageTransition.fade(0.3)),

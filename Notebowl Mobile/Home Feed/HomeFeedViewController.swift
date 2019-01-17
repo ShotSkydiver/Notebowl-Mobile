@@ -262,7 +262,6 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
     }
 
     func afterFullyLoaded() {
-        bulletinTableViewHeader.reloadAvatar()
         UIApplication.shared.registerForRemoteNotifications()
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
