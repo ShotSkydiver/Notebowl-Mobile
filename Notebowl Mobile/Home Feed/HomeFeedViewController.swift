@@ -348,7 +348,6 @@ extension HomeFeedViewController: UITableViewDelegate, UITableViewDataSource {
         cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
 
         let post = self.posts[indexPath.row]
-        cell.parentController = self
         cell.configure(post: post)
         cell.delegate = self
         cell.setCollectionView(dataSource: cell, delegate: cell, indexPath: indexPath)

@@ -14,13 +14,13 @@ import SocketIO
 import YPImagePicker
 import SwipeCellKit
 import PKHUD
+import ImageViewer
 
 class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDelegate, CellActionsVC {
     var viewIsLoaded = false
     var displayedPost: PostsComments!
     var attachmentIDs = [String]()
     var anonymousToggle: Bool = false
-    var showingPhotoPicker: Bool = false
 
     var postCommentToReplyTo: PostsComments!
     var currentWorkingIndexPath: IndexPath!
@@ -291,7 +291,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                 $0.accessibilityIdentifier = "photoLibraryButton"
             }
             .onSelected { libraryButton in
-                self.showingPhotoPicker = true
                 var config = YPImagePickerConfiguration()
                 config.library.numberOfItemsInRow = 3
                 config.library.spacingBetweenItems = 4.0
@@ -314,7 +313,6 @@ class HomeFeedPostViewController: UITableViewController, InputBarAccessoryViewDe
                     if cancelled {
                         picker.dismiss(animated: true, completion: nil)
                     } else if !cancelled {
-                        self.showingPhotoPicker = false
                         picker.dismiss(animated: true, completion: {
                             for item in items {
                                 if case .photo(let photo) = item {

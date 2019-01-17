@@ -20,10 +20,6 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'Socket.IO-Client-Swift', :git => 'https://github.com/socketio/socket.io-client-swift.git', :branch => 'development'
         pod 'YPImagePicker', :git => 'https://github.com/ShotSkydiver/YPImagePicker'
         pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :branch => 'develop'
-        pod 'Hue', :git => 'https://github.com/hyperoslo/Hue.git'
-        pod 'Cache'
-        pod 'Imaginary'
-        pod 'Lightbox'
         pod 'PKHUD'
         pod 'Siren'
         pod 'SwiftDate'
@@ -31,6 +27,7 @@ pod 'HTTPStatusCodes', '~> 3.2.0'
         pod 'SwiftyBeaver'
         pod 'URLPatterns'
         pod 'SwiftLint'
+        pod 'ImageViewer', :git => 'https://github.com/ShotSkydiver/ImageViewer.git'
     end
 
     target 'NotebowlMobileUITests' do

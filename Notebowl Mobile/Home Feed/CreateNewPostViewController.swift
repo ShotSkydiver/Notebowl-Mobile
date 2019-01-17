@@ -100,7 +100,7 @@ class CreateNewPostViewController: UIViewController, UITextViewDelegate {
             for attachment in existingObjectToEdit.attachments {
                 if attachment.mimeType == .image {
                     self.attachmentIDs.append(attachment.url.absoluteString)
-                    KingfisherManager.shared.retrieveImage(with: attachment.getUrlForAvatar()!.absoluteURL, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
+                    KingfisherManager.shared.retrieveImage(with: URL(string: attachment.thumbnailUrl)!, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, URL) in
                         if let retrievedImage = image {
                             self.attachmentManager.handleInput(of: retrievedImage)
                         }

@@ -2032,14 +2032,6 @@ public class Attachment: NBModel {
         desc <- map["description"]
         domain <- map["domain"]
     }
-
-    func getUrlForAvatar() -> URL? {
-        let params = ["uuid": UIDevice().uuid]
-        let sttt = ("https://\(baseUrl)/rpc/v1.0/attachments/" + self.resourceKey + "/download")
-        var imageUrl = URL(string: sttt)
-        imageUrl?.appendQueryParameters(params)
-        return imageUrl
-    }
 }
 
 class Folder: NBModel {

@@ -14,8 +14,8 @@ import Haptica
 import ObjectMapper
 import SocketIO
 import SwipeCellKit
-import Lightbox
 import PKHUD
+import ImageViewer
 
 class IndexedCollectionViewFlowLayout: UICollectionViewFlowLayout {
     fileprivate var paginatedScroll: Bool?
@@ -87,15 +87,11 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     @IBOutlet weak var linkPreviewUrl: UILabel!
     @IBOutlet weak var linkPreviewThumbnail: DesignableImageView!
 
-    var images = [UIImage]()
-    var lightboxPhotos = [LightboxImage]()
     var postForCell: Post!
-    var tempCount: Int?
     var collectionViewPaginatedScroll: Bool?
-    var isValidTouch: Bool = true
-    weak var parentController: HomeFeedViewController?
 
-    weak var lightboxController: LightboxController?
+    weak var galleryController: GalleryViewController!
+    var items: [GalleryItem] = []
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -134,31 +130,6 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
         likeButton.isHaptic = true
         likeButton.hapticType = .impact(.light)
-        LightboxConfig.loadImage = {
-            imageView, URL, completion in
-            imageView.kf.setImage(with: URL, options: [.transition(ImageTransition.fade(0.3))], completionHandler: { (image, error, cacheType, URL) in
-                if error != nil {
-                    completion?(nil)
-                } else {
-                    completion?(image)
-                }
-            })
-        }
-        LightboxConfig.CloseButton.image = UIImage(named: "dismiss-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.CloseButton.text = ""
-        LightboxConfig.DeleteButton.enabled = true
-        LightboxConfig.DeleteButton.image = UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal)
-        LightboxConfig.DeleteButton.text = ""
-        LightboxConfig.PageIndicator.separatorColor = .groupTableViewBackground
-        LightboxConfig.PageIndicator.textAttributes = [
-            .font: UIFont.systemFont(ofSize: 15),
-            .foregroundColor: UIColor.white,
-            .paragraphStyle: {
-                let style = NSMutableParagraphStyle()
-                style.alignment = .center
-                return style
-            }()
-        ]
 
         selectedBackgroundView?.backgroundColor = UIColor.cyan
     }
@@ -218,10 +189,18 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
                                 ])
         }
 
-        if lightboxPhotos.isEmpty {
+        if items.isEmpty {
             for attachment in post.attachments {
-                let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
-                self.lightboxPhotos.append(lightboxPhoto)
+                let thumbUrl = URL(string: attachment.thumbnailUrl)!
+
+                let galleryItem = GalleryItem.image { imageCompletion in
+                    KingfisherManager.shared.retrieveImage(with: thumbUrl, options: [.transition(ImageTransition.fade(0.3))]) { result in
+                        if let image = result.value?.image {
+                            imageCompletion(image)
+                        }
+                    }
+                }
+                self.items.append(galleryItem)
             }
         }
 
@@ -325,13 +304,11 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IndexedCollectionViewCell.identifier, for: indexPath) as! IndexedCollectionViewCell
-
         cell.isAccessibilityElement = true
         cell.accessibilityIdentifier = String(format: "IndexedCollectionViewCell-%d-%d", indexPath.section, indexPath.item)
         cell.accessibilityLabel = cell.accessibilityIdentifier
         cell.contentView.accessibilityIdentifier = String(format: "IndexedCollectionContentView-%d-%d", indexPath.section, indexPath.item)
         cell.contentView.accessibilityLabel = cell.contentView.accessibilityIdentifier
-
         cell.attachment.accessibilityIdentifier = "IndexedCollectionCellImageView"
         cell.attachmentOverlay.accessibilityIdentifier = "IndexedCollectionCellOverlay"
         cell.attachmentCount.accessibilityIdentifier = "IndexedCollectionCellLabel"
@@ -339,14 +316,7 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
         let attachmentForCell = self.postForCell.attachments[indexPath.item]
 
         if attachmentForCell.mimeType == .image {
-            cell.attachment.kf.setImage(with: attachmentForCell.getUrlForAvatar()!.absoluteURL, placeholder: nil, options: [
-                KingfisherOptionsInfoItem.processor(DownsamplingImageProcessor(size: cell.attachment!.intrinsicContentSize)),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage,
-                .transition(ImageTransition.fade(0.3))
-                ]) { result in
-                    self.setNeedsLayout()
-            }
+            cell.attachment.kf.setImage(with: URL(string: attachmentForCell.thumbnailUrl)!, placeholder: nil, options: [.transition(ImageTransition.fade(0.3))]) { result in }
 
             if indexPath.item == 2 && indexPath.item < self.postForCell.attachments.count-1 {
                 cell.cellDisplaysOverlay(count: "+\(self.postForCell.attachments.count-2)", forceUpdate: false)
@@ -358,29 +328,34 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        var newphotos = [LightboxImage]()
-        for attachment in self.postForCell.attachments {
-            let lightboxPhoto = LightboxImage(imageURL: attachment.getUrlForAvatar()!.absoluteURL)
-            newphotos.append(lightboxPhoto)
-        }
+        let shareButton = UIButton(type: .system)
+        shareButton.frame.size = CGSize(width: 28, height: 28)
+        shareButton.setBackgroundImage(UIImage(named: "upload-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal), for: .normal)
 
-        let lightbox = LightboxController(images: newphotos, startIndex: indexPath.item)
-        lightbox.pageDelegate = self
-        lightbox.dismissalDelegate = self
-        lightbox.imageTouchDelegate = self
-        lightbox.dynamicBackground = true
+        let thumbButton = UIButton(type: .system)
+        thumbButton.frame.size = CGSize(width: 28, height: 28)
+        thumbButton.setBackgroundImage(UIImage(named: "gallery-vector")!.filled(withColor: UIColor.groupTableViewBackground).withRenderingMode(.alwaysOriginal), for: .normal)
 
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            return
-        }
-        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
-            homeVC.showingPhotoPicker = true
-            homeVC.present(lightbox, animated: true, completion: nil)
-            self.lightboxController = lightbox
-        } else if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedViewController) {
-            homeVC.present(lightbox, animated: true, completion: nil)
-            self.lightboxController = lightbox
-        }
+        let galleryConfig: GalleryConfiguration = [
+            GalleryConfigurationItem.presentationStyle(.displacement),
+            GalleryConfigurationItem.pagingMode(.standard),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(true),
+            GalleryConfigurationItem.activityViewByLongPress(false),
+            GalleryConfigurationItem.overlayColor(UIColor.darkGray),
+            GalleryConfigurationItem.overlayColorOpacity(0.85),
+            GalleryConfigurationItem.overlayBlurOpacity(0.85),
+            GalleryConfigurationItem.overlayBlurStyle(UIBlurEffect.Style.light),
+            GalleryConfigurationItem.deleteButtonMode(.none),
+            GalleryConfigurationItem.thumbnailsButtonMode(.custom(thumbButton)),
+            GalleryConfigurationItem.thumbnailsLayout(.pinLeft(20, 28)),
+            GalleryConfigurationItem.shareButtonMode(.custom(shareButton)),
+            GalleryConfigurationItem.shareLayout(.pinRight(20, 72))
+        ]
+
+        let galleryVC = GalleryViewController(startIndex: indexPath.item, itemsDataSource: self, configuration: galleryConfig)
+
+        self.galleryController = galleryVC
+        parentViewController!.presentImageGallery(galleryVC)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -403,19 +378,14 @@ class HomeFeedPostCell: SwipeTableViewCell, UICollectionViewDelegate, UICollecti
     }
 }
 
-extension HomeFeedPostCell: LightboxControllerPageDelegate, LightboxControllerDismissalDelegate, LightboxControllerTouchDelegate {
-    func lightboxController(_ controller: LightboxController, didMoveToPage page: Int) { }
-
-    func lightboxControllerWillDismiss(_ controller: LightboxController) {
-        guard let tabbarVC = UIApplication.shared.keyWindow?.rootViewController!.presentedViewController as? MainTabBarViewController else {
-            return
-        }
-        if let homeVC = ((tabbarVC.viewControllers![0] as! UINavigationController).topViewController as? HomeFeedPostViewController) {
-            homeVC.showingPhotoPicker = false
-        }
+extension HomeFeedPostCell: GalleryItemsDataSource {
+    func itemCount() -> Int {
+        return items.count
     }
 
-    func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int) { }
+    func provideGalleryItem(_ index: Int) -> GalleryItem {
+        return items[index]
+    }
 }
 
 extension HomeFeedPostCell {
