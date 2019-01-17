@@ -36,7 +36,11 @@ import Kingfisher
             return
         }
 
-        if !self.forCurrentUser || newUser != NBClient.shared.getCurrentUser() {
+        if !self.forCurrentUser || NBClient.shared.currentUser == nil {
+            return
+        }
+
+        if newUser != NBClient.shared.getCurrentUser() {
             return
         }
 

@@ -19,31 +19,28 @@ class NBClient {
         return NBClient()
     }()
 
-    private var currentUser: User!
+    public var currentUser: User!
     public var storedTypes = [ItemType: [NBModel]]()
 
     private init() { }
 
     func resolveCurrentUser(_ force: Bool = true) -> Bool {
         if currentUser == nil || force {
-            let userTest = NBNetworking.shared.request(url: User.endpoint)
-            if userTest.statusCode == nil { return false }
-            if !userTest.statusCode!.isSuccess { return false }
-            guard let userReq = NBClient.shared.getMappable(User.self) else { return false }
-            if let finalUser = userReq.first {
-                setCurrentUser(user: finalUser)
-                Bugsnag.configuration()!.setUser(finalUser.resourceKey, withName: finalUser.fullName, andEmail: finalUser.email!)
+            if let getUser: User = User.getSingular(objectUrl: User.endpoint) {
+                setCurrentUser(user: getUser)
+                Bugsnag.configuration()!.setUser(getUser.resourceKey, withName: getUser.fullName, andEmail: getUser.email!)
                 Bugsnag.addAttribute("uuid", withValue: "\(UIDevice().uuid)", toTabWithName: "user")
                 return true
             }
-        } else if currentUser != nil { return true }
-
-        return false
+            return false
+        }
+        return true
     }
 
     func getCurrentUser() -> User {
         return currentUser
     }
+
     func setCurrentUser(user: User) {
         currentUser = user
     }
