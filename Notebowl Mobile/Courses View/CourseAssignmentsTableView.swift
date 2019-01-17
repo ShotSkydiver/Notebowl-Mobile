@@ -140,11 +140,11 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
             return
         }
 
-        if !(newObject.related is Assignment || (newObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
+        if newObject.getParentByType(Post.self, withSelf: true)!.isPostFeedback || !((newObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
             return
         }
 
-        updateRows(from: newObject.related!)
+        updateRows(from: newObject.getParentByType(Assignment.self))
     }
 
     @objc func finishUpdatingCourse(_ notification: NSNotification) {
@@ -178,11 +178,11 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
             return
         }
 
-        if !(deletedObject.related is Assignment || (deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
+        if deletedObject.getParentByType(Post.self, withSelf: true)!.isPostFeedback || !((deletedObject as! PostsComments).creator == NBClient.shared.getCurrentUser()) {
             return
         }
 
-        updateRows(from: deletedObject.related!)
+        updateRows(from: deletedObject.getParentByType(Assignment.self))
     }
 
     @objc func finishDeletingEnrollment(_ notification: NSNotification) {
@@ -225,8 +225,9 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
                 let assessSubs = NBClient.shared.requireByReferences(AssessmentSubmission.self, property: "_parent", values: assess)
                 let assessQs = NBClient.shared.requireByReferences(AssessmentQuestion.self, property: "_parent", values: assess)
 
-                let posts = NBClient.shared.getMappable(Post.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_related:IN:\(assignmentFilter)\"]")
-                let comments = NBClient.shared.getMappable(Comment.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_related:IN:\(assignmentFilter)\"]")
+                let posts = NBClient.shared.getMappable(Post.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_parent:IN:\(assignmentFilter)\"]")
+                let postsFilter = NBClient.shared.buildFilterString(from: posts!)
+                _ = NBClient.shared.getMappable(Comment.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_parent:IN:\(postsFilter)\"]")
 
                 assignmentFilter = (assignmentFilter + NBClient.shared.buildFilterString(from: assess) + NBClient.shared.buildFilterString(from: assessSubs))
                 _ = NBClient.shared.getMappable(Grade.self, filters: "[\"_owner:IN:\(assignmentFilter)\"]")

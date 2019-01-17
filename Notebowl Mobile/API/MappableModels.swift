@@ -205,12 +205,16 @@ extension ItemType {
             self = .category
         case .n1("University"):
             self = .university
-        case .n1("CourseUser"), .n1("GroupUser"), .n1("EventUser"):
+        case .n1(Regex("^(Course|Group|Event|UniversityGroup)User$")):
             self = .enrollment
         case .n1(Regex("Attachment.*")):
             self = .attachment
-        case .n1(Regex("AssignmentSubType.*")):
+        case .n1(Regex("Assignment.+(Discussion|Submission)$")):
             self = .assignment
+        case .n1("PostFeedback"):
+            self = .post
+        case .n1("Group"), .n1("UniversityGroup"):
+            self = .group
         default:
             self = ItemType(rawValue: "\(item.lowercase)s")!
         }
@@ -245,6 +249,7 @@ public enum SubmissionType: String {
 public enum GroupType: String {
     case individual = "Individual"
     case group = "Group"
+    case privateDiscussionBoard = "Private"
 }
 
 public enum UserRole: String {
@@ -579,7 +584,7 @@ public protocol AssignmentAssessment {
 }
 
 extension AssignmentAssessment {
-    var isAvailable: Bool { return (availableDate.isInPast || availableDate.isToday) }
+    var isAvailable: Bool { return availableDate.isInPast || availableDate.isToday }
     var isPastDue: Bool { return dueDate.isInPast }
 
     var status: AssignmentStatus { return getStatus() }
@@ -592,60 +597,56 @@ extension AssignmentAssessment {
     }
 
     public func getStatus() -> AssignmentStatus {
-        if let userRole = (self as! NBModel).parent?.enrollmentForUser.role {
-            if userRole == .professor || userRole == .admin || userRole == .TA {
-                if dueDate == nil { return AssignmentStatus.NotPublished }
-                if availableDate.isInFuture { return AssignmentStatus.NotAvailableYet }
+        guard let userRole = (self as! NBModel).parent?.enrollmentForUser.role else {
+            return .NotAvailableYet
+        }
 
-                if isPastDue {
-                    if let firstGrade = userGrade, firstGrade.grade != nil {
-                        return AssignmentStatus.Graded
-                    } else {
-                        return AssignmentStatus.NeedsGrading
-                    }
-                }
-            } else if userRole == .student {
-                if let grade = userGrade, grade.grade != nil {
-                    return AssignmentStatus.Graded
-                }
-
-                if let selfAssignment = self as? Assignment {
-                    if selfAssignment.submissionScheme == .fileSubmission {
-                        if selfAssignment.fileSubmissions != nil {
-                            if !selfAssignment.fileSubmissions.isEmpty {
-                                return AssignmentStatus.Submitted
-                            }
-                        }
-                    } else if selfAssignment.submissionScheme == .discussionBoard {
-                        if selfAssignment.isUserSubmissionStarted {
-                            if selfAssignment.hasRequirements && !selfAssignment.isUserSubmissionComplete {
-                                if isPastDue {
-                                    return AssignmentStatus.Submitted
-                                }
-                                return AssignmentStatus.InProgress
-                            }
-                            return AssignmentStatus.Submitted
-                        }
-                    }
-                    if isPastDue && selfAssignment.allowLateSubmission {
-                        return AssignmentStatus.PastDue
-                    }
-                } else if let selfAssessment = self as? Assessment {
-                    if selfAssessment.submissions != nil, let userSubmission = selfAssessment.submissions.first {
-                        if userSubmission.isInProgress {
-                            return AssignmentStatus.InProgress
-                        } else { return AssignmentStatus.Submitted }
-                    }
-                }
+        if userRole == .professor || userRole == .admin || userRole == .TA {
+            if dueDate == nil {
+                return .NotPublished
+            }
+            if availableDate.isInFuture {
+                return .NotAvailableYet
             }
 
-            if !isPastDue && isAvailable {
-                return AssignmentStatus.Open
-            } else if isPastDue {
-                return AssignmentStatus.Closed
+            if isPastDue {
+                if let firstGrade = userGrade, firstGrade.grade != nil {
+                    return .Graded
+                } else {
+                    return .NeedsGrading
+                }
+            }
+        } else if userRole == .student {
+            if let grade = userGrade, grade.grade != nil {
+                return .Graded
+            }
+
+            if let selfAssignment = self as? Assignment {
+                if selfAssignment.submissionScheme == .fileSubmission && !selfAssignment.fileSubmissions.isEmpty {
+                    return .Submitted
+                } else if selfAssignment.submissionScheme == .discussionBoard && selfAssignment.isUserSubmissionStarted {
+                    if selfAssignment.hasRequirements && !selfAssignment.isUserSubmissionComplete {
+                        return isPastDue ? .Submitted : .InProgress
+                    }
+                    return .Submitted
+                }
+                if isPastDue && selfAssignment.allowLateSubmission {
+                    return .PastDue
+                }
+            } else if let selfAssessment = self as? Assessment {
+                if let userSubmission = selfAssessment.submissions.first {
+                    return userSubmission.isInProgress ? .InProgress : .Submitted
+                }
             }
         }
-        return AssignmentStatus.NotAvailableYet
+
+        if !isPastDue && isAvailable {
+            return .Open
+        } else if isPastDue {
+            return .Closed
+        }
+
+        return .NotAvailableYet
     }
 
     public func getUserGrade() -> String {
@@ -720,7 +721,6 @@ public class User: NBModel {
     var profileUrl: URL!
     var gradMonth: Int?
     var gradYear: Int?
-    var university: University?
 
     var fullName: String { return (firstName + " " + lastName) }
     var fullGradDate: String { return (DateComponentsFormatter.monthYear.string(from: (DateComponents(year: gradYear, month: gradMonth))))! }
@@ -736,6 +736,7 @@ public class User: NBModel {
     }
 
     override public func mapping(map: Map) {
+        shouldMapParent = false
         super.mapping(map: map)
         firstName <- map["firstName"]
         lastName <- map["lastName"]
@@ -983,22 +984,21 @@ public class Assignment: NBModel, AssignmentAssessment {
     public var submissionComments: [Comment]!
     public var fileSubmissions: [Submission]!
 
-    public var hasRequirements: Bool { return minPosts > 0 || minComments > 0 }
+    public var hasRequirements: Bool {
+        return minPosts > 0 || minComments > 0
+    }
 
     public func postsMatchingWordCount() -> [Post] {
         var userPosts = [Post]()
-        for post in submissionPosts {
-            post.related = self
-            post.parent = self
-            if post.satisfiesWordCount { userPosts.append(post) }
+        for post in submissionPosts where post.satisfiesWordCount {
+            userPosts.append(post)
         }
         return userPosts
     }
     public func commentsMatchingWordCount() -> [Comment] {
         var userComments = [Comment]()
-        for comment in submissionComments {
-            comment.related = self
-            if comment.satisfiesWordCount { userComments.append(comment) }
+        for comment in submissionComments where comment.satisfiesWordCount {
+            userComments.append(comment)
         }
         return userComments
     }
@@ -1008,8 +1008,7 @@ public class Assignment: NBModel, AssignmentAssessment {
     }
 
     public var isUserSubmissionStarted: Bool {
-        if !submissionPosts.isEmpty || !submissionComments.isEmpty { return true }
-        return false
+        return !submissionPosts.isEmpty || !submissionComments.isEmpty
     }
 
     public var userGrade: Grade! {
@@ -1104,7 +1103,7 @@ public class Assignment: NBModel, AssignmentAssessment {
             return
         }
 
-        if newPost.related != self {
+        if newPost.parent != self || newPost.isPostFeedback {
             return
         }
 
@@ -1117,8 +1116,12 @@ public class Assignment: NBModel, AssignmentAssessment {
         guard let dict = notification.userInfo as NSDictionary?, let newComment = dict["object"] as? Comment else {
             return
         }
+        
+        guard let parentAssignment = newComment.getParentByType(Assignment.self) else {
+            return
+        }
 
-        if newComment.isCommentReply || newComment.related != self {
+        if newComment.isCommentReply || parentAssignment != self {
             return
         }
 
@@ -1156,7 +1159,7 @@ public class Assignment: NBModel, AssignmentAssessment {
             return
         }
 
-        if deletingPost.related != self {
+        if deletingPost.parent != self || deletingPost.isPostFeedback {
             return
         }
 
@@ -1169,8 +1172,12 @@ public class Assignment: NBModel, AssignmentAssessment {
         guard let dict = notification.userInfo as NSDictionary?, let deletingComment = dict["object"] as? Comment else {
             return
         }
+        
+        guard let parentAssignment = deletingComment.getParentByType(Assignment.self) else {
+            return
+        }
 
-        if deletingComment.isCommentReply || deletingComment.related != self {
+        if deletingComment.isCommentReply || parentAssignment != self {
             return
         }
 
@@ -1719,17 +1726,18 @@ public class Post: NBModel, PostsComments {
     public var comments: [Comment]!
     public var likedByCurrentUser: Bool!
     public var likeFromCurrentUser: Like?
+    public var isPostFeedback: Bool!
 
     public var satisfiesWordCount: Bool {
-        guard let parentDiscussionBoard = self.related as? Assignment else { return false }
-        if parentDiscussionBoard.postsWordCountRequired == "Required" {
-            if self.text.wordCount >= parentDiscussionBoard.wordCountPosts {
-                return true
-            }
-        } else if parentDiscussionBoard.postsWordCountRequired == "Recommended" {
-            return true
+        guard let parentDiscussionBoard = self.parent as? Assignment else {
+            return false
         }
-        return false
+
+        if parentDiscussionBoard.postsWordCountRequired == "Required" {
+            return self.text.wordCount >= parentDiscussionBoard.wordCountPosts
+        }
+
+        return parentDiscussionBoard.postsWordCountRequired == "Recommended"
     }
 
     override class var routeType: ItemType { return .post }
@@ -1777,6 +1785,7 @@ public class Post: NBModel, PostsComments {
         }
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
 
+        isPostFeedback = (map.JSON["itemType"] as! String) == "PostFeedback"
         postLikes = []
         comments = []
         attachments = []
@@ -2067,15 +2076,15 @@ public class Comment: NBModel, PostsComments {
     public var isCommentReply: Bool { return (self.parent is Comment) }
 
     public var satisfiesWordCount: Bool {
-        guard let parentDiscussionBoard = self.related as? Assignment else { return false }
-        if parentDiscussionBoard.commentsWordCountRequired == "Required" {
-            if self.text.wordCount >= parentDiscussionBoard.wordCountComments {
-                return true
-            }
-        } else if parentDiscussionBoard.commentsWordCountRequired == "Recommended" {
-            return true
+        guard let parentDiscussionBoard = self.parent!.parent as? Assignment else {
+            return false
         }
-        return false
+        
+        if parentDiscussionBoard.commentsWordCountRequired == "Required" {
+            return self.text.wordCount >= parentDiscussionBoard.wordCountComments
+        }
+
+        return parentDiscussionBoard.commentsWordCountRequired == "Recommended"
     }
 
     override class var routeType: ItemType { return .comment }
