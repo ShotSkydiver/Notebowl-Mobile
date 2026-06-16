@@ -98,14 +98,14 @@ class MainTabBarViewController: UITabBarController, UITabBarControllerDelegate {
         _ = NBClient.shared.getMappable(Setting.self)
         _ = NBClient.shared.getMappable(Notification.self, filters: "[\"text:IS_NULL:false\"]", sortBy: "createdAt:desc")
         let filter = NBClient.shared.doEnrollmentRequests()
-        if let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filter)\"]", sortBy: "availableDate:desc", limit: "10"), !retrievedPosts.isEmpty {
-            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+        if let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"parent:IN:\(filter)\"]", sortBy: "availableDate:desc", limit: "10"), !retrievedPosts.isEmpty {
+            let postComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: retrievedPosts)
+            let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: postComments)
             var combinedFilter = (retrievedPosts as [NBModel])
             combinedFilter.append(contentsOf: (postComments as [NBModel]))
             combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-            _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-            _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+            _ = NBClient.shared.requireByReferences(Like.self, property: "parent", values: combinedFilter)
+            _ = NBClient.shared.requireByReferences(Attachment.self, property: "parent", values: combinedFilter)
         }
     }
 

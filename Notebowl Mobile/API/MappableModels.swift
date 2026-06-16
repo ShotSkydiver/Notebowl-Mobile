@@ -473,7 +473,7 @@ public class NBModel: Mappable {
             let payloadJson = self.setPayload()
             for item in payloadJson {
                 if item.value is NBModel {
-                    json += ["_\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
+                    json += ["\(item.key)": "\((item.value as! NBModel).url.absoluteString)"]
                 } else if item.value is Date {
                     json += [item.key: "\((item.value as! Date).toFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))"]
                 } else {
@@ -518,16 +518,16 @@ public class NBModel: Mappable {
         resourceKey <- map["resourceKey"]
 
         if shouldMapParent {
-            if let parentString = map.JSON["_parent"] as? String, let itemType = ItemType.fromURL(parentString) {
+            if let parentString = map.JSON["parent"] as? String, let itemType = ItemType.fromURL(parentString) {
                 let parentDataObject = itemType.dataObject
                 parent = type(of: parentDataObject).getSingular(objectUrl: parentString)
             }
         }
-        if let ownerString = (map.JSON["_owner"] as? String), let itemType = ItemType.fromURL(ownerString) {
+        if let ownerString = (map.JSON["owner"] as? String), let itemType = ItemType.fromURL(ownerString) {
             let ownerDataObject = itemType.dataObject
             owner = type(of: ownerDataObject).getSingular(objectUrl: ownerString)
         }
-        if let relatedString = (map.JSON["_related"] as? String), let itemType = ItemType.fromURL(relatedString) {
+        if let relatedString = (map.JSON["related"] as? String), let itemType = ItemType.fromURL(relatedString) {
             let relatedDataObject = itemType.dataObject
             related = type(of: relatedDataObject).getSingular(objectUrl: relatedString)
         }
@@ -852,7 +852,7 @@ class Course: NBModel, WithName {
         endDate <- (map["endDate"], ISO8601FixedDateTransform())
         profileUrl <- (map["profileUrl"], URLTransform())
 
-        if let termString = map.JSON["_term"] as? String {
+        if let termString = map.JSON["term"] as? String {
             term = Term.getSingular(objectUrl: termString)
         }
 
@@ -1050,7 +1050,7 @@ public class Assignment: NBModel, AssignmentAssessment {
         commentsWordCountRequired <- map["commentsRequired"]
         submissionScheme <- (map["submissionScheme"], TransformOf<SubmissionType, String>(fromJSON: { SubmissionType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
 
-        if let categoryString = map.JSON["_category"] as? String {
+        if let categoryString = map.JSON["category"] as? String {
             category = Category.getSingular(objectUrl: categoryString)
         }
 
@@ -1228,7 +1228,7 @@ public class Submission: NBModel {
         super.mapping(map: map)
 
         text <- map["text"]
-        if let objectString = map.JSON["_creator"] as? String {
+        if let objectString = map.JSON["creator"] as? String {
             creator = User.getSingular(objectUrl: objectString)
         }
     }
@@ -1292,7 +1292,7 @@ public class Assessment: NBModel, AssignmentAssessment {
         gradeScheme <- (map["gradeScheme"], TransformOf<GradeType, String>(fromJSON: { GradeType(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         gradesPublished <- map["gradesPublished"]
 
-        if let objectString = map.JSON["_category"] as? String {
+        if let objectString = map.JSON["category"] as? String {
             category = Category.getSingular(objectUrl: objectString)
         }
 
@@ -1593,7 +1593,7 @@ public class Enrollment: NBModel {
         super.mapping(map: map)
         role <- (map["role"], TransformOf<UserRole, String>(fromJSON: { UserRole(rawValue: $0!) }, toJSON: { $0!.rawValue }))
         status <- map["status"]
-        if let objectString = map.JSON["_user"] as? String {
+        if let objectString = map.JSON["user"] as? String {
             user = User.getSingular(objectUrl: objectString)
         }
 
@@ -1780,7 +1780,7 @@ public class Post: NBModel, PostsComments {
         if text == nil {
             text = ""
         }
-        if let objectString = map.JSON["_creator"] as? String {
+        if let objectString = map.JSON["creator"] as? String {
             creator = User.getSingular(objectUrl: objectString)
         }
         availableDate <- (map["availableDate"], ISO8601FixedDateTransform())
@@ -2115,7 +2115,7 @@ public class Comment: NBModel, PostsComments {
         if text == nil {
             text = ""
         }
-        if let objectString = map.JSON["_creator"] as? String {
+        if let objectString = map.JSON["creator"] as? String {
             creator = User.getSingular(objectUrl: objectString)
         }
         attachments = []

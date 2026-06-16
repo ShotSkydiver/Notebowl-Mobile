@@ -82,14 +82,14 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         var toFilter = Course.getCache()
         toFilter += Group.getCache()
         let filterString = NBClient.shared.buildFilterString(from: toFilter)
-        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filterString)\"]", sortBy: "availableDate:desc", limit: "10")!
-        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"parent:IN:\(filterString)\"]", sortBy: "availableDate:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: retrievedPosts)
+        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: postComments)
         var combinedFilter = (retrievedPosts as [NBModel])
         combinedFilter.append(contentsOf: (postComments as [NBModel]))
         combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Like.self, property: "parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "parent", values: combinedFilter)
         reloadTable()
     }
 
@@ -174,14 +174,14 @@ class HomeFeedViewController: UIViewController, CellActionsVC {
         var toFilter = Course.getCache()
         toFilter += Group.getCache()
         let filterString = NBClient.shared.buildFilterString(from: toFilter)
-        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"_parent:IN:\(filterString)\"]", sortBy: "availableDate:desc", limit: "10")!
-        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: retrievedPosts)
-        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "_parent", values: postComments)
+        let retrievedPosts = NBClient.shared.getMappable(Post.self, filters: "[\"parent:IN:\(filterString)\"]", sortBy: "availableDate:desc", limit: "10")!
+        let postComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: retrievedPosts)
+        let threadedComments = NBClient.shared.requireByReferences(Comment.self, property: "parent", values: postComments)
         var combinedFilter = (retrievedPosts as [NBModel])
         combinedFilter.append(contentsOf: (postComments as [NBModel]))
         combinedFilter.append(contentsOf: (threadedComments as [NBModel]))
-        _ = NBClient.shared.requireByReferences(Like.self, property: "_parent", values: combinedFilter)
-        _ = NBClient.shared.requireByReferences(Attachment.self, property: "_parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Like.self, property: "parent", values: combinedFilter)
+        _ = NBClient.shared.requireByReferences(Attachment.self, property: "parent", values: combinedFilter)
         reloadTable()
     }
 

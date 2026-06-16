@@ -219,18 +219,18 @@ class CourseAssignmentsTableView: AnimatedNavBarViewController {
                     assigns = assigns.filter({$0.gradeOnly == false})
                 }
                 var assignmentFilter = NBClient.shared.buildFilterString(from: assigns)
-                _ = NBClient.shared.requireByReferences(Submission.self, property: "_parent", values: assigns)
+                _ = NBClient.shared.requireByReferences(Submission.self, property: "parent", values: assigns)
 
                 var assess = NBClient.shared.requireByReference(Assessment.self, property: "parent", value: self.selectedCourse)
-                let assessSubs = NBClient.shared.requireByReferences(AssessmentSubmission.self, property: "_parent", values: assess)
-                let assessQs = NBClient.shared.requireByReferences(AssessmentQuestion.self, property: "_parent", values: assess)
+                let assessSubs = NBClient.shared.requireByReferences(AssessmentSubmission.self, property: "parent", values: assess)
+                let assessQs = NBClient.shared.requireByReferences(AssessmentQuestion.self, property: "parent", values: assess)
 
-                let posts = NBClient.shared.getMappable(Post.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_parent:IN:\(assignmentFilter)\"]")
+                let posts = NBClient.shared.getMappable(Post.self, filters: "[\"creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"parent:IN:\(assignmentFilter)\"]")
                 let postsFilter = NBClient.shared.buildFilterString(from: posts!)
-                _ = NBClient.shared.getMappable(Comment.self, filters: "[\"_creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"_parent:IN:\(postsFilter)\"]")
+                _ = NBClient.shared.getMappable(Comment.self, filters: "[\"creator:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\",\"parent:IN:\(postsFilter)\"]")
 
                 assignmentFilter = (assignmentFilter + NBClient.shared.buildFilterString(from: assess) + NBClient.shared.buildFilterString(from: assessSubs))
-                _ = NBClient.shared.getMappable(Grade.self, filters: "[\"_owner:IN:\(assignmentFilter)\"]")
+                _ = NBClient.shared.getMappable(Grade.self, filters: "[\"owner:IN:\(assignmentFilter)\"]")
             }
 
             self.assignments = self.selectedCourse.courseAssignments

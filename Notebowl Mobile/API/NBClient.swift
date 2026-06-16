@@ -61,7 +61,7 @@ class NBClient {
     }
 
     public func doEnrollmentRequests() -> String {
-        let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"_user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
+        let reqEnroll = NBNetworking.shared.request(url: Enrollment.endpoint, params: ["filters": "[\"user:IN:\(NBClient.shared.getCurrentUser().url.absoluteString)\"]"])
         let nestedJson = (reqEnroll.json as AnyObject).value(forKeyPath: "result")
 
         var coursesFilter: String = ""
@@ -70,7 +70,7 @@ class NBClient {
 
         guard let keyPaths = nestedJson as? [[String: Any]] else { return "" }
         for key in keyPaths {
-            if let urlString = key["_parent"] as? String, let objectType = ItemType.fromURL(urlString) {
+            if let urlString = key["parent"] as? String, let objectType = ItemType.fromURL(urlString) {
                 let resKey = URL(string: urlString)!.lastPathComponent
                 if objectType == .course {
                     coursesFilter = (coursesFilter + resKey + ",")
@@ -118,7 +118,7 @@ class NBClient {
     }
 
     public func requireByReference<T>(_ object: T.Type, property: String, value: NBModel) -> [T] where T: NBModel {
-        let filterString: String = "_\(property)"
+        let filterString: String = property
         guard let req = getMappable(object, filters: "[\"\(filterString):IN:\(value.url.absoluteString)\"]") else { return [] }
         return req
     }
