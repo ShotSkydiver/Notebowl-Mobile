@@ -85,7 +85,7 @@ platform :ios do
         #slack(
         #    channel: "@shotskydiver",
         #    message: "Successfully uploaded build to App Store Connect",
-        #    slack_url: "https://hooks.slack.com/services/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",
+        #    slack_url: "https://hooks.slack.com/services/TEOREMF/BBXXXXXXX/SXXXXXXXXXXXXXXXXXX",
         #    use_webhook_configured_username_and_icon: "true"
         #    )
         upload_symbols_to_bugsnag                

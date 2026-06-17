@@ -65,9 +65,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupLibraries() {
-        Bugsnag.start(withApiKey: "572ce3fbfa0c590dcfbc69519080d42e")
+        Bugsnag.start(withApiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxx")
 
-        if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xoxb-342245113713-XuL04z8fKmrwO5QXCBHQgWCi", slackChannel: "#dev-mobile-feedback", subjects: ["Bug", "Question", "Looks good!"]) }
+        if Config.appConfiguration == .TestFlight || Config.appConfiguration == .Debug { _ = FeedbackSlack.setup("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", slackChannel: "#dev-mobile-feedback", subjects: ["Bug", "Question", "Looks good!"]) }
 
         ImageDownloader.default.trustedHosts = Set(trustedHosts)
     }
